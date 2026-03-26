@@ -1,0 +1,1703 @@
+<style>
+/* ============================================================
+   COPY BUILDERS — GHL REDESIGN
+   Global CSS — paste into GHL > Page Settings > Custom CSS
+   (or into the very first Custom HTML block as a <style> tag)
+   ============================================================ */
+
+/* ── Reset & base ─────────────────────────────────────────── */
+.cb-section *, .cb-section *::before, .cb-section *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Design tokens ────────────────────────────────────────── */
+:root {
+  --cb-cream:       #fff9f2;
+  --cb-white:       #ffffff;
+  --cb-black:       #111111;
+  --cb-dark:        #141414;
+  --cb-orange:      #f06449;
+  --cb-green:       #074638;
+  --cb-blue:        #485696;
+  --cb-text:        #111111;
+  --cb-text-mid:    #444444;
+  --cb-text-soft:   #777777;
+  --cb-divider:     rgba(0,0,0,0.08);
+  --cb-card-border: rgba(0,0,0,0.08);
+  --cb-card-shadow: 0 2px 16px rgba(0,0,0,0.06);
+
+  --cb-font: 'Plus Jakarta Sans', sans-serif;
+
+  --cb-max: 860px;
+  --cb-pad-v: 96px;
+  --cb-pad-h: 24px;
+}
+
+/* ── Typography ───────────────────────────────────────────── */
+.cb-section {
+  font-family: var(--cb-font);
+  color: var(--cb-text);
+  background-color: var(--cb-cream);
+  line-height: 1.7;
+}
+
+.cb-section h1 {
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: var(--cb-black);
+}
+
+.cb-section h2 {
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--cb-black);
+}
+
+.cb-section h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--cb-black);
+}
+
+.cb-section p {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--cb-text-mid);
+}
+
+.cb-section mark {
+  background: transparent;
+  color: var(--cb-orange);
+}
+
+/* ── Container ────────────────────────────────────────────── */
+.cb-container {
+  max-width: var(--cb-max);
+  margin: 0 auto;
+  padding: var(--cb-pad-v) var(--cb-pad-h);
+}
+
+.cb-container--narrow {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--cb-pad-v) var(--cb-pad-h);
+}
+
+/* ── Eyebrow label ────────────────────────────────────────── */
+.cb-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cb-orange);
+  margin-bottom: 20px;
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.cb-btn {
+  display: inline-block;
+  background: var(--cb-black);
+  color: #fff !important;
+  font-family: var(--cb-font);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  padding: 16px 36px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  line-height: 1;
+}
+
+.cb-btn:hover {
+  background: var(--cb-orange);
+  transform: translateY(-1px);
+}
+
+.cb-btn--lg {
+  font-size: 1rem;
+  padding: 20px 48px;
+  border-radius: 10px;
+}
+
+.cb-btn--outline {
+  background: transparent;
+  color: var(--cb-black) !important;
+  border: 2px solid var(--cb-black);
+}
+
+.cb-btn--outline:hover {
+  background: var(--cb-black);
+  color: #fff !important;
+}
+
+/* ── Cards ────────────────────────────────────────────────── */
+.cb-card {
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: var(--cb-card-shadow);
+}
+
+/* ── Divider ──────────────────────────────────────────────── */
+.cb-divider {
+  border: none;
+  border-top: 1px solid var(--cb-divider);
+  margin: 0;
+}
+
+/* ── Section backgrounds ──────────────────────────────────── */
+.cb-section--cream  { background: var(--cb-cream); }
+.cb-section--white  { background: var(--cb-white); }
+.cb-section--dark   { background: var(--cb-dark); }
+.cb-section--dark * { color: #fff; }
+.cb-section--dark .cb-text-soft-dark { color: rgba(255,255,255,0.55); }
+
+/* ── Testimonial card ─────────────────────────────────────── */
+.cb-testimonial {
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: var(--cb-card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cb-testimonial__quote {
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.7;
+  color: var(--cb-text-mid);
+  flex: 1;
+}
+
+.cb-testimonial__footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cb-testimonial__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #e0dbd4;
+  border: 2px solid var(--cb-divider);
+}
+
+.cb-testimonial__name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--cb-black);
+  line-height: 1.3;
+}
+
+.cb-testimonial__role {
+  font-size: 0.8rem;
+  color: var(--cb-text-soft);
+  line-height: 1.3;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --cb-pad-v: 64px;
+    --cb-pad-h: 20px;
+  }
+
+  .cb-section h1 { font-size: 2.2rem; }
+  .cb-section h2 { font-size: 1.8rem; }
+
+  .cb-btn--lg {
+    width: 100%;
+    text-align: center;
+    padding: 18px 24px;
+  }
+}
+</style>
+
+<!-- ============================================================
+     SECTION 1: HERO
+     GHL: Paste as the first Custom HTML block on the page.
+     Also paste cb-global.css ABOVE this (in Page Settings CSS
+     or as a <style> block before this block).
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container" style="text-align:center; padding-bottom: 72px;">
+
+    <!-- Eyebrow -->
+    <span class="cb-eyebrow">LinkedIn Writing Membership</span>
+
+    <!-- Headline -->
+    <h1 style="max-width: 760px; margin: 0 auto 28px;">
+      Posting on LinkedIn doesn't have to feel like
+      <mark>a root canal.</mark>
+    </h1>
+
+    <!-- Sub-headline / body -->
+    <!-- COPY: paste the 2–3 sentences of body text from the original GHL page here -->
+    <p style="max-width: 580px; margin: 0 auto 40px; font-size: 1.15rem;">
+      <!-- PASTE ORIGINAL BODY COPY HERE -->
+    </p>
+
+    <!-- CTA -->
+    <a href="#pricing" class="cb-btn cb-btn--lg">Yep, that's me</a>
+
+    <!-- Opening testimonial — Markus Winkler -->
+    <div style="max-width: 560px; margin: 56px auto 0; text-align: left; display: flex; gap: 16px; align-items: flex-start;">
+      <!-- Avatar -->
+      <img
+        src="PASTE_MARKUS_AVATAR_URL_FROM_GHL"
+        alt="Markus Winkler"
+        class="cb-testimonial__avatar"
+        style="width: 56px; height: 56px; margin-top: 4px; flex-shrink: 0;"
+      >
+      <!-- Quote block -->
+      <div>
+        <p style="font-size: 1rem; font-style: italic; color: #444; line-height: 1.7; margin-bottom: 10px;">
+          &#8220;<!-- PASTE MARKUS WINKLER QUOTE FROM ORIGINAL GHL PAGE -->&#8221;
+        </p>
+        <p style="font-size: 0.85rem; font-weight: 700; color: #111; margin-bottom: 2px;">Markus Winkler</p>
+        <p style="font-size: 0.8rem; color: #777;">Email Marketing Specialist</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<!-- ============================================================
+     SECTION 2: PAIN POINTS — The LinkedIn Doom Loop
+     GHL: Paste as the second Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container" style="text-align: center;">
+
+    <!-- Section heading -->
+    <!-- COPY: paste the section intro headline from the original GHL page -->
+    <span class="cb-eyebrow">Sound familiar?</span>
+    <h2 style="max-width: 640px; margin: 0 auto 16px;">
+      <!-- PASTE ORIGINAL SECTION HEADLINE HERE -->
+    </h2>
+    <p style="max-width: 540px; margin: 0 auto 64px;">
+      <!-- PASTE ORIGINAL SECTION BODY COPY HERE -->
+    </p>
+
+    <!-- The doom loop — 5 steps -->
+    <div class="cb-loop-steps">
+
+      <div class="cb-loop-step">
+        <div class="cb-loop-step__num">1</div>
+        <div class="cb-loop-step__body">
+          <h3>Overthink</h3>
+          <p><!-- PASTE ORIGINAL DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-loop-arrow" aria-hidden="true">&#8594;</div>
+
+      <div class="cb-loop-step">
+        <div class="cb-loop-step__num">2</div>
+        <div class="cb-loop-step__body">
+          <h3>Compare yourself to others</h3>
+          <p><!-- PASTE ORIGINAL DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-loop-arrow" aria-hidden="true">&#8594;</div>
+
+      <div class="cb-loop-step">
+        <div class="cb-loop-step__num">3</div>
+        <div class="cb-loop-step__body">
+          <h3>Post &amp; ghost</h3>
+          <p><!-- PASTE ORIGINAL DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-loop-arrow" aria-hidden="true">&#8594;</div>
+
+      <div class="cb-loop-step">
+        <div class="cb-loop-step__num">4</div>
+        <div class="cb-loop-step__body">
+          <h3>Check stats obsessively</h3>
+          <p><!-- PASTE ORIGINAL DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-loop-arrow" aria-hidden="true">&#8594;</div>
+
+      <div class="cb-loop-step cb-loop-step--end">
+        <div class="cb-loop-step__num cb-loop-step__num--orange">5</div>
+        <div class="cb-loop-step__body">
+          <h3>Quit LinkedIn</h3>
+          <p><!-- PASTE ORIGINAL DESCRIPTION --></p>
+        </div>
+      </div>
+
+    </div><!-- /cb-loop-steps -->
+
+    <!-- Optional closing line under the loop -->
+    <!-- COPY: paste any follow-on copy below the cycle from original page -->
+    <p style="max-width: 520px; margin: 56px auto 0; font-size: 1.05rem; color: #555;">
+      <!-- PASTE ORIGINAL CLOSING COPY HERE -->
+    </p>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── Pain points loop ── */
+.cb-loop-steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.cb-loop-step {
+  flex: 1 1 140px;
+  max-width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.cb-loop-step__num {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--cb-black);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cb-loop-step__num--orange {
+  background: var(--cb-orange);
+}
+
+.cb-loop-step__body h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cb-black);
+  margin-bottom: 4px;
+}
+
+.cb-loop-step__body p {
+  font-size: 0.85rem;
+  color: var(--cb-text-soft);
+  line-height: 1.5;
+}
+
+.cb-loop-arrow {
+  font-size: 1.4rem;
+  color: var(--cb-divider);
+  padding-top: 12px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .cb-loop-steps { flex-direction: column; align-items: center; gap: 4px; }
+  .cb-loop-step  { max-width: 100%; flex-direction: row; text-align: left; gap: 16px; }
+  .cb-loop-step__num { flex-shrink: 0; }
+  .cb-loop-arrow { transform: rotate(90deg); }
+}
+</style>
+
+<!-- ============================================================
+     SECTION 3: BRIDGE — Why LinkedIn Is Hard
+     GHL: Paste as the third Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container--narrow" style="text-align: center;">
+
+    <span class="cb-eyebrow">Here's the truth</span>
+
+    <h2 style="margin-bottom: 28px;">
+      <!-- PASTE ORIGINAL H2 / SECTION HEADLINE FROM GHL PAGE -->
+    </h2>
+
+    <!-- Body paragraphs — paste ALL original paragraphs from this section below -->
+    <p style="margin-bottom: 20px;">
+      <!-- PASTE ORIGINAL PARAGRAPH 1 -->
+    </p>
+    <p style="margin-bottom: 20px;">
+      <!-- PASTE ORIGINAL PARAGRAPH 2 -->
+    </p>
+    <p>
+      <!-- PASTE ORIGINAL PARAGRAPH 3 (if exists) -->
+    </p>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+
+<!-- ============================================================
+     SECTION 4: SOLUTION SHIFT — Making Writing Enjoyable
+     GHL: Paste immediately after Section 3.
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container--narrow" style="text-align: center;">
+
+    <span class="cb-eyebrow">A better way</span>
+
+    <h2 style="margin-bottom: 28px;">
+      <!-- PASTE ORIGINAL SOLUTION HEADLINE FROM GHL PAGE -->
+    </h2>
+
+    <p style="margin-bottom: 20px;">
+      <!-- PASTE ORIGINAL PARAGRAPH 1 -->
+    </p>
+    <p>
+      <!-- PASTE ORIGINAL PARAGRAPH 2 (if exists) -->
+    </p>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<!-- ============================================================
+     SECTION 5: ABOUT MATT
+     GHL: Paste as the fifth Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container">
+
+    <!-- Section label -->
+    <div style="text-align: center; margin-bottom: 56px;">
+      <span class="cb-eyebrow">Your guide</span>
+      <h2>
+        <!-- PASTE ORIGINAL ABOUT MATT HEADLINE -->
+      </h2>
+    </div>
+
+    <!-- Two-column: stats left, bio right -->
+    <div class="cb-about-grid">
+
+      <!-- Left: credential stat blocks -->
+      <div class="cb-about-stats">
+
+        <div class="cb-stat-block">
+          <span class="cb-stat-block__num">2,576</span>
+          <span class="cb-stat-block__label">Posts published</span>
+        </div>
+
+        <div class="cb-stat-block">
+          <span class="cb-stat-block__num">189,650</span>
+          <span class="cb-stat-block__label">LinkedIn followers</span>
+        </div>
+
+        <div class="cb-stat-block">
+          <span class="cb-stat-block__num">$1.3M</span>
+          <span class="cb-stat-block__label">Earned from LinkedIn content</span>
+        </div>
+
+      </div>
+
+      <!-- Right: bio text + achievements -->
+      <div class="cb-about-bio">
+
+        <!-- Matt's photo -->
+        <img
+          src="PASTE_MATT_PHOTO_URL_FROM_GHL"
+          alt="Matt Barker"
+          style="width: 100%; max-width: 340px; border-radius: 20px; margin-bottom: 28px; display: block;"
+        >
+
+        <!-- Bio intro copy -->
+        <p style="margin-bottom: 20px;">
+          <!-- PASTE ORIGINAL BIO INTRO PARAGRAPH(S) -->
+        </p>
+
+        <!-- Achievement list — 8 bullets from the original page -->
+        <ul class="cb-achievement-list">
+          <li><!-- PASTE ACHIEVEMENT 1 --></li>
+          <li><!-- PASTE ACHIEVEMENT 2 --></li>
+          <li><!-- PASTE ACHIEVEMENT 3 --></li>
+          <li><!-- PASTE ACHIEVEMENT 4 --></li>
+          <li><!-- PASTE ACHIEVEMENT 5 --></li>
+          <li><!-- PASTE ACHIEVEMENT 6 --></li>
+          <li><!-- PASTE ACHIEVEMENT 7 --></li>
+          <li><!-- PASTE ACHIEVEMENT 8 --></li>
+        </ul>
+
+      </div>
+    </div><!-- /cb-about-grid -->
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── About Matt ── */
+.cb-about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 56px;
+  align-items: start;
+}
+
+.cb-about-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  position: sticky;
+  top: 40px;
+}
+
+.cb-stat-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--cb-divider);
+}
+
+.cb-stat-block:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.cb-stat-block__num {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--cb-orange);
+  line-height: 1;
+}
+
+.cb-stat-block__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cb-text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.cb-achievement-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cb-achievement-list li {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.cb-achievement-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .cb-about-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .cb-about-stats {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px;
+    position: static;
+  }
+  .cb-stat-block {
+    flex: 1 1 120px;
+    border-bottom: none;
+    border-right: 1px solid var(--cb-divider);
+    padding-right: 20px;
+    padding-bottom: 0;
+  }
+  .cb-stat-block:last-child { border-right: none; }
+}
+</style>
+
+<!-- ============================================================
+     SECTION 6: INTRODUCING COPY BUILDERS
+     GHL: Paste as the sixth Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container" style="text-align: center;">
+
+    <span class="cb-eyebrow">Introducing</span>
+
+    <h2 style="max-width: 700px; margin: 0 auto 28px;">
+      <!-- PASTE ORIGINAL COPY BUILDERS INTRO HEADLINE -->
+    </h2>
+
+    <p style="max-width: 580px; margin: 0 auto 20px;">
+      <!-- PASTE ORIGINAL PARAGRAPH 1 -->
+    </p>
+
+    <p style="max-width: 580px; margin: 0 auto 48px;">
+      <!-- PASTE ORIGINAL PARAGRAPH 2 (if exists) -->
+    </p>
+
+    <!-- Product image (if one exists in the GHL page) -->
+    <!-- <img src="PASTE_PRODUCT_IMAGE_URL" alt="Copy Builders" style="width:100%; max-width:640px; border-radius:20px; margin-bottom:48px;"> -->
+
+    <a href="#pricing" class="cb-btn cb-btn--lg">Make LinkedIn fun again</a>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<!-- ============================================================
+     SECTION 7: HOW IT WORKS — 5 Steps
+     GHL: Paste as the seventh Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container">
+
+    <div style="text-align: center; margin-bottom: 64px;">
+      <span class="cb-eyebrow">The system</span>
+      <h2>How it works</h2>
+    </div>
+
+    <div class="cb-steps">
+
+      <div class="cb-step">
+        <div class="cb-step__num">01</div>
+        <div class="cb-step__content">
+          <h3>Build your writing foundations</h3>
+          <p><!-- PASTE ORIGINAL STEP 1 DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-step">
+        <div class="cb-step__num">02</div>
+        <div class="cb-step__content">
+          <h3>Monthly content templates delivered</h3>
+          <p><!-- PASTE ORIGINAL STEP 2 DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-step">
+        <div class="cb-step__num">03</div>
+        <div class="cb-step__content">
+          <h3>Get feedback on your content</h3>
+          <p><!-- PASTE ORIGINAL STEP 3 DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-step">
+        <div class="cb-step__num">04</div>
+        <div class="cb-step__content">
+          <h3>Community of fellow creators</h3>
+          <p><!-- PASTE ORIGINAL STEP 4 DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-step">
+        <div class="cb-step__num">05</div>
+        <div class="cb-step__content">
+          <h3>Go deeper with courses &amp; workshops</h3>
+          <p><!-- PASTE ORIGINAL STEP 5 DESCRIPTION --></p>
+        </div>
+      </div>
+
+    </div><!-- /cb-steps -->
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── How It Works steps ── */
+.cb-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cb-step {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  align-items: start;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--cb-divider);
+}
+
+.cb-step:first-child { padding-top: 0; }
+.cb-step:last-child  { border-bottom: none; padding-bottom: 0; }
+
+.cb-step__num {
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--cb-orange);
+  line-height: 1;
+  padding-top: 4px;
+}
+
+.cb-step__content h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--cb-black);
+}
+
+.cb-step__content p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.7;
+}
+
+@media (max-width: 640px) {
+  .cb-step { grid-template-columns: 56px 1fr; gap: 16px; }
+  .cb-step__num { font-size: 2rem; }
+}
+</style>
+
+<!-- ============================================================
+     SECTION 8: BENEFITS — 3 Cards
+     GHL: Paste as the eighth Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container">
+
+    <div style="text-align: center; margin-bottom: 56px;">
+      <span class="cb-eyebrow">What you get</span>
+      <h2 style="max-width: 580px; margin: 0 auto;">
+        <!-- PASTE ORIGINAL BENEFITS HEADLINE -->
+      </h2>
+    </div>
+
+    <div class="cb-benefits-grid">
+
+      <div class="cb-card cb-benefit-card">
+        <div class="cb-benefit-card__icon">📌</div>
+        <h3>Always know what to post</h3>
+        <p><!-- PASTE ORIGINAL BENEFIT 1 BODY --></p>
+      </div>
+
+      <div class="cb-card cb-benefit-card">
+        <div class="cb-benefit-card__icon">⚡</div>
+        <h3>Write in 10 minutes or less</h3>
+        <p><!-- PASTE ORIGINAL BENEFIT 2 BODY --></p>
+      </div>
+
+      <div class="cb-card cb-benefit-card">
+        <div class="cb-benefit-card__icon">🔁</div>
+        <h3>Stay consistent</h3>
+        <p><!-- PASTE ORIGINAL BENEFIT 3 BODY --></p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+
+<!-- ============================================================
+     SECTION 9: RESULTS — When You Have an Easy System
+     GHL: Paste immediately after Section 8.
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container--narrow" style="text-align: center;">
+
+    <span class="cb-eyebrow">The outcome</span>
+
+    <h2 style="margin-bottom: 28px;">
+      When you have an easy system&hellip;
+    </h2>
+
+    <!-- PASTE the original results/outcome body copy from the GHL page below -->
+    <p style="margin-bottom: 20px;">
+      <!-- PASTE ORIGINAL PARAGRAPH 1 -->
+    </p>
+    <p>
+      <!-- PASTE ORIGINAL PARAGRAPH 2 (if exists) -->
+    </p>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── Benefits grid ── */
+.cb-benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.cb-benefit-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cb-benefit-card__icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.cb-benefit-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cb-black);
+}
+
+.cb-benefit-card p {
+  font-size: 0.95rem;
+  color: var(--cb-text-mid);
+  line-height: 1.65;
+}
+
+@media (max-width: 768px) {
+  .cb-benefits-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<!-- ============================================================
+     SECTION 10: MEMBER TESTIMONIALS
+     GHL: Paste as the tenth Custom HTML block.
+
+     HOW TO FILL IN:
+     - Replace each PASTE_AVATAR_URL_* with the actual image src
+       from the original GHL page (assets.cdn.filesafe.space/...)
+     - Replace each PASTE_QUOTE_* with the exact quote text
+     - All names, roles, and quotes must come from original GHL page
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container">
+
+    <div style="text-align: center; margin-bottom: 64px;">
+      <span class="cb-eyebrow">Real members. Real results.</span>
+      <h2>What Copy Builders members say</h2>
+    </div>
+
+    <!-- Testimonials masonry grid — 3 columns desktop, 1 mobile -->
+    <div class="cb-testi-grid">
+
+      <!-- 1 — Kyle Campion -->
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;<!-- PASTE_QUOTE_KYLE -->&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="PASTE_AVATAR_URL_KYLE" alt="Kyle Campion" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Kyle Campion</p>
+            <p class="cb-testimonial__role">Founder @ KCR Associates</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 — Truett Bloxsom -->
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;<!-- PASTE_QUOTE_TRUETT -->&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="PASTE_AVATAR_URL_TRUETT" alt="Truett Bloxsom" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Truett Bloxsom</p>
+            <p class="cb-testimonial__role">Startup Data Analyst</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 — Arnaud Renoux -->
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;<!-- PASTE_QUOTE_ARNAUD -->&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="PASTE_AVATAR_URL_ARNAUD" alt="Arnaud Renoux" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Arnaud Renoux</p>
+            <p class="cb-testimonial__role">Founder @ Scalelist — $150k in signed deals</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 — Almudena -->
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;<!-- PASTE_QUOTE_ALMUDENA -->&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="PASTE_AVATAR_URL_ALMUDENA" alt="Almudena" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Almudena</p>
+            <p class="cb-testimonial__role">Software Developer</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 — Nigel Thomas -->
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;<!-- PASTE_QUOTE_NIGEL -->&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="PASTE_AVATAR_URL_NIGEL" alt="Nigel Thomas" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Nigel Thomas</p>
+            <p class="cb-testimonial__role">CEO @ Alpha Inbound — $100k/month agency</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 — Tom Hunt -->
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;<!-- PASTE_QUOTE_TOM -->&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="PASTE_AVATAR_URL_TOM" alt="Tom Hunt" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Tom Hunt</p>
+            <p class="cb-testimonial__role">Founder @ Fame — 100k followers</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7 — Cass Whitaker -->
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;<!-- PASTE_QUOTE_CASS -->&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="PASTE_AVATAR_URL_CASS" alt="Cass Whitaker" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Cass Whitaker</p>
+            <p class="cb-testimonial__role"><!-- PASTE CASS ROLE --></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8 — Michael Erhard -->
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;<!-- PASTE_QUOTE_MICHAEL_E -->&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="PASTE_AVATAR_URL_MICHAEL_E" alt="Michael Erhard" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Michael Erhard</p>
+            <p class="cb-testimonial__role"><!-- PASTE MICHAEL E ROLE --></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9 — Reno Perry -->
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;<!-- PASTE_QUOTE_RENO -->&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="PASTE_AVATAR_URL_RENO" alt="Reno Perry" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Reno Perry</p>
+            <p class="cb-testimonial__role"><!-- PASTE RENO ROLE --></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10 — Michael Lovegrove -->
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;<!-- PASTE_QUOTE_MICHAEL_L -->&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="PASTE_AVATAR_URL_MICHAEL_L" alt="Michael Lovegrove" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Michael Lovegrove</p>
+            <p class="cb-testimonial__role"><!-- PASTE MICHAEL L ROLE --></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11 — Josh Hannen -->
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;<!-- PASTE_QUOTE_JOSH -->&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="PASTE_AVATAR_URL_JOSH" alt="Josh Hannen" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Josh Hannen</p>
+            <p class="cb-testimonial__role"><!-- PASTE JOSH ROLE --></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 12 — Ben (performance coach) -->
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;<!-- PASTE_QUOTE_BEN -->&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="PASTE_AVATAR_URL_BEN" alt="Ben" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Ben</p>
+            <p class="cb-testimonial__role">Performance Coach</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /cb-testi-grid -->
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── Testimonials grid ── */
+.cb-testi-grid {
+  columns: 3;
+  column-gap: 24px;
+}
+
+.cb-testimonial {
+  break-inside: avoid;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .cb-testi-grid { columns: 2; }
+}
+
+@media (max-width: 600px) {
+  .cb-testi-grid { columns: 1; }
+}
+</style>
+
+<!-- ============================================================
+     SECTION 11: VIDEO TESTIMONIAL — Ken Yarmosh
+     GHL: Paste as the eleventh Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container" style="text-align: center;">
+
+    <span class="cb-eyebrow">In their own words</span>
+    <h2 style="max-width: 560px; margin: 0 auto 48px;">
+      <!-- PASTE ORIGINAL VIDEO SECTION HEADLINE (if any) -->
+      Hear it from Ken
+    </h2>
+
+    <!-- Video embed wrapper — paste the original GHL video iframe here -->
+    <div class="cb-video-wrap">
+      <!-- PASTE THE ORIGINAL KEN YARMOSH VIDEO EMBED / IFRAME HERE -->
+      <!-- Example structure:
+      <iframe
+        src="https://..."
+        width="100%"
+        height="480"
+        frameborder="0"
+        allowfullscreen
+        style="border-radius: 16px;"
+      ></iframe>
+      -->
+    </div>
+
+    <!-- Attribution below video -->
+    <p style="margin-top: 24px; font-size: 0.9rem; font-weight: 700; color: #111;">Ken Yarmosh</p>
+    <p style="font-size: 0.8rem; color: #777;"><!-- PASTE KEN'S ROLE/TITLE --></p>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+.cb-video-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 16 / 9;
+}
+
+.cb-video-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+</style>
+
+<!-- ============================================================
+     SECTION 12: LINKEDIN CAN OPEN BIG DOORS
+     GHL: Paste as the twelfth Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container">
+
+    <div style="text-align: center; margin-bottom: 56px;">
+      <span class="cb-eyebrow">The bigger picture</span>
+      <h2 style="max-width: 600px; margin: 0 auto 16px;">
+        LinkedIn <mark>can</mark> open big doors
+      </h2>
+      <p style="max-width: 520px; margin: 0 auto;">
+        <!-- PASTE ORIGINAL INTRO PARAGRAPH FOR THIS SECTION -->
+      </p>
+    </div>
+
+    <!-- Two-column outcome list -->
+    <div class="cb-doors-grid">
+      <!-- PASTE EACH OUTCOME AS AN <li> — copy exactly from original GHL page -->
+      <ul class="cb-doors-list">
+        <li><!-- OUTCOME 1 --></li>
+        <li><!-- OUTCOME 2 --></li>
+        <li><!-- OUTCOME 3 --></li>
+        <li><!-- OUTCOME 4 --></li>
+      </ul>
+      <ul class="cb-doors-list">
+        <li><!-- OUTCOME 5 --></li>
+        <li><!-- OUTCOME 6 --></li>
+        <li><!-- OUTCOME 7 --></li>
+        <li><!-- OUTCOME 8 --></li>
+      </ul>
+    </div>
+
+    <!-- Closing line (if in original) -->
+    <p style="text-align: center; margin-top: 48px; max-width: 540px; margin-left: auto; margin-right: auto;">
+      <!-- PASTE ORIGINAL CLOSING COPY FOR THIS SECTION -->
+    </p>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+.cb-doors-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.cb-doors-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cb-doors-list li {
+  font-size: 1rem;
+  color: var(--cb-text-mid);
+  padding-left: 24px;
+  position: relative;
+  line-height: 1.55;
+}
+
+.cb-doors-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .cb-doors-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<!-- ============================================================
+     SECTION 13: PRICING
+     GHL: Paste as the thirteenth Custom HTML block.
+     Add id="pricing" to the section so CTA links scroll here.
+     ============================================================ -->
+
+<section class="cb-section cb-section--dark" id="pricing">
+  <div class="cb-container">
+
+    <div style="text-align: center; margin-bottom: 64px;">
+      <span class="cb-eyebrow" style="color: var(--cb-orange);">Simple pricing</span>
+      <h2 style="color: #fff; max-width: 560px; margin: 0 auto 16px;">
+        <!-- PASTE ORIGINAL PRICING HEADLINE -->
+        Join Copy Builders today
+      </h2>
+      <p style="color: rgba(255,255,255,0.6); max-width: 460px; margin: 0 auto;">
+        <!-- PASTE ORIGINAL PRICING SUB-COPY (if any) -->
+      </p>
+    </div>
+
+    <!-- Pricing cards: Monthly + Annual -->
+    <div class="cb-pricing-grid">
+
+      <!-- Monthly -->
+      <div class="cb-pricing-card">
+        <p class="cb-pricing-card__label">Monthly</p>
+        <div class="cb-pricing-card__price">
+          <span class="cb-pricing-card__amount">$99</span>
+          <span class="cb-pricing-card__period">/month</span>
+        </div>
+        <ul class="cb-pricing-features">
+          <!-- PASTE FEATURE LIST ITEMS FROM ORIGINAL GHL PAGE -->
+          <li><!-- FEATURE 1 --></li>
+          <li><!-- FEATURE 2 --></li>
+          <li><!-- FEATURE 3 --></li>
+          <li><!-- FEATURE 4 --></li>
+          <li><!-- FEATURE 5 --></li>
+        </ul>
+        <a href="PASTE_MONTHLY_CHECKOUT_LINK" class="cb-btn" style="width: 100%; text-align: center; display: block;">
+          Get started — monthly
+        </a>
+      </div>
+
+      <!-- Annual — best value -->
+      <div class="cb-pricing-card cb-pricing-card--featured">
+        <div class="cb-pricing-card__badge">Best value — save $198</div>
+        <p class="cb-pricing-card__label">Annual</p>
+        <div class="cb-pricing-card__price">
+          <span class="cb-pricing-card__amount">$990</span>
+          <span class="cb-pricing-card__period">/year</span>
+        </div>
+        <p style="font-size: 0.82rem; color: rgba(255,255,255,0.5); margin: -12px 0 20px;">
+          Equivalent to $82.50/month
+        </p>
+        <ul class="cb-pricing-features">
+          <!-- PASTE FEATURE LIST ITEMS FROM ORIGINAL GHL PAGE (same as monthly) -->
+          <li><!-- FEATURE 1 --></li>
+          <li><!-- FEATURE 2 --></li>
+          <li><!-- FEATURE 3 --></li>
+          <li><!-- FEATURE 4 --></li>
+          <li><!-- FEATURE 5 --></li>
+        </ul>
+        <a href="PASTE_ANNUAL_CHECKOUT_LINK" class="cb-btn" style="width: 100%; text-align: center; display: block; background: var(--cb-orange);">
+          Get started — annual
+        </a>
+      </div>
+
+    </div><!-- /cb-pricing-grid -->
+
+    <!-- Guarantee bar -->
+    <div class="cb-guarantee">
+      <span class="cb-guarantee__icon">🛡️</span>
+      <p>
+        <strong>14-day money-back guarantee.</strong>
+        <!-- PASTE ORIGINAL GUARANTEE COPY -->
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── Pricing section ── */
+.cb-section--dark {
+  background: #141414;
+}
+
+.cb-pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 740px;
+  margin: 0 auto 48px;
+}
+
+.cb-pricing-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 36px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cb-pricing-card--featured {
+  border-color: var(--cb-orange);
+  background: rgba(240,100,73,0.08);
+}
+
+.cb-pricing-card__badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--cb-orange);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.cb-pricing-card__label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+
+.cb-pricing-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.cb-pricing-card__amount {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #fff;
+  line-height: 1;
+}
+
+.cb-pricing-card__period {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.5);
+}
+
+.cb-pricing-features {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.cb-pricing-features li {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.75);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.cb-pricing-features li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+/* Guarantee bar */
+.cb-guarantee {
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+
+.cb-guarantee__icon { font-size: 1.4rem; flex-shrink: 0; }
+
+.cb-guarantee p {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.6;
+}
+
+.cb-guarantee strong { color: #fff; }
+
+@media (max-width: 640px) {
+  .cb-pricing-grid { grid-template-columns: 1fr; }
+  .cb-pricing-card { padding: 28px 24px; }
+}
+</style>
+
+<!-- ============================================================
+     SECTION 14: FAQs — CSS-only accordion (no JavaScript)
+     GHL: Paste as the fourteenth Custom HTML block.
+
+     HOW IT WORKS:
+     - Each FAQ uses a hidden <input type="checkbox"> + <label>
+     - Clicking the label toggles the answer open/closed
+     - Pure CSS, no JS needed
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container--narrow">
+
+    <div style="text-align: center; margin-bottom: 56px;">
+      <span class="cb-eyebrow">Got questions?</span>
+      <h2>Frequently asked questions</h2>
+    </div>
+
+    <div class="cb-faqs">
+
+      <!-- FAQ 1 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq1" class="cb-faq__toggle">
+        <label for="faq1" class="cb-faq__question">
+          Does Copy Builders work with AI?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq2" class="cb-faq__toggle">
+        <label for="faq2" class="cb-faq__question">
+          Is this for business owners specifically?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq3" class="cb-faq__toggle">
+        <label for="faq3" class="cb-faq__question">
+          What if I'm a complete beginner?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 4 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq4" class="cb-faq__toggle">
+        <label for="faq4" class="cb-faq__question">
+          How often do I need to post?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 5 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq5" class="cb-faq__toggle">
+        <label for="faq5" class="cb-faq__question">
+          What if my life isn't interesting enough to post about?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 6 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq6" class="cb-faq__toggle">
+        <label for="faq6" class="cb-faq__question">
+          What do the templates look like?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 7 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq7" class="cb-faq__toggle">
+        <label for="faq7" class="cb-faq__question">
+          What about time zones for live calls?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 8 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq8" class="cb-faq__toggle">
+        <label for="faq8" class="cb-faq__question">
+          Can I cancel anytime?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+    </div><!-- /cb-faqs -->
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── FAQ accordion — CSS only ── */
+.cb-faqs {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cb-faq {
+  border-bottom: 1px solid var(--cb-divider);
+}
+
+.cb-faq:first-child {
+  border-top: 1px solid var(--cb-divider);
+}
+
+/* Hide the checkbox */
+.cb-faq__toggle {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Question label row */
+.cb-faq__question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 0;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--cb-black);
+  font-family: var(--cb-font);
+  user-select: none;
+  transition: color 0.15s;
+}
+
+.cb-faq__question:hover {
+  color: var(--cb-orange);
+}
+
+/* The + / × icon */
+.cb-faq__icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.cb-faq__icon::before,
+.cb-faq__icon::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Horizontal bar */
+.cb-faq__icon::before {
+  width: 14px; height: 2px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Vertical bar */
+.cb-faq__icon::after {
+  width: 2px; height: 14px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Answer — hidden by default */
+.cb-faq__answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.2s ease;
+}
+
+.cb-faq__answer p {
+  padding-bottom: 24px;
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+/* Checked state — show answer, rotate icon */
+.cb-faq__toggle:checked ~ .cb-faq__question .cb-faq__icon::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+  opacity: 0;
+}
+
+.cb-faq__toggle:checked ~ .cb-faq__answer {
+  max-height: 600px;
+}
+</style>
+
+<!-- ============================================================
+     SECTION 15: FINAL CTA
+     GHL: Paste as the last Custom HTML block on the page.
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container--narrow" style="text-align: center;">
+
+    <!-- Final headline -->
+    <h2 style="max-width: 600px; margin: 0 auto 20px;">
+      <!-- PASTE ORIGINAL FINAL CTA HEADLINE -->
+    </h2>
+
+    <!-- Final persuasion copy (if any) -->
+    <p style="max-width: 480px; margin: 0 auto 40px;">
+      <!-- PASTE ORIGINAL FINAL CTA BODY COPY -->
+    </p>
+
+    <a href="#pricing" class="cb-btn cb-btn--lg">Okay, I'm in</a>
+
+    <!-- Guarantee / trust note -->
+    <p style="margin-top: 20px; font-size: 0.85rem; color: #888;">
+      🛡️ 14-day money-back guarantee. Cancel anytime.
+    </p>
+
+  </div>
+</section>
