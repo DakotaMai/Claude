@@ -1,79 +1,81 @@
 <!-- ============================================================
-     SECTION 13: PRICING
-     GHL: Paste as the thirteenth Custom HTML block.
-     Add id="pricing" to the section so CTA links scroll here.
+     SECTION 13: PRICING (First instance — appears after results)
+     GHL: Paste after results + testimonials (s09).
+     This same block is repeated later — just paste it again.
+     id="pricing" is on this first instance so CTAs scroll here.
      ============================================================ -->
 
 <section class="cb-section cb-section--dark" id="pricing">
   <div class="cb-container">
 
     <div style="text-align: center; margin-bottom: 64px;">
-      <span class="cb-eyebrow" style="color: var(--cb-orange);">Simple pricing</span>
+      <span class="cb-eyebrow" style="color: var(--cb-orange);">Ready to join?</span>
       <h2 style="color: #fff; max-width: 560px; margin: 0 auto 16px;">
-        <!-- PASTE ORIGINAL PRICING HEADLINE -->
-        Join Copy Builders today
+        Ready to make posting on LinkedIn fast, easy, and fun?
       </h2>
       <p style="color: rgba(255,255,255,0.6); max-width: 460px; margin: 0 auto;">
-        <!-- PASTE ORIGINAL PRICING SUB-COPY (if any) -->
+        Join Copy Builders Today
       </p>
     </div>
 
-    <!-- Pricing cards: Monthly + Annual -->
+    <!-- What's included -->
+    <div class="cb-pricing-includes">
+      <div class="cb-pricing-includes__col">
+        <p class="cb-pricing-includes__heading">The full Copy Builders Curriculum:</p>
+        <ul class="cb-pricing-features">
+          <li>Weekly training video</li>
+          <li>LinkedIn courses</li>
+          <li>Guest expert workshops</li>
+          <li>100+ templates</li>
+        </ul>
+      </div>
+      <div class="cb-pricing-includes__col">
+        <p class="cb-pricing-includes__heading">Ongoing coaching &amp; support:</p>
+        <ul class="cb-pricing-features">
+          <li>1 hour Mastermind call</li>
+          <li>Personalised advice</li>
+          <li>Monthly LIVE Q&amp;A chat to drop your Qs</li>
+          <li>Copy Builders community access</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Pricing cards -->
     <div class="cb-pricing-grid">
 
       <!-- Monthly -->
       <div class="cb-pricing-card">
-        <p class="cb-pricing-card__label">Monthly</p>
+        <p class="cb-pricing-card__label">12 Monthly Payments</p>
         <div class="cb-pricing-card__price">
           <span class="cb-pricing-card__amount">$99</span>
           <span class="cb-pricing-card__period">/month</span>
         </div>
-        <ul class="cb-pricing-features">
-          <!-- PASTE FEATURE LIST ITEMS FROM ORIGINAL GHL PAGE -->
-          <li><!-- FEATURE 1 --></li>
-          <li><!-- FEATURE 2 --></li>
-          <li><!-- FEATURE 3 --></li>
-          <li><!-- FEATURE 4 --></li>
-          <li><!-- FEATURE 5 --></li>
-        </ul>
-        <a href="PASTE_MONTHLY_CHECKOUT_LINK" class="cb-btn" style="width: 100%; text-align: center; display: block;">
-          Get started — monthly
+        <a href="PASTE_MONTHLY_CHECKOUT_LINK" class="cb-btn" style="width: 100%; text-align: center; display: block; margin-top: auto;">
+          Join now
         </a>
+        <p style="font-size: 0.75rem; color: rgba(255,255,255,0.4); text-align: center; margin-top: 8px;">12-month membership</p>
       </div>
 
       <!-- Annual — best value -->
       <div class="cb-pricing-card cb-pricing-card--featured">
-        <div class="cb-pricing-card__badge">Best value — save $198</div>
-        <p class="cb-pricing-card__label">Annual</p>
+        <div class="cb-pricing-card__badge">Save $198</div>
+        <p class="cb-pricing-card__label">One Annual Payment</p>
         <div class="cb-pricing-card__price">
           <span class="cb-pricing-card__amount">$990</span>
           <span class="cb-pricing-card__period">/year</span>
         </div>
-        <p style="font-size: 0.82rem; color: rgba(255,255,255,0.5); margin: -12px 0 20px;">
-          Equivalent to $82.50/month
-        </p>
-        <ul class="cb-pricing-features">
-          <!-- PASTE FEATURE LIST ITEMS FROM ORIGINAL GHL PAGE (same as monthly) -->
-          <li><!-- FEATURE 1 --></li>
-          <li><!-- FEATURE 2 --></li>
-          <li><!-- FEATURE 3 --></li>
-          <li><!-- FEATURE 4 --></li>
-          <li><!-- FEATURE 5 --></li>
-        </ul>
-        <a href="PASTE_ANNUAL_CHECKOUT_LINK" class="cb-btn" style="width: 100%; text-align: center; display: block; background: var(--cb-orange);">
-          Get started — annual
+        <a href="PASTE_ANNUAL_CHECKOUT_LINK" class="cb-btn" style="width: 100%; text-align: center; display: block; margin-top: auto; background: var(--cb-orange);">
+          Join now
         </a>
+        <p style="font-size: 0.75rem; color: rgba(255,255,255,0.4); text-align: center; margin-top: 8px;">12-month membership</p>
       </div>
 
-    </div><!-- /cb-pricing-grid -->
+    </div>
 
-    <!-- Guarantee bar -->
+    <!-- Guarantee -->
     <div class="cb-guarantee">
       <span class="cb-guarantee__icon">🛡️</span>
-      <p>
-        <strong>14-day money-back guarantee.</strong>
-        <!-- PASTE ORIGINAL GUARANTEE COPY -->
-      </p>
+      <p><strong>Try Copy Builders 100% risk-free.</strong> If you don't love what you see inside the first 14 days, email me and I'll refund every penny. No questions asked.</p>
     </div>
 
   </div>
@@ -82,16 +84,37 @@
 <hr class="cb-divider">
 
 <style>
-/* ── Pricing section ── */
-.cb-section--dark {
-  background: #141414;
+.cb-section--dark { background: #141414; }
+.cb-section--dark p,
+.cb-section--dark h2,
+.cb-section--dark h3 { color: #fff; }
+
+.cb-pricing-includes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 640px;
+  margin: 0 auto 48px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 28px 32px;
+}
+
+.cb-pricing-includes__heading {
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cb-orange) !important;
+  margin-bottom: 14px;
 }
 
 .cb-pricing-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  max-width: 740px;
+  max-width: 580px;
   margin: 0 auto 48px;
 }
 
@@ -99,11 +122,11 @@
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 20px;
-  padding: 36px;
+  padding: 32px;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .cb-pricing-card--featured {
@@ -128,11 +151,11 @@
 }
 
 .cb-pricing-card__label {
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.5) !important;
 }
 
 .cb-pricing-card__price {
@@ -159,12 +182,11 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  flex: 1;
+  gap: 8px;
 }
 
 .cb-pricing-features li {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: rgba(255,255,255,0.75);
   padding-left: 20px;
   position: relative;
@@ -172,14 +194,12 @@
 }
 
 .cb-pricing-features li::before {
-  content: '✓';
+  content: '✅';
   position: absolute;
   left: 0;
-  color: var(--cb-orange);
-  font-weight: 700;
+  font-size: 0.8rem;
 }
 
-/* Guarantee bar */
 .cb-guarantee {
   max-width: 560px;
   margin: 0 auto;
@@ -196,14 +216,16 @@
 
 .cb-guarantee p {
   font-size: 0.9rem;
-  color: rgba(255,255,255,0.65);
+  color: rgba(255,255,255,0.65) !important;
   line-height: 1.6;
 }
 
-.cb-guarantee strong { color: #fff; }
+.cb-guarantee strong { color: #fff !important; }
 
 @media (max-width: 640px) {
-  .cb-pricing-grid { grid-template-columns: 1fr; }
-  .cb-pricing-card { padding: 28px 24px; }
+  .cb-pricing-grid,
+  .cb-pricing-includes { grid-template-columns: 1fr; }
+  .cb-pricing-card { padding: 24px; }
+  .cb-pricing-includes { padding: 20px; }
 }
 </style>

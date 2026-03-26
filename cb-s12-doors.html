@@ -1,42 +1,51 @@
 <!-- ============================================================
      SECTION 12: LINKEDIN CAN OPEN BIG DOORS
-     GHL: Paste as the twelfth Custom HTML block.
+     GHL: Paste after the social proof / Arnaud-Nigel-Tom block (s11b).
      ============================================================ -->
 
 <section class="cb-section cb-section--white">
-  <div class="cb-container">
+  <div class="cb-container--narrow">
 
-    <div style="text-align: center; margin-bottom: 56px;">
-      <span class="cb-eyebrow">The bigger picture</span>
-      <h2 style="max-width: 600px; margin: 0 auto 16px;">
-        LinkedIn <mark>can</mark> open big doors
-      </h2>
-      <p style="max-width: 520px; margin: 0 auto;">
-        <!-- PASTE ORIGINAL INTRO PARAGRAPH FOR THIS SECTION -->
-      </p>
+    <span class="cb-eyebrow">The bigger picture</span>
+    <h2 style="margin-bottom: 40px;">LinkedIn <mark>can</mark> open some pretty big doors</h2>
+
+    <div class="cb-doors-list-full">
+
+      <div class="cb-door-item">
+        <span class="cb-door-item__icon">👉</span>
+        <p>A steady stream of clients so you're not lying awake worried about how to cover your bills.</p>
+      </div>
+
+      <div class="cb-door-item">
+        <span class="cb-door-item__icon">👉</span>
+        <p>An engaged audience the size of Arsenal stadium, who recognise your name in the feed and like all your posts.</p>
+      </div>
+
+      <div class="cb-door-item">
+        <span class="cb-door-item__icon">👉</span>
+        <p>Being the front-runner for a job post (or skipping the recruitment process entirely) because you've been connected with the hiring manager for months.</p>
+      </div>
+
+      <div class="cb-door-item">
+        <span class="cb-door-item__icon">👉</span>
+        <p>Making more money than you ever thought possible because people have binged your posts and enjoyed the way you think.</p>
+      </div>
+
     </div>
 
-    <!-- Two-column outcome list -->
-    <div class="cb-doors-grid">
-      <!-- PASTE EACH OUTCOME AS AN <li> — copy exactly from original GHL page -->
-      <ul class="cb-doors-list">
-        <li><!-- OUTCOME 1 --></li>
-        <li><!-- OUTCOME 2 --></li>
-        <li><!-- OUTCOME 3 --></li>
-        <li><!-- OUTCOME 4 --></li>
-      </ul>
-      <ul class="cb-doors-list">
-        <li><!-- OUTCOME 5 --></li>
-        <li><!-- OUTCOME 6 --></li>
-        <li><!-- OUTCOME 7 --></li>
-        <li><!-- OUTCOME 8 --></li>
-      </ul>
+    <p style="margin-top: 40px; margin-bottom: 20px;">I've seen this play out for myself and the members inside Copy Builders.</p>
+
+    <p style="margin-bottom: 28px; font-weight: 700; color: #111;">But none of it happens if you never hit post.</p>
+
+    <p style="margin-bottom: 28px;">Because no one can refer you, hire you, or invite you into bigger conversations if you're sitting in the comments section saying "Great post 👏" while your own ideas stay hidden in drafts.</p>
+
+    <div class="cb-doors-closing">
+      <p>If you're ready to start writing and posting, Copy Builders makes that part easy.</p>
     </div>
 
-    <!-- Closing line (if in original) -->
-    <p style="text-align: center; margin-top: 48px; max-width: 540px; margin-left: auto; margin-right: auto;">
-      <!-- PASTE ORIGINAL CLOSING COPY FOR THIS SECTION -->
-    </p>
+    <div style="text-align: center; margin-top: 48px;">
+      <a href="#pricing" class="cb-btn cb-btn--lg">Join Copy Builders today</a>
+    </div>
 
   </div>
 </section>
@@ -44,39 +53,45 @@
 <hr class="cb-divider">
 
 <style>
-.cb-doors-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.cb-doors-list {
-  list-style: none;
-  padding: 0;
+.cb-doors-list-full {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
-.cb-doors-list li {
-  font-size: 1rem;
+.cb-door-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: var(--cb-cream);
+  border-radius: 14px;
+  padding: 20px 24px;
+}
+
+.cb-door-item__icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  line-height: 1.7;
+}
+
+.cb-door-item p {
+  font-size: 0.975rem;
   color: var(--cb-text-mid);
-  padding-left: 24px;
-  position: relative;
-  line-height: 1.55;
+  line-height: 1.7;
 }
 
-.cb-doors-list li::before {
-  content: '→';
-  position: absolute;
-  left: 0;
-  color: var(--cb-orange);
-  font-weight: 700;
+.cb-doors-closing {
+  background: #f0fdf7;
+  border: 1px solid rgba(7,70,56,0.12);
+  border-radius: 14px;
+  padding: 24px 28px;
+  text-align: center;
 }
 
-@media (max-width: 640px) {
-  .cb-doors-grid { grid-template-columns: 1fr; }
+.cb-doors-closing p {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--cb-green);
+  line-height: 1.65;
 }
 </style>
