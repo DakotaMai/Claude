@@ -1,0 +1,223 @@
+<!-- ============================================================
+     SECTION 14: FAQs — CSS-only accordion (no JavaScript)
+     GHL: Paste as the fourteenth Custom HTML block.
+
+     HOW IT WORKS:
+     - Each FAQ uses a hidden <input type="checkbox"> + <label>
+     - Clicking the label toggles the answer open/closed
+     - Pure CSS, no JS needed
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container--narrow">
+
+    <div style="text-align: center; margin-bottom: 56px;">
+      <span class="cb-eyebrow">Got questions?</span>
+      <h2>Frequently asked questions</h2>
+    </div>
+
+    <div class="cb-faqs">
+
+      <!-- FAQ 1 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq1" class="cb-faq__toggle">
+        <label for="faq1" class="cb-faq__question">
+          Does Copy Builders work with AI?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq2" class="cb-faq__toggle">
+        <label for="faq2" class="cb-faq__question">
+          Is this for business owners specifically?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq3" class="cb-faq__toggle">
+        <label for="faq3" class="cb-faq__question">
+          What if I'm a complete beginner?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 4 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq4" class="cb-faq__toggle">
+        <label for="faq4" class="cb-faq__question">
+          How often do I need to post?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 5 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq5" class="cb-faq__toggle">
+        <label for="faq5" class="cb-faq__question">
+          What if my life isn't interesting enough to post about?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 6 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq6" class="cb-faq__toggle">
+        <label for="faq6" class="cb-faq__question">
+          What do the templates look like?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 7 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq7" class="cb-faq__toggle">
+        <label for="faq7" class="cb-faq__question">
+          What about time zones for live calls?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+      <!-- FAQ 8 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq8" class="cb-faq__toggle">
+        <label for="faq8" class="cb-faq__question">
+          Can I cancel anytime?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p><!-- PASTE ORIGINAL ANSWER --></p>
+        </div>
+      </div>
+
+    </div><!-- /cb-faqs -->
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── FAQ accordion — CSS only ── */
+.cb-faqs {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cb-faq {
+  border-bottom: 1px solid var(--cb-divider);
+}
+
+.cb-faq:first-child {
+  border-top: 1px solid var(--cb-divider);
+}
+
+/* Hide the checkbox */
+.cb-faq__toggle {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Question label row */
+.cb-faq__question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 0;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--cb-black);
+  font-family: var(--cb-font);
+  user-select: none;
+  transition: color 0.15s;
+}
+
+.cb-faq__question:hover {
+  color: var(--cb-orange);
+}
+
+/* The + / × icon */
+.cb-faq__icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.cb-faq__icon::before,
+.cb-faq__icon::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Horizontal bar */
+.cb-faq__icon::before {
+  width: 14px; height: 2px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Vertical bar */
+.cb-faq__icon::after {
+  width: 2px; height: 14px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Answer — hidden by default */
+.cb-faq__answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.2s ease;
+}
+
+.cb-faq__answer p {
+  padding-bottom: 24px;
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+/* Checked state — show answer, rotate icon */
+.cb-faq__toggle:checked ~ .cb-faq__question .cb-faq__icon::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+  opacity: 0;
+}
+
+.cb-faq__toggle:checked ~ .cb-faq__answer {
+  max-height: 600px;
+}
+</style>

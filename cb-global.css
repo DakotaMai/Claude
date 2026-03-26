@@ -1,0 +1,232 @@
+/* ============================================================
+   COPY BUILDERS — GHL REDESIGN
+   Global CSS — paste into GHL > Page Settings > Custom CSS
+   (or into the very first Custom HTML block as a <style> tag)
+   ============================================================ */
+
+/* ── Reset & base ─────────────────────────────────────────── */
+.cb-section *, .cb-section *::before, .cb-section *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Design tokens ────────────────────────────────────────── */
+:root {
+  --cb-cream:       #fff9f2;
+  --cb-white:       #ffffff;
+  --cb-black:       #111111;
+  --cb-dark:        #141414;
+  --cb-orange:      #f06449;
+  --cb-green:       #074638;
+  --cb-blue:        #485696;
+  --cb-text:        #111111;
+  --cb-text-mid:    #444444;
+  --cb-text-soft:   #777777;
+  --cb-divider:     rgba(0,0,0,0.08);
+  --cb-card-border: rgba(0,0,0,0.08);
+  --cb-card-shadow: 0 2px 16px rgba(0,0,0,0.06);
+
+  --cb-font: 'Plus Jakarta Sans', sans-serif;
+
+  --cb-max: 860px;
+  --cb-pad-v: 96px;
+  --cb-pad-h: 24px;
+}
+
+/* ── Typography ───────────────────────────────────────────── */
+.cb-section {
+  font-family: var(--cb-font);
+  color: var(--cb-text);
+  background-color: var(--cb-cream);
+  line-height: 1.7;
+}
+
+.cb-section h1 {
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: var(--cb-black);
+}
+
+.cb-section h2 {
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--cb-black);
+}
+
+.cb-section h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--cb-black);
+}
+
+.cb-section p {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--cb-text-mid);
+}
+
+.cb-section mark {
+  background: transparent;
+  color: var(--cb-orange);
+}
+
+/* ── Container ────────────────────────────────────────────── */
+.cb-container {
+  max-width: var(--cb-max);
+  margin: 0 auto;
+  padding: var(--cb-pad-v) var(--cb-pad-h);
+}
+
+.cb-container--narrow {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--cb-pad-v) var(--cb-pad-h);
+}
+
+/* ── Eyebrow label ────────────────────────────────────────── */
+.cb-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cb-orange);
+  margin-bottom: 20px;
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.cb-btn {
+  display: inline-block;
+  background: var(--cb-black);
+  color: #fff !important;
+  font-family: var(--cb-font);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  padding: 16px 36px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  line-height: 1;
+}
+
+.cb-btn:hover {
+  background: var(--cb-orange);
+  transform: translateY(-1px);
+}
+
+.cb-btn--lg {
+  font-size: 1rem;
+  padding: 20px 48px;
+  border-radius: 10px;
+}
+
+.cb-btn--outline {
+  background: transparent;
+  color: var(--cb-black) !important;
+  border: 2px solid var(--cb-black);
+}
+
+.cb-btn--outline:hover {
+  background: var(--cb-black);
+  color: #fff !important;
+}
+
+/* ── Cards ────────────────────────────────────────────────── */
+.cb-card {
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: var(--cb-card-shadow);
+}
+
+/* ── Divider ──────────────────────────────────────────────── */
+.cb-divider {
+  border: none;
+  border-top: 1px solid var(--cb-divider);
+  margin: 0;
+}
+
+/* ── Section backgrounds ──────────────────────────────────── */
+.cb-section--cream  { background: var(--cb-cream); }
+.cb-section--white  { background: var(--cb-white); }
+.cb-section--dark   { background: var(--cb-dark); }
+.cb-section--dark * { color: #fff; }
+.cb-section--dark .cb-text-soft-dark { color: rgba(255,255,255,0.55); }
+
+/* ── Testimonial card ─────────────────────────────────────── */
+.cb-testimonial {
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: var(--cb-card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cb-testimonial__quote {
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.7;
+  color: var(--cb-text-mid);
+  flex: 1;
+}
+
+.cb-testimonial__footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cb-testimonial__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #e0dbd4;
+  border: 2px solid var(--cb-divider);
+}
+
+.cb-testimonial__name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--cb-black);
+  line-height: 1.3;
+}
+
+.cb-testimonial__role {
+  font-size: 0.8rem;
+  color: var(--cb-text-soft);
+  line-height: 1.3;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --cb-pad-v: 64px;
+    --cb-pad-h: 20px;
+  }
+
+  .cb-section h1 { font-size: 2.2rem; }
+  .cb-section h2 { font-size: 1.8rem; }
+
+  .cb-btn--lg {
+    width: 100%;
+    text-align: center;
+    padding: 18px 24px;
+  }
+}

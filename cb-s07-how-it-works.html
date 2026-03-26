@@ -1,0 +1,109 @@
+<!-- ============================================================
+     SECTION 7: HOW IT WORKS — 5 Steps
+     GHL: Paste as the seventh Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container">
+
+    <div style="text-align: center; margin-bottom: 64px;">
+      <span class="cb-eyebrow">The system</span>
+      <h2>How it works</h2>
+    </div>
+
+    <div class="cb-steps">
+
+      <div class="cb-step">
+        <div class="cb-step__num">01</div>
+        <div class="cb-step__content">
+          <h3>Build your writing foundations</h3>
+          <p><!-- PASTE ORIGINAL STEP 1 DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-step">
+        <div class="cb-step__num">02</div>
+        <div class="cb-step__content">
+          <h3>Monthly content templates delivered</h3>
+          <p><!-- PASTE ORIGINAL STEP 2 DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-step">
+        <div class="cb-step__num">03</div>
+        <div class="cb-step__content">
+          <h3>Get feedback on your content</h3>
+          <p><!-- PASTE ORIGINAL STEP 3 DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-step">
+        <div class="cb-step__num">04</div>
+        <div class="cb-step__content">
+          <h3>Community of fellow creators</h3>
+          <p><!-- PASTE ORIGINAL STEP 4 DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-step">
+        <div class="cb-step__num">05</div>
+        <div class="cb-step__content">
+          <h3>Go deeper with courses &amp; workshops</h3>
+          <p><!-- PASTE ORIGINAL STEP 5 DESCRIPTION --></p>
+        </div>
+      </div>
+
+    </div><!-- /cb-steps -->
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── How It Works steps ── */
+.cb-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cb-step {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 24px;
+  align-items: start;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--cb-divider);
+}
+
+.cb-step:first-child { padding-top: 0; }
+.cb-step:last-child  { border-bottom: none; padding-bottom: 0; }
+
+.cb-step__num {
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--cb-orange);
+  line-height: 1;
+  padding-top: 4px;
+}
+
+.cb-step__content h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--cb-black);
+}
+
+.cb-step__content p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.7;
+}
+
+@media (max-width: 640px) {
+  .cb-step { grid-template-columns: 56px 1fr; gap: 16px; }
+  .cb-step__num { font-size: 2rem; }
+}
+</style>

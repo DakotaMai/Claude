@@ -1,0 +1,165 @@
+<!-- ============================================================
+     SECTION 5: ABOUT MATT
+     GHL: Paste as the fifth Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container">
+
+    <!-- Section label -->
+    <div style="text-align: center; margin-bottom: 56px;">
+      <span class="cb-eyebrow">Your guide</span>
+      <h2>
+        <!-- PASTE ORIGINAL ABOUT MATT HEADLINE -->
+      </h2>
+    </div>
+
+    <!-- Two-column: stats left, bio right -->
+    <div class="cb-about-grid">
+
+      <!-- Left: credential stat blocks -->
+      <div class="cb-about-stats">
+
+        <div class="cb-stat-block">
+          <span class="cb-stat-block__num">2,576</span>
+          <span class="cb-stat-block__label">Posts published</span>
+        </div>
+
+        <div class="cb-stat-block">
+          <span class="cb-stat-block__num">189,650</span>
+          <span class="cb-stat-block__label">LinkedIn followers</span>
+        </div>
+
+        <div class="cb-stat-block">
+          <span class="cb-stat-block__num">$1.3M</span>
+          <span class="cb-stat-block__label">Earned from LinkedIn content</span>
+        </div>
+
+      </div>
+
+      <!-- Right: bio text + achievements -->
+      <div class="cb-about-bio">
+
+        <!-- Matt's photo -->
+        <img
+          src="PASTE_MATT_PHOTO_URL_FROM_GHL"
+          alt="Matt Barker"
+          style="width: 100%; max-width: 340px; border-radius: 20px; margin-bottom: 28px; display: block;"
+        >
+
+        <!-- Bio intro copy -->
+        <p style="margin-bottom: 20px;">
+          <!-- PASTE ORIGINAL BIO INTRO PARAGRAPH(S) -->
+        </p>
+
+        <!-- Achievement list — 8 bullets from the original page -->
+        <ul class="cb-achievement-list">
+          <li><!-- PASTE ACHIEVEMENT 1 --></li>
+          <li><!-- PASTE ACHIEVEMENT 2 --></li>
+          <li><!-- PASTE ACHIEVEMENT 3 --></li>
+          <li><!-- PASTE ACHIEVEMENT 4 --></li>
+          <li><!-- PASTE ACHIEVEMENT 5 --></li>
+          <li><!-- PASTE ACHIEVEMENT 6 --></li>
+          <li><!-- PASTE ACHIEVEMENT 7 --></li>
+          <li><!-- PASTE ACHIEVEMENT 8 --></li>
+        </ul>
+
+      </div>
+    </div><!-- /cb-about-grid -->
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── About Matt ── */
+.cb-about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 56px;
+  align-items: start;
+}
+
+.cb-about-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  position: sticky;
+  top: 40px;
+}
+
+.cb-stat-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--cb-divider);
+}
+
+.cb-stat-block:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.cb-stat-block__num {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--cb-orange);
+  line-height: 1;
+}
+
+.cb-stat-block__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cb-text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.cb-achievement-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cb-achievement-list li {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.cb-achievement-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .cb-about-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .cb-about-stats {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px;
+    position: static;
+  }
+  .cb-stat-block {
+    flex: 1 1 120px;
+    border-bottom: none;
+    border-right: 1px solid var(--cb-divider);
+    padding-right: 20px;
+    padding-bottom: 0;
+  }
+  .cb-stat-block:last-child { border-right: none; }
+}
+</style>

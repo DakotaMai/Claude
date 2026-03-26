@@ -1,0 +1,147 @@
+<!-- ============================================================
+     SECTION 2: PAIN POINTS — The LinkedIn Doom Loop
+     GHL: Paste as the second Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container" style="text-align: center;">
+
+    <!-- Section heading -->
+    <!-- COPY: paste the section intro headline from the original GHL page -->
+    <span class="cb-eyebrow">Sound familiar?</span>
+    <h2 style="max-width: 640px; margin: 0 auto 16px;">
+      <!-- PASTE ORIGINAL SECTION HEADLINE HERE -->
+    </h2>
+    <p style="max-width: 540px; margin: 0 auto 64px;">
+      <!-- PASTE ORIGINAL SECTION BODY COPY HERE -->
+    </p>
+
+    <!-- The doom loop — 5 steps -->
+    <div class="cb-loop-steps">
+
+      <div class="cb-loop-step">
+        <div class="cb-loop-step__num">1</div>
+        <div class="cb-loop-step__body">
+          <h3>Overthink</h3>
+          <p><!-- PASTE ORIGINAL DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-loop-arrow" aria-hidden="true">&#8594;</div>
+
+      <div class="cb-loop-step">
+        <div class="cb-loop-step__num">2</div>
+        <div class="cb-loop-step__body">
+          <h3>Compare yourself to others</h3>
+          <p><!-- PASTE ORIGINAL DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-loop-arrow" aria-hidden="true">&#8594;</div>
+
+      <div class="cb-loop-step">
+        <div class="cb-loop-step__num">3</div>
+        <div class="cb-loop-step__body">
+          <h3>Post &amp; ghost</h3>
+          <p><!-- PASTE ORIGINAL DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-loop-arrow" aria-hidden="true">&#8594;</div>
+
+      <div class="cb-loop-step">
+        <div class="cb-loop-step__num">4</div>
+        <div class="cb-loop-step__body">
+          <h3>Check stats obsessively</h3>
+          <p><!-- PASTE ORIGINAL DESCRIPTION --></p>
+        </div>
+      </div>
+
+      <div class="cb-loop-arrow" aria-hidden="true">&#8594;</div>
+
+      <div class="cb-loop-step cb-loop-step--end">
+        <div class="cb-loop-step__num cb-loop-step__num--orange">5</div>
+        <div class="cb-loop-step__body">
+          <h3>Quit LinkedIn</h3>
+          <p><!-- PASTE ORIGINAL DESCRIPTION --></p>
+        </div>
+      </div>
+
+    </div><!-- /cb-loop-steps -->
+
+    <!-- Optional closing line under the loop -->
+    <!-- COPY: paste any follow-on copy below the cycle from original page -->
+    <p style="max-width: 520px; margin: 56px auto 0; font-size: 1.05rem; color: #555;">
+      <!-- PASTE ORIGINAL CLOSING COPY HERE -->
+    </p>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── Pain points loop ── */
+.cb-loop-steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.cb-loop-step {
+  flex: 1 1 140px;
+  max-width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.cb-loop-step__num {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--cb-black);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cb-loop-step__num--orange {
+  background: var(--cb-orange);
+}
+
+.cb-loop-step__body h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cb-black);
+  margin-bottom: 4px;
+}
+
+.cb-loop-step__body p {
+  font-size: 0.85rem;
+  color: var(--cb-text-soft);
+  line-height: 1.5;
+}
+
+.cb-loop-arrow {
+  font-size: 1.4rem;
+  color: var(--cb-divider);
+  padding-top: 12px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .cb-loop-steps { flex-direction: column; align-items: center; gap: 4px; }
+  .cb-loop-step  { max-width: 100%; flex-direction: row; text-align: left; gap: 16px; }
+  .cb-loop-step__num { flex-shrink: 0; }
+  .cb-loop-arrow { transform: rotate(90deg); }
+}
+</style>
