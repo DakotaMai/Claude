@@ -9,17 +9,18 @@
     <!-- Eyebrow -->
     <span class="cb-eyebrow">LinkedIn Writing Membership</span>
 
-    <!-- Pre-headline — smaller lead-in line -->
-    <p class="cb-hero__lead">Posting on LinkedIn doesn't have to feel like</p>
-
-    <!-- Main headline — big focal point -->
-    <h1 class="cb-hero__h1">a <mark>root canal.</mark></h1>
-
-    <!-- Body -->
-    <p style="max-width: 540px; margin: 32px auto 16px; font-size: 1.15rem;">
-      Make writing on LinkedIn fast, easy, and fun so you stick with it long enough for opportunities to stack
+    <!-- Sub-heading — lead-in line -->
+    <p class="cb-hero__sub cb-hero__sub--top">
+      Posting on LinkedIn doesn't have to feel like a root canal
     </p>
-    <p style="max-width: 520px; margin: 0 auto 44px; font-size: 1rem; color: #666;">
+
+    <!-- Main headline -->
+    <h1 class="cb-hero__h1">
+      Make writing on LinkedIn <mark>fast, easy, and fun</mark> so you stick with it long enough for opportunities to stack
+    </h1>
+
+    <!-- Sub-heading — below headline -->
+    <p class="cb-hero__sub cb-hero__sub--bottom">
       Copy Builders is for anyone who's ever hit "Start a post"&hellip;typed three lines&hellip;deleted them&hellip;and thought, "Maybe next week."
     </p>
 
@@ -32,22 +33,32 @@
 <hr class="cb-divider">
 
 <style>
-.cb-hero__lead {
-  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+.cb-hero__sub {
+  font-size: clamp(1rem, 2vw, 1.2rem);
   font-weight: 500;
-  color: #666;
+  color: #888;
   letter-spacing: -0.01em;
-  line-height: 1.3;
-  margin-bottom: 12px;
+  line-height: 1.4;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cb-hero__sub--top {
+  margin-bottom: 20px;
+}
+
+.cb-hero__sub--bottom {
+  margin-top: 20px;
+  margin-bottom: 40px;
 }
 
 .cb-hero__h1 {
-  font-size: clamp(3rem, 8vw, 5.5rem);
+  font-size: clamp(2.2rem, 5.5vw, 3.6rem);
   font-weight: 800;
-  letter-spacing: -0.05em;
-  line-height: 1.05;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
   color: var(--cb-black);
+  max-width: 780px;
   margin: 0 auto;
-  max-width: 700px;
 }
 </style>
