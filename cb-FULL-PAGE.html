@@ -20,13 +20,12 @@
   --cb-dark:        #141414;
   --cb-orange:      #f06449;
   --cb-green:       #074638;
-  --cb-blue:        #485696;
   --cb-text:        #111111;
   --cb-text-mid:    #444444;
   --cb-text-soft:   #777777;
-  --cb-divider:     rgba(0,0,0,0.08);
-  --cb-card-border: rgba(0,0,0,0.08);
-  --cb-card-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  --cb-divider:     rgba(0,0,0,0.07);
+  --cb-card-border: rgba(0,0,0,0.07);
+  --cb-card-shadow: 0 2px 16px rgba(0,0,0,0.05);
 
   --cb-font: 'Plus Jakarta Sans', sans-serif;
 
@@ -132,24 +131,44 @@
   border-radius: 10px;
 }
 
-.cb-btn--outline {
-  background: transparent;
-  color: var(--cb-black) !important;
-  border: 2px solid var(--cb-black);
-}
-
-.cb-btn--outline:hover {
-  background: var(--cb-black);
-  color: #fff !important;
-}
-
 /* ── Cards ────────────────────────────────────────────────── */
+/* Two box types only:
+   1. .cb-card       — white, for content cards
+   2. .cb-card--tint — cream, for subtle accent blocks        */
 .cb-card {
   background: var(--cb-white);
   border: 1px solid var(--cb-card-border);
   border-radius: 16px;
   padding: 32px;
   box-shadow: var(--cb-card-shadow);
+}
+
+.cb-card--tint {
+  background: var(--cb-cream);
+  border: 1px solid var(--cb-card-border);
+  border-radius: 16px;
+  padding: 32px;
+}
+
+/* ── Callout block (replaces orange left-border treatment) ── */
+/* Use .cb-callout for any emphasised text block              */
+.cb-callout {
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
+  border-radius: 14px;
+  padding: 24px 28px;
+  box-shadow: var(--cb-card-shadow);
+}
+
+.cb-callout p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+.cb-callout strong,
+.cb-callout b {
+  color: var(--cb-black);
 }
 
 /* ── Divider ──────────────────────────────────────────────── */
@@ -160,11 +179,12 @@
 }
 
 /* ── Section backgrounds ──────────────────────────────────── */
-.cb-section--cream  { background: var(--cb-cream); }
-.cb-section--white  { background: var(--cb-white); }
-.cb-section--dark   { background: var(--cb-dark); }
+/* Main background is always cream. White sections provide    */
+/* subtle rhythm — both are clean and consistent.             */
+.cb-section--cream { background: var(--cb-cream); }
+.cb-section--white { background: var(--cb-white); }
+.cb-section--dark  { background: var(--cb-dark); }
 .cb-section--dark * { color: #fff; }
-.cb-section--dark .cb-text-soft-dark { color: rgba(255,255,255,0.55); }
 
 /* ── Testimonial card ─────────────────────────────────────── */
 .cb-testimonial {
@@ -236,52 +256,78 @@
 <!-- ============================================================
      SECTION 1: HERO
      GHL: Paste as the first Custom HTML block on the page.
-     Also paste cb-global.css ABOVE this (in Page Settings CSS
-     or as a <style> block before this block).
      ============================================================ -->
 
 <section class="cb-section cb-section--cream">
-  <div class="cb-container" style="text-align:center; padding-bottom: 72px;">
+  <div class="cb-container" style="text-align:center; padding-bottom: 80px;">
 
     <!-- Eyebrow -->
     <span class="cb-eyebrow">LinkedIn Writing Membership</span>
 
-    <!-- Headline -->
-    <h1 style="max-width: 760px; margin: 0 auto 28px;">
-      Posting on LinkedIn doesn't have to feel like
-      <mark>a root canal.</mark>
-    </h1>
+    <!-- Pre-headline — smaller lead-in line -->
+    <p class="cb-hero__lead">Posting on LinkedIn doesn't have to feel like</p>
 
-    <!-- Sub-headline / body -->
-    <p style="max-width: 580px; margin: 0 auto 20px; font-size: 1.15rem;">
+    <!-- Main headline — big focal point -->
+    <h1 class="cb-hero__h1">a <mark>root canal.</mark></h1>
+
+    <!-- Body -->
+    <p style="max-width: 540px; margin: 32px auto 16px; font-size: 1.15rem;">
       Make writing on LinkedIn fast, easy, and fun so you stick with it long enough for opportunities to stack
     </p>
-    <p style="max-width: 580px; margin: 0 auto 40px; font-size: 1.05rem; color: #555;">
+    <p style="max-width: 520px; margin: 0 auto 44px; font-size: 1rem; color: #666;">
       Copy Builders is for anyone who's ever hit "Start a post"&hellip;typed three lines&hellip;deleted them&hellip;and thought, "Maybe next week."
     </p>
 
     <!-- CTA -->
     <a href="#pricing" class="cb-btn cb-btn--lg">Yep, that's me</a>
 
-    <!-- Opening testimonial — Markus Winkler -->
-    <div style="max-width: 560px; margin: 56px auto 0; text-align: left; display: flex; gap: 16px; align-items: flex-start;">
-      <!-- Avatar -->
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+.cb-hero__lead {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  font-weight: 500;
+  color: #666;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+
+.cb-hero__h1 {
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+  color: var(--cb-black);
+  margin: 0 auto;
+  max-width: 700px;
+}
+</style>
+<!-- ============================================================
+     SECTION 1b: MARKUS WINKLER TESTIMONIAL
+     GHL: Paste immediately after the Hero block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container" style="padding-top: 48px; padding-bottom: 48px;">
+    <div style="max-width: 600px; margin: 0 auto; display: flex; gap: 20px; align-items: flex-start;">
       <img
         src="PASTE_MARKUS_AVATAR_URL_FROM_GHL"
         alt="Markus Winkler"
         class="cb-testimonial__avatar"
         style="width: 56px; height: 56px; margin-top: 4px; flex-shrink: 0;"
       >
-      <!-- Quote block -->
       <div>
-        <p style="font-size: 1rem; font-style: italic; color: #444; line-height: 1.7; margin-bottom: 10px;">
+        <p style="font-size: 1rem; font-style: italic; color: #444; line-height: 1.75; margin-bottom: 12px;">
           &#8220;After posting for 4 months on LinkedIn, I struggled. Then I found Copy Builders. The best thing was the simple and structured approach. Now I can write excellent and accurate posts fast and easy.&#8221;
         </p>
         <p style="font-size: 0.85rem; font-weight: 700; color: #111; margin-bottom: 2px;">Markus Winkler</p>
         <p style="font-size: 0.8rem; color: #777;">Email Marketing Specialist</p>
       </div>
     </div>
-
   </div>
 </section>
 
@@ -489,7 +535,7 @@
   padding: 32px;
   background: var(--cb-cream);
   border-radius: 16px;
-  border-left: 4px solid var(--cb-orange);
+  border: 1px solid var(--cb-card-border);
 }
 
 .cb-doom-closing p {
@@ -650,11 +696,12 @@
 
 /* ── Bridge callout ── */
 .cb-bridge-callout {
-  background: var(--cb-cream);
-  border-left: 4px solid var(--cb-orange);
-  border-radius: 0 12px 12px 0;
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
+  border-radius: 14px;
   padding: 24px 28px;
   margin-top: 8px;
+  box-shadow: var(--cb-card-shadow);
 }
 
 .cb-bridge-callout p {
@@ -711,10 +758,11 @@
 
 /* ── Solution turn ── */
 .cb-solution-turn {
-  background: #f0fdf7;
-  border: 1px solid rgba(7,70,56,0.12);
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
   border-radius: 14px;
   padding: 28px;
+  box-shadow: var(--cb-card-shadow);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -732,7 +780,7 @@
   content: '✓';
   position: absolute;
   left: 0;
-  color: var(--cb-green);
+  color: var(--cb-orange);
   font-weight: 700;
 }
 
@@ -1194,14 +1242,14 @@
 }
 
 .cb-or-pivot__option--bad {
-  background: #fafafa;
+  background: var(--cb-white);
   border: 1px solid var(--cb-divider);
   opacity: 0.75;
 }
 
 .cb-or-pivot__option--good {
-  background: #f0fdf7;
-  border: 1px solid rgba(7,70,56,0.15);
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
 }
 
 .cb-or-pivot__option--good p {
@@ -2551,7 +2599,7 @@
 }
 
 .cb-doors-closing {
-  background: #f0fdf7;
+  background: var(--cb-white);
   border: 1px solid rgba(7,70,56,0.12);
   border-radius: 14px;
   padding: 24px 28px;
@@ -2563,6 +2611,208 @@
   font-weight: 600;
   color: var(--cb-green);
   line-height: 1.65;
+}
+</style>
+<!-- ============================================================
+     SECTION 15: SECOND PRICING BLOCK + BEN TESTIMONIAL
+     GHL: Paste BEFORE the FAQs block (s14).
+     After this: s14 FAQs → s16 Final CTA button (last block).
+     ============================================================ -->
+
+<!-- Second pricing block -->
+<section class="cb-section cb-section--dark">
+  <div class="cb-container">
+
+    <div style="text-align: center; margin-bottom: 64px;">
+      <span class="cb-eyebrow" style="color: var(--cb-orange);">Ready?</span>
+      <h2 style="color: #fff; max-width: 600px; margin: 0 auto 12px;">
+        Take your posts out of drafts and into the feed
+      </h2>
+      <p style="color: rgba(255,255,255,0.55); margin: 0;">Join Copy Builders Today</p>
+    </div>
+
+    <div class="cb-pricing-includes">
+      <div class="cb-pricing-includes__col">
+        <p class="cb-pricing-includes__heading">The full Copy Builders Curriculum:</p>
+        <ul class="cb-pricing-features">
+          <li>Weekly training video</li>
+          <li>LinkedIn courses</li>
+          <li>Guest expert workshops</li>
+          <li>100+ templates</li>
+        </ul>
+      </div>
+      <div class="cb-pricing-includes__col">
+        <p class="cb-pricing-includes__heading">Ongoing coaching &amp; support:</p>
+        <ul class="cb-pricing-features">
+          <li>1 hour Mastermind call</li>
+          <li>Personalised advice</li>
+          <li>Monthly LIVE Q&amp;A chat to drop your Qs</li>
+          <li>Copy Builders community access</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cb-pricing-grid">
+
+      <div class="cb-pricing-card">
+        <p class="cb-pricing-card__label">12 Monthly Payments</p>
+        <div class="cb-pricing-card__price">
+          <span class="cb-pricing-card__amount">$99</span>
+          <span class="cb-pricing-card__period">/month</span>
+        </div>
+        <a href="PASTE_MONTHLY_CHECKOUT_LINK" class="cb-btn" style="width:100%;text-align:center;display:block;margin-top:auto;">
+          Join now
+        </a>
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);text-align:center;margin-top:8px;">12-month membership</p>
+      </div>
+
+      <div class="cb-pricing-card cb-pricing-card--featured">
+        <div class="cb-pricing-card__badge">Save $198</div>
+        <p class="cb-pricing-card__label">One Annual Payment</p>
+        <div class="cb-pricing-card__price">
+          <span class="cb-pricing-card__amount">$990</span>
+          <span class="cb-pricing-card__period">/year</span>
+        </div>
+        <a href="PASTE_ANNUAL_CHECKOUT_LINK" class="cb-btn" style="width:100%;text-align:center;display:block;margin-top:auto;background:var(--cb-orange);">
+          Join now
+        </a>
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);text-align:center;margin-top:8px;">12-month membership</p>
+      </div>
+
+    </div>
+
+    <div class="cb-guarantee">
+      <span class="cb-guarantee__icon">🛡️</span>
+      <p><strong>Try Copy Builders 100% risk-free.</strong> If you don't love what you see inside the first 14 days, email me and I'll refund every penny. No questions asked.</p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<!-- Ben testimonial — long form -->
+<section class="cb-section cb-section--cream">
+  <div class="cb-container" style="max-width: 720px;">
+
+    <div style="text-align: center; margin-bottom: 40px;">
+      <span class="cb-eyebrow">Still on the fence?</span>
+      <p style="font-size: 1rem; color: #555;">Here's exactly what one member had to say about all the resources inside Copy Builders</p>
+    </div>
+
+    <div class="cb-ben-testi">
+      <p class="cb-ben-testi__pull">&#8220;I've built a level of confidence in articulating my thoughts that I didn't have before.&#8221;</p>
+
+      <div class="cb-ben-testi__body">
+        <p>Before I engaged with Matt, I was frustrated. I'd worked with 2-3 LinkedIn "coaches" and hadn't really seen the change in results I was looking for.</p>
+        <p>My impressions were up and down, with no clear rhyme or reason as to why. My engagement was inconsistent and I couldn't figure out how to: 1) create more visibility or 2) how to convert that visibility.</p>
+        <p>A lot of the usual LinkedIn advice out there is surface-level — formatting tips, algorithm hacks, the same recycled spiel from one to another.</p>
+        <p style="font-weight: 700; color: #111;">But Matt MASSIVELY over delivered.</p>
+        <p>Here's the key useful pieces I noticed:</p>
+        <ul class="cb-ben-list">
+          <li>He could break down HOW a reader was consuming my content — I nicknamed him "Captain Hook" as his hook structures helped drive much higher impressions and engagement (and in turn conversion).</li>
+          <li>He showed me how to structure different types of posts and how to tell stories with relevance to my reader.</li>
+          <li>He taught me how to do all of this whilst writing in my own voice with alignment with what works on LinkedIn today.</li>
+          <li>Lastly, his guidance around CTA design and post flow boosted conversion to real clients.</li>
+        </ul>
+        <p>The biggest value for me came from:</p>
+        <ul class="cb-ben-list">
+          <li>1:1 sessions (pick his brains about various useful topics including copy for lead magnets and websites)</li>
+          <li>Community access (structure and templates for posts)</li>
+          <li>His post audits — where he didn't just tweak my writing, he TAUGHT me how to THINK and write like a copywriter. The ability to watch and rewatch those audits was gold for developing my own skill, not surface level tactics.</li>
+        </ul>
+        <p>Life feels a lot easier now. I've got a clear grip on what I am doing, I know WHY posts do or don't land and I've built a level of confidence in articulating my thoughts that I didn't have before.</p>
+        <p>Matt's a top bloke. He's super patient with requests and it feels like he genuinely cares about helping his clients win.</p>
+        <p>The only negative is&hellip; life without Matt's direct support is a little more challenging so I am currently discussing renewing with him because his partnership has been a huge comfort blanket as I grow my audience and business. Sincerely appreciate you, Matt!</p>
+      </div>
+
+      <div class="cb-ben-testi__footer">
+        <img src="PASTE_BEN_AVATAR_URL_FROM_GHL" alt="Ben" class="cb-testimonial__avatar" style="width:56px;height:56px;">
+        <div>
+          <p class="cb-testimonial__name">Ben</p>
+          <p class="cb-testimonial__role">Personal Performance Coach</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+<!-- FAQs (s14) go here, then the final CTA button (s16) below -->
+
+<style>
+/* Ben testimonial */
+.cb-ben-testi {
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: var(--cb-card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.cb-ben-testi__pull {
+  font-size: 1.2rem;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--cb-black);
+  line-height: 1.55;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--cb-divider);
+}
+
+.cb-ben-testi__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cb-ben-testi__body p {
+  font-size: 0.95rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+.cb-ben-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--cb-cream);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.cb-ben-list li {
+  font-size: 0.92rem;
+  color: var(--cb-text-mid);
+  line-height: 1.65;
+  padding-left: 20px;
+  position: relative;
+}
+
+.cb-ben-list li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+.cb-ben-testi__footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 20px;
+  border-top: 1px solid var(--cb-divider);
+}
+
+@media (max-width: 640px) {
+  .cb-ben-testi { padding: 24px; }
 }
 </style>
 <!-- ============================================================
@@ -2827,132 +3077,11 @@
 }
 </style>
 <!-- ============================================================
-     SECTION 15: SECOND PRICING BLOCK + BEN TESTIMONIAL + FINAL CTA
-     GHL: Paste as the final Custom HTML block (after FAQs).
+     SECTION 16: FINAL CTA — "Okay, I'm in"
+     GHL: Paste as the VERY LAST Custom HTML block on the page.
+     Order: s15 (pricing+Ben) → s14 (FAQs) → this block.
      ============================================================ -->
 
-<!-- Second pricing block -->
-<section class="cb-section cb-section--dark">
-  <div class="cb-container">
-
-    <div style="text-align: center; margin-bottom: 64px;">
-      <span class="cb-eyebrow" style="color: var(--cb-orange);">Ready?</span>
-      <h2 style="color: #fff; max-width: 600px; margin: 0 auto 12px;">
-        Take your posts out of drafts and into the feed
-      </h2>
-      <p style="color: rgba(255,255,255,0.55); margin: 0;">Join Copy Builders Today</p>
-    </div>
-
-    <div class="cb-pricing-includes">
-      <div class="cb-pricing-includes__col">
-        <p class="cb-pricing-includes__heading">The full Copy Builders Curriculum:</p>
-        <ul class="cb-pricing-features">
-          <li>Weekly training video</li>
-          <li>LinkedIn courses</li>
-          <li>Guest expert workshops</li>
-          <li>100+ templates</li>
-        </ul>
-      </div>
-      <div class="cb-pricing-includes__col">
-        <p class="cb-pricing-includes__heading">Ongoing coaching &amp; support:</p>
-        <ul class="cb-pricing-features">
-          <li>1 hour Mastermind call</li>
-          <li>Personalised advice</li>
-          <li>Monthly LIVE Q&amp;A chat to drop your Qs</li>
-          <li>Copy Builders community access</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="cb-pricing-grid">
-
-      <div class="cb-pricing-card">
-        <p class="cb-pricing-card__label">12 Monthly Payments</p>
-        <div class="cb-pricing-card__price">
-          <span class="cb-pricing-card__amount">$99</span>
-          <span class="cb-pricing-card__period">/month</span>
-        </div>
-        <a href="PASTE_MONTHLY_CHECKOUT_LINK" class="cb-btn" style="width:100%;text-align:center;display:block;margin-top:auto;">
-          Join now
-        </a>
-        <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);text-align:center;margin-top:8px;">12-month membership</p>
-      </div>
-
-      <div class="cb-pricing-card cb-pricing-card--featured">
-        <div class="cb-pricing-card__badge">Save $198</div>
-        <p class="cb-pricing-card__label">One Annual Payment</p>
-        <div class="cb-pricing-card__price">
-          <span class="cb-pricing-card__amount">$990</span>
-          <span class="cb-pricing-card__period">/year</span>
-        </div>
-        <a href="PASTE_ANNUAL_CHECKOUT_LINK" class="cb-btn" style="width:100%;text-align:center;display:block;margin-top:auto;background:var(--cb-orange);">
-          Join now
-        </a>
-        <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);text-align:center;margin-top:8px;">12-month membership</p>
-      </div>
-
-    </div>
-
-    <div class="cb-guarantee">
-      <span class="cb-guarantee__icon">🛡️</span>
-      <p><strong>Try Copy Builders 100% risk-free.</strong> If you don't love what you see inside the first 14 days, email me and I'll refund every penny. No questions asked.</p>
-    </div>
-
-  </div>
-</section>
-
-<hr class="cb-divider">
-
-<!-- Ben testimonial — long form -->
-<section class="cb-section cb-section--cream">
-  <div class="cb-container" style="max-width: 720px;">
-
-    <div style="text-align: center; margin-bottom: 40px;">
-      <span class="cb-eyebrow">Still on the fence?</span>
-      <p style="font-size: 1rem; color: #555;">Here's exactly what one member had to say about all the resources inside Copy Builders</p>
-    </div>
-
-    <div class="cb-ben-testi">
-      <p class="cb-ben-testi__pull">&#8220;I've built a level of confidence in articulating my thoughts that I didn't have before.&#8221;</p>
-
-      <div class="cb-ben-testi__body">
-        <p>Before I engaged with Matt, I was frustrated. I'd worked with 2-3 LinkedIn "coaches" and hadn't really seen the change in results I was looking for.</p>
-        <p>My impressions were up and down, with no clear rhyme or reason as to why. My engagement was inconsistent and I couldn't figure out how to: 1) create more visibility or 2) how to convert that visibility.</p>
-        <p>A lot of the usual LinkedIn advice out there is surface-level — formatting tips, algorithm hacks, the same recycled spiel from one to another.</p>
-        <p style="font-weight: 700; color: #111;">But Matt MASSIVELY over delivered.</p>
-        <p>Here's the key useful pieces I noticed:</p>
-        <ul class="cb-ben-list">
-          <li>He could break down HOW a reader was consuming my content — I nicknamed him "Captain Hook" as his hook structures helped drive much higher impressions and engagement (and in turn conversion).</li>
-          <li>He showed me how to structure different types of posts and how to tell stories with relevance to my reader.</li>
-          <li>He taught me how to do all of this whilst writing in my own voice with alignment with what works on LinkedIn today.</li>
-          <li>Lastly, his guidance around CTA design and post flow boosted conversion to real clients.</li>
-        </ul>
-        <p>The biggest value for me came from:</p>
-        <ul class="cb-ben-list">
-          <li>1:1 sessions (pick his brains about various useful topics including copy for lead magnets and websites)</li>
-          <li>Community access (structure and templates for posts)</li>
-          <li>His post audits — where he didn't just tweak my writing, he TAUGHT me how to THINK and write like a copywriter. The ability to watch and rewatch those audits was gold for developing my own skill, not surface level tactics.</li>
-        </ul>
-        <p>Life feels a lot easier now. I've got a clear grip on what I am doing, I know WHY posts do or don't land and I've built a level of confidence in articulating my thoughts that I didn't have before.</p>
-        <p>Matt's a top bloke. He's super patient with requests and it feels like he genuinely cares about helping his clients win.</p>
-        <p>The only negative is&hellip; life without Matt's direct support is a little more challenging so I am currently discussing renewing with him because his partnership has been a huge comfort blanket as I grow my audience and business. Sincerely appreciate you, Matt!</p>
-      </div>
-
-      <div class="cb-ben-testi__footer">
-        <img src="PASTE_BEN_AVATAR_URL_FROM_GHL" alt="Ben" class="cb-testimonial__avatar" style="width:56px;height:56px;">
-        <div>
-          <p class="cb-testimonial__name">Ben</p>
-          <p class="cb-testimonial__role">Personal Performance Coach</p>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<hr class="cb-divider">
-
-<!-- Final CTA -->
 <section class="cb-section cb-section--cream">
   <div class="cb-container--narrow" style="text-align: center;">
 
@@ -2962,7 +3091,7 @@
       Join 180+ members posting consistently and building something real on LinkedIn.
     </p>
 
-    <a href="#pricing" class="cb-btn cb-btn--lg">Sign me up</a>
+    <a href="PASTE_MONTHLY_CHECKOUT_LINK" class="cb-btn cb-btn--lg">Sign me up</a>
 
     <p style="margin-top: 20px; font-size: 0.85rem; color: #999;">
       🛡️ 14-day money-back guarantee &nbsp;·&nbsp; Cancel anytime after 14 days
@@ -2970,78 +3099,3 @@
 
   </div>
 </section>
-
-<style>
-/* Ben testimonial */
-.cb-ben-testi {
-  background: #fff;
-  border: 1px solid var(--cb-card-border);
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: var(--cb-card-shadow);
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-
-.cb-ben-testi__pull {
-  font-size: 1.2rem;
-  font-style: italic;
-  font-weight: 600;
-  color: var(--cb-black);
-  line-height: 1.55;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--cb-divider);
-}
-
-.cb-ben-testi__body {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.cb-ben-testi__body p {
-  font-size: 0.95rem;
-  color: var(--cb-text-mid);
-  line-height: 1.75;
-}
-
-.cb-ben-list {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: var(--cb-cream);
-  border-radius: 10px;
-  padding: 16px 20px;
-}
-
-.cb-ben-list li {
-  font-size: 0.92rem;
-  color: var(--cb-text-mid);
-  line-height: 1.65;
-  padding-left: 20px;
-  position: relative;
-}
-
-.cb-ben-list li::before {
-  content: '–';
-  position: absolute;
-  left: 0;
-  color: var(--cb-orange);
-  font-weight: 700;
-}
-
-.cb-ben-testi__footer {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding-top: 20px;
-  border-top: 1px solid var(--cb-divider);
-}
-
-@media (max-width: 640px) {
-  .cb-ben-testi { padding: 24px; }
-}
-</style>

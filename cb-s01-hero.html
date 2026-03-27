@@ -1,53 +1,53 @@
 <!-- ============================================================
      SECTION 1: HERO
      GHL: Paste as the first Custom HTML block on the page.
-     Also paste cb-global.css ABOVE this (in Page Settings CSS
-     or as a <style> block before this block).
      ============================================================ -->
 
 <section class="cb-section cb-section--cream">
-  <div class="cb-container" style="text-align:center; padding-bottom: 72px;">
+  <div class="cb-container" style="text-align:center; padding-bottom: 80px;">
 
     <!-- Eyebrow -->
     <span class="cb-eyebrow">LinkedIn Writing Membership</span>
 
-    <!-- Headline -->
-    <h1 style="max-width: 760px; margin: 0 auto 28px;">
-      Posting on LinkedIn doesn't have to feel like
-      <mark>a root canal.</mark>
-    </h1>
+    <!-- Pre-headline — smaller lead-in line -->
+    <p class="cb-hero__lead">Posting on LinkedIn doesn't have to feel like</p>
 
-    <!-- Sub-headline / body -->
-    <p style="max-width: 580px; margin: 0 auto 20px; font-size: 1.15rem;">
+    <!-- Main headline — big focal point -->
+    <h1 class="cb-hero__h1">a <mark>root canal.</mark></h1>
+
+    <!-- Body -->
+    <p style="max-width: 540px; margin: 32px auto 16px; font-size: 1.15rem;">
       Make writing on LinkedIn fast, easy, and fun so you stick with it long enough for opportunities to stack
     </p>
-    <p style="max-width: 580px; margin: 0 auto 40px; font-size: 1.05rem; color: #555;">
+    <p style="max-width: 520px; margin: 0 auto 44px; font-size: 1rem; color: #666;">
       Copy Builders is for anyone who's ever hit "Start a post"&hellip;typed three lines&hellip;deleted them&hellip;and thought, "Maybe next week."
     </p>
 
     <!-- CTA -->
     <a href="#pricing" class="cb-btn cb-btn--lg">Yep, that's me</a>
 
-    <!-- Opening testimonial — Markus Winkler -->
-    <div style="max-width: 560px; margin: 56px auto 0; text-align: left; display: flex; gap: 16px; align-items: flex-start;">
-      <!-- Avatar -->
-      <img
-        src="PASTE_MARKUS_AVATAR_URL_FROM_GHL"
-        alt="Markus Winkler"
-        class="cb-testimonial__avatar"
-        style="width: 56px; height: 56px; margin-top: 4px; flex-shrink: 0;"
-      >
-      <!-- Quote block -->
-      <div>
-        <p style="font-size: 1rem; font-style: italic; color: #444; line-height: 1.7; margin-bottom: 10px;">
-          &#8220;After posting for 4 months on LinkedIn, I struggled. Then I found Copy Builders. The best thing was the simple and structured approach. Now I can write excellent and accurate posts fast and easy.&#8221;
-        </p>
-        <p style="font-size: 0.85rem; font-weight: 700; color: #111; margin-bottom: 2px;">Markus Winkler</p>
-        <p style="font-size: 0.8rem; color: #777;">Email Marketing Specialist</p>
-      </div>
-    </div>
-
   </div>
 </section>
 
 <hr class="cb-divider">
+
+<style>
+.cb-hero__lead {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  font-weight: 500;
+  color: #666;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+
+.cb-hero__h1 {
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+  color: var(--cb-black);
+  margin: 0 auto;
+  max-width: 700px;
+}
+</style>

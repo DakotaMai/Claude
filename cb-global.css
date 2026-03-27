@@ -19,13 +19,12 @@
   --cb-dark:        #141414;
   --cb-orange:      #f06449;
   --cb-green:       #074638;
-  --cb-blue:        #485696;
   --cb-text:        #111111;
   --cb-text-mid:    #444444;
   --cb-text-soft:   #777777;
-  --cb-divider:     rgba(0,0,0,0.08);
-  --cb-card-border: rgba(0,0,0,0.08);
-  --cb-card-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  --cb-divider:     rgba(0,0,0,0.07);
+  --cb-card-border: rgba(0,0,0,0.07);
+  --cb-card-shadow: 0 2px 16px rgba(0,0,0,0.05);
 
   --cb-font: 'Plus Jakarta Sans', sans-serif;
 
@@ -131,24 +130,44 @@
   border-radius: 10px;
 }
 
-.cb-btn--outline {
-  background: transparent;
-  color: var(--cb-black) !important;
-  border: 2px solid var(--cb-black);
-}
-
-.cb-btn--outline:hover {
-  background: var(--cb-black);
-  color: #fff !important;
-}
-
 /* ── Cards ────────────────────────────────────────────────── */
+/* Two box types only:
+   1. .cb-card       — white, for content cards
+   2. .cb-card--tint — cream, for subtle accent blocks        */
 .cb-card {
   background: var(--cb-white);
   border: 1px solid var(--cb-card-border);
   border-radius: 16px;
   padding: 32px;
   box-shadow: var(--cb-card-shadow);
+}
+
+.cb-card--tint {
+  background: var(--cb-cream);
+  border: 1px solid var(--cb-card-border);
+  border-radius: 16px;
+  padding: 32px;
+}
+
+/* ── Callout block (replaces orange left-border treatment) ── */
+/* Use .cb-callout for any emphasised text block              */
+.cb-callout {
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
+  border-radius: 14px;
+  padding: 24px 28px;
+  box-shadow: var(--cb-card-shadow);
+}
+
+.cb-callout p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+.cb-callout strong,
+.cb-callout b {
+  color: var(--cb-black);
 }
 
 /* ── Divider ──────────────────────────────────────────────── */
@@ -159,11 +178,12 @@
 }
 
 /* ── Section backgrounds ──────────────────────────────────── */
-.cb-section--cream  { background: var(--cb-cream); }
-.cb-section--white  { background: var(--cb-white); }
-.cb-section--dark   { background: var(--cb-dark); }
+/* Main background is always cream. White sections provide    */
+/* subtle rhythm — both are clean and consistent.             */
+.cb-section--cream { background: var(--cb-cream); }
+.cb-section--white { background: var(--cb-white); }
+.cb-section--dark  { background: var(--cb-dark); }
 .cb-section--dark * { color: #fff; }
-.cb-section--dark .cb-text-soft-dark { color: rgba(255,255,255,0.55); }
 
 /* ── Testimonial card ─────────────────────────────────────── */
 .cb-testimonial {
