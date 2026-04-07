@@ -1,7 +1,6 @@
 /* ============================================================
    COPY BUILDERS — GHL REDESIGN
-   Global CSS — paste into GHL > Page Settings > Custom CSS
-   (or into the very first Custom HTML block as a <style> tag)
+   Global CSS
    ============================================================ */
 
 /* ── Reset & base ─────────────────────────────────────────── */
@@ -14,15 +13,17 @@
 /* ── Design tokens ────────────────────────────────────────── */
 :root {
   --cb-cream:       #fff9f2;
+  --cb-cream-2:     #fff5ed;
   --cb-white:       #ffffff;
   --cb-black:       #111111;
   --cb-dark:        #141414;
   --cb-orange:      #f06449;
+  --cb-orange-soft: rgba(240,100,73,0.14);
   --cb-green:       #074638;
   --cb-text:        #111111;
   --cb-text-mid:    #444444;
   --cb-text-soft:   #777777;
-  --cb-divider:     rgba(0,0,0,0.07);
+  --cb-divider:     rgba(240,100,73,0.12);
   --cb-card-border: rgba(0,0,0,0.07);
   --cb-card-shadow: 0 2px 16px rgba(0,0,0,0.05);
 
@@ -37,8 +38,8 @@
 .cb-section {
   font-family: var(--cb-font);
   color: var(--cb-text);
-  background-color: var(--cb-cream);
   line-height: 1.7;
+  position: relative;
 }
 
 .cb-section h1 {
@@ -115,13 +116,15 @@
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
   line-height: 1;
+  box-shadow: 0 10px 24px rgba(17,17,17,0.08);
 }
 
 .cb-btn:hover {
   background: var(--cb-orange);
   transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(240,100,73,0.22);
 }
 
 .cb-btn--lg {
@@ -131,12 +134,10 @@
 }
 
 /* ── Cards ────────────────────────────────────────────────── */
-/* Two box types only:
-   1. .cb-card       — white, for content cards
-   2. .cb-card--tint — cream, for subtle accent blocks        */
 .cb-card {
   background: var(--cb-white);
   border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
   border-radius: 16px;
   padding: 32px;
   box-shadow: var(--cb-card-shadow);
@@ -145,15 +146,16 @@
 .cb-card--tint {
   background: var(--cb-cream);
   border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
   border-radius: 16px;
   padding: 32px;
 }
 
-/* ── Callout block (replaces orange left-border treatment) ── */
-/* Use .cb-callout for any emphasised text block              */
+/* ── Callout block ────────────────────────────────────────── */
 .cb-callout {
   background: var(--cb-white);
   border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
   border-radius: 14px;
   padding: 24px 28px;
   box-shadow: var(--cb-card-shadow);
@@ -178,17 +180,27 @@
 }
 
 /* ── Section backgrounds ──────────────────────────────────── */
-/* Main background is always cream. White sections provide    */
-/* subtle rhythm — both are clean and consistent.             */
-.cb-section--cream { background: var(--cb-cream); }
-.cb-section--white { background: var(--cb-white); }
-.cb-section--dark  { background: var(--cb-dark); }
-.cb-section--dark * { color: #fff; }
+.cb-section--cream {
+  background: linear-gradient(180deg, var(--cb-cream) 0%, var(--cb-cream-2) 100%);
+}
+
+.cb-section--white {
+  background: var(--cb-white);
+}
+
+.cb-section--dark  {
+  background: var(--cb-dark);
+}
+
+.cb-section--dark * {
+  color: #fff;
+}
 
 /* ── Testimonial card ─────────────────────────────────────── */
 .cb-testimonial {
   background: var(--cb-white);
   border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
   border-radius: 16px;
   padding: 28px;
   box-shadow: var(--cb-card-shadow);
@@ -218,7 +230,7 @@
   object-fit: cover;
   flex-shrink: 0;
   background: #e0dbd4;
-  border: 2px solid var(--cb-divider);
+  border: 2px solid rgba(240,100,73,0.18);
 }
 
 .cb-testimonial__name {

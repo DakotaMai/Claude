@@ -142,6 +142,7 @@
 .cb-doom-step {
   background: #fff;
   border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
   border-radius: 16px;
   padding: 28px 32px;
   box-shadow: var(--cb-card-shadow);
@@ -158,7 +159,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--cb-black);
+  background: var(--cb-orange);
   color: #fff;
   font-size: 0.95rem;
   font-weight: 800;
@@ -190,18 +191,17 @@
 .cb-doom-step__arrow {
   text-align: center;
   font-size: 1.4rem;
-  color: #ccc;
+  color: rgba(240,100,73,0.45);
   padding: 8px 0;
   line-height: 1;
 }
 
-/* Closing block */
+/* Closing block — no box */
 .cb-doom-closing {
-  margin-top: 48px;
-  padding: 32px;
-  background: var(--cb-cream);
-  border-radius: 16px;
-  border: 1px solid var(--cb-card-border);
+  margin-top: 40px;
+  padding: 0;
+  background: transparent;
+  border: none;
 }
 
 .cb-doom-closing p {
