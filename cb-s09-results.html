@@ -38,7 +38,20 @@
     <p style="text-align: center; margin-top: 64px; font-size: 1.05rem; font-weight: 700; color: #111;">
       And it's already happening for members inside Copy Builders
     </p>
-    <p style="text-align: center; font-size: 1.5rem; margin-top: 8px;">🔽</p>
+
+    <div class="cb-proof-image-grid">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b9487608e9f2d80622d085.png" alt="Copy Builders social proof 1" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b94876ad02763e64496cf8.png" alt="Copy Builders social proof 2" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b948769ab5e2c13b558887.png" alt="Copy Builders social proof 3" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b948769c9817399abd8a92.png" alt="Copy Builders social proof 4" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b9487661cba5f088857854.png" alt="Copy Builders social proof 5" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b948769c981767dbbd8a93.png" alt="Copy Builders social proof 6" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b948769ab5e23f12558888.png" alt="Copy Builders social proof 7" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b94876dac58479599bc67a.png" alt="Copy Builders social proof 8" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b9487681a84899dc02df05.png" alt="Copy Builders social proof 9" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b9487608e9f23b0122d084.png" alt="Copy Builders social proof 10" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b94876d822b75a7696b7f3.png" alt="Copy Builders social proof 11" class="cb-proof-image-card">
+    </div>
 
   </div>
 </section>
@@ -113,6 +126,7 @@
 .cb-result-card {
   background: var(--cb-cream);
   border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
   border-radius: 16px;
   padding: 32px;
   display: flex;
@@ -133,6 +147,24 @@
   line-height: 1.75;
 }
 
+/* ── Social proof image grid ── */
+.cb-proof-image-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 32px;
+  margin-bottom: 18px;
+}
+
+.cb-proof-image-card {
+  width: 100%;
+  display: block;
+  border-radius: 16px;
+  border: 1px solid var(--cb-card-border);
+  box-shadow: var(--cb-card-shadow);
+  background: #fff;
+}
+
 /* ── Major testimonials ── */
 .cb-major-testimonials {
   display: grid;
@@ -143,6 +175,7 @@
 .cb-major-testi {
   background: #fff;
   border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
   border-radius: 16px;
   padding: 32px;
   box-shadow: var(--cb-card-shadow);
