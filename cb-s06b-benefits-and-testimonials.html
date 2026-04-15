@@ -147,10 +147,9 @@
 
 /* ── Benefits grid ── */
 .cb-benefits-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 24px;
-  align-items: start;
 }
 
 .cb-benefit-card {
@@ -211,17 +210,14 @@
   font-weight: 700;
 }
 
-/* ── 3-col testi grid ── */
+/* ── Testimonial stack ── */
 .cb-testi-grid--3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 24px;
-  align-items: start;
 }
 
 @media (max-width: 900px) {
-  .cb-benefits-grid,
-  .cb-testi-grid--3 { grid-template-columns: 1fr; }
   .cb-featured-quote { padding: 24px; }
 }
 </style>
