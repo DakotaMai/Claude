@@ -1949,9 +1949,10 @@
       <img src="https://copybuilders.carrd.co/assets/images/image02.png?v=b6e25d95" alt="" loading="lazy" style="max-width: 280px; width: 100%;">
     </div>
 
-    <p style="text-align: center; margin-top: 16px; font-size: 1.05rem; font-weight: 700; color: #111;">
-      And it's already happening for members inside Copy Builders
-    </p>
+    <div style="text-align: center; margin-top: 64px; margin-bottom: 36px;">
+      <span class="cb-eyebrow">Real member wins</span>
+      <h3 style="font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; color: var(--cb-black); letter-spacing: -0.02em; line-height: 1.2;">And it's already happening for members inside Copy Builders</h3>
+    </div>
 
     <div class="cb-proof-image-grid">
       <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b9487608e9f2d80622d085.png" alt="Copy Builders social proof 1" class="cb-proof-image-card">
@@ -2064,10 +2065,16 @@
 /* ── Social proof image grid ── */
 .cb-proof-image-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin-top: 32px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 0;
   margin-bottom: 18px;
+}
+
+@media (max-width: 640px) {
+  .cb-proof-image-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .cb-proof-image-card {
