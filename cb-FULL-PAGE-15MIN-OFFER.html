@@ -1,0 +1,3184 @@
+/* ============================================================
+   COPY BUILDERS — GHL REDESIGN
+   Global CSS
+   ============================================================ */
+
+/* ── Reset & base ─────────────────────────────────────────── */
+.cb-section *, .cb-section *::before, .cb-section *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Design tokens ────────────────────────────────────────── */
+:root {
+  --cb-cream:       #fff9f2;
+  --cb-cream-2:     #fff5ed;
+  --cb-white:       #ffffff;
+  --cb-black:       #111111;
+  --cb-dark:        #141414;
+  --cb-orange:      #f06449;
+  --cb-orange-soft: rgba(240,100,73,0.14);
+  --cb-green:       #074638;
+  --cb-text:        #111111;
+  --cb-text-mid:    #444444;
+  --cb-text-soft:   #777777;
+  --cb-divider:     rgba(240,100,73,0.12);
+  --cb-card-border: rgba(0,0,0,0.07);
+  --cb-card-shadow: 0 2px 16px rgba(0,0,0,0.05);
+
+  --cb-font: 'Plus Jakarta Sans', sans-serif;
+
+  --cb-max: 860px;
+  --cb-pad-v: 96px;
+  --cb-pad-h: 24px;
+}
+
+/* ── Typography ───────────────────────────────────────────── */
+.cb-section {
+  font-family: var(--cb-font);
+  color: var(--cb-text);
+  line-height: 1.7;
+  position: relative;
+}
+
+.cb-section h1 {
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: var(--cb-black);
+}
+
+.cb-section h2 {
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--cb-black);
+}
+
+.cb-section h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--cb-black);
+}
+
+.cb-section p {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--cb-text-mid);
+}
+
+.cb-section mark {
+  background: transparent;
+  color: var(--cb-orange);
+}
+
+/* ── Container ────────────────────────────────────────────── */
+.cb-container {
+  max-width: var(--cb-max);
+  margin: 0 auto;
+  padding: var(--cb-pad-v) var(--cb-pad-h);
+}
+
+.cb-container--narrow {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--cb-pad-v) var(--cb-pad-h);
+}
+
+/* ── Eyebrow label ────────────────────────────────────────── */
+.cb-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cb-orange);
+  margin-bottom: 20px;
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.cb-btn {
+  display: inline-block;
+  background: var(--cb-black);
+  color: #fff !important;
+  font-family: var(--cb-font);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  padding: 16px 36px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  line-height: 1;
+  box-shadow: 0 10px 24px rgba(17,17,17,0.08);
+}
+
+.cb-btn:hover {
+  background: var(--cb-orange);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(240,100,73,0.22);
+}
+
+.cb-btn--lg {
+  font-size: 1rem;
+  padding: 20px 48px;
+  border-radius: 10px;
+}
+
+/* ── Cards ────────────────────────────────────────────────── */
+.cb-card {
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: var(--cb-card-shadow);
+}
+
+.cb-card--tint {
+  background: var(--cb-cream);
+  border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
+  border-radius: 16px;
+  padding: 32px;
+}
+
+/* ── Callout block ────────────────────────────────────────── */
+.cb-callout {
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
+  border-radius: 14px;
+  padding: 24px 28px;
+  box-shadow: var(--cb-card-shadow);
+}
+
+.cb-callout p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+.cb-callout strong,
+.cb-callout b {
+  color: var(--cb-black);
+}
+
+/* ── Divider ──────────────────────────────────────────────── */
+.cb-divider {
+  border: none;
+  border-top: 1px solid var(--cb-divider);
+  margin: 0;
+}
+
+/* ── Section backgrounds ──────────────────────────────────── */
+.cb-section--cream {
+  background: linear-gradient(180deg, var(--cb-cream) 0%, var(--cb-cream-2) 100%);
+}
+
+.cb-section--white {
+  background: var(--cb-white);
+}
+
+.cb-section--dark  {
+  background: var(--cb-dark);
+}
+
+.cb-section--dark * {
+  color: #fff;
+}
+
+/* ── Testimonial card ─────────────────────────────────────── */
+.cb-testimonial {
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: var(--cb-card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cb-testimonial__quote {
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.7;
+  color: var(--cb-text-mid);
+  flex: 1;
+}
+
+.cb-testimonial__footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cb-testimonial__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #e0dbd4;
+  border: 2px solid rgba(240,100,73,0.18);
+}
+
+.cb-testimonial__name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--cb-black);
+  line-height: 1.3;
+}
+
+.cb-testimonial__role {
+  font-size: 0.8rem;
+  color: var(--cb-text-soft);
+  line-height: 1.3;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --cb-pad-v: 64px;
+    --cb-pad-h: 20px;
+  }
+
+  .cb-section h1 { font-size: 2.2rem; }
+  .cb-section h2 { font-size: 1.8rem; }
+
+  .cb-btn--lg {
+    width: 100%;
+    text-align: center;
+    padding: 18px 24px;
+  }
+}
+<!-- ============================================================
+     V2 SECTION 0: SPECIAL OFFER BANNER (top of page)
+     ============================================================ -->
+
+<section style="background: var(--cb-green); padding: 28px 20px;">
+  <div class="cb-container" style="text-align: center; max-width: 760px;">
+
+    <p style="font-size: 0.75rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 10px;">
+      Special offer for 15 Minute Content subscribers
+    </p>
+
+    <p style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: 700; color: #fff; line-height: 1.55; margin-bottom: 20px;">
+      Get inside Your Next Post for <span style="text-decoration: line-through; opacity: 0.55; font-weight: 400;">$1,000</span> <strong style="color: var(--cb-orange);">$500</strong>, and get a <strong>FREE 1-1 call with me</strong> if you join before <strong>[DATE &amp; TIME]</strong>
+    </p>
+
+    <!-- Paste GHL countdown timer element here -->
+    <div style="margin-bottom: 24px; color: rgba(255,255,255,0.75); font-size: 0.9rem; font-style: italic;">
+      [COUNTDOWN TIMER]
+    </div>
+
+    <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn cb-btn--lg" style="background: var(--cb-orange);">
+      Get 50% off &amp; my free 1-1 call
+    </a>
+
+  </div>
+</section>
+<!-- ============================================================
+     SECTION 1: HERO
+     GHL: Paste as the first Custom HTML block on the page.
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container" style="text-align:center; padding-bottom: 80px;">
+
+    <!-- Eyebrow -->
+    <span class="cb-eyebrow">LinkedIn Writing Membership</span>
+
+    <!-- Sub-heading — lead-in line -->
+    <p class="cb-hero__sub cb-hero__sub--top">
+      Posting on LinkedIn doesn't have to feel like a root canal
+    </p>
+
+    <!-- Main headline -->
+    <h1 class="cb-hero__h1">
+      Make writing on LinkedIn <mark>fast, easy, and fun</mark> so you stick with it long enough for opportunities to stack
+    </h1>
+
+    <!-- Sub-heading — below headline -->
+    <p class="cb-hero__sub cb-hero__sub--bottom">
+      Your Next Post is for anyone who's ever hit "Start a post"&hellip;typed three lines&hellip;deleted them&hellip;and thought, "Maybe next week."
+    </p>
+
+    <!-- CTA -->
+    <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn cb-btn--lg">Join for 50% off</a>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+.cb-hero__sub {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: 500;
+  color: #888;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cb-hero__sub--top {
+  margin-bottom: 20px;
+}
+
+.cb-hero__sub--bottom {
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.cb-hero__h1 {
+  font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: var(--cb-black);
+  max-width: 780px;
+  margin: 0 auto;
+}
+</style>
+<!-- ============================================================
+     SECTION 1b: MARKUS WINKLER TESTIMONIAL
+     GHL: Paste immediately after the Hero block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container" style="padding-top: 48px; padding-bottom: 48px;">
+    <div style="max-width: 600px; margin: 0 auto; display: flex; gap: 20px; align-items: flex-start;">
+      <img
+        src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b93692ad0276336b4700df.jpg"
+        alt="Markus Winkler"
+        class="cb-testimonial__avatar"
+        style="width: 56px; height: 56px; margin-top: 4px; flex-shrink: 0;"
+      >
+      <div>
+        <p style="font-size: 1rem; font-style: italic; color: #444; line-height: 1.75; margin-bottom: 12px;">
+          &#8220;After posting for 4 months on LinkedIn, I struggled. Then I found Your Next Post. The best thing was the simple and structured approach. <mark>Now I can write excellent and accurate posts fast and easy.</mark>&#8221;
+        </p>
+        <p style="font-size: 0.85rem; font-weight: 700; color: #111; margin-bottom: 2px;">Markus Winkler</p>
+        <p style="font-size: 0.8rem; color: #777;">Email Marketing Specialist</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="cb-divider">
+<!-- ============================================================
+     SECTION 2: PAIN POINTS — The LinkedIn Doom Loop
+     GHL: Paste as the second Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container--narrow">
+
+    <!-- Opening hook -->
+    <h2 style="margin-bottom: 28px;">You didn't join LinkedIn just to scroll</h2>
+
+    <p style="margin-bottom: 20px;">You already know it's more than a dusty old job site.</p>
+
+    <p style="margin-bottom: 20px;">It's where people share ideas, grow audiences of thousands, attract high-paying clients, and end up in rooms and conversations they never would've been invited into otherwise.</p>
+
+    <p style="margin-bottom: 28px;">And you want LinkedIn to bring the same things your way:</p>
+
+    <!-- Desire list -->
+    <ul class="cb-desire-list">
+      <li>A wider network than the same 12 ex co-workers</li>
+      <li>Your name to be the first one people tag when someone asks, "Does anyone know someone good at this?"</li>
+      <li>A place where your reputation lives online instead of being stuck inside meetings and email threads</li>
+      <li>Opening your DMs and finding opportunities, collaborations, and interesting conversations instead of another sales pitch or automated message from The LinkedIn Team</li>
+    </ul>
+
+    <!-- Transition -->
+    <p style="margin-top: 48px; margin-bottom: 48px; font-size: 1.1rem; font-weight: 700; color: #111;">
+      But every time you get a burst of motivation to post on LinkedIn, you:
+    </p>
+
+    <!-- Illustration: burning clock -->
+    <div style="text-align: center; margin-bottom: 40px;">
+      <img src="https://copybuilders.carrd.co/assets/images/image03.png?v=b6e25d95" alt="" loading="lazy" style="max-width: 280px; width: 100%;">
+    </div>
+
+    <!-- The 5 steps — vertical, full copy -->
+    <div class="cb-doom-steps">
+
+      <div class="cb-doom-step">
+        <div class="cb-doom-step__header">
+          <span class="cb-doom-step__num">1</span>
+          <h3>Overthink the blank page</h3>
+        </div>
+        <div class="cb-doom-step__body">
+          <p>As soon as the white box pops up, you instantly think, "WTF do I write about?" You type a sentence, delete it, type another, delete that too. How do I start? Should this be a story? A lesson? A strong opinion? Should I open with a hook?</p>
+          <p>What's a good hook?</p>
+          <p>90 mins later, you've written 4 half-finished drafts, and each one makes you cringe. So you start searching for "inspiration."</p>
+        </div>
+      </div>
+
+      <div class="cb-doom-step__arrow" aria-hidden="true">↓</div>
+
+      <div class="cb-doom-step">
+        <div class="cb-doom-step__header">
+          <span class="cb-doom-step__num">2</span>
+          <h3>Scroll straight into comparison</h3>
+        </div>
+        <div class="cb-doom-step__body">
+          <p>The algorithm dishes up 14,567 people who are all funnier, smarter, and way more articulate than you. Their posts get hundreds of likes and dozens of comments. Then it gets worse. Someone says exactly what you wanted to say, but better. You tweak your draft to sound smarter, like a "thought leader," like them. But it doesn't feel right. So you close the tab.</p>
+        </div>
+      </div>
+
+      <div class="cb-doom-step__arrow" aria-hidden="true">↓</div>
+
+      <div class="cb-doom-step">
+        <div class="cb-doom-step__header">
+          <span class="cb-doom-step__num">3</span>
+          <h3>(Finally) hit post and ghost</h3>
+        </div>
+        <div class="cb-doom-step__body">
+          <p>It's a day (or a week) later, and you're sick of re-arranging the same words on your screen. You hit post and give yourself the tiniest pat on the back, but then your chest tightens. You don't know if it's hope (maybe this post will take off!). Or anxiety (what if Colin from HR sees it?). You chuck your phone under the pillow and tell yourself not to check the notifications for 24 hours.</p>
+        </div>
+      </div>
+
+      <div class="cb-doom-step__arrow" aria-hidden="true">↓</div>
+
+      <div class="cb-doom-step">
+        <div class="cb-doom-step__header">
+          <span class="cb-doom-step__num">4</span>
+          <h3>Fuck it, you're checking</h3>
+        </div>
+        <div class="cb-doom-step__body">
+          <p>It's 4 hours later, and your post has 50 impressions and 2 likes: one's from your spouse, the other's your ex co-worker. You pretend it doesn't matter ("bloody algorithm"), but it stings. And despite everything you've achieved in your career, and all the support you have from real people in your life, the rejection from internet strangers feels worse.</p>
+        </div>
+      </div>
+
+      <div class="cb-doom-step__arrow" aria-hidden="true">↓</div>
+
+      <div class="cb-doom-step cb-doom-step--end">
+        <div class="cb-doom-step__header">
+          <span class="cb-doom-step__num cb-doom-step__num--orange">5</span>
+          <h3>Quiet quit LinkedIn</h3>
+        </div>
+        <div class="cb-doom-step__body">
+          <p>You tell yourself: Maybe LinkedIn isn't for me. Maybe I don't have anything interesting to say. Is this really the best use of my time? You know you have to "be consistent" to "see results"... but you also don't want to put yourself through this humiliation ritual again.</p>
+          <p>So you go back to lurking and not posting for another 6 months.</p>
+        </div>
+      </div>
+
+    </div><!-- /cb-doom-steps -->
+
+    <!-- Closing -->
+    <div class="cb-doom-closing">
+      <p style="font-weight: 700; color: #111; margin-bottom: 16px;">^^ This right here is a Universal LinkedIn rite of passage.</p>
+      <p style="margin-bottom: 12px;">I've seen it happen to 7-figure execs, CEOs, founders, consultants, and grads fresh out of Uni.</p>
+      <p>People who are brilliant, smart, and witty in real life… frozen by a blinking cursor.</p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── Desire list ── */
+.cb-desire-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cb-desire-list li {
+  font-size: 1rem;
+  color: var(--cb-text-mid);
+  padding-left: 24px;
+  position: relative;
+  line-height: 1.65;
+}
+
+.cb-desire-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+/* ── Doom loop steps — vertical ── */
+.cb-doom-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cb-doom-step {
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: var(--cb-card-shadow);
+}
+
+.cb-doom-step__header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.cb-doom-step__num {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--cb-orange);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cb-doom-step__num--orange {
+  background: var(--cb-orange);
+}
+
+.cb-doom-step__header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cb-black);
+}
+
+.cb-doom-step__body p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+  margin-bottom: 12px;
+}
+
+.cb-doom-step__body p:last-child { margin-bottom: 0; }
+
+.cb-doom-step__arrow {
+  text-align: center;
+  font-size: 1.4rem;
+  color: rgba(240,100,73,0.45);
+  padding: 8px 0;
+  line-height: 1;
+}
+
+/* Closing block — no box */
+.cb-doom-closing {
+  margin-top: 40px;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.cb-doom-closing p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+</style>
+<!-- ============================================================
+     SECTION 3: BRIDGE — Why LinkedIn Is Hard
+     GHL: Paste as the third Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container--narrow">
+
+    <h2 style="margin-bottom: 24px;">And that's because our brains aren't designed for LinkedIn</h2>
+
+    <div style="text-align: center; margin-bottom: 32px;">
+      <img src="https://copybuilders.carrd.co/assets/images/image19.png?v=b6e25d95" alt="" loading="lazy" style="max-width: 260px; width: 100%;">
+    </div>
+
+    <div class="cb-bridge-points">
+
+      <div class="cb-bridge-point">
+        <span class="cb-bridge-point__icon">👉</span>
+        <p><strong>Posting feels scary because Dave from finance can see it.</strong> Your judgy ex-colleague can see it. And so can the client you'd love to work with one day. All people whose opinion of you could flip from a single post.</p>
+      </div>
+
+      <div class="cb-bridge-point">
+        <span class="cb-bridge-point__icon">👉</span>
+        <p><strong>The feedback is unpredictable.</strong> You can post something you're proud of and get 47 impressions and a pity like from your mate. Then watch someone post the most basic "hot take" and get 600 comments saying, "This 👏👏👏"</p>
+      </div>
+
+      <div class="cb-bridge-point">
+        <span class="cb-bridge-point__icon">👉</span>
+        <p><strong>There's no real "finish line"</strong> or badge that says, "Congrats, you've cracked it." The feed moves so fast, you have to keep coming up with ideas and showing up to stay top of mind.</p>
+      </div>
+
+    </div>
+
+    <p style="margin-top: 40px; margin-bottom: 20px;">And when something feels this public and high-stakes, your brain tries to protect you.</p>
+
+    <p style="margin-bottom: 8px;">So you overthink.</p>
+    <p style="margin-bottom: 8px;">You ghost.</p>
+    <p style="margin-bottom: 28px;">You decide LinkedIn just "isn't your thing."</p>
+
+    <p style="margin-bottom: 28px;">And it's why most people post once then disappear off the face of the earth.</p>
+
+    <div class="cb-bridge-callout">
+      <p style="font-weight: 700; color: #111; margin-bottom: 16px;">This is where most LinkedIn advice misses the point.</p>
+      <p style="margin-bottom: 16px;">You don't need to "try harder," ignore what other people think, or learn more growth tactics.</p>
+      <p>If you want to start posting on LinkedIn and keep going long enough for it to matter, you need to change how you approach writing.</p>
+    </div>
+
+    <p style="margin-top: 36px; font-size: 1.1rem; font-weight: 700; color: #111;">And that starts by making writing simple and enjoyable.</p>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+
+<!-- ============================================================
+     SECTION 4: SOLUTION SHIFT — Why "growth tactics" fail
+     GHL: Paste immediately after Section 3.
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container--narrow">
+
+    <p style="margin-bottom: 20px;">Anyone can teach you how to <strong>GROW FAST</strong> on LinkedIn:</p>
+
+    <div class="cb-tactics-list">
+      <p>Hooks.</p>
+      <p>"Post at 8:17am."</p>
+      <p>Rage bait.</p>
+    </div>
+
+    <p style="margin-bottom: 20px;">&hellip;all designed to get you likes, comments, and quadruple your following.</p>
+
+    <p style="margin-bottom: 20px;">Sure, those tactics might work (for a bit&hellip;).</p>
+
+    <p style="margin-bottom: 20px;">But if ALL you're focused on is how your post performs, writing stops being writing.</p>
+
+    <p style="margin-bottom: 28px;">It becomes a test of how insightful you are, how interesting you sound, and whether you're worth following.</p>
+
+    <p style="margin-bottom: 28px; font-weight: 700; color: #111;">And no one enjoys taking a test every morning.</p>
+
+    <p style="margin-bottom: 20px;">With all that pressure in the back of your mind, you can end up wasting 90 mins or an entire afternoon trying to get the post "right."</p>
+
+    <p style="margin-bottom: 20px;">And if writing a single post chews up that much time and mental energy, you won't want to do it consistently.</p>
+
+    <p style="margin-bottom: 8px;">So you don't.</p>
+    <p style="margin-bottom: 20px;">And when you don't, you won't even begin to cut through all the noise and AI garbage swirling around.</p>
+    <p style="margin-bottom: 28px;">And none of the things you want from LinkedIn ever happen.</p>
+
+    <div class="cb-wont-list">
+      <p>You won't build a network.</p>
+      <p>You won't build a reputation.</p>
+      <p>And you definitely won't attract the opportunities you know you deserve.</p>
+    </div>
+
+    <div style="text-align: center; margin: 32px 0;">
+      <img src="https://copybuilders.carrd.co/assets/images/image18.png?v=b6e25d95" alt="" loading="lazy" style="max-width: 280px; width: 100%;">
+    </div>
+
+    <!-- The turn -->
+    <div class="cb-solution-turn">
+      <p style="margin-bottom: 16px;">But when you enjoy the writing process and have fun, you'll want to show up to the keyboard.</p>
+      <p style="margin-bottom: 16px;">You can knock out a post in 10 minutes instead of blocking off an entire afternoon.</p>
+      <p style="margin-bottom: 16px;">You can experiment with different angles and formats without asking three different people (and ChatGPT) if it's good enough.</p>
+      <p>You're not afraid to share all the interesting things in your daily life – the advice you gave a client, the shower epiphany, a convo you had with your spouse – instead of only posting about the promotion or big wins.</p>
+    </div>
+
+    <p style="margin-top: 40px; margin-bottom: 20px; font-weight: 700; color: #111;">Here's the irony.</p>
+
+    <p style="margin-bottom: 20px;">The less you focus on growth hacks and performance, and find a way to hit post that's easy and fun for you:</p>
+
+    <p style="margin-bottom: 20px; font-size: 1.05rem; font-weight: 700; color: var(--cb-orange);">The more LinkedIn starts working the way you want it to.</p>
+
+    <div class="cb-proof-list">
+      <p>People start liking and replying to what you write.</p>
+      <p>Someone tags you under a post because you're the first person they thought of.</p>
+      <p>You get a connection request from someone on the other side of the world saying, "I've been enjoying your posts lately."</p>
+    </div>
+
+    <p style="margin-top: 40px; font-size: 1.1rem; font-weight: 700; color: #111;">How am I so sure?</p>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── Bridge points ── */
+.cb-bridge-points {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.cb-bridge-point {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: var(--cb-card-shadow);
+}
+
+.cb-bridge-point__icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  line-height: 1.6;
+}
+
+.cb-bridge-point p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+/* ── Bridge callout ── */
+.cb-bridge-callout {
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin-top: 8px;
+  box-shadow: var(--cb-card-shadow);
+}
+
+.cb-bridge-callout p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+/* ── Tactics list ── */
+.cb-tactics-list {
+  background: var(--cb-cream);
+  border-radius: 12px;
+  padding: 20px 28px;
+  margin: 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cb-tactics-list p {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--cb-black);
+  line-height: 1.6;
+}
+
+/* ── Won't list ── */
+.cb-wont-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px 28px;
+  border: 1px solid var(--cb-card-border);
+  border-radius: 14px;
+  background: #fff;
+  margin-bottom: 40px;
+}
+
+.cb-wont-list p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.cb-wont-list p::before {
+  content: '✗';
+  position: absolute;
+  left: 0;
+  color: #ccc;
+  font-weight: 700;
+}
+
+/* ── Solution turn ── */
+.cb-solution-turn {
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: var(--cb-card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cb-solution-turn p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+  padding-left: 20px;
+  position: relative;
+}
+
+.cb-solution-turn p::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+/* ── Proof list ── */
+.cb-proof-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cb-proof-list p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.7;
+  padding-left: 20px;
+  position: relative;
+}
+
+.cb-proof-list p::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+</style>
+<!-- ============================================================
+     SECTION 5: ABOUT MATT
+     GHL: Paste as the fifth Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container">
+
+    <div style="text-align: center; margin-bottom: 64px;">
+      <span class="cb-eyebrow">Your guide</span>
+      <h2>Hi, I'm Matt Barker.</h2>
+    </div>
+
+    <!-- Two-column: story left, photo + stats right -->
+    <div class="cb-matt-grid">
+
+      <!-- Left: story -->
+      <div class="cb-matt-story">
+
+        <p style="margin-bottom: 16px;">And I've posted <strong>2,576 posts on LinkedIn.</strong> (That's 1 post a day for 4+ years, if you're counting.)</p>
+
+        <p style="margin-bottom: 16px;">Like so many, I knew I "should" be on LinkedIn.</p>
+
+        <p style="margin-bottom: 16px;">But despite being a professional copywriter, I was scared sh*tless.</p>
+
+        <p style="margin-bottom: 16px;">(If I wrote something terrible, why would anyone hire me?)</p>
+
+        <p style="margin-bottom: 16px;">Eventually, I plucked up the courage to hit post and&hellip;</p>
+
+        <p style="margin-bottom: 16px;">&hellip;the only people who seemed to care were the WhatsApp group chats with my friends who were waiting to take the piss out of whatever I posted next. (Lovely bunch.)</p>
+
+        <p style="margin-bottom: 16px;">It was awkward. And it kept being awkward for a long time as I figured out what to say and how to write specifically for LinkedIn.</p>
+
+        <p style="margin-bottom: 24px; font-weight: 700; color: #111;">But here's what's interesting.</p>
+
+        <p style="margin-bottom: 16px;">Instead of trying to "win" LinkedIn, I treated it like practice.</p>
+
+        <p style="margin-bottom: 8px;">I studied why posts worked for my ghostwriting clients.</p>
+        <p style="margin-bottom: 8px;">Tested hooks.</p>
+        <p style="margin-bottom: 24px;">And shared stories about what I was learning in business and life.</p>
+
+        <div style="text-align: center; margin: 24px 0;">
+          <img src="https://copybuilders.carrd.co/assets/images/image21.png?v=b6e25d95" alt="" loading="lazy" style="max-width: 240px; width: 100%;">
+        </div>
+
+        <p style="margin-bottom: 8px;">You can probably guess what happened next.</p>
+
+        <!-- The momentum chain -->
+        <div class="cb-momentum">
+          <p>The more I enjoyed the craft, the less pressure I felt.</p>
+          <p>The less pressure I felt, the faster I wrote.</p>
+          <p>The faster I wrote, the more consistent I became.</p>
+        </div>
+
+        <div style="margin-top: 36px;">
+          <a href="#pricing" class="cb-btn">Show me how</a>
+        </div>
+
+      </div>
+
+      <!-- Right: photo + stat blocks -->
+      <div class="cb-matt-aside">
+
+        <!-- Matt's photo -->
+        <img
+          src="https://cdn.prod.website-files.com/66aa6797ab26f86e3cdec9c9/66ab3c48d3b5aa2c152cda07_image03-p-800.jpg"
+          alt="Matt Barker"
+          style="width: 100%; border-radius: 20px; margin-bottom: 32px; display: block;"
+        >
+
+        <!-- 3 key stats -->
+        <div class="cb-matt-stats">
+          <div class="cb-stat-block">
+            <span class="cb-stat-block__num">2,576</span>
+            <span class="cb-stat-block__label">Posts published</span>
+          </div>
+          <div class="cb-stat-block">
+            <span class="cb-stat-block__num">189,650</span>
+            <span class="cb-stat-block__label">LinkedIn followers</span>
+          </div>
+          <div class="cb-stat-block">
+            <span class="cb-stat-block__num">$1.3M</span>
+            <span class="cb-stat-block__label">Earned as a writer</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /cb-matt-grid -->
+
+    <!-- Achievements — full width below -->
+    <div class="cb-achievements">
+
+      <p style="margin-bottom: 8px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cb-orange);">Since that first LinkedIn post, some ridiculous things have happened:</p>
+
+      <ol class="cb-achievement-list">
+        <li>189,650 people started following me</li>
+        <li>I've been invited to speak on 10+ podcasts</li>
+        <li>Made $94k in a weekend from one product launch</li>
+        <li>Grown an email list of 15,000 subscribers</li>
+        <li>I became an investor in a SaaS that raised $690k in funding last year</li>
+        <li>Worked with 7 and 8 figure business owners after striking up convos in the DMs</li>
+        <li>Been approached by strangers who recognise me from LinkedIn</li>
+        <li>Earned over $1.3M as a writer, from my living room</li>
+      </ol>
+
+      <p style="margin-top: 28px; font-size: 0.95rem; color: #777; font-style: italic;">(Mad, innit?)</p>
+
+    </div>
+
+    <!-- Closing reflection -->
+    <div class="cb-matt-closing">
+      <p style="margin-bottom: 16px;">But the thing I'm most proud of isn't the followers or the money.</p>
+      <p style="margin-bottom: 16px;">And it's not because I cracked some secret LinkedIn growth code, either.</p>
+      <p style="font-weight: 700; color: #111;">It's because I figured out how to make writing on LinkedIn light and enjoyable enough to do every day so the right opportunities find me.</p>
+      <p style="margin-top: 16px;">And it's far less complicated than you might think.</p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── About Matt grid ── */
+.cb-matt-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 56px;
+  align-items: start;
+  margin-bottom: 56px;
+}
+
+.cb-matt-story p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+/* Momentum chain */
+.cb-momentum {
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-radius: 14px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--cb-card-shadow);
+}
+
+.cb-momentum p {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--cb-text-mid);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.cb-momentum p::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+/* Stats aside */
+.cb-matt-aside {
+  position: sticky;
+  top: 40px;
+}
+
+.cb-matt-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--cb-card-shadow);
+}
+
+.cb-stat-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--cb-divider);
+}
+
+.cb-stat-block:last-child { border-bottom: none; }
+
+.cb-stat-block__num {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--cb-orange);
+  line-height: 1;
+}
+
+.cb-stat-block__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--cb-text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Achievements */
+.cb-achievements {
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-radius: 20px;
+  padding: 36px 40px;
+  box-shadow: var(--cb-card-shadow);
+  margin-bottom: 40px;
+}
+
+.cb-achievement-list {
+  padding-left: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+  counter-reset: achievements;
+}
+
+.cb-achievement-list li {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.65;
+  padding-left: 36px;
+  position: relative;
+  counter-increment: achievements;
+}
+
+.cb-achievement-list li::before {
+  content: counter(achievements);
+  position: absolute;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  background: var(--cb-orange);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 1px;
+}
+
+/* Closing block */
+.cb-matt-closing {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 40px 32px;
+  background: var(--cb-cream);
+  border-radius: 20px;
+  border: 1px solid var(--cb-divider);
+}
+
+.cb-matt-closing p {
+  font-size: 1rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+@media (max-width: 768px) {
+  .cb-matt-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .cb-matt-aside { position: static; }
+  .cb-matt-stats { flex-direction: row; flex-wrap: wrap; }
+  .cb-stat-block { flex: 1 1 140px; border-bottom: none; border-right: 1px solid var(--cb-divider); }
+  .cb-stat-block:last-child { border-right: none; }
+  .cb-achievements { padding: 24px; }
+}
+</style>
+<!-- ============================================================
+     SECTION 5b: MATT'S SYSTEM + THE PIVOT
+     GHL: Paste AFTER the About Matt block, BEFORE Introducing Your Next Post.
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container--narrow">
+
+    <span class="cb-eyebrow">The simple approach</span>
+    <h2 style="margin-bottom: 40px;">The easy system I use to show up on LinkedIn every single day</h2>
+
+    <!-- 3 system steps -->
+    <div class="cb-system-steps">
+
+      <div class="cb-system-step">
+        <span class="cb-system-step__num">1</span>
+        <div>
+          <p class="cb-system-step__title">I make sure I have ideas before I start writing.</p>
+          <p class="cb-system-step__note">(No staring at a blank page wondering what the hell to say.)</p>
+        </div>
+      </div>
+
+      <div class="cb-system-step">
+        <span class="cb-system-step__num">2</span>
+        <div>
+          <p class="cb-system-step__title">I use one or two simple frameworks to write about my lived experience.</p>
+          <p class="cb-system-step__note">(No reinventing the wheel every time.)</p>
+        </div>
+      </div>
+
+      <div class="cb-system-step">
+        <span class="cb-system-step__num">3</span>
+        <div>
+          <p class="cb-system-step__title">I treat every post like an experiment.</p>
+          <p class="cb-system-step__note">(Not a measure of how smart, intelligent, or successful I am.)</p>
+        </div>
+      </div>
+
+    </div>
+
+    <p style="margin-top: 40px; margin-bottom: 12px;">It's not the 47-step content strategy most gurus teach.</p>
+    <p style="margin-bottom: 28px; font-weight: 700; color: #111;">It's stupidly simple.</p>
+    <p style="margin-bottom: 40px;">So simple, in fact, that most people skip this step then wonder why posting on LinkedIn feels like pulling teeth.</p>
+
+    <!-- Mindset callout -->
+    <div class="cb-mindset-block">
+      <p style="margin-bottom: 16px;"><strong>More importantly:</strong></p>
+      <p style="margin-bottom: 16px;">I don't let the number of likes, comments, or impressions decide whether posting is 'worth it.'</p>
+      <p style="font-weight: 700; color: #111;">Posting IS the win. The fun is the reward. And it's why I'm happy to show up again and again even when my posts flop.</p>
+    </div>
+
+    <div style="text-align: center; margin: 32px 0 24px;">
+      <img src="https://copybuilders.carrd.co/assets/images/image01.png?v=b6e25d95" alt="" loading="lazy" style="max-width: 280px; width: 100%;">
+    </div>
+
+    <!-- The OR pivot -->
+    <div class="cb-or-pivot">
+
+      <div class="cb-or-pivot__option cb-or-pivot__option--bad">
+        <p>Because sure, I could force you to sit at your desk and post every single day or else.</p>
+        <p style="margin-top: 12px;">And that will work&hellip;until you resent the process and swear you're done with LinkedIn forever.</p>
+      </div>
+
+      <div class="cb-or-pivot__divider">OR&hellip;</div>
+
+      <div class="cb-or-pivot__option cb-or-pivot__option--good">
+        <p>I can show you how to remove the friction, make writing fun, and build a simple, repeatable way to write on LinkedIn so consistency takes care of itself.</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── System steps ── */
+.cb-system-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cb-system-step {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  background: var(--cb-cream);
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.cb-system-step__num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--cb-orange);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cb-system-step__title {
+  font-size: 0.975rem;
+  font-weight: 700;
+  color: var(--cb-black);
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.cb-system-step__note {
+  font-size: 0.875rem;
+  color: var(--cb-text-soft);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ── Mindset block ── */
+.cb-mindset-block {
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: var(--cb-card-shadow);
+  margin-bottom: 40px;
+}
+
+.cb-mindset-block p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+/* ── OR pivot ── */
+.cb-or-pivot {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cb-or-pivot__option {
+  padding: 24px 28px;
+  border-radius: 14px;
+}
+
+.cb-or-pivot__option p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+.cb-or-pivot__option--bad {
+  background: var(--cb-white);
+  border: 1px solid var(--cb-divider);
+  opacity: 0.75;
+}
+
+.cb-or-pivot__option--good {
+  background: var(--cb-white);
+  border: 1px solid var(--cb-card-border);
+}
+
+.cb-or-pivot__option--good p {
+  font-weight: 600;
+  color: var(--cb-green);
+}
+
+.cb-or-pivot__divider {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--cb-orange);
+  letter-spacing: 0.05em;
+  padding: 12px 0;
+}
+</style>
+<!-- ============================================================
+     SECTION 6: INTRODUCING COPY BUILDERS
+     GHL: Paste as the sixth Custom HTML block.
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container" style="text-align: center;">
+
+    <span class="cb-eyebrow">Introducing</span>
+
+    <h2 style="font-size: clamp(2.8rem, 6vw, 4.2rem); margin-bottom: 12px; letter-spacing: -0.04em;">
+      Your Next Post
+    </h2>
+
+    <p style="max-width: 600px; margin: 0 auto 32px; font-size: 1.2rem; font-weight: 600; color: #111; line-height: 1.5;">
+      The membership that makes writing on LinkedIn the easiest part of your day
+    </p>
+
+    <div style="max-width: 580px; margin: 0 auto 40px;">
+      <p style="margin-bottom: 16px; font-size: 1.05rem; color: #444;">
+        Inside, you'll get ongoing ideas, frameworks, and direct feedback so instead of staring at a blank page wondering what the hell to say&hellip;
+      </p>
+      <p style="font-size: 1.05rem; font-weight: 700; color: #111;">
+        You can sit down, write a post in 10 minutes, and hit publish again and again.
+      </p>
+    </div>
+
+    <!-- Credibility line -->
+    <div class="cb-product-cred">
+      <p>It's the exact system I built from <strong>4 years of posting consistently</strong>, writing <strong>1,000s of posts</strong>, and earning <strong>100Ms of impressions</strong> for <strong>3,000+ clients and customers.</strong></p>
+    </div>
+
+    <div style="margin-top: 40px; margin-bottom: 40px;">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69e114b450b9a3263a53078a.png" alt="Inside Your Next Post" loading="lazy" style="width: 100%; max-width: 640px; border-radius: 16px; border: 1px solid var(--cb-card-border); box-shadow: var(--cb-card-shadow);">
+    </div>
+
+    <div>
+      <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn cb-btn--lg">Join for 50% off — 15 Minute Content members only</a>
+      <p style="margin-top: 16px; font-size: 0.9rem; color: var(--cb-text-soft); font-style: italic; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.65;">
+        ^^ If you click that button, you'll also get a <strong style="color: var(--cb-black);">FREE 1-1 consultation call with me</strong>, which is something I only offer to my coaching clients (who pay me $XXX).
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+.cb-product-cred {
+  max-width: 560px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-radius: 14px;
+  padding: 24px 28px;
+  box-shadow: var(--cb-card-shadow);
+}
+
+.cb-product-cred p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+.cb-product-cred strong {
+  color: var(--cb-black);
+}
+</style>
+<!-- ============================================================
+     SECTION 6b: BENEFITS + TESTIMONIALS
+     GHL: Paste AFTER the Your Next Post intro block (s06),
+     and BEFORE How It Works (s07).
+     ============================================================ -->
+
+<!-- Opening testimonial — Kyle Campion -->
+<section class="cb-section cb-section--white">
+  <div class="cb-container" style="max-width: 680px;">
+
+    <div class="cb-featured-quote">
+      <p class="cb-featured-quote__text">
+        &#8220;Your Next Post is jam packed with <mark>easy to digest videos</mark> as well as <mark>templates, frameworks and examples that can explode your writing skills</mark>. The community is supportive and I've made great connections where we help each other and share ideas. Matt is great at responding quickly to questions. He's genuinely there to help me!&#8221;
+      </p>
+      <div class="cb-featured-quote__footer">
+        <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b93bd99c981729d2bbddec.jpg" alt="Kyle Campion" class="cb-testimonial__avatar">
+        <div>
+          <p class="cb-testimonial__name">Kyle Campion</p>
+          <p class="cb-testimonial__role">Founder @ KCR Associates</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<!-- Benefits -->
+<section class="cb-section cb-section--cream">
+  <div class="cb-container">
+
+    <div style="text-align: center; margin-bottom: 40px;">
+      <span class="cb-eyebrow">What you get</span>
+      <h2>When you join Your Next Post, you will:</h2>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 40px;">
+      <img src="https://copybuilders.carrd.co/assets/images/image10.png?v=b6e25d95" alt="" loading="lazy" style="max-width: 260px; width: 100%;">
+    </div>
+
+    <div class="cb-benefits-grid">
+
+      <div class="cb-card cb-benefit-card">
+        <div class="cb-benefit-card__num">01</div>
+        <h3>Always know what to post about</h3>
+        <p>You'll start pulling ideas from the things already happening in your day.</p>
+        <p>Things like:</p>
+        <ul class="cb-benefit-list">
+          <li>A question someone asked you in a meeting.</li>
+          <li>A funny conversation you overheard on your morning commute.</li>
+          <li>A lesson from a project that went sideways.</li>
+        </ul>
+        <p>So instead of scrolling the feed and wondering, "where do people come up with this stuff?"&hellip;you're the one posting.</p>
+      </div>
+
+      <div class="cb-card cb-benefit-card">
+        <div class="cb-benefit-card__num">02</div>
+        <h3>Write engaging posts in 10 mins</h3>
+        <p class="cb-benefit-card__sub">(not 3 hours)</p>
+        <p>Instead of letting good ideas rot in your drafts folder, you'll know how to pull out your phone, write a post, hit publish, and enjoy the rest of your day.</p>
+      </div>
+
+      <div class="cb-card cb-benefit-card">
+        <div class="cb-benefit-card__num">03</div>
+        <h3>Stay consistent without forcing it</h3>
+        <p>Posting becomes something you can knock out in less time than it takes to scroll LinkedIn "for inspiration."</p>
+        <p style="margin-top: 12px;">And when posting feels that easy, you can keep showing up day after day, week after week.</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<!-- 3 supporting testimonials -->
+<section class="cb-section cb-section--white">
+  <div class="cb-container">
+
+    <div class="cb-testi-grid cb-testi-grid--3">
+
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;I joined Your Next Post because <mark>I need accountability</mark> and more resources to turbocharge my brand on LinkedIn, and <mark>that's exactly what I get</mark>. There's no fluff. It's exactly what you need. <mark>I can't say enough</mark> about Matt and his knowledge.&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b94106d822b797bd95f5e5.jpg" alt="Truett Bloxsom" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Truett Bloxsom</p>
+            <p class="cb-testimonial__role">Startup Data Analyst</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;The Copy Builder system is <mark>clear, concise, and easy to understand</mark>. Just after a week of joining, <mark>I moved up ten positions in the Favikon LinkedIn ranking for women in IT and tech in Spain</mark>.&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b941069c98171f4cbcca7c.jpg" alt="Almudena Rendón Fernández" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Almudena Rendón Fernández</p>
+            <p class="cb-testimonial__role">Software Developer</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cb-testimonial">
+        <p class="cb-testimonial__quote">&#8220;I've got <mark>three weeks of content ideas lined up in my calendar</mark>, and I'm able to write them out easily once a week. <mark>Matt's frameworks made everything click</mark>, especially the way he uses a content marketing funnel as a filter to make sure every post serves a purpose. The <mark>personalised feedback was where the real magic happened</mark>. It's taken the stress out of content creation, and <mark>my post performance has jumped noticeably since joining</mark>.&#8221;</p>
+        <div class="cb-testimonial__footer">
+          <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b9410661cba5622184b89b.png" alt="Cass Whitaker" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Cass Whitaker</p>
+            <p class="cb-testimonial__role">@ Wordcraft</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── Featured quote ── */
+.cb-featured-quote {
+  background: var(--cb-cream);
+  border-radius: 20px;
+  padding: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cb-featured-quote__text {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+.cb-featured-quote__footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ── Benefits grid ── */
+.cb-benefits-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cb-benefit-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cb-benefit-card__num {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--cb-orange);
+  text-transform: uppercase;
+}
+
+.cb-benefit-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cb-black);
+  line-height: 1.3;
+}
+
+.cb-benefit-card p {
+  font-size: 0.95rem;
+  color: var(--cb-text-mid);
+  line-height: 1.7;
+}
+
+.cb-benefit-card__sub {
+  font-size: 0.9rem !important;
+  font-style: italic;
+  color: var(--cb-text-soft) !important;
+  margin-top: -4px;
+}
+
+.cb-benefit-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cb-benefit-list li {
+  font-size: 0.9rem;
+  color: var(--cb-text-mid);
+  padding-left: 18px;
+  position: relative;
+  line-height: 1.55;
+}
+
+.cb-benefit-list li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+/* ── Testimonial stack ── */
+.cb-testi-grid--3 {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .cb-featured-quote { padding: 24px; }
+}
+</style>
+<!-- ============================================================
+     SECTION 7: HOW IT WORKS — 5 Steps
+     GHL: Paste as the seventh Custom HTML block (after s06b).
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container">
+
+    <div style="text-align: center; margin-bottom: 16px;">
+      <span class="cb-eyebrow">Inside Your Next Post</span>
+      <h2>Here's How It Works</h2>
+    </div>
+
+    <p style="max-width: 620px; margin: 0 auto 72px; text-align: center; font-size: 1.05rem; color: #555;">
+      Your Next Post isn't a course you binge on over the weekend, then forget about. Or worse, never open at all. It gives you ongoing structure, personalised feedback, and accountability to start and <strong>keep</strong> posting based on what works TODAY, while having fun along the way.
+    </p>
+
+    <div class="cb-steps">
+
+      <!-- Step 1 -->
+      <div class="cb-step">
+        <div class="cb-step__num">01</div>
+        <div class="cb-step__content">
+          <h3>Build Your LinkedIn Writing Foundations</h3>
+          <p style="margin-bottom: 16px;">Get instant access to the full Your Next Post training hub, where you'll learn the important elements for writing on LinkedIn:</p>
+          <ul class="cb-step-list">
+            <li>Hooks.</li>
+            <li>Storytelling.</li>
+            <li>Content systems.</li>
+            <li>Formats.</li>
+            <li>Starting conversations.</li>
+            <li>And more.</li>
+          </ul>
+          <p style="margin-top: 16px; margin-bottom: 16px;">It's designed so you can jump in whenever you're stuck.</p>
+          <div class="cb-step-examples">
+            <p>Overthinking how to open a post? <span class="cb-step-arrow">→</span> Head to the Audience-Attracting Hooks lesson.</p>
+            <p>Got a great idea but not sure how to structure it? <span class="cb-step-arrow">→</span> The Storytelling Module shows you how to start.</p>
+            <p>Want to mix up the posts you're sharing? <span class="cb-step-arrow">→</span> There's a whole section on that.</p>
+          </div>
+          <p style="margin-top: 16px;">Think of this as a reference library you can dip into whenever you need a hand.</p>
+
+          <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69e114b4c56ad27908224191.png" alt="Your Next Post courses and training" loading="lazy" style="width: 100%; border-radius: 12px; border: 1px solid var(--cb-card-border); box-shadow: var(--cb-card-shadow); margin-top: 20px; display: block;">
+        </div>
+      </div>
+
+      <div class="cb-step-connector" aria-hidden="true">⬇</div>
+
+      <!-- Step 2 -->
+      <div class="cb-step">
+        <div class="cb-step__num">02</div>
+        <div class="cb-step__content">
+          <h3>Write in Half the Time With Monthly Templates</h3>
+          <p style="margin-bottom: 16px;">Every month, you get 8–10 content templates to shortcut the writing process.</p>
+          <p style="margin-bottom: 12px;">Each one comes with:</p>
+          <ul class="cb-step-list">
+            <li>A breakdown of why it works</li>
+            <li>Examples across different niches (SaaS, personal brands, fitness, founders, etc.)</li>
+            <li>Guidance on how to adapt it to your voice</li>
+          </ul>
+          <p style="margin-top: 16px; margin-bottom: 16px;">Instead of wasting 90 mins figuring out where to start:</p>
+          <p style="margin-bottom: 16px; font-weight: 700; color: #111;">You pick a template, plug in your lived experience, and hit post (or schedule).</p>
+          <p style="margin-bottom: 16px;">Then you're free to walk the dog, sit in the sun, or do anything other than scrolling and comparing yourself to strangers on the internet.</p>
+          <p style="margin-bottom: 16px;">And because you understand the structure behind it, you can use it again next week without starting from scratch.</p>
+          <div class="cb-step-highlight">
+            (There are already <strong>155+ post templates</strong> waiting when you join).
+          </div>
+
+          <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69e114b4a2661c2e8f959d4a.png" alt="Post templates inside Your Next Post" loading="lazy" style="width: 100%; border-radius: 12px; border: 1px solid var(--cb-card-border); box-shadow: var(--cb-card-shadow); margin-top: 20px; display: block;">
+        </div>
+      </div>
+
+      <div class="cb-step-connector" aria-hidden="true">⬇</div>
+
+      <!-- Step 3 -->
+      <div class="cb-step">
+        <div class="cb-step__num">03</div>
+        <div class="cb-step__content">
+          <h3>Get My Eyes on Your Posts Anytime</h3>
+          <p style="margin-bottom: 16px;">Forget second-guessing whether something is good enough to post.</p>
+          <p style="margin-bottom: 16px;">Inside Your Next Post, you can get my eyes on your writing whenever you want a second opinion. Just drop your draft in the community and I'll meet you in the comments with feedback on what to tweak, tighten, or improve for next time.</p>
+          <p style="margin-bottom: 12px;">This can be anything:</p>
+          <ul class="cb-step-list">
+            <li>A draft sitting in your notes app you're unsure about posting</li>
+            <li>Two different hooks you can't decide between</li>
+            <li>A post that flopped and you want to understand why</li>
+            <li>Or a rough idea from your week you're trying to turn into something interesting</li>
+          </ul>
+          <p style="margin-top: 16px; margin-bottom: 16px;">I typically respond within 48 hours (often faster) so you're not stuck overthinking a post for days.</p>
+          <p style="margin-bottom: 16px;">Every month, I also run a <strong>1-hour Mastermind Zoom</strong>. I'll deep dive on one specific topic ― hooks, emails, DMing, commenting ― chosen BY you, so it's always relevant to what you need help with the most.</p>
+          <p style="margin-bottom: 16px;">Then we open it up for you to ask me anything about writing online, building an audience, or turning posts into real opportunities.</p>
+          <div class="cb-step-highlight">
+            If you can't make it to LIVE calls (time zones, kids, life)&hellip; Drop your question in the monthly <strong>Live Chat Q&amp;A</strong>, and we can go back and forth in the thread until it clicks.
+          </div>
+
+          <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69e114b412a3b92a6811135e.png" alt="Feedback inside Your Next Post" loading="lazy" style="width: 100%; border-radius: 12px; border: 1px solid var(--cb-card-border); box-shadow: var(--cb-card-shadow); margin-top: 20px; display: block;">
+        </div>
+      </div>
+
+      <div class="cb-step-connector" aria-hidden="true">⬇</div>
+
+      <!-- Step 4 -->
+      <div class="cb-step">
+        <div class="cb-step__num">04</div>
+        <div class="cb-step__content">
+          <h3>Stay Consistent With a Community That Gets It</h3>
+          <p style="margin-bottom: 16px;">Inside the community, members share drafts, live posts, wins, and flops.</p>
+          <p style="margin-bottom: 16px;">You'll see what others are testing, what's working, and what feedback they're implementing.</p>
+          <ul class="cb-step-list">
+            <li>Someone will post a hook they're unsure about.</li>
+            <li>Someone else will share a post that unexpectedly took off.</li>
+            <li>And it usually sparks ideas for your own posts.</li>
+          </ul>
+          <p style="margin-top: 16px; font-weight: 700; color: #111;">More importantly, you'll keep going. Because it's a lot harder to disappear for three weeks when everyone else is posting too.</p>
+
+          <img src="https://copybuilders.carrd.co/assets/images/image22.jpg?v=b6e25d95" alt="Your Next Post community wins" loading="lazy" style="width: 100%; border-radius: 12px; border: 1px solid var(--cb-card-border); box-shadow: var(--cb-card-shadow); margin-top: 20px; display: block;">
+        </div>
+      </div>
+
+      <div class="cb-step-connector" aria-hidden="true">⬇</div>
+
+      <!-- Step 5 -->
+      <div class="cb-step">
+        <div class="cb-step__num">05</div>
+        <div class="cb-step__content">
+          <h3>Go Deeper When You're Ready</h3>
+          <p style="margin-bottom: 16px;">I'm constantly adding new trainings and breakdowns based on what I'm testing in my business and what's working on LinkedIn right now (not recycled garbage from three years ago).</p>
+          <p style="margin-bottom: 16px;">Right now, that includes:</p>
+          <div class="cb-bonus-list">
+
+            <div class="cb-bonus-item">
+              <p class="cb-bonus-item__title">Past Mastermind Call Recordings</p>
+              <p>Hours of real conversations where I help members break down posts, hooks, and content strategy. Ask any question, and my handy AI tool will pull the answer from past discussions with the exact timestamp so you can jump straight to the good bit.</p>
+            </div>
+
+            <div class="cb-bonus-item">
+              <p class="cb-bonus-item__title">My Swipe File</p>
+              <p>A growing collection of real LinkedIn posts you can study, break down, and borrow from so you're never short on inspiration or structure.</p>
+            </div>
+
+            <div class="cb-bonus-item">
+              <p class="cb-bonus-item__title">The Digital Copywriter course <span style="font-weight:400; color: #777;">(normally $497)</span></p>
+              <p>The gold standard for helping you figure out who your audience is, what you want to be known for, and how to communicate it clearly online.</p>
+            </div>
+
+            <div class="cb-bonus-item">
+              <p class="cb-bonus-item__title">The Copy Builder Toolkit workshops</p>
+              <p>Over 6 hours of workshops and extra resources to sharpen your writing and content strategy even further.</p>
+            </div>
+
+          </div>
+          <p style="margin-top: 20px;">It's all there whenever you feel like going down the rabbit hole.</p>
+        </div>
+      </div>
+
+    </div><!-- /cb-steps -->
+
+    <div style="text-align: center; margin-top: 64px;">
+      <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn cb-btn--lg">Join for <span style="text-decoration:line-through;opacity:0.55;">$1,000</span> $500/year</a>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── How It Works steps ── */
+.cb-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cb-step {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 32px;
+  align-items: start;
+  padding: 40px 0;
+  border-bottom: 1px solid var(--cb-divider);
+}
+
+.cb-step:first-child { padding-top: 0; }
+.cb-step:last-child  { border-bottom: none; }
+
+.cb-step__num {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--cb-orange);
+  line-height: 1;
+  padding-top: 4px;
+}
+
+.cb-step__content h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--cb-black);
+}
+
+.cb-step__content p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+/* Step bullet list */
+.cb-step-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cb-step-list li {
+  font-size: 0.95rem;
+  color: var(--cb-text-mid);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.cb-step-list li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+/* Routing examples */
+.cb-step-examples {
+  background: var(--cb-cream);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cb-step-examples p {
+  font-size: 0.9rem;
+  color: var(--cb-text-mid);
+  line-height: 1.55;
+}
+
+.cb-step-arrow {
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+/* Highlight callout */
+.cb-step-highlight {
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 0.9rem;
+  color: var(--cb-text-mid);
+  line-height: 1.65;
+  box-shadow: var(--cb-card-shadow);
+}
+
+/* Bonus list */
+.cb-bonus-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cb-bonus-item {
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: var(--cb-card-shadow);
+}
+
+.cb-bonus-item__title {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: var(--cb-black) !important;
+  margin-bottom: 6px !important;
+}
+
+.cb-bonus-item p:last-child {
+  font-size: 0.9rem;
+  color: var(--cb-text-mid);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Step connector */
+.cb-step-connector {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #ccc;
+  padding: 4px 0;
+  margin-left: 80px;
+}
+
+@media (max-width: 640px) {
+  .cb-step {
+    grid-template-columns: 56px 1fr;
+    gap: 16px;
+  }
+  .cb-step__num { font-size: 1.8rem; }
+  .cb-step-connector { margin-left: 56px; }
+}
+</style>
+<!-- ============================================================
+     SECTION 9: RESULTS — When You Have an Easy System
+     GHL: Paste after How It Works (s07).
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container">
+
+    <div style="text-align: center; margin-bottom: 64px;">
+      <span class="cb-eyebrow">The outcomes</span>
+      <h2 style="max-width: 680px; margin: 0 auto;">When you have an easy system for writing and staying consistent on LinkedIn&hellip;</h2>
+    </div>
+
+    <div class="cb-results-grid">
+
+      <div class="cb-result-card">
+        <h3>Your name pops up more often</h3>
+        <p>People stop scrolling when they recognise your name in their feed. They start associating you with certain ideas. And soon, you get tagged in comments saying, "You should chat to @[Your Name] about this."</p>
+      </div>
+
+      <div class="cb-result-card">
+        <h3>Your posts travel further than you expect</h3>
+        <p>You'll stop feeling like you're posting in the void. People reply with thoughtful comments. They tag colleagues who need to see it. And the beauty of LinkedIn is that your post can land in front of anybody, from hiring managers to senior leaders to CEOs who would've never discovered you otherwise.</p>
+      </div>
+
+      <div class="cb-result-card">
+        <h3>Meaningful conversations happen in your DMs</h3>
+        <p>Instead of spam and cold pitches, your inbox fills with messages from potential clients ready to pay your rates, collaborators suggesting partnerships, and even recruiters with higher-paying roles.</p>
+      </div>
+
+      <div class="cb-result-card">
+        <h3>You get better at explaining what you think</h3>
+        <p>Knowing how to clearly share your ideas is THE most powerful and profitable skill you can have. The easier it is for people to understand how you think, the easier it is for them to trust you, hire you, promote you, or buy from you. And the more you practise it online, the more naturally it shows up in meetings, sales calls, interviews, and just about every other part of life.</p>
+      </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 48px; margin-bottom: 8px;">
+      <img src="https://copybuilders.carrd.co/assets/images/image02.png?v=b6e25d95" alt="" loading="lazy" style="max-width: 280px; width: 100%;">
+    </div>
+
+    <div style="text-align: center; margin-top: 64px; margin-bottom: 36px;">
+      <span class="cb-eyebrow">Real member wins</span>
+      <h3 style="font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; color: var(--cb-black); letter-spacing: -0.02em; line-height: 1.2;">And it's already happening for members inside<br>Your Next Post</h3>
+    </div>
+
+    <div class="cb-proof-image-grid">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b9487608e9f2d80622d085.png" alt="Your Next Post social proof 1" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b94876ad02763e64496cf8.png" alt="Your Next Post social proof 2" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b948769ab5e2c13b558887.png" alt="Your Next Post social proof 3" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b948769c9817399abd8a92.png" alt="Your Next Post social proof 4" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b9487661cba5f088857854.png" alt="Your Next Post social proof 5" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b948769c981767dbbd8a93.png" alt="Your Next Post social proof 6" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b948769ab5e23f12558888.png" alt="Your Next Post social proof 7" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b94876dac58479599bc67a.png" alt="Your Next Post social proof 8" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b9487681a84899dc02df05.png" alt="Your Next Post social proof 9" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b9487608e9f23b0122d084.png" alt="Your Next Post social proof 10" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b94876d822b75a7696b7f3.png" alt="Your Next Post social proof 11" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69e7a8898381f926787c70a2.png" alt="Your Next Post social proof 12" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69e7a889da11eeea68deda2d.png" alt="Your Next Post social proof 13" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69e7a889a691ce6ea0971fb7.png" alt="Your Next Post social proof 14" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69e7a88903c24196d23c82ee.png" alt="Your Next Post social proof 15" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69e7a88903c24196d23c82f0.png" alt="Your Next Post social proof 16" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69e7a8896fc69286f3a1f5ce.png" alt="Your Next Post social proof 17" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69e7a889033b8ae4a4a1151f.png" alt="Your Next Post social proof 18" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69e7a8898381f926787c709e.png" alt="Your Next Post social proof 19" class="cb-proof-image-card">
+      <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69e7a88903c24196d23c82ef.png" alt="Your Next Post social proof 20" class="cb-proof-image-card">
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<!-- ── 4 major testimonials ── -->
+<section class="cb-section cb-section--cream">
+  <div class="cb-container">
+
+    <div class="cb-major-testimonials">
+
+      <div class="cb-major-testi">
+        <p class="cb-major-testi__quote">&#8220;In 4 weeks I've grown my followers by 1,500+ and achieved more than 850,000 impressions.<br><br>Before Matt, I've been wasting hours looking at a blank screen not knowing what to write about despite having delivered $2.4B in tech projects over the last years. Matt's approach is unique and brought my writing to the next level.<br><br>Too many ideas and lived experiences I could ever write about. Turning them into high-quality content with easy and fast systems.<br><br>Matt is going the extra mile for each attendee and is providing direct feedback to all our questions. Highly recommended!&#8221;</p>
+        <div class="cb-major-testi__footer">
+          <img src="https://media.licdn.com/dms/image/v2/D4D03AQGo--QLLIFWhw/profile-displayphoto-shrink_800_800/B4DZTX3dQtGkAc-/0/1738788427226?e=1778112000&v=beta&t=oOwvTSMlF_SwReshgWqoqpeL7QAlYwWssFlo3r-AIFo" alt="Michael Erhard" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Michael Erhard</p>
+            <p class="cb-testimonial__role">Head of Engineering @ Amazon</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cb-major-testi">
+        <p class="cb-major-testi__quote">&#8220;My very first post working with Matt actually became one of my top-performing posts of all time — over 540K impressions on just one post.<br><br>I was looking to get more engagement and leads for my business. Matt delivered! I usually post every day with mixed engagement but Matt's coaching helped add more clarity and impact to my writing.<br><br>The great thing about working with Matt is that you become a better copywriter in the process. Whenever I'm creating content for my biz, I always think back to the frameworks I learned from Matt.&#8221;</p>
+        <div class="cb-major-testi__footer">
+          <img src="https://media.licdn.com/dms/image/v2/D5603AQE-EGVhPM-6_g/profile-displayphoto-shrink_800_800/B56ZReAjekHwAg-/0/1736743991510?e=1778112000&v=beta&t=ew6H2xGiwNKvHv6Os4txOU4UIv5sXkky_ctGGiYhnOI" alt="Reno Perry" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Reno Perry</p>
+            <p class="cb-testimonial__role"><!-- PASTE RENO'S ROLE/TITLE --></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cb-major-testi">
+        <p class="cb-major-testi__quote">&#8220;After 6 months in Your Next Post my monthly impressions on LinkedIn grew from 41k/month to 134k/month.<br><br>I joined Your Next Post because I wanted to get more engagement from my LinkedIn posts, grow my audience and drive more revenue for my business (and monetise my personal brand).<br><br>After 6 months, my monthly impressions grew from 41k/month to 134k/month, my followers grew from 6,000 to 9,733, I booked 5 speaking gigs (one of which turned into a $50k/year advisory agreement) and closed $73k in new revenue from my LinkedIn posts.<br><br>I think the most useful thing about your content was the separation between what makes TOF, MOF and BOF content. And then how to go from the content to a conversation.&#8221;</p>
+        <div class="cb-major-testi__footer">
+          <img src="https://media.licdn.com/dms/image/v2/D4E03AQEQzKhYdzT9gA/profile-displayphoto-crop_800_800/B4EZzySV68JAAI-/0/1773591425503?e=1778112000&v=beta&t=CO5nZJKIqN7rjeX6F6cRF8oLAfwUpcxvTyzjMZoEdRY" alt="Michael Lovegrove" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Michael Lovegrove</p>
+            <p class="cb-testimonial__role">Founder @ Snowballn'</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cb-major-testi">
+        <p class="cb-major-testi__quote">&#8220;Since joining (3 months ago), my MRR has grown by over 157% and I've already smashed every revenue goal I set for myself for 2025.<br><br>When I joined Your Next Post, I was just over a year into my solo-founder journey and feeling pretty stuck finding &#8220;the model&#8221;. I was a glorified freelancer at best, juggling ghostwriting, email marketing &amp; paid advertising retainers. It was chaotic, unscalable, and not the business I wanted to build.<br><br>I joined to find my &#8220;online voice&#8221; &amp; step away from a reliance on cold email/DMs. Bloody hell&hellip; what an impact it's made.<br><br>Since joining, my MRR has grown by over 157% and I've already smashed every revenue goal I set for myself for 2025. Last month I hit a new MRR record. This month, I'm on track to beat it again.<br><br>There are lots of moving parts that have contributed to this growth&hellip; but the confidence this program has given me is unquantifiable.<br><br>Matt is at the top of his game, a fantastic operator &amp; also a genuinely caring person. I've been in the social media marketing space for 10+ years and haven't come across a program as valuable as this. This is only the beginning, but just wanted to share my gratitude!&#8221;</p>
+        <div class="cb-major-testi__footer">
+          <img src="https://media.licdn.com/dms/image/v2/D4E03AQESSC8U4iN2xg/profile-displayphoto-crop_800_800/B4EZzE5eZMHMAM-/0/1772829929432?e=1778112000&v=beta&t=PcBKC4_fEe6We0emXKQvhCmAnPMTYL0fIDfjAE9JerU" alt="Josh Hannen" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Josh Hannen</p>
+            <p class="cb-testimonial__role">Founder @ 5days</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── Results grid ── */
+.cb-results-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.cb-result-card {
+  background: var(--cb-cream);
+  border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cb-result-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cb-black);
+  line-height: 1.3;
+}
+
+.cb-result-card p {
+  font-size: 0.95rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+/* ── Social proof image grid ── */
+.cb-proof-image-grid {
+  columns: 2;
+  column-gap: 24px;
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 640px) {
+  .cb-proof-image-grid {
+    columns: 1;
+  }
+}
+
+.cb-proof-image-card {
+  width: 100%;
+  display: block;
+  border-radius: 16px;
+  border: 1px solid var(--cb-card-border);
+  box-shadow: var(--cb-card-shadow);
+  background: #fff;
+  margin-bottom: 24px;
+  break-inside: avoid;
+}
+
+/* ── Major testimonials ── */
+.cb-major-testimonials {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.cb-major-testi {
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: var(--cb-card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cb-major-testi__quote {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--cb-text-mid);
+  line-height: 1.8;
+  flex: 1;
+}
+
+.cb-major-testi__footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 20px;
+  border-top: 1px solid var(--cb-divider);
+}
+
+@media (max-width: 768px) {
+  .cb-results-grid,
+  .cb-major-testimonials { grid-template-columns: 1fr; }
+}
+</style>
+<!-- ============================================================
+     V2 SECTION 13: PRICING — 3 cards + bonus (first instance)
+     id="pricing" so all #pricing CTAs scroll here.
+     ============================================================ -->
+
+<section class="cb-section cb-section--dark" id="pricing">
+  <div class="cb-container">
+
+    <div style="text-align: center; margin-bottom: 64px;">
+      <span class="cb-eyebrow" style="color: var(--cb-orange);">Ready to join?</span>
+      <h2 style="color: #fff; max-width: 560px; margin: 0 auto 16px;">
+        Ready to make posting on LinkedIn fast, easy, and fun?
+      </h2>
+      <p style="color: rgba(255,255,255,0.6); max-width: 460px; margin: 0 auto;">
+        Join Your Next Post Today
+      </p>
+    </div>
+
+    <!-- What's included -->
+    <div class="cb-pricing-includes">
+      <div class="cb-pricing-includes__col">
+        <p class="cb-pricing-includes__heading">The full Your Next Post Curriculum:</p>
+        <ul class="cb-pricing-features">
+          <li>Weekly training video</li>
+          <li>LinkedIn courses</li>
+          <li>Guest expert workshops</li>
+          <li>100+ templates</li>
+        </ul>
+      </div>
+      <div class="cb-pricing-includes__col">
+        <p class="cb-pricing-includes__heading">Ongoing coaching &amp; support:</p>
+        <ul class="cb-pricing-features">
+          <li>1 hour Mastermind call</li>
+          <li>Personalised advice</li>
+          <li>Monthly LIVE Q&amp;A chat to drop your Qs</li>
+          <li>Your Next Post community access</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bonus highlight -->
+    <div class="cb-v2-bonus">
+      <p class="cb-v2-bonus__heading">🎁 Bonus for 15 Minute Content subscribers:</p>
+      <p class="cb-v2-bonus__body">✅ FREE 1-1 consultation call with me where we can dive deep into your LinkedIn journey so far and work together to come up with a plan to help you reach your unique goals</p>
+      <p class="cb-v2-bonus__note">This is something I only offer my 1:1 coaching clients — yours free when you join before [DATE].</p>
+    </div>
+
+    <!-- 3 pricing cards -->
+    <div class="cb-pricing-grid cb-pricing-grid--3col">
+
+      <!-- Monthly -->
+      <div class="cb-pricing-card">
+        <p class="cb-pricing-card__label">12 Monthly Payments</p>
+        <div class="cb-pricing-card__price">
+          <span class="cb-pricing-card__amount">$99</span>
+          <span class="cb-pricing-card__period">/month</span>
+        </div>
+        <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn" style="width: 100%; text-align: center; display: block; margin-top: auto;">
+          Join now
+        </a>
+        <p style="font-size: 0.75rem; color: rgba(255,255,255,0.4); text-align: center; margin-top: 8px;">12-month membership</p>
+      </div>
+
+      <!-- Annual — regular price -->
+      <div class="cb-pricing-card">
+        <p class="cb-pricing-card__label">One Annual Payment</p>
+        <div class="cb-pricing-card__price">
+          <span class="cb-pricing-card__amount">$1,000</span>
+          <span class="cb-pricing-card__period">/year</span>
+        </div>
+        <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn" style="width: 100%; text-align: center; display: block; margin-top: auto;">
+          Join now
+        </a>
+        <p style="font-size: 0.75rem; color: rgba(255,255,255,0.4); text-align: center; margin-top: 8px;">12-month membership</p>
+      </div>
+
+      <!-- Exclusive 50% off — featured -->
+      <div class="cb-pricing-card cb-pricing-card--featured">
+        <div class="cb-pricing-card__badge">Your Exclusive Price</div>
+        <p class="cb-pricing-card__label">One Annual Payment</p>
+        <div class="cb-pricing-card__price">
+          <span style="font-size: 1rem; text-decoration: line-through; opacity: 0.5; display: block; margin-bottom: 4px;">$1,000</span>
+          <span class="cb-pricing-card__amount">$500</span>
+          <span class="cb-pricing-card__period">/year</span>
+        </div>
+        <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn" style="width: 100%; text-align: center; display: block; margin-top: auto; background: var(--cb-orange);">
+          Get 50% off
+        </a>
+        <p style="font-size: 0.75rem; color: rgba(255,255,255,0.4); text-align: center; margin-top: 8px;">*Offer expires [DATE]</p>
+      </div>
+
+    </div>
+
+    <!-- Guarantee -->
+    <div class="cb-guarantee">
+      <span class="cb-guarantee__icon">🛡️</span>
+      <p><strong>Try Your Next Post 100% risk-free.</strong> If you don't love what you see inside the first 14 days, email me and I'll refund every penny. No questions asked.</p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* 3-column pricing grid override */
+.cb-pricing-grid--3col {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 900px) {
+  .cb-pricing-grid--3col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Bonus box */
+.cb-v2-bonus {
+  background: rgba(240,100,73,0.12);
+  border: 1px solid rgba(240,100,73,0.3);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cb-v2-bonus__heading {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--cb-orange);
+  letter-spacing: -0.01em;
+}
+
+.cb-v2-bonus__body {
+  font-size: 0.975rem;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.7;
+}
+
+.cb-v2-bonus__note {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
+  font-style: italic;
+  line-height: 1.6;
+}
+</style>
+<!-- ============================================================
+     SECTION 13b: WHO IT'S FOR
+     GHL: Paste immediately after the first pricing block (s13).
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container--narrow">
+
+    <span class="cb-eyebrow">Is this for me?</span>
+    <h2 style="margin-bottom: 20px;">Your Next Post is for anyone who wants LinkedIn to open the doors to more clients, conversations, and opportunities without wasting 90 mins on a single post</h2>
+
+    <p style="margin-bottom: 28px;">And yes, this works no matter what niche you're in.</p>
+
+    <p style="margin-bottom: 20px;">Inside the community, we've got members writing about everything from finance, healthcare and MedTech… to product design, web design, real estate, meal planning, and even the music industry.</p>
+
+    <p style="margin-bottom: 28px;">You might want different things from LinkedIn, like clients, career opportunities, a stronger reputation, or simply a place to share your ideas…</p>
+
+    <p style="margin-bottom: 16px; font-weight: 700; color: #111;">But most people start in the same place:</p>
+
+    <ul class="cb-for-list cb-for-list--yes">
+      <li>You've posted once or twice… then told yourself, "nobody cares what I have to say"</li>
+      <li>You open LinkedIn and think, "I could say something about this…" but never do</li>
+      <li>You keep rewriting or watering down your posts until it sounds like everyone else</li>
+    </ul>
+
+    <p style="margin-top: 28px; margin-bottom: 28px;">If that sounds like you, you'll fit right in.</p>
+
+    <p style="margin-bottom: 40px;">I'll show you just how easy writing on LinkedIn can be when you have a simple process, clear frameworks, and people around you committed to staying consistent.</p>
+
+    <!-- Who should skip it -->
+    <div class="cb-not-for">
+      <p class="cb-not-for__heading">You're better off giving Your Next Post a miss if:</p>
+      <p>You're only looking for growth hacks or ways to go viral. While I occasionally talk about reach and getting ideas in front of more people, the goal isn't to beat the algorithm.</p>
+    </div>
+
+    <!-- Social proof count -->
+    <div class="cb-member-count">
+      <p>Join the <strong>180+ members</strong> inside Your Next Post who've gone from lurking on the sidelines to sharing their ideas consistently on LinkedIn</p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+.cb-for-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cb-for-list li {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  padding-left: 24px;
+  position: relative;
+  line-height: 1.65;
+}
+
+.cb-for-list--yes li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+.cb-not-for {
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin-bottom: 32px;
+  box-shadow: var(--cb-card-shadow);
+}
+
+.cb-not-for__heading {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cb-text-soft);
+  margin-bottom: 10px;
+}
+
+.cb-not-for p:last-child {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.7;
+}
+
+.cb-member-count {
+  background: var(--cb-orange);
+  border-radius: 14px;
+  padding: 20px 28px;
+  text-align: center;
+}
+
+.cb-member-count p {
+  font-size: 1rem;
+  color: #fff;
+  line-height: 1.6;
+}
+
+.cb-member-count strong {
+  color: #fff;
+}
+</style>
+<!-- ============================================================
+     SECTION 11: VIDEO TESTIMONIAL — Ryan Hashemi
+     GHL: Paste after the "who it's for" section (s13b).
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container" style="text-align: center;">
+
+    <span class="cb-eyebrow">In their own words</span>
+    <h2 style="max-width: 580px; margin: 0 auto 16px;">
+      Hear what's possible when consistency compounds on LinkedIn
+    </h2>
+
+    <p style="max-width: 540px; margin: 0 auto 48px; font-size: 1rem; font-style: italic; color: #555;">
+      &#8220;I first started the LinkedIn game clueless. I talked to Matt, and instantly he was able to help me get clarity on how to think about LinkedIn. He helped me most immensely in my style of writing, how to actually write in a way that works on LinkedIn, how to keep it fresh, how to keep it fun. He&#8217;s one of the best in the game, and I couldn&#8217;t recommend working with Matt more.&#8221;
+    </p>
+
+    <div class="cb-video-wrap">
+      <iframe src="https://testimonial.to/embed/v/a4649d8b-95cf-43d9-a68e-2116eeb5c88a" frameborder="0" allowfullscreen allow="autoplay; fullscreen"></iframe>
+    </div>
+
+    <p style="margin-top: 20px; font-size: 0.9rem; font-weight: 700; color: #111;">Ryan Hashemi</p>
+    <p style="font-size: 0.8rem; color: #777;">Founder &amp; CEO @ Snowball</p>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+.cb-video-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 16 / 9;
+}
+
+.cb-video-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+</style>
+<!-- ============================================================
+     SECTION 11b: ARNAUD, NIGEL, TOM + JOIN CTA
+     GHL: Paste immediately after the video section (s11).
+     ============================================================ -->
+
+<section class="cb-section cb-section--cream">
+  <div class="cb-container">
+
+    <div class="cb-social-proof-grid">
+
+      <div class="cb-social-proof-card">
+        <p class="cb-social-proof-card__quote">&#8220;Before working with Matt, I'd never signed a client from LinkedIn. In the first 7 weeks of using Matt's strategy, I generated $150k signed deals, all inbound.&#8221;</p>
+        <div class="cb-social-proof-card__person">
+          <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b94ac6f8443c76e352678f.jpg" alt="Arnaud Renoux" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Arnaud Renoux</p>
+            <p class="cb-testimonial__role">Founder @ Scalelist — 40,000 followers</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cb-social-proof-card">
+        <p class="cb-social-proof-card__quote">&#8220;I was running around like a headless chicken, as a busy CEO. But now, our agency does $100k per month — our entire pipeline is built with LinkedIn.&#8221;</p>
+        <div class="cb-social-proof-card__person">
+          <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b94ac6ad0276061449aab6.jpg" alt="Nigel Thomas" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Nigel Thomas</p>
+            <p class="cb-testimonial__role">CEO @ Alpha Inbound — 60,000 followers</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cb-social-proof-card">
+        <p class="cb-social-proof-card__quote">&#8220;I had a goal to hit 100 likes on my LinkedIn posts. After 3 months working with Matt, we hit that multiple times and shortly after I hit 100k followers.&#8221;</p>
+        <div class="cb-social-proof-card__person">
+          <img src="https://assets.cdn.filesafe.space/ZD3rYznbY7tzHZrAxBwr/media/69b94ac6ad0276b1b549aab5.jpg" alt="Tom Hunt" class="cb-testimonial__avatar">
+          <div>
+            <p class="cb-testimonial__name">Tom Hunt</p>
+            <p class="cb-testimonial__role">Founder @ Fame — 207,000 followers</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 56px;">
+      <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn cb-btn--lg">Join for 50% off + get free 1-1 call</a>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+.cb-social-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.cb-social-proof-card {
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-top: 3px solid var(--cb-orange-soft);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: var(--cb-card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cb-social-proof-card__quote {
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+  flex: 1;
+}
+
+.cb-social-proof-card__person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--cb-divider);
+}
+
+@media (max-width: 900px) {
+  .cb-social-proof-grid { grid-template-columns: 1fr; }
+}
+</style>
+<!-- ============================================================
+     SECTION 12: LINKEDIN CAN OPEN BIG DOORS
+     GHL: Paste after the social proof / Arnaud-Nigel-Tom block (s11b).
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container--narrow">
+
+    <span class="cb-eyebrow">The bigger picture</span>
+    <h2 style="margin-bottom: 32px;">LinkedIn <mark>can</mark> open some pretty big doors</h2>
+
+    <div style="text-align: center; margin-bottom: 40px;">
+      <img src="https://copybuilders.carrd.co/assets/images/image20.png?v=b6e25d95" alt="" loading="lazy" style="max-width: 280px; width: 100%;">
+    </div>
+
+    <div class="cb-doors-list-full">
+
+      <div class="cb-door-item">
+        <span class="cb-door-item__icon">👉</span>
+        <p>A steady stream of clients so you're not lying awake worried about how to cover your bills.</p>
+      </div>
+
+      <div class="cb-door-item">
+        <span class="cb-door-item__icon">👉</span>
+        <p>An engaged audience the size of Arsenal stadium, who recognise your name in the feed and like all your posts.</p>
+      </div>
+
+      <div class="cb-door-item">
+        <span class="cb-door-item__icon">👉</span>
+        <p>Being the front-runner for a job post (or skipping the recruitment process entirely) because you've been connected with the hiring manager for months.</p>
+      </div>
+
+      <div class="cb-door-item">
+        <span class="cb-door-item__icon">👉</span>
+        <p>Making more money than you ever thought possible because people have binged your posts and enjoyed the way you think.</p>
+      </div>
+
+    </div>
+
+    <p style="margin-top: 40px; margin-bottom: 20px;">I've seen this play out for myself and the members inside Your Next Post.</p>
+
+    <p style="margin-bottom: 28px; font-weight: 700; color: #111;">But none of it happens if you never hit post.</p>
+
+    <p style="margin-bottom: 28px;">Because no one can refer you, hire you, or invite you into bigger conversations if you're sitting in the comments section saying "Great post 👏" while your own ideas stay hidden in drafts.</p>
+
+    <div class="cb-doors-closing">
+      <p>If you're ready to start writing and posting, Your Next Post makes that part easy.</p>
+    </div>
+
+    <div style="text-align: center; margin-top: 48px;">
+      <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn cb-btn--lg">Join for 50% off + get free 1-1 call</a>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+.cb-doors-list-full {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cb-door-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: var(--cb-cream);
+  border-radius: 14px;
+  padding: 20px 24px;
+}
+
+.cb-door-item__icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  line-height: 1.7;
+}
+
+.cb-door-item p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.7;
+}
+
+.cb-doors-closing {
+  background: var(--cb-white);
+  border: 1px solid rgba(7,70,56,0.12);
+  border-radius: 14px;
+  padding: 24px 28px;
+  text-align: center;
+}
+
+.cb-doors-closing p {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--cb-green);
+  line-height: 1.65;
+}
+</style>
+<!-- ============================================================
+     SECTION 15: SECOND PRICING BLOCK + BEN TESTIMONIAL
+     GHL: Paste BEFORE the FAQs block (s14).
+     After this: s14 FAQs → s16 Final CTA button (last block).
+     ============================================================ -->
+
+<!-- Second pricing block -->
+<section class="cb-section cb-section--dark">
+  <div class="cb-container">
+
+    <div style="text-align: center; margin-bottom: 64px;">
+      <span class="cb-eyebrow" style="color: var(--cb-orange);">Ready?</span>
+      <h2 style="color: #fff; max-width: 600px; margin: 0 auto 12px;">
+        Take your posts out of drafts and into the feed
+      </h2>
+      <p style="color: rgba(255,255,255,0.55); margin: 0;">Join Your Next Post Today</p>
+    </div>
+
+    <div class="cb-pricing-includes">
+      <div class="cb-pricing-includes__col">
+        <p class="cb-pricing-includes__heading">The full Your Next Post Curriculum:</p>
+        <ul class="cb-pricing-features">
+          <li>Weekly training video</li>
+          <li>LinkedIn courses</li>
+          <li>Guest expert workshops</li>
+          <li>100+ templates</li>
+        </ul>
+      </div>
+      <div class="cb-pricing-includes__col">
+        <p class="cb-pricing-includes__heading">Ongoing coaching &amp; support:</p>
+        <ul class="cb-pricing-features">
+          <li>1 hour Mastermind call</li>
+          <li>Personalised advice</li>
+          <li>Monthly LIVE Q&amp;A chat to drop your Qs</li>
+          <li>Your Next Post community access</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bonus highlight -->
+    <div class="cb-v2-bonus">
+      <p class="cb-v2-bonus__heading">🎁 Bonus for 15 Minute Content subscribers:</p>
+      <p class="cb-v2-bonus__body">✅ FREE 1-1 consultation call with me where we can dive deep into your LinkedIn journey so far and work together to come up with a plan to help you reach your unique goals</p>
+      <p class="cb-v2-bonus__note">This is something I only offer my 1:1 coaching clients — yours free when you join before [DATE].</p>
+    </div>
+
+    <div class="cb-pricing-grid cb-pricing-grid--3col">
+
+      <div class="cb-pricing-card">
+        <p class="cb-pricing-card__label">12 Monthly Payments</p>
+        <div class="cb-pricing-card__price">
+          <span class="cb-pricing-card__amount">$99</span>
+          <span class="cb-pricing-card__period">/month</span>
+        </div>
+        <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn" style="width:100%;text-align:center;display:block;margin-top:auto;">
+          Join now
+        </a>
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);text-align:center;margin-top:8px;">12-month membership</p>
+      </div>
+
+      <div class="cb-pricing-card">
+        <p class="cb-pricing-card__label">One Annual Payment</p>
+        <div class="cb-pricing-card__price">
+          <span class="cb-pricing-card__amount">$1,000</span>
+          <span class="cb-pricing-card__period">/year</span>
+        </div>
+        <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn" style="width:100%;text-align:center;display:block;margin-top:auto;">
+          Join now
+        </a>
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);text-align:center;margin-top:8px;">12-month membership</p>
+      </div>
+
+      <div class="cb-pricing-card cb-pricing-card--featured">
+        <div class="cb-pricing-card__badge">Your Exclusive Price</div>
+        <p class="cb-pricing-card__label">One Annual Payment</p>
+        <div class="cb-pricing-card__price">
+          <span style="font-size:1rem;text-decoration:line-through;opacity:0.5;display:block;margin-bottom:4px;">$1,000</span>
+          <span class="cb-pricing-card__amount">$500</span>
+          <span class="cb-pricing-card__period">/year</span>
+        </div>
+        <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn" style="width:100%;text-align:center;display:block;margin-top:auto;background:var(--cb-orange);">
+          Get 50% off
+        </a>
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);text-align:center;margin-top:8px;">*Offer expires [DATE]</p>
+      </div>
+
+    </div>
+
+    <div class="cb-guarantee">
+      <span class="cb-guarantee__icon">🛡️</span>
+      <p><strong>Try Your Next Post 100% risk-free.</strong> If you don't love what you see inside the first 14 days, email me and I'll refund every penny. No questions asked.</p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<!-- Ben testimonial — long form -->
+<section class="cb-section cb-section--cream">
+  <div class="cb-container" style="max-width: 720px;">
+
+    <div style="text-align: center; margin-bottom: 40px;">
+      <span class="cb-eyebrow">Still on the fence?</span>
+      <p style="font-size: 1rem; color: #555;">Here's exactly what one member had to say about all the resources inside Your Next Post</p>
+    </div>
+
+    <div class="cb-ben-testi">
+      <p class="cb-ben-testi__pull">&#8220;I've built a level of confidence in articulating my thoughts that I didn't have before.&#8221;</p>
+
+      <div class="cb-ben-testi__body">
+        <p>Before I engaged with Matt, I was frustrated. I'd worked with 2-3 LinkedIn "coaches" and hadn't really seen the change in results I was looking for.</p>
+        <p>My impressions were up and down, with no clear rhyme or reason as to why. My engagement was inconsistent and I couldn't figure out how to: 1) create more visibility or 2) how to convert that visibility.</p>
+        <p>A lot of the usual LinkedIn advice out there is surface-level — formatting tips, algorithm hacks, the same recycled spiel from one to another.</p>
+        <p style="font-weight: 700; color: #111;">But Matt MASSIVELY over delivered.</p>
+        <p>Here's the key useful pieces I noticed:</p>
+        <ul class="cb-ben-list">
+          <li>He could break down HOW a reader was consuming my content — I nicknamed him "Captain Hook" as his hook structures helped drive much higher impressions and engagement (and in turn conversion).</li>
+          <li>He showed me how to structure different types of posts and how to tell stories with relevance to my reader.</li>
+          <li>He taught me how to do all of this whilst writing in my own voice with alignment with what works on LinkedIn today.</li>
+          <li>Lastly, his guidance around CTA design and post flow boosted conversion to real clients.</li>
+        </ul>
+        <p>The biggest value for me came from:</p>
+        <ul class="cb-ben-list">
+          <li>1:1 sessions (pick his brains about various useful topics including copy for lead magnets and websites)</li>
+          <li>Community access (structure and templates for posts)</li>
+          <li>His post audits — where he didn't just tweak my writing, he TAUGHT me how to THINK and write like a copywriter. The ability to watch and rewatch those audits was gold for developing my own skill, not surface level tactics.</li>
+        </ul>
+        <p>Life feels a lot easier now. I've got a clear grip on what I am doing, I know WHY posts do or don't land and I've built a level of confidence in articulating my thoughts that I didn't have before.</p>
+        <p>Matt's a top bloke. He's super patient with requests and it feels like he genuinely cares about helping his clients win.</p>
+        <p>The only negative is&hellip; life without Matt's direct support is a little more challenging so I am currently discussing renewing with him because his partnership has been a huge comfort blanket as I grow my audience and business. Sincerely appreciate you, Matt!</p>
+      </div>
+
+      <div class="cb-ben-testi__footer">
+        <div>
+          <p class="cb-testimonial__name">Ben</p>
+          <p class="cb-testimonial__role">Personal Performance Coach</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+<!-- FAQs (s14) go here, then the final CTA button (s16) below -->
+
+<style>
+/* Ben testimonial */
+.cb-ben-testi {
+  background: #fff;
+  border: 1px solid var(--cb-card-border);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: var(--cb-card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.cb-ben-testi__pull {
+  font-size: 1.2rem;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--cb-black);
+  line-height: 1.55;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--cb-divider);
+}
+
+.cb-ben-testi__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cb-ben-testi__body p {
+  font-size: 0.95rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+.cb-ben-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--cb-cream);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.cb-ben-list li {
+  font-size: 0.92rem;
+  color: var(--cb-text-mid);
+  line-height: 1.65;
+  padding-left: 20px;
+  position: relative;
+}
+
+.cb-ben-list li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+.cb-ben-testi__footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 20px;
+  border-top: 1px solid var(--cb-divider);
+}
+
+@media (max-width: 640px) {
+  .cb-ben-testi { padding: 24px; }
+}
+</style>
+<!-- ============================================================
+     SECTION 14: FAQs — CSS-only accordion (no JavaScript)
+     GHL: Paste before the final CTA block (s15).
+     ============================================================ -->
+
+<section class="cb-section cb-section--white">
+  <div class="cb-container--narrow">
+
+    <div style="text-align: center; margin-bottom: 56px;">
+      <span class="cb-eyebrow">Got questions?</span>
+      <h2>FAQs</h2>
+    </div>
+
+    <div class="cb-faqs">
+
+      <!-- FAQ 1 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq1" class="cb-faq__toggle">
+        <label for="faq1" class="cb-faq__question">
+          Can I use AI to write my LinkedIn posts for me?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p>AI is incredible for accelerating the writing process.</p>
+          <p>But if you want to stand out, you can't outsource your way of thinking and communicating. Because the moment you copy and paste whatever AI spits out, you start blending in with the thousands of other people on LinkedIn sharing the same 'hot take.'</p>
+          <p>The way I see it: You can either spend 45 mins feeding AI 10 different prompts to spit out something semi-decent. Or you can understand the principles behind what makes a LinkedIn post 'work' so you can go from idea → post in your voice and with your unique perspective in as little as 10 mins.</p>
+          <p>That is exactly the skill we focus on building inside Your Next Post.</p>
+          <p>Then you can layer AI on top to speed up your workflow, not replace the thinking entirely. I'm even building a set of AI workflows based on the exact writing principles I teach inside the membership so you can move even faster while still sounding like you.</p>
+        </div>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq2" class="cb-faq__toggle">
+        <label for="faq2" class="cb-faq__question">
+          Is this just for business owners?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p>No.</p>
+          <p>We've got founders and business owners inside, yes. But also corporate managers, analysts, freelancers, junior employees, and CEOs.</p>
+          <p>You could be:</p>
+          <ul class="cb-faq-list">
+            <li>A grad building a network so your next role is easier to find</li>
+            <li>A senior leader developing a personal brand before stepping into consulting</li>
+            <li>A business owner attracting clients who already trust how you think</li>
+            <li>A ghostwriter who wants to find your own voice again after being a chameleon for clients</li>
+            <li>Someone who simply wants to communicate ideas more clearly online</li>
+          </ul>
+          <p>If you have thoughts, experience, opinions, or stories you want to share online, and you want to know how to start and keep going, you'll fit right in.</p>
+        </div>
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq3" class="cb-faq__toggle">
+        <label for="faq3" class="cb-faq__question">
+          What if I'm a beginner and never posted before?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p>Perfect. Most members join because they don't know where to start or what to say. Inside, you'll learn how to write posts specifically for LinkedIn, and get a simple process that makes posting feel far less intimidating.</p>
+        </div>
+      </div>
+
+      <!-- FAQ 4 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq4" class="cb-faq__toggle">
+        <label for="faq4" class="cb-faq__question">
+          What if I don't want to post every day?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p>You don't need to.</p>
+          <p>I do it because I enjoy the craft and treat it like reps in the gym. (Plus, my system and frameworks make it easy for me to batch write and schedule my posts ahead of time).</p>
+          <p>Most members post 2–3 times a week, sometimes more, sometimes less. The goal is to make writing light enough that you actually want to keep doing it.</p>
+          <p>One post a week for a year beats three posts in January and then disappearing until October.</p>
+        </div>
+      </div>
+
+      <!-- FAQ 5 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq5" class="cb-faq__toggle">
+        <label for="faq5" class="cb-faq__question">
+          What if I'm not interesting enough to post on LinkedIn?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p>Great news: You don't need a 0-$1M story or a dramatic career pivot.</p>
+          <p>The best posts come from your lived experience:</p>
+          <ul class="cb-faq-list">
+            <li>The stuff you're learning in your 9-5 or day-to-day.</li>
+            <li>The epiphany you had while walking the dog or taking a shower.</li>
+            <li>A conversation you had with your mates at the pub.</li>
+          </ul>
+          <p>That's the stuff people relate to. And once you know how to turn those everyday moments into posts, you realise you're sitting on far more ideas than you thought.</p>
+        </div>
+      </div>
+
+      <!-- FAQ 6 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq6" class="cb-faq__toggle">
+        <label for="faq6" class="cb-faq__question">
+          Is this just a bunch of templates?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p>You get templates every month, yes.</p>
+          <p>But the real value is understanding why they work so you're not blindly filling in blanks.</p>
+          <p>You'll also get ongoing feedback and coaching from me on your drafts, answers to your questions as they come up, and a steady stream of ideas and breakdowns based on what's working on LinkedIn right now.</p>
+        </div>
+      </div>
+
+      <!-- FAQ 7 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq7" class="cb-faq__toggle">
+        <label for="faq7" class="cb-faq__question">
+          What if I'm in a different time zone and can't make the LIVE calls?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p>The monthly mastermind is the only live element of Your Next Post, and every call is recorded.</p>
+          <p>Most of the membership is asynchronous by design so you can learn, post, and get feedback without rearranging your schedule or sitting on endless Zoom calls.</p>
+          <p>We've got members from Brazil, Spain, India, the US, Switzerland, the UK, and more.</p>
+        </div>
+      </div>
+
+      <!-- FAQ 8 -->
+      <div class="cb-faq">
+        <input type="checkbox" id="faq8" class="cb-faq__toggle">
+        <label for="faq8" class="cb-faq__question">
+          Can I cancel anytime?
+          <span class="cb-faq__icon" aria-hidden="true"></span>
+        </label>
+        <div class="cb-faq__answer">
+          <p>Your Next Post is a 12-month subscription. I designed it this way so you have enough time to implement AND see the compound effects of posting consistently. The longer runway also helps the community actually bond instead of feeling like a revolving door.</p>
+          <p>That said, there's a 14-day money-back guarantee. If you join and realise it's not for you, just let me know and I'll refund every penny.</p>
+        </div>
+      </div>
+
+    </div><!-- /cb-faqs -->
+
+  </div>
+</section>
+
+<hr class="cb-divider">
+
+<style>
+/* ── FAQ accordion — CSS only ── */
+.cb-faqs {
+  display: flex;
+  flex-direction: column;
+}
+
+.cb-faq {
+  border-bottom: 1px solid var(--cb-divider);
+}
+
+.cb-faq:first-child { border-top: 1px solid var(--cb-divider); }
+
+.cb-faq__toggle {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.cb-faq__question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 0;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--cb-black);
+  font-family: var(--cb-font);
+  user-select: none;
+  transition: color 0.15s;
+}
+
+.cb-faq__question:hover { color: var(--cb-orange); }
+
+.cb-faq__icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.cb-faq__icon::before,
+.cb-faq__icon::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.cb-faq__icon::before { width: 14px; height: 2px; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+.cb-faq__icon::after  { width: 2px; height: 14px; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+.cb-faq__answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.cb-faq__answer p,
+.cb-faq__answer ul {
+  margin-bottom: 12px;
+}
+
+.cb-faq__answer p:last-child,
+.cb-faq__answer ul:last-child {
+  margin-bottom: 0;
+  padding-bottom: 24px;
+}
+
+.cb-faq__answer p {
+  font-size: 0.975rem;
+  color: var(--cb-text-mid);
+  line-height: 1.75;
+}
+
+.cb-faq-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 4px;
+}
+
+.cb-faq-list li {
+  font-size: 0.95rem;
+  color: var(--cb-text-mid);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.65;
+}
+
+.cb-faq-list li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: var(--cb-orange);
+  font-weight: 700;
+}
+
+.cb-faq__toggle:checked ~ .cb-faq__question .cb-faq__icon::after {
+  transform: translate(-50%,-50%) rotate(90deg);
+  opacity: 0;
+}
+
+.cb-faq__toggle:checked ~ .cb-faq__answer {
+  max-height: 1000px;
+}
+</style>
+<!-- ============================================================
+     V2 SECTION 16: FINAL URGENCY CTA + COUNTDOWN
+     GHL: Last block on the page.
+     ============================================================ -->
+
+<section class="cb-section cb-section--dark">
+  <div class="cb-container" style="text-align: center; max-width: 720px;">
+
+    <span class="cb-eyebrow" style="color: var(--cb-orange);">Don't miss this</span>
+
+    <h2 style="color: #fff; font-size: clamp(1.5rem, 3.5vw, 2.4rem); max-width: 640px; margin: 0 auto 24px; line-height: 1.2;">
+      Join Your Next Post before <strong>[DATE &amp; TIME]</strong> to get 50% off a full year, and a free 1-1 consultation call with me
+    </h2>
+
+    <!-- Paste GHL countdown timer element here -->
+    <div style="margin-bottom: 36px; color: rgba(255,255,255,0.6); font-style: italic;">
+      [COUNTDOWN TIMER]
+    </div>
+
+    <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn cb-btn--lg" style="background: var(--cb-orange); margin-bottom: 32px;">
+      Get 50% off
+    </a>
+
+    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.5); max-width: 520px; margin: 0 auto 36px; line-height: 1.7;">
+      If you wait until after [DATE], you'll still be able to join but you'll have to pay full price and you'll forfeit the free call. I won't be offering this again — it's something I only offer my 1:1 clients.
+    </p>
+
+    <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn cb-btn--lg">
+      Okay, I'm in
+    </a>
+
+  </div>
+</section>
