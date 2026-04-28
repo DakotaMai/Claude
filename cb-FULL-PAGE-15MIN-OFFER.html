@@ -2270,16 +2270,150 @@
 <hr class="cb-divider">
 
 <style>
-/* 3-column pricing grid override */
-.cb-pricing-grid--3col {
-  grid-template-columns: repeat(3, 1fr);
+.cb-section--dark { background: #141414; }
+.cb-section--dark p,
+.cb-section--dark h2,
+.cb-section--dark h3 { color: #fff; }
+
+.cb-pricing-includes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 640px;
+  margin: 0 auto 48px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 28px 32px;
 }
 
-@media (max-width: 900px) {
-  .cb-pricing-grid--3col {
-    grid-template-columns: 1fr;
-  }
+.cb-pricing-includes__heading {
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cb-orange) !important;
+  margin-bottom: 14px;
 }
+
+.cb-pricing-features {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cb-pricing-features li {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.75);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.cb-pricing-features li::before {
+  content: '✅';
+  position: absolute;
+  left: 0;
+  font-size: 0.8rem;
+}
+
+.cb-pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 580px;
+  margin: 0 auto 48px;
+}
+
+/* 3-column variant */
+.cb-pricing-grid--3col {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 900px;
+}
+
+.cb-pricing-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 32px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cb-pricing-card--featured {
+  border-color: var(--cb-orange);
+  background: rgba(240,100,73,0.08);
+}
+
+.cb-pricing-card__badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--cb-orange);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.cb-pricing-card__label {
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5) !important;
+}
+
+.cb-pricing-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.cb-pricing-card__amount {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #fff;
+  line-height: 1;
+}
+
+.cb-pricing-card__period {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.5);
+}
+
+.cb-guarantee {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+
+.cb-guarantee__icon { font-size: 1.4rem; flex-shrink: 0; }
+
+.cb-guarantee p {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.65) !important;
+  line-height: 1.6;
+}
+
+.cb-guarantee strong { color: #fff !important; }
 
 /* Bonus box */
 .cb-v2-bonus {
@@ -2288,6 +2422,9 @@
   border-radius: 16px;
   padding: 28px 32px;
   margin-bottom: 40px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -2296,21 +2433,32 @@
 .cb-v2-bonus__heading {
   font-size: 1rem;
   font-weight: 800;
-  color: var(--cb-orange);
+  color: var(--cb-orange) !important;
   letter-spacing: -0.01em;
 }
 
 .cb-v2-bonus__body {
   font-size: 0.975rem;
-  color: rgba(255,255,255,0.85);
+  color: rgba(255,255,255,0.85) !important;
   line-height: 1.7;
 }
 
 .cb-v2-bonus__note {
   font-size: 0.85rem;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.5) !important;
   font-style: italic;
   line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .cb-pricing-grid--3col { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .cb-pricing-grid,
+  .cb-pricing-includes { grid-template-columns: 1fr; }
+  .cb-pricing-card { padding: 24px; }
+  .cb-pricing-includes { padding: 20px; }
 }
 </style>
 <!-- ============================================================
