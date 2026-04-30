@@ -274,13 +274,11 @@
     </p>
 
     <p style="font-size: clamp(0.9rem, 2vw, 1.05rem); font-weight: 600; color: #fff; line-height: 1.5; margin-bottom: 14px;">
-      Get inside Your Next Post for <span style="text-decoration: line-through; opacity: 0.55; font-weight: 400;">$1,000</span> <strong style="color: var(--cb-orange);">$500</strong> &mdash; plus a <strong>FREE group strategy call</strong> if you join before <strong>[DATE &amp; TIME]</strong>
+      Get inside Your Next Post for <span style="text-decoration: line-through; opacity: 0.55; font-weight: 400;">$1,000</span> <strong style="color: var(--cb-orange);">$500</strong> &mdash; plus a <strong>FREE group strategy call</strong> if you join before <strong>Sun 17th May, 7PM (BST)</strong>
     </p>
 
-    <!-- Paste GHL countdown timer element here -->
-    <div style="margin-bottom: 14px; color: rgba(255,255,255,0.7); font-size: 0.85rem; font-style: italic;">
-      [COUNTDOWN TIMER]
-    </div>
+    <!-- Countdown timer — JS loaded in cb-v2-s16 -->
+    <div class="cb-countdown cb-countdown--sm" style="margin-bottom: 14px;"></div>
 
     <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn" style="background: var(--cb-orange); font-size: 0.875rem; padding: 10px 24px;">
       Get 50% off &amp; my free group strategy call
@@ -2209,7 +2207,7 @@
     <div class="cb-v2-bonus">
       <p class="cb-v2-bonus__heading">🎁 Bonus for 15 Minute Content subscribers:</p>
       <p class="cb-v2-bonus__body">✅ FREE group strategy consultation call where we can dive deep into your LinkedIn journey so far and work together to come up with a plan to help you reach your unique goals</p>
-      <p class="cb-v2-bonus__note">This is something I only offer my coaching clients — yours free when you join before [DATE].</p>
+      <p class="cb-v2-bonus__note">This is something I only offer my coaching clients — yours free when you join before Sun 17th May.</p>
     </div>
 
     <!-- 3 pricing cards -->
@@ -2253,7 +2251,7 @@
         <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn" style="width: 100%; text-align: center; display: block; margin-top: auto; background: var(--cb-orange);">
           Get 50% off
         </a>
-        <p style="font-size: 0.75rem; color: rgba(255,255,255,0.4); text-align: center; margin-top: 8px;">*Offer expires [DATE]</p>
+        <p style="font-size: 0.75rem; color: rgba(255,255,255,0.4); text-align: center; margin-top: 8px;">*Offer expires Sun 17th May</p>
       </div>
 
     </div>
@@ -2858,7 +2856,7 @@
     <div class="cb-v2-bonus">
       <p class="cb-v2-bonus__heading">🎁 Bonus for 15 Minute Content subscribers:</p>
       <p class="cb-v2-bonus__body">✅ FREE group strategy consultation call where we can dive deep into your LinkedIn journey so far and work together to come up with a plan to help you reach your unique goals</p>
-      <p class="cb-v2-bonus__note">This is something I only offer my coaching clients — yours free when you join before [DATE].</p>
+      <p class="cb-v2-bonus__note">This is something I only offer my coaching clients — yours free when you join before Sun 17th May.</p>
     </div>
 
     <div class="cb-pricing-grid cb-pricing-grid--3col">
@@ -2898,7 +2896,7 @@
         <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn" style="width:100%;text-align:center;display:block;margin-top:auto;background:var(--cb-orange);">
           Get 50% off
         </a>
-        <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);text-align:center;margin-top:8px;">*Offer expires [DATE]</p>
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);text-align:center;margin-top:8px;">*Offer expires Sun 17th May</p>
       </div>
 
     </div>
@@ -3308,20 +3306,18 @@
     <span class="cb-eyebrow" style="color: var(--cb-orange);">Don't miss this</span>
 
     <h2 style="color: #fff; font-size: clamp(1.5rem, 3.5vw, 2.4rem); max-width: 640px; margin: 0 auto 24px; line-height: 1.2;">
-      Join Your Next Post before <strong>[DATE &amp; TIME]</strong> to get 50% off a full year, and a free strategy call
+      Join Your Next Post before <strong>Sun 17th May, 7PM (BST)</strong> to get 50% off a full year, and a free strategy call
     </h2>
 
-    <!-- Paste GHL countdown timer element here -->
-    <div style="margin-bottom: 36px; color: rgba(255,255,255,0.6); font-style: italic;">
-      [COUNTDOWN TIMER]
-    </div>
+    <!-- Countdown timer -->
+    <div class="cb-countdown" style="margin-bottom: 36px;"></div>
 
     <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn cb-btn--lg" style="background: var(--cb-orange); margin-bottom: 32px;">
       Get 50% off
     </a>
 
     <p style="font-size: 0.9rem; color: rgba(255,255,255,0.5); max-width: 520px; margin: 0 auto 36px; line-height: 1.7;">
-      If you wait until after [DATE], you'll still be able to join but you'll have to pay full price and you'll forfeit the strategy call. I won't be offering this again — it's something I only offer my coaching clients.
+      If you wait until after Sun 17th May, you'll still be able to join but you'll have to pay full price and you'll forfeit the strategy call. I won't be offering this again — it's something I only offer my coaching clients.
     </p>
 
     <a href="https://mattbarker.thrivecart.com/copy-builders-monthly/" class="cb-btn cb-btn--lg">
@@ -3330,3 +3326,133 @@
 
   </div>
 </section>
+
+<style>
+/* ── Countdown timer ── */
+.cb-countdown__units {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cb-countdown__unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 12px 18px;
+  min-width: 68px;
+}
+
+.cb-countdown__num {
+  font-family: var(--cb-font);
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #fff;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.cb-countdown__label {
+  font-family: var(--cb-font);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-top: 6px;
+}
+
+.cb-countdown__sep {
+  font-family: var(--cb-font);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.25);
+  line-height: 1;
+  padding-bottom: 18px;
+}
+
+/* Compact variant for top banner */
+.cb-countdown--sm .cb-countdown__unit {
+  padding: 6px 10px;
+  min-width: 46px;
+  border-radius: 7px;
+}
+
+.cb-countdown--sm .cb-countdown__num {
+  font-size: 1.15rem;
+}
+
+.cb-countdown--sm .cb-countdown__sep {
+  font-size: 1rem;
+  padding-bottom: 12px;
+}
+
+.cb-countdown__expired {
+  font-family: var(--cb-font);
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.5);
+  font-style: italic;
+}
+</style>
+
+<script>
+(function () {
+  /* 7PM BST on Sun 17th May 2026 = 18:00 UTC */
+  var deadline = new Date('2026-05-17T18:00:00Z');
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function render(el, d, h, m, s) {
+    var sm = el.classList.contains('cb-countdown--sm');
+    el.innerHTML =
+      '<div class="cb-countdown__units">' +
+        unit(d, 'days', sm) +
+        sep(sm) +
+        unit(h, 'hours', sm) +
+        sep(sm) +
+        unit(m, 'mins', sm) +
+        sep(sm) +
+        unit(s, 'secs', sm) +
+      '</div>';
+  }
+
+  function unit(n, label, sm) {
+    return '<div class="cb-countdown__unit">' +
+      '<span class="cb-countdown__num">' + pad(n) + '</span>' +
+      '<span class="cb-countdown__label">' + label + '</span>' +
+    '</div>';
+  }
+
+  function sep(sm) {
+    return '<span class="cb-countdown__sep">:</span>';
+  }
+
+  function tick() {
+    var diff = deadline - Date.now();
+    var els  = document.querySelectorAll('.cb-countdown');
+
+    if (diff <= 0) {
+      els.forEach(function (el) {
+        el.innerHTML = '<p class="cb-countdown__expired">This offer has now closed.</p>';
+      });
+      return;
+    }
+
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000)  / 60000);
+    var s = Math.floor((diff % 60000)    / 1000);
+
+    els.forEach(function (el) { render(el, d, h, m, s); });
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
