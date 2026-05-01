@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ember by Victoria Lewis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@700&family=Livvic:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark-bg: #2a140c;
+      --cream: #f2e1cd;
+      --orange: #c75c33;
+      --card-bg: #f2e1cd;
+      --card-text: #3a3432;
+      --font-heading: 'Chivo', sans-serif;
+      --font-body: 'Livvic', sans-serif;
+    }
+
+    html { font-size: 19px; }
+
+    body {
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.75;
+      background: var(--dark-bg);
+      color: var(--cream);
+    }
+
+    /* ─── LAYOUT ─── */
+    .section { padding: 80px 24px; }
+    .section--light { background: var(--cream); color: var(--card-text); }
+    .section--dark { background: var(--dark-bg); color: var(--cream); }
+    .container { max-width: 760px; margin: 0 auto; }
+    .container--wide { max-width: 1000px; margin: 0 auto; }
+
+    /* ─── TYPOGRAPHY ─── */
+    h1, h2, h3, h4 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      letter-spacing: -0.05em;
+      line-height: 1.25;
+    }
+    h1 { font-size: 2.4rem; }
+    h2 { font-size: 1.9rem; }
+    h3 { font-size: 1.3rem; }
+
+    .pretitle {
+      font-family: var(--font-body);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.8rem;
+      color: var(--orange);
+      margin-bottom: 12px;
+    }
+    .section--light .pretitle { color: var(--orange); }
+
+    p { margin-top: 1rem; }
+    p:first-child { margin-top: 0; }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-block;
+      background: var(--orange);
+      color: var(--cream);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 14px 28px;
+      border-radius: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s ease;
+      margin-top: 24px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn--dark {
+      background: var(--dark-bg);
+      color: var(--cream);
+    }
+    .btn--center { display: block; text-align: center; width: fit-content; margin: 24px auto 0; }
+
+    /* ─── NAV ─── */
+    .nav {
+      background: var(--dark-bg);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid rgba(242,225,205,0.1);
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      color: var(--cream);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .nav-logo span { color: var(--orange); }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: var(--dark-bg);
+      padding: 100px 24px;
+    }
+    .hero-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .hero-text .pretitle { margin-bottom: 12px; }
+    .hero-text h1 { color: var(--cream); }
+    .hero-text p { color: var(--cream); opacity: 0.9; margin-top: 20px; }
+    .hero-text .btn { margin-top: 36px; }
+    .hero-image {
+      background: rgba(242,225,205,0.08);
+      border: 2px dashed rgba(242,225,205,0.25);
+      border-radius: 12px;
+      aspect-ratio: 4/5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: rgba(242,225,205,0.4);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      gap: 10px;
+    }
+    .hero-image svg { opacity: 0.35; }
+    @media (max-width: 720px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-image { aspect-ratio: 16/9; }
+    }
+
+    /* ─── ARROW LISTS ─── */
+    .arrow-list {
+      list-style: none;
+      margin-top: 16px;
+    }
+    .arrow-list li { padding: 4px 0; }
+    .arrow-list li::before { content: "→ "; color: var(--orange); font-weight: 500; }
+
+    .check-list {
+      list-style: none;
+      margin-top: 16px;
+    }
+    .check-list li { padding: 4px 0; }
+    .check-list li::before { content: "✅ "; }
+
+    .bullet-list {
+      list-style: none;
+      margin-top: 16px;
+    }
+    .bullet-list li { padding: 4px 0; }
+    .bullet-list li::before { content: "• "; color: var(--orange); }
+
+    /* ─── ROW CARDS ─── */
+    .cards-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 40px;
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .card {
+      background: var(--card-bg);
+      color: var(--card-text);
+      border-radius: 8px;
+      padding: 28px 32px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0 24px;
+      align-items: start;
+    }
+    .card-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding-top: 4px;
+    }
+    .card .card-icon { font-size: 1.8rem; line-height: 1; }
+    .card .card-tag {
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--orange);
+      white-space: nowrap;
+    }
+    .card-body h3 { color: var(--card-text); margin-top: 0; }
+    .card-body p { color: var(--card-text); opacity: 0.85; font-size: 0.9rem; }
+    .card-body .arrow-list li { color: var(--card-text); }
+    .card-body .arrow-list li::before { color: var(--orange); }
+    .card .best-for {
+      font-size: 0.8rem;
+      font-style: italic;
+      color: var(--orange);
+      font-weight: 500;
+      white-space: nowrap;
+      padding-top: 4px;
+    }
+    @media (max-width: 600px) {
+      .card { grid-template-columns: auto 1fr; }
+      .card .best-for { grid-column: 1 / -1; white-space: normal; padding-top: 0; }
+    }
+
+    /* ─── TESTIMONIALS ─── */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .testimonial {
+      background: var(--card-bg);
+      color: var(--card-text);
+      border-radius: 8px;
+      padding: 28px;
+    }
+    .testimonial blockquote {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--card-text);
+    }
+    .testimonial blockquote::before { content: '"'; font-size: 2rem; color: var(--orange); line-height: 0; vertical-align: -0.4em; margin-right: 4px; }
+    .testimonial blockquote::after  { content: '"'; font-size: 2rem; color: var(--orange); line-height: 0; vertical-align: -0.4em; margin-left: 4px; }
+    .testimonial .author {
+      margin-top: 16px;
+      font-weight: 700;
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      color: var(--dark-bg);
+    }
+    .testimonial .role {
+      font-size: 0.78rem;
+      color: var(--orange);
+      font-weight: 500;
+    }
+
+    /* ─── NEWSLETTER ─── */
+    .newsletter { text-align: center; }
+    .newsletter h2 { color: var(--cream); }
+    .newsletter p { color: var(--cream); opacity: 0.85; max-width: 540px; margin: 16px auto 0; }
+    .newsletter-form { margin-top: 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 420px; margin-left: auto; margin-right: auto; }
+    .newsletter-form input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 6px;
+      border: none;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      background: var(--cream);
+      color: var(--card-text);
+    }
+    .newsletter-form input::placeholder { color: #888; }
+    .newsletter-form input:focus { outline: 2px solid var(--orange); }
+    .newsletter-form .btn { margin-top: 0; width: 100%; text-align: center; }
+    .disclaimer { font-size: 0.72rem; color: var(--cream); opacity: 0.6; margin-top: 10px; }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      background: var(--dark-bg);
+      border-top: 1px solid rgba(242,225,205,0.15);
+      text-align: center;
+      padding: 40px 24px;
+      font-size: 0.8rem;
+      color: var(--cream);
+      opacity: 0.7;
+    }
+    .footer-brand {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cream);
+      opacity: 1;
+      margin-bottom: 12px;
+    }
+    .footer a { color: var(--cream); opacity: 0.7; text-decoration: underline; margin: 0 8px; }
+    .footer a:hover { opacity: 1; }
+
+    /* ─── DIVIDER ─── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid rgba(242,225,205,0.15);
+    }
+    .section--light .section-divider {
+      border-top: 1px solid rgba(42,20,12,0.1);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 600px) {
+      html { font-size: 17px; }
+      .hero { padding: 70px 20px; }
+      .section { padding: 60px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-logo">Ember <span>by Victoria Lewis</span></div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <p class="pretitle">Systems that run without you</p>
+        <h1>Your Business Shouldn't Rely on You For Everything!</h1>
+        <p>But right now, it probably does. I build simple backend systems so your business runs smoothly — without everything going through you.</p>
+        <a class="btn" href="#">🔥 See How We Fix This</a>
+      </div>
+      <div class="hero-image">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+        </svg>
+        Your image here
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section class="section section--light">
+    <div class="container">
+      <p>You're juggling client work, chasing deadlines, and trying to keep up. You've outgrown DIY setups and quick fixes. Things only run smoothly when you stay on top of them — and that's not sustainable.</p>
+      <p>Growth starts to feel heavy:</p>
+      <ul class="arrow-list">
+        <li>more clients = more pressure</li>
+        <li>more work = more hours</li>
+        <li>more risk of something breaking</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- WHAT'S ACTUALLY GOING ON -->
+  <section class="section section--dark">
+    <div class="container">
+      <p class="pretitle">The real issue</p>
+      <h2>What's actually going on</h2>
+      <p>It's not a tools problem. It's a systems problem. Right now:</p>
+      <ul class="bullet-list">
+        <li>things are held together in your head</li>
+        <li>processes are inconsistent</li>
+        <li>automations are either missing or messy</li>
+      </ul>
+      <p>So nothing really runs without you.</p>
+    </div>
+  </section>
+
+  <!-- WHAT WE DO INSTEAD -->
+  <section class="section section--light">
+    <div class="container">
+      <p class="pretitle">The fix</p>
+      <h2>What we do instead</h2>
+      <p>I design and build backend systems that:</p>
+      <ul class="arrow-list">
+        <li>capture and organise your leads</li>
+        <li>onboard clients automatically</li>
+        <li>deliver your services smoothly</li>
+        <li>keep everything moving without constant input</li>
+      </ul>
+      <p>No patchy fixes. No overcomplicated tech stacks. Just systems that actually work.</p>
+    </div>
+  </section>
+
+  <!-- OFFERINGS -->
+  <section class="section section--dark">
+    <div class="container--wide">
+      <div style="text-align: center;">
+        <p class="pretitle">Choose your path</p>
+        <h2>3 ways to get your business running smoothly</h2>
+      </div>
+      <div class="cards-stack">
+
+        <div class="card">
+          <div class="card-left">
+            <div class="card-icon">⚡</div>
+            <div class="card-tag">Spark</div>
+          </div>
+          <div class="card-body">
+            <h3>DIY… but with support</h3>
+            <p>If you want to sort things yourself but don't want to waste hours figuring it out: Get access to me. Ask questions. Fix things quickly. No more Googling. No more guessing.</p>
+          </div>
+          <p class="best-for">"I just need help<br>when I get stuck"</p>
+        </div>
+
+        <div class="card">
+          <div class="card-left">
+            <div class="card-icon">🔥</div>
+            <div class="card-tag">Ignite</div>
+          </div>
+          <div class="card-body">
+            <h3>Clarity + plan</h3>
+            <p>If you know things are messy but don't know what to fix first: We map out exactly what your business needs:</p>
+            <ul class="arrow-list">
+              <li>what should happen</li>
+              <li>when &amp; how</li>
+              <li>and in what system</li>
+            </ul>
+            <p style="margin-top:12px;">You leave with a clear plan you can actually follow.</p>
+          </div>
+          <p class="best-for">"I need a plan<br>before anything else"</p>
+        </div>
+
+        <div class="card">
+          <div class="card-left">
+            <div class="card-icon">🚀</div>
+            <div class="card-tag">Build</div>
+          </div>
+          <div class="card-body">
+            <h3>Done for you</h3>
+            <p>If you're done trying to DIY it: I take everything and build it for you. Your systems. Your automations. Your backend. Set up properly so your business runs without everything going through you.</p>
+          </div>
+          <p class="best-for">"I just want<br>this sorted"</p>
+        </div>
+
+      </div>
+      <div style="text-align:center;">
+        <a class="btn" href="#">🔥 See Which Option Fits You</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHO IT'S FOR -->
+  <section class="section section--light">
+    <div class="container">
+      <p class="pretitle">Is this you?</p>
+      <h2>Who it's for</h2>
+      <p>This is for you if:</p>
+      <ul class="bullet-list">
+        <li>You're a coach, consultant, course creator, or small agency</li>
+        <li>You've outgrown scrappy setups</li>
+        <li>Everything still depends on you</li>
+        <li>You want to grow, but your backend can't keep up</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- EMAIL FUNNELS -->
+  <section class="section section--dark">
+    <div class="container">
+      <p class="pretitle">Email that actually converts</p>
+      <h2>The Fuse — Email funnels that actually work</h2>
+      <p>Most 'email marketing' advice stops at copy. But what happens after someone signs up is what really matters. I build the backend that makes your funnels work:</p>
+      <ul class="check-list">
+        <li>Lead capture + tagging</li>
+        <li>Segmentation + automation</li>
+        <li>Full funnel setup</li>
+        <li>Everything connected and tracked</li>
+      </ul>
+      <p>You bring the copy. I make sure it runs properly.</p>
+      <a class="btn" href="#">👉 Learn more about email tech support</a>
+    </div>
+  </section>
+
+  <!-- WHY IT MATTERS -->
+  <section class="section section--light">
+    <div class="container">
+      <p class="pretitle">The bigger picture</p>
+      <h2>Why It Matters</h2>
+      <p>When your backend is set up properly:</p>
+      <ul class="bullet-list">
+        <li>Clients get a better experience</li>
+        <li>Your delivery becomes smoother</li>
+        <li>You stop relying on memory and manual work</li>
+        <li>You get your time and headspace back</li>
+      </ul>
+      <p>This isn't about more tools. It's about a business that actually runs.</p>
+      <a class="btn btn--dark" href="#">🔥 Let's fix it properly</a>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section section--dark">
+    <div class="container--wide">
+      <div style="text-align:center;">
+        <p class="pretitle">Testimonials</p>
+        <h2>Nice Words from Happy Clients</h2>
+      </div>
+      <div class="testimonials-grid">
+
+        <div class="testimonial">
+          <blockquote>She stopped my Sunday night stress in its tracks. Victoria instantly offers solutions that work.</blockquote>
+          <p class="author">Harrison Cantel</p>
+          <p class="role">Founder, Cantel Studio</p>
+        </div>
+
+        <div class="testimonial">
+          <blockquote>She's the 'fixer' I needed in my life! She took time to understand my pain points and offered pragmatic, efficient recommendations.</blockquote>
+          <p class="author">Emily Graveson</p>
+          <p class="role">Leadership Coach</p>
+        </div>
+
+        <div class="testimonial">
+          <blockquote>I've gone from overthinking everything to total clarity. Worth her weight in gold.</blockquote>
+          <p class="author">Zack Robinson</p>
+          <p class="role">Personal Brand Strategist</p>
+        </div>
+
+        <div class="testimonial">
+          <blockquote>Viki came in, cleaned everything up and saved me hours. I can breathe again!</blockquote>
+          <p class="author">Sam Clayton</p>
+          <p class="role">Co-Founder, Precision Edits</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="section section--dark newsletter">
+    <div class="container">
+      <p class="pretitle" style="text-align:center;">Stay in the loop</p>
+      <h2>Become an Email Subscriber</h2>
+      <p>Bite-sized, practical tips to connect your tools, scale your systems, &amp; free up headspace for the stuff that matters.</p>
+      <div class="newsletter-form">
+        <input type="text" placeholder="Name">
+        <input type="email" placeholder="Email">
+        <a class="btn" href="#">🔥 Sign me up!</a>
+        <p class="disclaimer">By signing up, you agree to receive email updates.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p class="footer-brand">Ember by Victoria Lewis</p>
+    <p>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+    </p>
+  </footer>
+
+</body>
+</html>
