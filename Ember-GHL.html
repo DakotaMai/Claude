@@ -32,8 +32,8 @@
 
     /* ─── LAYOUT ─── */
     .section { padding: 64px 24px; background: var(--dark-bg); }
-    .container { max-width: 1000px; margin: 0 auto; }
-    .container--wide { max-width: 1000px; margin: 0 auto; }
+    .container { max-width: 100%; margin: 0 auto; }
+    .container--wide { max-width: 100%; margin: 0 auto; }
 
     /* ─── TYPOGRAPHY ─── */
     h1, h2, h3 {
@@ -66,8 +66,7 @@
       background: var(--cream);
       border-radius: 16px;
       padding: 40px 44px;
-      max-width: 1000px;
-      margin: 0 auto;
+      width: 100%;
     }
     .content-card h2 { color: var(--card-text); }
     .content-card p { color: var(--card-text); opacity: 0.85; }
@@ -119,7 +118,7 @@
     /* ─── HERO ─── */
     .hero { background: var(--dark-bg); padding: 100px 24px; }
     .hero-inner {
-      max-width: 1000px;
+      width: 100%;
       margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -167,7 +166,7 @@
       flex-direction: column;
       gap: 16px;
       margin-top: 40px;
-      max-width: 1000px;
+      width: 100%;
       margin-left: auto;
       margin-right: auto;
     }
