@@ -305,6 +305,28 @@
       .hero { padding: 70px 20px; }
       .section { padding: 60px 20px; }
     }
+
+    /* ─── GHL OVERRIDES ─── */
+    html, body {
+      background: #2a140c !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    /* Strip padding from GHL's section/column wrappers */
+    .page-section,
+    .section-body,
+    .container-fluid,
+    .full-width,
+    [data-section-id],
+    .col-12,
+    .row {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      max-width: 100% !important;
+      background: transparent !important;
+    }
   </style>
 </head>
 <body>
