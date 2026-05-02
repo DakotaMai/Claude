@@ -32,14 +32,36 @@
 
     /* ─── LAYOUT ─── */
     .section { padding: 64px 24px; background: var(--dark-bg); }
+
+    /* Orange animal print — cream cards float on top */
     .section--print {
       background-color: var(--orange);
       background-image: url('https://assets.cdn.filesafe.space/gGF2noIJlyzuSf2qJqHz/media/69f5b30ddd67e758c0a01059.png');
       background-size: cover;
       background-position: center;
     }
-    .container { max-width: 100%; margin: 0 auto; }
-    .container--wide { max-width: 100%; margin: 0 auto; }
+
+    /* Solid cream — content sits directly on it, text goes dark */
+    .section--cream {
+      background: var(--cream);
+    }
+    .section--cream h2,
+    .section--cream h3 { color: var(--card-text); }
+    .section--cream p { color: var(--card-text); opacity: 0.85; }
+    .section--cream .pretitle { color: var(--orange); }
+    .section--cream .arrow-list li::before { color: var(--orange); }
+    .section--cream .check-list li { color: var(--card-text); opacity: 0.85; }
+    .section--cream .bullet-list li { color: var(--card-text); opacity: 0.85; }
+    .section--cream .bullet-list li::before { color: var(--orange); }
+    .section--cream .arrow-list li { color: var(--card-text); opacity: 0.85; }
+    .section--cream .disclaimer { color: var(--card-text); opacity: 0.5; }
+    .section--cream .newsletter-form input {
+      background: rgba(42,20,12,0.06);
+      border: 1px solid rgba(42,20,12,0.15);
+      color: var(--card-text);
+    }
+    .section--cream .newsletter-form input::placeholder { color: rgba(42,20,12,0.35); }
+    .section--cream .newsletter-form input:focus { outline: 2px solid var(--orange); }
 
     /* ─── TYPOGRAPHY ─── */
     h1, h2, h3 {
@@ -66,8 +88,7 @@
     p { margin-top: 1rem; color: var(--cream); }
     p:first-child { margin-top: 0; }
 
-    /* ─── CREAM CONTENT CARD ─── */
-    /* Used for sections that previously had a light background */
+    /* ─── CREAM CONTENT CARD (used inside print sections) ─── */
     .content-card {
       background: var(--cream);
       border-radius: 16px;
@@ -78,11 +99,10 @@
     .content-card p { color: var(--card-text); opacity: 0.85; }
     .content-card .pretitle { color: var(--orange); }
     .content-card .arrow-list li { color: var(--card-text); }
+    .content-card .arrow-list li::before { color: var(--orange); }
     .content-card .bullet-list li { color: var(--card-text); }
-    .content-card .btn--dark {
-      background: var(--dark-bg);
-      color: var(--cream);
-    }
+    .content-card .bullet-list li::before { color: var(--orange); }
+    .content-card .btn--dark { background: var(--dark-bg); color: var(--cream); }
 
     /* ─── BUTTONS ─── */
     .btn {
@@ -173,8 +193,6 @@
       gap: 16px;
       margin-top: 40px;
       width: 100%;
-      margin-left: auto;
-      margin-right: auto;
     }
     .card {
       background: var(--cream);
@@ -233,26 +251,11 @@
       border-radius: 14px;
       padding: 28px;
     }
-    .testimonial blockquote {
-      font-size: 0.95rem;
-      line-height: 1.65;
-      color: var(--card-text);
-    }
-    .testimonial blockquote::before { content: '"'; font-size: 2rem; color: var(--orange); line-height: 0; vertical-align: -0.4em; margin-right: 4px; }
-    .testimonial blockquote::after  { content: '"'; font-size: 2rem; color: var(--orange); line-height: 0; vertical-align: -0.4em; margin-left: 4px; }
-    .testimonial .author {
-      margin-top: 16px;
-      font-weight: 700;
-      font-family: var(--font-heading);
-      font-size: 0.85rem;
-      color: var(--dark-bg);
-    }
-    .testimonial .role {
-      font-size: 0.78rem;
-      color: var(--orange);
-      font-weight: 500;
-      margin-top: 2px;
-    }
+    .testimonial blockquote { font-size: 0.95rem; line-height: 1.65; color: var(--card-text); }
+    .testimonial blockquote::before { content: '\201C'; font-size: 2rem; color: var(--orange); line-height: 0; vertical-align: -0.4em; margin-right: 4px; }
+    .testimonial blockquote::after  { content: '\201D'; font-size: 2rem; color: var(--orange); line-height: 0; vertical-align: -0.4em; margin-left: 4px; }
+    .testimonial .author { margin-top: 16px; font-weight: 700; font-family: var(--font-heading); font-size: 0.85rem; color: var(--dark-bg); }
+    .testimonial .role { font-size: 0.78rem; color: var(--orange); font-weight: 500; margin-top: 2px; }
 
     /* ─── NEWSLETTER ─── */
     .newsletter { text-align: center; }
@@ -270,12 +273,12 @@
       width: 100%;
       padding: 14px 18px;
       border-radius: 8px;
-      border: none;
       font-family: var(--font-body);
       font-size: 1rem;
       background: rgba(242,225,205,0.12);
       color: var(--cream);
       border: 1px solid rgba(242,225,205,0.2);
+      outline: none;
     }
     .newsletter-form input::placeholder { color: rgba(242,225,205,0.45); }
     .newsletter-form input:focus { outline: 2px solid var(--orange); }
@@ -329,7 +332,7 @@
     <div class="nav-logo">Ember <span>by Victoria Lewis</span></div>
   </nav>
 
-  <!-- HERO -->
+  <!-- 1. HERO — dark -->
   <section class="hero">
     <div class="hero-inner">
       <div class="hero-text">
@@ -347,7 +350,7 @@
     </div>
   </section>
 
-  <!-- PROBLEM -->
+  <!-- 2. PROBLEM — print (cream card floats on print) -->
   <section class="section section--print">
     <div class="content-card">
       <p>You're juggling client work, chasing deadlines, and trying to keep up. You've outgrown DIY setups and quick fixes. Things only run smoothly when you stay on top of them — and that's not sustainable.</p>
@@ -360,7 +363,7 @@
     </div>
   </section>
 
-  <!-- WHAT'S ACTUALLY GOING ON -->
+  <!-- 3. WHAT'S ACTUALLY GOING ON — dark -->
   <section class="section">
     <div class="container">
       <p class="pretitle">The real issue</p>
@@ -375,9 +378,9 @@
     </div>
   </section>
 
-  <!-- WHAT WE DO INSTEAD -->
-  <section class="section section--print">
-    <div class="content-card">
+  <!-- 4. WHAT WE DO INSTEAD — cream (content sits directly on cream) -->
+  <section class="section section--cream">
+    <div class="container">
       <p class="pretitle">The fix</p>
       <h2>What we do instead</h2>
       <p>I design and build backend systems that:</p>
@@ -391,11 +394,11 @@
     </div>
   </section>
 
-  <!-- OFFERINGS -->
+  <!-- 5. OFFERINGS — print (cream row cards float on print) -->
   <section class="section section--print">
     <div class="container--wide">
       <div style="text-align: center;">
-        <p class="pretitle">Choose your path</p>
+        <p class="pretitle" style="color: var(--cream);">Choose your path</p>
         <h2>3 ways to get your business running smoothly</h2>
       </div>
       <div class="cards-stack">
@@ -449,9 +452,9 @@
     </div>
   </section>
 
-  <!-- WHO IT'S FOR -->
-  <section class="section section--print">
-    <div class="content-card">
+  <!-- 6. WHO IT'S FOR — dark -->
+  <section class="section">
+    <div class="container">
       <p class="pretitle">Is this you?</p>
       <h2>Who it's for</h2>
       <p>This is for you if:</p>
@@ -464,8 +467,8 @@
     </div>
   </section>
 
-  <!-- EMAIL FUNNELS -->
-  <section class="section">
+  <!-- 7. EMAIL FUNNELS — cream -->
+  <section class="section section--cream">
     <div class="container">
       <p class="pretitle">Email that actually converts</p>
       <h2>The Fuse — Email funnels that actually work</h2>
@@ -481,7 +484,7 @@
     </div>
   </section>
 
-  <!-- WHY IT MATTERS -->
+  <!-- 8. WHY IT MATTERS — print (cream card floats on print) -->
   <section class="section section--print">
     <div class="content-card">
       <p class="pretitle">The bigger picture</p>
@@ -498,8 +501,8 @@
     </div>
   </section>
 
-  <!-- TESTIMONIALS -->
-  <section class="section section--print">
+  <!-- 9. TESTIMONIALS — dark (cream cards pop beautifully on dark) -->
+  <section class="section">
     <div class="container--wide">
       <div style="text-align:center;">
         <p class="pretitle">Testimonials</p>
@@ -535,12 +538,12 @@
     </div>
   </section>
 
-  <!-- NEWSLETTER -->
-  <section class="section newsletter">
+  <!-- 10. NEWSLETTER — cream -->
+  <section class="section section--cream newsletter">
     <div class="container">
       <p class="pretitle" style="text-align:center;">Stay in the loop</p>
-      <h2 style="text-align:center;">Become an Email Subscriber</h2>
-      <p style="text-align:center; max-width:540px; margin: 16px auto 0; opacity:0.85;">Bite-sized, practical tips to connect your tools, scale your systems, &amp; free up headspace for the stuff that matters.</p>
+      <h2 style="text-align:center; color: var(--card-text);">Become an Email Subscriber</h2>
+      <p style="text-align:center; max-width:540px; margin: 16px auto 0;">Bite-sized, practical tips to connect your tools, scale your systems, &amp; free up headspace for the stuff that matters.</p>
       <div class="newsletter-form">
         <input type="text" placeholder="Name">
         <input type="email" placeholder="Email">
@@ -550,7 +553,7 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- 11. FOOTER — dark -->
   <footer class="footer">
     <p class="footer-brand">Ember by Victoria Lewis</p>
     <p>
