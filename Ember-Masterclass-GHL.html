@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map It Before You Build It — Free Masterclass | Ember by Victoria Lewis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@700&family=Livvic:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark-bg: #2a140c;
+      --cream: #f2e1cd;
+      --orange: #c75c33;
+      --card-text: #3a3432;
+      --font-heading: 'Chivo', sans-serif;
+      --font-body: 'Livvic', sans-serif;
+    }
+
+    html, body {
+      background: var(--dark-bg) !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.75;
+      color: var(--cream);
+      font-size: 18px;
+    }
+
+    /* ─── TYPOGRAPHY ─── */
+    h1, h2, h3, h4 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.2;
+      color: var(--cream);
+    }
+    h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); }
+    h2 { font-size: clamp(1.7rem, 3.5vw, 2.4rem); }
+    h3 { font-size: 1rem; }
+    h4 { font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; }
+
+    p { margin-top: 1rem; color: var(--cream); }
+    p:first-child { margin-top: 0; }
+
+    .pretitle {
+      font-family: var(--font-body);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.72rem;
+      color: var(--orange);
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    /* ─── LAYOUT ─── */
+    .section { padding: 80px 24px; background: var(--dark-bg); }
+    .inner { width: 100%; margin: 0 auto; }
+
+    /* ─── CREAM CONTENT CARD ─── */
+    .content-card {
+      background: var(--cream);
+      border-radius: 16px;
+      padding: 44px 48px;
+      width: 100%;
+    }
+    .content-card h2 { color: var(--card-text); }
+    .content-card p { color: var(--card-text); opacity: 0.85; }
+    .content-card .pretitle { color: var(--orange); }
+    .content-card ul li { color: var(--card-text); }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px 24px;
+      margin-top: 12px;
+      background: var(--orange);
+      color: var(--cream);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      text-align: center;
+    }
+    .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-dark { background: var(--dark-bg); color: var(--cream); }
+    .btn-dark:hover { opacity: 0.85; }
+
+    /* ─── FORM ELEMENTS ─── */
+    .field { margin-bottom: 10px; }
+    .field input {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(242,225,205,0.08);
+      border: 1px solid rgba(242,225,205,0.18);
+      border-radius: 8px;
+      color: var(--cream);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field input::placeholder { color: rgba(242,225,205,0.38); }
+    .field input:focus { border-color: var(--orange); }
+    .fine-print { font-size: 0.7rem; color: rgba(242,225,205,0.5); text-align: center; margin-top: 12px; }
+    .divider-rule { height: 1px; background: rgba(242,225,205,0.12); margin: 20px 0; }
+
+    /* ─── FORM CARD ─── */
+    .form-card {
+      background: rgba(242,225,205,0.06);
+      border: 1px solid rgba(242,225,205,0.14);
+      border-radius: 16px;
+      padding: 36px 32px;
+    }
+    .form-card-headline {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--cream);
+      margin-bottom: 6px;
+    }
+    .form-card-sub {
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: rgba(242,225,205,0.65);
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      background: var(--dark-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      border-bottom: 1px solid rgba(242,225,205,0.08);
+    }
+    .brand {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      color: var(--cream);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .brand span { color: var(--orange); }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: var(--dark-bg);
+      padding: 80px 24px 100px;
+      text-align: center;
+    }
+    .pill {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--orange);
+      border: 1px solid rgba(199,92,51,0.4);
+      border-radius: 100px;
+      padding: 7px 18px;
+      margin-bottom: 28px;
+    }
+    .hero h1 { margin-bottom: 28px; }
+    .hero h1 em { font-style: italic; color: var(--orange); }
+    .hero-sub {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(242,225,205,0.88);
+      max-width: 620px;
+      margin: 0 auto 36px;
+    }
+    .reassure {
+      list-style: none;
+      display: inline-flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+      margin: 0 auto 44px;
+    }
+    .reassure li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: rgba(242,225,205,0.9);
+    }
+    .reassure li::before {
+      content: '';
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(199,92,51,0.5);
+      background: rgba(199,92,51,0.1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c75c33' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center / 11px no-repeat;
+    }
+    .hero-form { max-width: 480px; margin: 0 auto; text-align: left; }
+
+    /* ─── WHAT YOU'LL GET (3 cards) ─── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 40px;
+    }
+    .num-card {
+      background: var(--cream);
+      border-radius: 14px;
+      padding: 32px 28px;
+    }
+    .num-card .card-num {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      color: rgba(199,92,51,0.25);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .num-card h3 {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      color: var(--card-text);
+      margin-bottom: 10px;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .num-card p { font-size: 0.88rem; line-height: 1.72; color: var(--card-text); opacity: 0.82; }
+
+    /* ─── PROBLEM SECTION SPECIFICS ─── */
+    .problem-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 8px 0 16px;
+    }
+    .problem-list li {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--card-text);
+      padding-left: 20px;
+      position: relative;
+      opacity: 0.82;
+    }
+    .problem-list li::before { content: '—'; position: absolute; left: 0; color: var(--orange); font-weight: 600; }
+    .callout-bar {
+      border-left: 3px solid var(--orange);
+      padding: 16px 20px;
+      margin: 28px 0;
+      background: rgba(199,92,51,0.07);
+      border-radius: 0 10px 10px 0;
+    }
+    .callout-bar p { font-size: 1rem; font-weight: 600; color: var(--card-text); margin: 0; opacity: 1; }
+
+    /* ─── MID CTA ─── */
+    .mid-cta-grid {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 60px;
+      align-items: center;
+      width: 100%;
+    }
+    .mid-cta-copy h2 { color: var(--cream); }
+    .mid-cta-copy p { color: rgba(242,225,205,0.85); margin-top: 12px; }
+
+    /* ─── STEPS ─── */
+    .steps { list-style: none; display: flex; flex-direction: column; margin-top: 40px; }
+    .steps li {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 24px;
+      align-items: start;
+      padding: 28px 0;
+      border-bottom: 1px solid rgba(242,225,205,0.08);
+    }
+    .steps li:last-child { border-bottom: none; }
+    .step-num {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      color: var(--orange);
+      line-height: 1;
+      opacity: 0.7;
+    }
+    .step-body h4 { color: var(--cream); margin-bottom: 10px; font-size: 0.82rem; }
+    .step-body p { font-size: 0.9rem; line-height: 1.75; color: rgba(242,225,205,0.8); }
+    .step-body p em { font-style: italic; }
+    .micro-line { font-size: 0.88rem; color: rgba(242,225,205,0.55); margin-top: 8px; margin-bottom: 0; font-style: italic; }
+
+    /* ─── PILLARS ─── */
+    .pillars {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      margin-top: 48px;
+      background: rgba(199,92,51,0.1);
+      border: 1px solid rgba(199,92,51,0.22);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .pillar { padding: 28px 22px; text-align: center; }
+    .pillar-label {
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 6px;
+    }
+    .pillar-name {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      color: var(--cream);
+      line-height: 1.2;
+    }
+    .pillar-desc { font-size: 0.75rem; color: rgba(242,225,205,0.6); margin-top: 4px; line-height: 1.5; }
+    .pillar-arrow { font-size: 1rem; color: var(--orange); padding: 0 4px; opacity: 0.6; }
+
+    /* ─── BONUS SECTION ─── */
+    .bonus-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 8px 0 16px;
+    }
+    .bonus-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--card-text);
+      opacity: 0.85;
+    }
+    .bonus-list li::before {
+      content: '';
+      flex-shrink: 0;
+      margin-top: 9px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--orange);
+    }
+    .filter-line {
+      display: block;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(42,20,12,0.15);
+      font-size: 0.82rem;
+      font-style: italic;
+      color: rgba(42,20,12,0.6);
+      line-height: 1.6;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--dark-bg);
+      border-top: 1px solid rgba(242,225,205,0.08);
+      text-align: center;
+      padding: 36px 24px;
+      font-size: 0.75rem;
+      color: rgba(242,225,205,0.35);
+    }
+    footer a { color: rgba(242,225,205,0.45); text-decoration: none; }
+    footer a:hover { color: var(--orange); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 860px) {
+      .mid-cta-grid { grid-template-columns: 1fr; gap: 40px; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .pillars { grid-template-columns: 1fr; }
+      .pillar-arrow { display: none; }
+    }
+    @media (max-width: 600px) {
+      html, body { font-size: 16px; }
+      .section { padding: 60px 20px; }
+      .content-card { padding: 28px 24px; }
+      .form-card { padding: 26px 20px; }
+      .steps li { grid-template-columns: 36px 1fr; gap: 16px; }
+      .step-num { font-size: 1.8rem; }
+    }
+
+    /* ─── GHL OVERRIDES ─── */
+    .page-section, .section-body, .container-fluid,
+    .full-width, [data-section-id], .col-12, .row {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      max-width: 100% !important;
+      background: transparent !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="brand">Ember <span>by Victoria Lewis</span></div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="pill">Free Masterclass + Workbook</p>
+    <h1>Map It Before You <em>Build</em> It.</h1>
+    <p class="hero-sub">
+      Your systems aren't messy because you picked the wrong tools. They're messy because there's no clear map behind them yet.<br><br>
+      This free 20-minute masterclass shows you how to map your client journey properly — so the back end of your business delivers as well as the front.
+    </p>
+    <ul class="reassure">
+      <li>A 20-minute video. Straight to the point.</li>
+      <li>A workbook you fill in as you watch</li>
+      <li>A personal, no-pitch audit of your setup</li>
+    </ul>
+    <div class="hero-form">
+      <div class="form-card">
+        <span class="pretitle">Get instant access</span>
+        <p class="form-card-headline">Get the masterclass + workbook</p>
+        <p class="form-card-sub">Pop your details in and I'll send everything straight over, plus how to get your free audit.</p>
+        <div class="divider-rule"></div>
+        <form action="#" method="post">
+          <div class="field"><input type="text" name="first_name" placeholder="First Name" required></div>
+          <div class="field"><input type="email" name="email" placeholder="Email Address" required></div>
+          <button type="submit" class="btn">Send Me the Masterclass →</button>
+        </form>
+        <p class="fine-print">Free. No pitch. Unsubscribe anytime.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT YOU'LL GET -->
+  <section class="section">
+    <div class="inner">
+      <span class="pretitle">What you'll get</span>
+      <h2>Everything you need to get clear on your backend</h2>
+      <div class="cards-grid">
+        <div class="num-card">
+          <div class="card-num">01</div>
+          <h3>The Masterclass</h3>
+          <p>A focused 20-minute walkthrough showing you how to map your real client journey, spot what's not working, and understand what actually needs fixing before you touch another tool.</p>
+        </div>
+        <div class="num-card">
+          <div class="card-num">02</div>
+          <h3>The Workbook</h3>
+          <p>A simple, practical workbook to fill in as you watch. By the end, you'll have a clear view of where things are clunky, manual, or falling through the cracks.</p>
+        </div>
+        <div class="num-card">
+          <div class="card-num">03</div>
+          <h3>Your Personal Audit</h3>
+          <p>Send me your completed workbook and I'll reply with the exact 3 areas I'd fix first. No pitch. No fluff. Just straight answers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section class="section">
+    <div class="inner">
+      <div class="content-card">
+        <span class="pretitle">Sound familiar?</span>
+        <h2>Things look good on the surface… but behind the scenes, it's harder work than it should be.</h2>
+        <p>You've got the tools in place. Things are set up. From the outside, it looks like it should all run smoothly.</p>
+        <p>But in reality:</p>
+        <ul class="problem-list">
+          <li>things happen in the wrong order</li>
+          <li>you're manually stepping in more than you should be</li>
+          <li>and you're holding more of it together in your head than you'd like</li>
+        </ul>
+        <p>So you keep tweaking. Adding something here. Fixing something there. Trying to get it to flow… but it never quite does.</p>
+        <div class="callout-bar">
+          <p>Nothing's broken. It just hasn't been mapped out yet.</p>
+        </div>
+        <p>When you can see your full client journey clearly, everything shifts. You stop guessing what to fix. You stop adding tools you don't need. And the back end of your business starts supporting what you're trying to build, instead of slowing it down.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MID CTA -->
+  <section class="section">
+    <div class="inner">
+      <div class="mid-cta-grid">
+        <div class="mid-cta-copy">
+          <span class="pretitle">Get started</span>
+          <h2>Ready to see what's really going on?</h2>
+          <p>Get the free masterclass and workbook, and map your client journey in 20 minutes flat.</p>
+        </div>
+        <div class="form-card">
+          <form action="#" method="post">
+            <div class="field"><input type="text" name="first_name" placeholder="First Name" required></div>
+            <div class="field"><input type="email" name="email" placeholder="Email Address" required></div>
+            <button type="submit" class="btn">Send Me the Masterclass →</button>
+          </form>
+          <p class="fine-print">Free. No pitch. Unsubscribe anytime.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEPS -->
+  <section class="section">
+    <div class="inner">
+      <span class="pretitle">The masterclass</span>
+      <h2>In 20 minutes, you'll go from "this feels messy" to knowing exactly what's going on</h2>
+      <p class="micro-line">No overwhelm. No complicated frameworks. Just clarity.</p>
+      <ul class="steps">
+        <li>
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Map what's really happening</h4>
+            <p>You'll quickly map your current client journey as it actually works today. Not the polished version. The real one.</p>
+            <p><em>This is usually where things start to click.</em></p>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>See where it's not flowing</h4>
+            <p>You'll spot the points where things feel clunky, manual, or out of sync. The bits where you're stepping in, chasing, fixing, or second-guessing.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Know what to fix (and what to leave alone)</h4>
+            <p>You'll use a simple framework to sort every issue into what it actually is — so you stop guessing and start fixing the right things in the right order.</p>
+          </div>
+        </li>
+      </ul>
+      <div class="pillars">
+        <div class="pillar">
+          <p class="pillar-label">Process</p>
+          <p class="pillar-name">What's happening</p>
+          <p class="pillar-desc">and in what order</p>
+        </div>
+        <div class="pillar-arrow">→</div>
+        <div class="pillar">
+          <p class="pillar-label">Tool</p>
+          <p class="pillar-name">What's supporting it</p>
+          <p class="pillar-desc">or getting in the way</p>
+        </div>
+        <div class="pillar-arrow">→</div>
+        <div class="pillar">
+          <p class="pillar-label">Human</p>
+          <p class="pillar-name">Where you stay involved</p>
+          <p class="pillar-desc">and where you don't have to</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BONUS -->
+  <section class="section">
+    <div class="inner">
+      <div class="content-card">
+        <span class="pretitle">The bonus</span>
+        <h2>Get a second pair of eyes on your map.</h2>
+        <p>Once you've worked through the workbook, you can send it over to me.</p>
+        <p>I'll go through it properly and come back with clear, straight-talking feedback on what's actually going on behind the scenes. Not a generic checklist. Not surface-level advice.</p>
+        <p>I'm looking at how your journey flows, where things feel clunky, and where your time and energy are being pulled in unnecessarily.</p>
+        <p><strong style="color: var(--card-text);">You'll get:</strong></p>
+        <ul class="bonus-list">
+          <li>the biggest gaps in your current setup</li>
+          <li>where things are slowing you down or breaking the experience</li>
+          <li>and the 3 places I'd focus first to make things run properly</li>
+        </ul>
+        <p>No pitch. No pressure. Just honest feedback you can actually use.</p>
+        <span class="filter-line">I only review completed workbooks, so you'll need to go through the process first.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="section">
+    <div class="inner" style="max-width: 520px;">
+      <div class="form-card">
+        <p class="form-card-headline">Start mapping your client journey</p>
+        <p class="form-card-sub">Get the masterclass, workbook, and the option to send your map for feedback.</p>
+        <div class="divider-rule"></div>
+        <form action="#" method="post">
+          <div class="field"><input type="text" name="first_name" placeholder="First Name" required></div>
+          <div class="field"><input type="email" name="email" placeholder="Email Address" required></div>
+          <button type="submit" class="btn">Send Me the Masterclass &amp; Workbook →</button>
+        </form>
+        <p class="fine-print">Free. No pitch. Unsubscribe anytime.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 Ember by Victoria Lewis &nbsp;·&nbsp; <a href="#">Privacy Policy</a> &nbsp;·&nbsp; <a href="#">Terms</a></p>
+  </footer>
+
+</body>
+</html>
