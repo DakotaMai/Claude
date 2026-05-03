@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Ember by Victoria Lewis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@700&family=Livvic:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark:      #2a140c;
+      --cream:     #f2e1cd;
+      --orange:    #c75c33;
+      --card-text: #3a2820;
+      --h:         'Chivo', sans-serif;
+      --b:         'Livvic', sans-serif;
+    }
+
+    html, body {
+      font-size: 18px;
+      font-family: var(--b);
+      font-weight: 400;
+      line-height: 1.7;
+      background: var(--dark) !important;
+      color: var(--cream);
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* ── SECTIONS ── */
+    .s        { padding: 120px 64px; background: var(--dark); }
+    .s--orange { background: var(--orange); }
+    .s--cream  { background: var(--cream); }
+    .s--xl    { padding-top: 160px; padding-bottom: 160px; }
+    .s--sm    { padding-top: 80px;  padding-bottom: 80px; }
+
+    /* ── INNER WIDTHS ── */
+    .w-narrow { max-width: 640px;  margin-left: auto; margin-right: auto; }
+    .w-mid    { max-width: 880px;  margin-left: auto; margin-right: auto; }
+    .w-wide   { max-width: 1200px; margin-left: auto; margin-right: auto; }
+
+    /* ── TYPE ── */
+    h1 {
+      font-family: var(--h);
+      font-size: clamp(3.8rem, 8vw, 8.5rem);
+      font-weight: 700;
+      letter-spacing: -0.045em;
+      line-height: 0.97;
+      color: var(--cream);
+    }
+    h2 {
+      font-family: var(--h);
+      font-size: clamp(2.8rem, 5.5vw, 5.2rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.03;
+      color: var(--cream);
+    }
+    h3 {
+      font-family: var(--h);
+      font-size: clamp(1.2rem, 2vw, 1.55rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+    p { margin-top: 1rem; }
+    p:first-child { margin-top: 0; }
+    .lead {
+      font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+      line-height: 1.75;
+      color: rgba(242,225,205,0.8);
+      margin-top: 28px;
+    }
+
+    em.hi { font-style: normal; color: var(--orange); }
+
+    .pre {
+      display: inline-block;
+      font-family: var(--b);
+      font-weight: 600;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      border: 1.5px solid var(--orange);
+      color: var(--orange);
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+
+    .bar {
+      width: 52px; height: 4px;
+      background: var(--orange);
+      border-radius: 2px;
+      margin-bottom: 32px;
+    }
+
+    /* ── COLOUR OVERRIDES ── */
+    .s--orange h2, .s--orange h3 { color: var(--cream); }
+    .s--orange p, .s--orange .lead { color: rgba(242,225,205,0.88); }
+    .s--orange em.hi { color: var(--dark); }
+    .s--orange .pre  { color: var(--cream); border-color: rgba(242,225,205,0.4); }
+    .s--orange .bar  { background: rgba(242,225,205,0.5); }
+
+    .s--cream h2, .s--cream h3 { color: var(--dark); }
+    .s--cream p, .s--cream .lead { color: rgba(42,20,12,0.72); }
+    .s--cream em.hi { color: var(--orange); }
+    .s--cream .pre  { color: var(--orange); border-color: var(--orange); }
+    .s--cream .bar  { background: var(--orange); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-block;
+      font-family: var(--b);
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.03em;
+      padding: 20px 48px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      margin-top: 40px;
+      background: var(--orange);
+      color: var(--cream) !important;
+    }
+    .btn:hover { opacity: 0.85; transform: translateY(-2px); }
+    .btn--dark  { background: var(--dark);  color: var(--cream) !important; }
+    .btn--cream { background: var(--cream); color: var(--dark)  !important; }
+
+    /* ── NAV ── */
+    .nav {
+      background: var(--dark);
+      padding: 24px 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(242,225,205,0.07);
+    }
+    .nav-logo { font-family: var(--h); font-size: 1.15rem; color: var(--cream); letter-spacing: 0.1em; text-transform: uppercase; }
+    .nav-logo span { color: var(--orange); }
+    .nav-link { font-family: var(--b); font-size: 0.88rem; font-weight: 600; color: var(--orange); text-decoration: none; letter-spacing: 0.04em; }
+    .nav-link:hover { opacity: 0.7; }
+
+    /* ── HERO ── */
+    .hero { background: var(--dark); padding: 120px 64px 140px; }
+    .hero .pre { color: var(--orange); border-color: var(--orange); }
+    .hero h1   { margin-top: 24px; margin-bottom: 72px; }
+    .hero-lower {
+      display: grid;
+      grid-template-columns: 1fr 460px;
+      gap: 80px;
+      align-items: center;
+    }
+    .hero-points { display: flex; flex-direction: column; gap: 28px; }
+    .hero-points p { color: rgba(242,225,205,0.78); font-size: 1.08rem; line-height: 1.8; margin-top: 0; }
+    .hero-img { border-radius: 20px; overflow: hidden; aspect-ratio: 3/4; }
+    .hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* ── SPLIT ── */
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    /* ── PULL QUOTE ── */
+    .pull-quote {
+      border-left: 4px solid var(--orange);
+      padding-left: 28px;
+      margin-top: 0;
+    }
+    .pull-quote p {
+      font-family: var(--h);
+      font-size: clamp(1.3rem, 2.5vw, 2rem);
+      letter-spacing: -0.03em;
+      line-height: 1.25;
+      color: var(--dark);
+      margin-top: 0;
+    }
+    .pull-quote cite {
+      display: block;
+      margin-top: 16px;
+      font-style: normal;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--orange);
+    }
+
+    /* ── TEAM CARDS ── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 64px;
+    }
+    .team-card {
+      background: var(--cream);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .team-card-photo {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      object-position: top;
+      display: block;
+    }
+    .team-card-body { padding: 36px 32px 40px; }
+    .team-role {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 12px;
+    }
+    .team-card h3 { color: var(--card-text); margin-bottom: 16px; font-size: 1.35rem; }
+    .team-card p  { color: rgba(42,20,12,0.68); font-size: 0.97rem; line-height: 1.78; margin-top: 0; }
+
+    /* ── BELIEFS ── */
+    .belief-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-top: 64px;
+    }
+    .belief {
+      background: rgba(42,20,12,0.18);
+      padding: 48px 44px;
+    }
+    .belief:first-child { border-radius: 20px 0 0 0; }
+    .belief:nth-child(2) { border-radius: 0 20px 0 0; }
+    .belief:nth-child(3) { border-radius: 0 0 0 20px; }
+    .belief:last-child  { border-radius: 0 0 20px 0; }
+    .belief-n {
+      font-family: var(--h);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(242,225,205,0.35);
+      display: block;
+      margin-bottom: 20px;
+    }
+    .belief p {
+      font-family: var(--h);
+      font-size: clamp(1.1rem, 1.8vw, 1.45rem);
+      letter-spacing: -0.025em;
+      line-height: 1.3;
+      color: var(--cream);
+      margin-top: 0;
+    }
+
+    /* ── FOOTER ── */
+    .footer { background: var(--dark); border-top: 1px solid rgba(242,225,205,0.07); text-align: center; padding: 48px 64px; font-size: 0.8rem; color: rgba(242,225,205,0.32); }
+    .footer-brand { font-family: var(--h); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(242,225,205,0.55); display: block; margin-bottom: 12px; }
+    .footer a { color: rgba(242,225,205,0.32); text-decoration: underline; margin: 0 10px; }
+    .footer a:hover { color: var(--orange); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero { padding: 80px 40px 100px; }
+      .hero h1 { margin-bottom: 48px; }
+      .hero-lower { grid-template-columns: 1fr; gap: 48px; }
+      .hero-img { aspect-ratio: 4/3; }
+      .split { grid-template-columns: 1fr; gap: 48px; }
+      .team-grid { grid-template-columns: 1fr; }
+      .belief-grid { grid-template-columns: 1fr; gap: 2px; }
+      .belief:first-child  { border-radius: 20px 20px 0 0; }
+      .belief:nth-child(2) { border-radius: 0; }
+      .belief:nth-child(3) { border-radius: 0; }
+      .belief:last-child   { border-radius: 0 0 20px 20px; }
+    }
+    @media (max-width: 600px) {
+      html, body { font-size: 16px; }
+      .s   { padding: 80px 28px; }
+      .s--xl { padding: 100px 28px; }
+      .hero { padding: 80px 28px 100px; }
+      .nav, .footer { padding-left: 28px; padding-right: 28px; }
+      .belief { padding: 36px 28px; }
+    }
+
+    /* ── GHL OVERRIDES ── */
+    .page-section, .section-body, .container-fluid,
+    .full-width, [data-section-id], .col-12, .row {
+      padding-left: 0 !important; padding-right: 0 !important;
+      margin-left: 0 !important;  margin-right: 0 !important;
+      max-width: 100% !important; background: transparent !important;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Ember <span>by Victoria Lewis</span></div>
+  <a class="nav-link" href="https://www.victorialewis.co.uk/services">All services →</a>
+</nav>
+
+<!-- 1. HERO — dark -->
+<section class="hero">
+  <div class="w-wide">
+    <span class="pre">Systems designer, fixer &amp; your go-to for a business that actually works</span>
+    <h1>Hello, I'm <em class="hi">Viki.</em></h1>
+    <div class="hero-lower">
+      <div class="hero-points">
+        <p>My passion is productivity and efficiency. Wait — don't scroll. I know those words don't sound exciting, but stay with me.</p>
+        <p>When your systems and client experience actually <em>work together</em>, everything in your business feels easier. You get more time, less stress, and a business that finally runs smoothly behind the scenes.</p>
+        <p>That's what I help founders, freelancers, and creative agency owners build — systems that <em>match</em> their brand, their clients, and their way of working.</p>
+        <a class="btn" href="https://app.usemotion.com/meet/victoria-lewis/disco">Book a Free Call →</a>
+      </div>
+      <div class="hero-img">
+        <img src="https://www.victorialewis.co.uk/content-assets/public/eyJhbGciOiJIUzI1NiJ9.eyJvYmplY3Rfa2V5Ijoidjl2Nmtjd3dkYmZmcjA3ZjZsN2o3YnA5c3psNSIsImRvbWFpbiI6Ind3dy52aWN0b3JpYWxld2lzLmNvLnVrIn0.cDqxZHaAL_r-lIFs4aWZAY1PpDk74dIVkPwM9eJzU28" alt="Viki Lewis">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. BACKGROUND — cream, split -->
+<section class="s s--cream s--xl">
+  <div class="w-wide">
+    <div class="split">
+      <div>
+        <div class="bar"></div>
+        <span class="pre">A bit about me</span>
+        <h2>25 years of fixing things <em class="hi">behind the scenes.</em></h2>
+        <p style="margin-top:28px;">I spent 25 years working inside large businesses and retail chains — fixing inefficiencies, improving processes, and streamlining workflows long before automation was a buzzword.</p>
+        <p>Now I bring all of that experience into the small business world, helping you design client journeys and build systems that grow <em>with</em> you — not against you.</p>
+        <p>My husband works full-time in the touring music industry, so he's often away. Thankfully I've got two grown boys and two dogs keeping me company at home.</p>
+        <p>With the kids grown and my time finally my own, my goal is simple — to build a business that gives me freedom to travel and support others doing the same. That's why I care so much about helping others build businesses that actually <em>work for them.</em></p>
+      </div>
+      <div>
+        <div class="pull-quote">
+          <p>"When the backend runs right, you get time and headspace to actually grow."</p>
+          <cite>— Viki Lewis</cite>
+        </div>
+        <p style="margin-top:40px;">I've been on both sides of the chaos — the corporate machine with too many processes, and the small business with none at all. The sweet spot is somewhere in between, and finding it is what I love to do.</p>
+        <p>Whether you need one system sorted, a full client journey built from scratch, or just someone to ask when you're stuck — that's what Ember is here for.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. MEET THE TEAM — dark -->
+<section class="s s--xl">
+  <div class="w-wide">
+    <div class="bar"></div>
+    <span class="pre">The team</span>
+    <h2>Meet the people behind <em class="hi">Ember.</em></h2>
+    <p style="max-width:560px; margin-top:20px; color:rgba(242,225,205,0.65);">Ember isn't a one-woman show. It's a small but mighty team — here to make sure every project runs smoothly from start to finish.</p>
+    <div class="team-grid">
+
+      <div class="team-card">
+        <img class="team-card-photo" src="https://www.victorialewis.co.uk/content-assets/public/eyJhbGciOiJIUzI1NiJ9.eyJvYmplY3Rfa2V5IjoicHJkMmNkbXBqeTdzOHludW1wb3NsYzV3cHYyYyIsImRvbWFpbiI6Ind3dy52aWN0b3JpYWxld2lzLmNvLnVrIn0.vG-b5sQGCLnI8PiQMMRTGqXJSBQnS80KIQyqjiha77g" alt="Natalie">
+        <div class="team-card-body">
+          <span class="team-role">EA &amp; Project Manager</span>
+          <h3>Natalie</h3>
+          <p>Natalie keeps everything — and everyone — organised. She handles timelines, communication, and coordination across projects so nothing slips through the cracks. If you've ever wondered how everything runs so smoothly, it's probably because Nat's behind it.</p>
+        </div>
+      </div>
+
+      <div class="team-card">
+        <img class="team-card-photo" src="https://www.victorialewis.co.uk/content-assets/public/eyJhbGciOiJIUzI1NiJ9.eyJvYmplY3Rfa2V5IjoiNGx2Z2MxZXBxdDc5cWd2YXR6cGgydnE1aHVwaSIsImRvbWFpbiI6Ind3dy52aWN0b3JpYWxld2lzLmNvLnVrIn0.XBSm0y0pPz1chlhV4K0amHvbxQQsHL_Npa9mYuA45k8" alt="Kate">
+        <div class="team-card-body">
+          <span class="team-role">Tech VA &amp; Systems Support</span>
+          <h3>Kate</h3>
+          <p>Kate supports client projects, sense-checks Viki's mad ideas, and helps bring each system to life from setup to testing. She's a total whizz with Airtable, WordPress, Kajabi, Podia, and can figure out pretty much any task you throw at her.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 4. WHAT WE BELIEVE — orange, belief grid -->
+<section class="s s--orange s--xl">
+  <div class="w-wide">
+    <div class="bar"></div>
+    <span class="pre">What we believe</span>
+    <h2>The things we <em class="hi">won't compromise on.</em></h2>
+    <div class="belief-grid">
+
+      <div class="belief">
+        <span class="belief-n">01</span>
+        <p>Your systems should reflect your brand — not fight against it.</p>
+      </div>
+
+      <div class="belief">
+        <span class="belief-n">02</span>
+        <p>A smooth client journey is good business strategy, not a luxury.</p>
+      </div>
+
+      <div class="belief">
+        <span class="belief-n">03</span>
+        <p>You don't need to be techy to have tech that works.</p>
+      </div>
+
+      <div class="belief">
+        <span class="belief-n">04</span>
+        <p>When the backend runs right, you get time and headspace to grow.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 5. CTA — dark -->
+<section class="s s--sm" style="text-align:center;">
+  <div class="w-narrow">
+    <div class="bar" style="margin-left:auto; margin-right:auto;"></div>
+    <span class="pre">Let's work together</span>
+    <h2>Let's <em class="hi">chat.</em></h2>
+    <p class="lead">Whether you need a full Ember Build or just one system sorted — book a free call and let's work out what makes sense for you.</p>
+    <p style="margin-top:8px; color:rgba(242,225,205,0.45); font-size:0.9rem;">No pressure. Just clear next steps.</p>
+    <a class="btn" href="https://app.usemotion.com/meet/victoria-lewis/disco">Book a Free Call →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <span class="footer-brand">Ember by Victoria Lewis</span>
+  <p><a href="https://www.victorialewis.co.uk/privacy">Privacy Policy</a><a href="https://www.victorialewis.co.uk/terms">Terms of Service</a></p>
+</footer>
+
+</body>
+</html>
