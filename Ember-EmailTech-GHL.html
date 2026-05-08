@@ -162,7 +162,10 @@
     .nav-logo { font-family: var(--h); font-size: 1.15rem; color: var(--cream); letter-spacing: 0.1em; text-transform: uppercase; }
     .nav-logo span { color: var(--orange); }
     .nav-link { font-family: var(--b); font-size: 0.88rem; font-weight: 600; color: var(--orange); text-decoration: none; letter-spacing: 0.04em; }
-    .nav-link:hover { opacity: 0.7; }
+    .nav-link { color: rgba(242,225,205,0.5); }
+    .nav-link:hover { color: var(--cream); opacity: 1; }
+    .nav-link--active { color: var(--orange) !important; }
+    .nav-links { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
 
     /* ── HERO ── */
     .hero { background: var(--dark); padding: 120px 64px 140px; }
@@ -310,6 +313,7 @@
       .cap-card--full { max-width: 100%; }
     }
     @media (max-width: 600px) {
+      .nav-links { display: none; }
       html, body { font-size: 16px; }
       .s   { padding: 80px 28px; }
       .s--xl { padding: 100px 28px; }
@@ -331,7 +335,14 @@
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-logo">Ember <span>by Victoria Lewis</span></div>
-  <a class="nav-link" href="https://www.victorialewis.co.uk/services">All services →</a>
+  <div class="nav-links">
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/TeNX4q3g8VlFNirhLOl1?notrack=true">Home</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Services</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/xSJEwDoTtk7bHBZCGd74">Ignite</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/aSgfiQ8D7IZXCDCyPZrg?notrack=true">Spark</a>
+    <a class="nav-link nav-link--active" href="https://app.gohighlevel.com/v2/preview/q1PAkpQd08WxnTFUF8rt">Email Tech</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/F1NUq7LP9rtPnKCI9ycr">About</a>
+  </div>
 </nav>
 
 <!-- 1. HERO - dark -->
