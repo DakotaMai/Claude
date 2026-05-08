@@ -185,7 +185,10 @@
       font-family: var(--b); font-size: 0.88rem; font-weight: 600;
       color: var(--orange); text-decoration: none; letter-spacing: 0.04em;
     }
-    .nav-link:hover { opacity: 0.7; }
+    .nav-link { color: rgba(242,225,205,0.5); }
+    .nav-link:hover { color: var(--cream); opacity: 1; }
+    .nav-link--active { color: var(--orange) !important; }
+    .nav-links { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
 
     /* ── HERO ── */
     .hero {
@@ -365,6 +368,7 @@
       .offer-num  { font-size: 2.8rem; }
     }
     @media (max-width: 600px) {
+      .nav-links { display: none; }
       html, body { font-size: 16px; }
       .s   { padding: 80px 28px; }
       .s--xl { padding: 100px 28px; }
@@ -388,7 +392,14 @@
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-logo">Ember <span>by Victoria Lewis</span></div>
-  <a class="nav-link" href="#">Work with me →</a>
+  <div class="nav-links">
+    <a class="nav-link nav-link--active" href="#">Home</a>
+    <a class="nav-link" href="#">Services</a>
+    <a class="nav-link" href="#">Ignite</a>
+    <a class="nav-link" href="#">Spark</a>
+    <a class="nav-link" href="#">Email Tech</a>
+    <a class="nav-link" href="#">About</a>
+  </div>
 </nav>
 
 <!-- 1. HERO - dark, full-width headline then image + subtext -->
@@ -466,19 +477,19 @@
       </div>
 
       <div style="background:rgba(42,20,12,0.07); border-radius:20px; padding:40px 36px;">
-        <span style="font-family:var(--b); font-weight:600; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--orange);">Module A</span>
+        <span style="font-family:var(--b); font-weight:600; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--orange);">Phase 2</span>
         <h3 style="color:var(--dark); margin-top:14px; margin-bottom:12px;">The Engine Room</h3>
         <p style="color:rgba(42,20,12,0.68); font-size:0.97rem; margin-top:0;">Your entire back-end operation - CRM, pipelines, call bookings, onboarding, contracts, invoicing, and automations. Everything that keeps your business running behind the scenes.</p>
       </div>
 
       <div style="background:rgba(42,20,12,0.07); border-radius:20px; padding:40px 36px;">
-        <span style="font-family:var(--b); font-weight:600; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--orange);">Module B - bolt-on to Engine Room</span>
+        <span style="font-family:var(--b); font-weight:600; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--orange);">Bolt-on 1</span>
         <h3 style="color:var(--dark); margin-top:14px; margin-bottom:12px;">The Front End</h3>
         <p style="color:rgba(42,20,12,0.68); font-size:0.97rem; margin-top:0;">A fully bespoke website - designed to reflect your brand and connect directly into your back-end system. Not a template with your colours overlaid. Built specifically for you.</p>
       </div>
 
       <div style="background:rgba(42,20,12,0.07); border-radius:20px; padding:40px 36px;">
-        <span style="font-family:var(--b); font-weight:600; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--orange);">Module C - bolt-on to Engine Room</span>
+        <span style="font-family:var(--b); font-weight:600; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--orange);">Bolt-on 2</span>
         <h3 style="color:var(--dark); margin-top:14px; margin-bottom:12px;">The Map</h3>
         <p style="color:rgba(42,20,12,0.68); font-size:0.97rem; margin-top:0;">Lead magnets, landing pages, and email funnels - everything that guides your prospects toward becoming clients, wired directly into your system so nothing falls through the cracks.</p>
       </div>
