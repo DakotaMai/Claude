@@ -162,7 +162,10 @@
     .nav-logo { font-family: var(--h); font-size: 1.15rem; color: var(--cream); letter-spacing: 0.1em; text-transform: uppercase; }
     .nav-logo span { color: var(--orange); }
     .nav-link { font-family: var(--b); font-size: 0.88rem; font-weight: 600; color: var(--orange); text-decoration: none; letter-spacing: 0.04em; }
-    .nav-link:hover { opacity: 0.7; }
+    .nav-link { color: rgba(242,225,205,0.5); }
+    .nav-link:hover { color: var(--cream); opacity: 1; }
+    .nav-link--active { color: var(--orange) !important; }
+    .nav-links { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
 
     /* ── HERO ── */
     .hero { background: var(--dark); padding: 120px 64px 140px; }
@@ -193,7 +196,7 @@
       display: grid;
       grid-template-columns: 1fr 40px 1fr 40px 1fr;
       gap: 0;
-      align-items: center;
+      align-items: stretch;
       margin-top: 72px;
     }
     .vip-card {
@@ -238,7 +241,7 @@
       margin-top: 64px;
     }
     .num-card { background: var(--cream); border-radius: 18px; padding: 40px 36px; }
-    .num-card-n { font-family: var(--h); font-size: 4rem; letter-spacing: -0.05em; line-height: 1; color: rgba(42,20,12,0.1); display: block; margin-bottom: 16px; }
+    .num-card-n { font-family: var(--h); font-size: 4rem; letter-spacing: -0.05em; line-height: 1; color: var(--orange); display: block; margin-bottom: 16px; }
     .num-card h3 { color: var(--card-text); margin-bottom: 12px; }
     .num-card p  { color: rgba(42,20,12,0.68); font-size: 0.97rem; line-height: 1.75; margin-top: 0; }
     .num-card p + p { margin-top: 10px; }
@@ -377,6 +380,7 @@
       .includes-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 600px) {
+      .nav-links { display: none; }
       html, body { font-size: 16px; }
       .s   { padding: 80px 28px; }
       .s--xl { padding: 100px 28px; }
@@ -398,7 +402,14 @@
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-logo">Ember <span>by Victoria Lewis</span></div>
-  <a class="nav-link" href="https://www.victorialewis.co.uk/free">Join Spark - £27/month →</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#">Home</a>
+    <a class="nav-link" href="#">Services</a>
+    <a class="nav-link" href="#">Ignite</a>
+    <a class="nav-link nav-link--active" href="#">Spark</a>
+    <a class="nav-link" href="#">Email Tech</a>
+    <a class="nav-link" href="#">About</a>
+  </div>
 </nav>
 
 <!-- 1. HERO - dark -->
@@ -461,7 +472,7 @@
 
       <div class="vip-card">
         <span class="vip-step">Step 01</span>
-        <h3>You post your question</h3>
+        <h3>Ask Your Question</h3>
         <p>Anything about systems, tools, workflows, automations, AI - whatever's got you stuck. Post it in the Spark community any time.</p>
       </div>
 
