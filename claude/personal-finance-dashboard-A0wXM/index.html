@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#111827;min-height:100vh}
+
+/* ── Setup ── */
+.setup-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+.setup-card{background:#fff;border-radius:20px;padding:48px;max-width:520px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.setup-card h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.setup-card>p{color:#6b7280;margin-bottom:32px;line-height:1.5}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-group input{width:100%;border:1.5px solid #e5e7eb;border-radius:10px;padding:12px 14px;font-size:15px;transition:border-color .15s}
+.form-group input:focus{outline:none;border-color:#6366f1}
+.connect-btn{width:100%;background:#6366f1;color:#fff;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s;margin-top:8px}
+.connect-btn:hover{background:#4f46e5}
+.connect-btn:disabled{background:#a5b4fc;cursor:not-allowed}
+.setup-note{font-size:13px;color:#9ca3af;margin-top:20px;line-height:1.5;text-align:center}
+.setup-note strong{color:#6b7280}
+.error-msg{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;border-radius:8px;padding:12px 14px;font-size:14px;margin-top:16px}
+
+/* ── Loading ── */
+.loading-overlay{position:fixed;inset:0;background:rgba(240,242,245,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:100}
+.spinner{width:36px;height:36px;border:3px solid #e5e7eb;border-top-color:#6366f1;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-overlay p{color:#6b7280;font-size:15px}
+
+/* ── Dashboard ── */
+.hidden{display:none!important}
+
+header{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.header-title{font-size:17px;font-weight:700;color:#111827}
+.month-nav{display:flex;align-items:center;gap:12px}
+.nav-btn{background:none;border:1.5px solid #e5e7eb;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:18px;color:#374151;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.nav-btn:hover{border-color:#6366f1;color:#6366f1}
+.nav-btn:disabled{opacity:.35;cursor:default}
+.month-label{font-size:16px;font-weight:600;min-width:140px;text-align:center}
+.header-actions{display:flex;gap:8px}
+.icon-btn{background:none;border:1.5px solid #e5e7eb;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px;color:#374151;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.icon-btn:hover{border-color:#6366f1;color:#6366f1}
+
+.main{max-width:1200px;margin:0 auto;padding:24px}
+
+/* ── Cards ── */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.card{background:#fff;border-radius:14px;padding:20px 22px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card-label{font-size:12px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.card-value{font-size:26px;font-weight:700;line-height:1}
+.card-sub{font-size:13px;color:#9ca3af;margin-top:6px}
+.card.income .card-value{color:#16a34a}
+.card.expense .card-value{color:#dc2626}
+.card.net .card-value{color:#0369a1}
+.card.net .card-value.negative{color:#dc2626}
+
+/* ── Charts ── */
+.charts-row{display:grid;grid-template-columns:380px 1fr;gap:16px;margin-bottom:24px}
+.chart-card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.chart-card h3{font-size:14px;font-weight:600;color:#374151;margin-bottom:16px;text-transform:uppercase;letter-spacing:.4px}
+.chart-container{position:relative;height:260px;display:flex;align-items:center;justify-content:center}
+.chart-container.donut{height:280px}
+.no-data{text-align:center;color:#9ca3af;font-size:14px;padding:40px 0}
+
+/* ── Transactions ── */
+.tx-section{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:24px}
+.tx-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.tx-header h3{font-size:14px;font-weight:600;color:#374151;text-transform:uppercase;letter-spacing:.4px}
+.tx-controls{display:flex;align-items:center;gap:16px}
+.tx-controls label{display:flex;align-items:center;gap:6px;font-size:13px;color:#6b7280;cursor:pointer;user-select:none}
+.tx-controls input[type=checkbox]{accent-color:#6366f1;width:14px;height:14px}
+
+.category-group{margin-bottom:4px}
+.category-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .1s}
+.category-header:hover{background:#f9fafb}
+.category-header-left{display:flex;align-items:center;gap:10px}
+.cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.cat-name{font-weight:600;font-size:14px;color:#111827}
+.cat-count{font-size:12px;color:#9ca3af;margin-left:4px}
+.cat-total{font-weight:700;font-size:15px}
+.cat-total.expense{color:#dc2626}
+.cat-total.income{color:#16a34a}
+.cat-total.neutral{color:#6b7280}
+.cat-chevron{font-size:12px;color:#9ca3af;transition:transform .2s;margin-right:4px}
+.cat-chevron.open{transform:rotate(90deg)}
+
+.tx-items{border-radius:0 0 8px 8px;overflow:hidden}
+.tx-item{display:flex;align-items:center;padding:9px 12px 9px 32px;border-top:1px solid #f3f4f6;transition:background .1s}
+.tx-item:hover{background:#fafafa}
+.tx-item-name{flex:1;font-size:14px;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:380px}
+.tx-item-date{font-size:12px;color:#9ca3af;width:90px;text-align:right;flex-shrink:0}
+.tx-item-amount{font-size:14px;font-weight:600;width:90px;text-align:right;flex-shrink:0}
+.tx-item-amount.expense{color:#dc2626}
+.tx-item-amount.income{color:#16a34a}
+.tx-item-amount.neutral{color:#6b7280}
+
+.footer{text-align:center;padding:16px 0 32px;font-size:13px;color:#9ca3af}
+.footer a{color:#6366f1;text-decoration:none;cursor:pointer}
+.footer a:hover{text-decoration:underline}
+
+@media(max-width:900px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .charts-row{grid-template-columns:1fr}
+}
+@media(max-width:500px){
+  .cards{grid-template-columns:1fr 1fr}
+  .main{padding:16px}
+  header{padding:0 16px}
+  .month-label{min-width:120px;font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<!-- Setup -->
+<div id="setup" class="setup-screen">
+  <div class="setup-card">
+    <h1>💰 Finance Dashboard</h1>
+    <p>Connect your Monzo auto-export Google Sheet. The sheet must be set to <strong>"Anyone with the link can view"</strong> in sharing settings.</p>
+    <div class="form-group">
+      <label>Google Sheet URL</label>
+      <input type="text" id="sheet-url" placeholder="https://docs.google.com/spreadsheets/d/…">
+    </div>
+    <div class="form-group">
+      <label>Sheet tab name</label>
+      <input type="text" id="tab-name" value="Personal Account Transactions">
+    </div>
+    <button class="connect-btn" id="connect-btn" onclick="connect()">Connect Sheet →</button>
+    <div id="setup-error" class="error-msg hidden"></div>
+    <p class="setup-note">Your transaction data stays in your browser — nothing is sent anywhere else.</p>
+  </div>
+</div>
+
+<!-- Loading -->
+<div id="loading" class="loading-overlay hidden">
+  <div class="spinner"></div>
+  <p>Loading transactions…</p>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard" class="hidden">
+  <header>
+    <span class="header-title">💰 Finance Dashboard</span>
+    <div class="month-nav">
+      <button class="nav-btn" id="prev-btn" onclick="changeMonth(-1)">‹</button>
+      <span id="month-label" class="month-label"></span>
+      <button class="nav-btn" id="next-btn" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="refresh()" title="Refresh data">↻</button>
+      <button class="icon-btn" onclick="showSetup()" title="Change sheet">⚙</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <!-- Summary cards -->
+    <div class="cards">
+      <div class="card income">
+        <div class="card-label">Income</div>
+        <div class="card-value" id="v-income">£0</div>
+        <div class="card-sub" id="s-income"></div>
+      </div>
+      <div class="card expense">
+        <div class="card-label">Spent</div>
+        <div class="card-value" id="v-expense">£0</div>
+        <div class="card-sub" id="s-expense"></div>
+      </div>
+      <div class="card net">
+        <div class="card-label">Net</div>
+        <div class="card-value" id="v-net">£0</div>
+        <div class="card-sub" id="s-net"></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Transactions</div>
+        <div class="card-value" id="v-count">0</div>
+        <div class="card-sub" id="s-count"></div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Spending by Category</h3>
+        <div class="chart-container donut">
+          <canvas id="cat-chart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>Monthly Trend — last 6 months</h3>
+        <div class="chart-container">
+          <canvas id="trend-chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="tx-section">
+      <div class="tx-header">
+        <h3 id="tx-title">Transactions</h3>
+        <div class="tx-controls">
+          <label>
+            <input type="checkbox" id="show-transfers" onchange="renderTransactions()">
+            Show transfers &amp; savings
+          </label>
+        </div>
+      </div>
+      <div id="tx-list"></div>
+    </div>
+
+    <div class="footer">
+      <span id="last-updated"></span>
+      &nbsp;·&nbsp;
+      <a onclick="showSetup()">Change sheet</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────
+const S = {
+  txAll: [],
+  month: new Date().getMonth(),
+  year: new Date().getFullYear(),
+  catChart: null,
+  trendChart: null,
+  lastUpdated: null,
+};
+
+const SETTINGS_KEY = 'fin_dash_v1';
+const SKIP_CATEGORIES = new Set(['Transfers', 'Savings']);
+
+const CAT_COLORS = {
+  'Software':'#6366f1','Bills':'#f59e0b','Services':'#8b5cf6',
+  'Marketing':'#ec4899','Travel':'#14b8a6','Eating out':'#f97316',
+  'Groceries':'#22c55e','Shopping':'#06b6d4','Entertainment':'#a78bfa',
+  'General':'#94a3b8','Transport':'#f43f5e','Personal care':'#fb7185',
+  'Finances':'#0ea5e9','Family':'#4ade80','Holidays':'#fb923c',
+  'Education':'#a3e635','Charity':'#34d399','Cash':'#fbbf24',
+};
+const FALLBACK = ['#6366f1','#8b5cf6','#ec4899','#f59e0b','#14b8a6',
+  '#f97316','#22c55e','#06b6d4','#f43f5e','#0ea5e9','#4ade80','#fb923c'];
+const catColorCache = {};
+let fallbackIdx = 0;
+function catColor(cat) {
+  if (!catColorCache[cat]) {
+    catColorCache[cat] = CAT_COLORS[cat] || FALLBACK[fallbackIdx++ % FALLBACK.length];
+  }
+  return catColorCache[cat];
+}
+
+// ── Settings ───────────────────────────────────────────────────────
+function loadSettings() {
+  try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || null; } catch { return null; }
+}
+function saveSettings(s) { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
+
+function extractId(url) {
+  const m = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  return m ? m[1] : null;
+}
+
+// ── Fetch ──────────────────────────────────────────────────────────
+function fetchSheet(sheetId, tabName) {
+  return new Promise((resolve, reject) => {
+    const cb = '__gviz_' + Date.now();
+    let timer = setTimeout(() => {
+      delete window[cb];
+      reject(new Error('Request timed out. Check the URL and sharing settings.'));
+    }, 12000);
+
+    window[cb] = (data) => {
+      clearTimeout(timer);
+      delete window[cb];
+      if (!data || !data.table) reject(new Error('No data returned. Check the tab name.'));
+      else resolve(data.table);
+    };
+
+    const script = document.createElement('script');
+    script.src = `https://docs.google.com/spreadsheets/d/${encodeURIComponent(sheetId)}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tabName)}&callback=${cb}`;
+    script.onerror = () => {
+      clearTimeout(timer);
+      delete window[cb];
+      reject(new Error('Could not reach the sheet. Make sure it is shared as "Anyone with the link can view".'));
+    };
+    document.head.appendChild(script);
+  });
+}
+
+// ── Parse ──────────────────────────────────────────────────────────
+function parseDate(str) {
+  if (!str) return null;
+  const s = String(str);
+  // DD/MM/YYYY
+  const a = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (a) return new Date(+a[3], +a[2] - 1, +a[1]);
+  // gviz Date(Y,M,D)
+  const b = s.match(/Date\((\d+),(\d+),(\d+)\)/);
+  if (b) return new Date(+b[1], +b[2], +b[3]);
+  return null;
+}
+
+function cellVal(row, i) {
+  const c = (row.c || [])[i];
+  if (!c) return '';
+  return c.v !== null && c.v !== undefined ? c.v : (c.f || '');
+}
+
+function parseTx(table) {
+  return (table.rows || []).map(row => {
+    const amt = parseFloat(cellVal(row, 7)) || 0;
+    const d = parseDate(String(cellVal(row, 1)));
+    return {
+      id: String(cellVal(row, 0)),
+      date: d,
+      type: String(cellVal(row, 3)),
+      name: String(cellVal(row, 4)) || 'Unknown',
+      category: String(cellVal(row, 6)) || 'General',
+      amount: amt,
+    };
+  }).filter(t => t.date && t.amount !== 0 && !String(cellVal({c:[{v:t.id}]}, 0)).startsWith('tx_header'));
+}
+
+// ── Format ─────────────────────────────────────────────────────────
+const fmt = new Intl.NumberFormat('en-GB', {style:'currency', currency:'GBP'});
+function fmtAmt(n) { return fmt.format(Math.abs(n)); }
+
+function fmtDate(d) {
+  return d.toLocaleDateString('en-GB', {day:'numeric', month:'short'});
+}
+
+const MONTHS = ['January','February','March','April','May','June',
+  'July','August','September','October','November','December'];
+
+// ── Month helpers ──────────────────────────────────────────────────
+function getTxForMonth(y, m) {
+  return S.txAll.filter(t => t.date.getFullYear() === y && t.date.getMonth() === m);
+}
+
+function monthSummary(txs, includeTransfers) {
+  const filtered = includeTransfers ? txs : txs.filter(t => !SKIP_CATEGORIES.has(t.category));
+  let income = 0, expense = 0;
+  filtered.forEach(t => {
+    if (t.amount > 0) income += t.amount;
+    else expense += t.amount;
+  });
+  return { income, expense: Math.abs(expense), net: income + expense, count: filtered.length };
+}
+
+// ── Cards ──────────────────────────────────────────────────────────
+function renderCards(txs) {
+  const { income, expense, net, count } = monthSummary(txs, false);
+  document.getElementById('v-income').textContent = fmtAmt(income);
+  document.getElementById('s-income').textContent = txs.filter(t=>t.amount>0&&!SKIP_CATEGORIES.has(t.category)).length + ' payments in';
+  document.getElementById('v-expense').textContent = fmtAmt(expense);
+  document.getElementById('s-expense').textContent = txs.filter(t=>t.amount<0&&!SKIP_CATEGORIES.has(t.category)).length + ' payments out';
+  const netEl = document.getElementById('v-net');
+  netEl.textContent = (net >= 0 ? '+' : '-') + fmtAmt(net);
+  netEl.className = 'card-value' + (net < 0 ? ' negative' : '');
+  document.getElementById('s-net').textContent = net >= 0 ? 'surplus' : 'shortfall';
+  document.getElementById('v-count').textContent = count;
+  document.getElementById('s-count').textContent = 'excl. transfers';
+}
+
+// ── Category chart ─────────────────────────────────────────────────
+function renderCatChart(txs) {
+  const spending = {};
+  txs.filter(t => t.amount < 0 && !SKIP_CATEGORIES.has(t.category))
+     .forEach(t => { spending[t.category] = (spending[t.category] || 0) + Math.abs(t.amount); });
+
+  const labels = Object.keys(spending).sort((a, b) => spending[b] - spending[a]);
+  const values = labels.map(l => spending[l]);
+  const colors = labels.map(l => catColor(l));
+
+  const ctx = document.getElementById('cat-chart').getContext('2d');
+  if (S.catChart) S.catChart.destroy();
+
+  if (!labels.length) {
+    ctx.canvas.parentElement.innerHTML = '<p class="no-data">No spending this month</p>';
+    return;
+  }
+
+  S.catChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#fff' }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { boxWidth: 10, padding: 14, font: { size: 12 }, color: '#374151' }
+        },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => ` ${ctx.label}: ${fmt.format(ctx.parsed)}`
+          }
+        }
+      }
+    }
+  });
+}
+
+// ── Trend chart ────────────────────────────────────────────────────
+function renderTrendChart() {
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    let m = S.month - i, y = S.year;
+    while (m < 0) { m += 12; y--; }
+    months.push({ y, m, label: MONTHS[m].slice(0,3) + ' ' + String(y).slice(2) });
+  }
+
+  const incomes = [], expenses = [];
+  months.forEach(({ y, m }) => {
+    const txs = getTxForMonth(y, m).filter(t => !SKIP_CATEGORIES.has(t.category));
+    let inc = 0, exp = 0;
+    txs.forEach(t => { if (t.amount > 0) inc += t.amount; else exp += Math.abs(t.amount); });
+    incomes.push(parseFloat(inc.toFixed(2)));
+    expenses.push(parseFloat(exp.toFixed(2)));
+  });
+
+  const ctx = document.getElementById('trend-chart').getContext('2d');
+  if (S.trendChart) S.trendChart.destroy();
+
+  S.trendChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: months.map(m => m.label),
+      datasets: [
+        { label: 'Income', data: incomes, backgroundColor: '#bbf7d0', borderColor: '#16a34a', borderWidth: 1.5, borderRadius: 4 },
+        { label: 'Spent',  data: expenses, backgroundColor: '#fee2e2', borderColor: '#dc2626', borderWidth: 1.5, borderRadius: 4 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { boxWidth: 12, font: { size: 12 }, color: '#374151' } },
+        tooltip: { callbacks: { label: (ctx) => ` ${ctx.dataset.label}: ${fmt.format(ctx.parsed.y)}` } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#6b7280', font: { size: 11 } } },
+        y: { grid: { color: '#f3f4f6' }, ticks: { color: '#6b7280', font: { size: 11 }, callback: v => '£' + v.toLocaleString() } }
+      }
+    }
+  });
+}
+
+// ── Transactions ───────────────────────────────────────────────────
+function renderTransactions() {
+  const txs = getTxForMonth(S.year, S.month);
+  const showTransfers = document.getElementById('show-transfers').checked;
+  const visible = showTransfers ? txs : txs.filter(t => !SKIP_CATEGORIES.has(t.category));
+
+  document.getElementById('tx-title').textContent =
+    `Transactions — ${MONTHS[S.month]} ${S.year} (${visible.length})`;
+
+  // Group by category
+  const groups = {};
+  visible.forEach(t => {
+    if (!groups[t.category]) groups[t.category] = [];
+    groups[t.category].push(t);
+  });
+
+  // Sort categories: expenses by total desc, income last
+  const cats = Object.keys(groups).sort((a, b) => {
+    const totA = groups[a].reduce((s, t) => s + t.amount, 0);
+    const totB = groups[b].reduce((s, t) => s + t.amount, 0);
+    if (a === 'Income' && b !== 'Income') return 1;
+    if (b === 'Income' && a !== 'Income') return -1;
+    return totA - totB;
+  });
+
+  const list = document.getElementById('tx-list');
+  if (!cats.length) {
+    list.innerHTML = '<p class="no-data" style="padding:32px 0;text-align:center;color:#9ca3af">No transactions this month</p>';
+    return;
+  }
+
+  list.innerHTML = cats.map(cat => {
+    const items = groups[cat].sort((a, b) => b.date - a.date);
+    const total = items.reduce((s, t) => s + t.amount, 0);
+    const color = catColor(cat);
+    const totalClass = total < 0 ? 'expense' : total > 0 ? 'income' : 'neutral';
+    const id = 'cat-' + cat.replace(/\W/g, '_');
+
+    const rows = items.map(t => {
+      const cls = t.amount < 0 ? 'expense' : t.amount > 0 ? 'income' : 'neutral';
+      return `<div class="tx-item">
+        <span class="tx-item-name" title="${t.name}">${t.name}</span>
+        <span class="tx-item-date">${fmtDate(t.date)}</span>
+        <span class="tx-item-amount ${cls}">${t.amount < 0 ? '-' : '+'}${fmtAmt(t.amount)}</span>
+      </div>`;
+    }).join('');
+
+    return `<div class="category-group">
+      <div class="category-header" onclick="toggleCat('${id}')">
+        <div class="category-header-left">
+          <span class="cat-chevron" id="chev-${id}">›</span>
+          <span class="cat-dot" style="background:${color}"></span>
+          <span class="cat-name">${cat}</span>
+          <span class="cat-count">${items.length}</span>
+        </div>
+        <span class="cat-total ${totalClass}">${total < 0 ? '-' : total > 0 ? '+' : ''}${fmtAmt(total)}</span>
+      </div>
+      <div class="tx-items hidden" id="${id}">${rows}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCat(id) {
+  const el = document.getElementById(id);
+  const chev = document.getElementById('chev-' + id);
+  const open = !el.classList.contains('hidden');
+  el.classList.toggle('hidden', open);
+  chev.classList.toggle('open', !open);
+}
+
+// ── Render all ─────────────────────────────────────────────────────
+function renderAll() {
+  const txs = getTxForMonth(S.year, S.month);
+  document.getElementById('month-label').textContent = `${MONTHS[S.month]} ${S.year}`;
+
+  const now = new Date();
+  const isCurrentMonth = S.month === now.getMonth() && S.year === now.getFullYear();
+  document.getElementById('next-btn').disabled = isCurrentMonth;
+
+  renderCards(txs);
+  renderCatChart(txs);
+  renderTrendChart();
+  renderTransactions();
+
+  if (S.lastUpdated) {
+    document.getElementById('last-updated').textContent =
+      'Data updated ' + S.lastUpdated.toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+  }
+}
+
+// ── Navigation ─────────────────────────────────────────────────────
+function changeMonth(delta) {
+  S.month += delta;
+  if (S.month > 11) { S.month = 0; S.year++; }
+  if (S.month < 0)  { S.month = 11; S.year--; }
+  renderAll();
+}
+
+// ── Connect / refresh ──────────────────────────────────────────────
+async function connect() {
+  const url = document.getElementById('sheet-url').value.trim();
+  const tab = document.getElementById('tab-name').value.trim() || 'Personal Account Transactions';
+  const errEl = document.getElementById('setup-error');
+  errEl.classList.add('hidden');
+
+  const sheetId = extractId(url);
+  if (!sheetId) {
+    errEl.textContent = 'That doesn\'t look like a Google Sheets URL. Copy the full URL from the address bar.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  document.getElementById('connect-btn').disabled = true;
+  document.getElementById('connect-btn').textContent = 'Connecting…';
+
+  try {
+    const table = await fetchSheet(sheetId, tab);
+    const txs = parseTx(table);
+    if (!txs.length) throw new Error('No transactions found. Check the sheet tab name.');
+
+    S.txAll = txs;
+    S.lastUpdated = new Date();
+    saveSettings({ sheetId, tab });
+
+    document.getElementById('setup').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    renderAll();
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  } finally {
+    document.getElementById('connect-btn').disabled = false;
+    document.getElementById('connect-btn').textContent = 'Connect Sheet →';
+  }
+}
+
+async function refresh() {
+  const settings = loadSettings();
+  if (!settings) return;
+  document.getElementById('loading').classList.remove('hidden');
+  try {
+    const table = await fetchSheet(settings.sheetId, settings.tab);
+    S.txAll = parseTx(table);
+    S.lastUpdated = new Date();
+    renderAll();
+  } catch (e) {
+    alert('Could not refresh: ' + e.message);
+  } finally {
+    document.getElementById('loading').classList.add('hidden');
+  }
+}
+
+function showSetup() {
+  const settings = loadSettings();
+  if (settings) {
+    document.getElementById('sheet-url').value = `https://docs.google.com/spreadsheets/d/${settings.sheetId}`;
+    document.getElementById('tab-name').value = settings.tab;
+  }
+  document.getElementById('setup').classList.remove('hidden');
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('setup-error').classList.add('hidden');
+}
+
+// ── Init ───────────────────────────────────────────────────────────
+(async function init() {
+  const settings = loadSettings();
+  if (!settings) return;
+
+  document.getElementById('loading').classList.remove('hidden');
+  try {
+    const table = await fetchSheet(settings.sheetId, settings.tab);
+    S.txAll = parseTx(table);
+    S.lastUpdated = new Date();
+    document.getElementById('setup').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    renderAll();
+  } catch (e) {
+    // Show setup with error if auto-load fails
+    document.getElementById('sheet-url').value = `https://docs.google.com/spreadsheets/d/${settings.sheetId}`;
+    document.getElementById('tab-name').value = settings.tab;
+    document.getElementById('setup-error').textContent = 'Could not auto-load: ' + e.message;
+    document.getElementById('setup-error').classList.remove('hidden');
+  } finally {
+    document.getElementById('loading').classList.add('hidden');
+  }
+})();
+</script>
+</body>
+</html>
