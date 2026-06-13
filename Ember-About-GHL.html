@@ -289,7 +289,44 @@
       .belief { padding: 36px 28px; }
     }
 
-    /* ── GHL OVERRIDES ── */
+    
+    /* ── MOBILE NAV ── */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px 4px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--cream);
+      border-radius: 2px;
+    }
+    @media (max-width: 600px) {
+      .nav { position: relative; }
+      .nav-toggle { display: flex; }
+      .nav-links.nav-open {
+        display: flex !important;
+        flex-direction: column;
+        align-items: flex-start;
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        background: var(--dark);
+        padding: 28px 28px;
+        gap: 22px;
+        border-bottom: 1px solid rgba(242,225,205,0.1);
+        z-index: 1000;
+      }
+    }
+
+/* ── GHL OVERRIDES ── */
     .page-section, .section-body, .container-fluid,
     .full-width, [data-section-id], .col-12, .row {
       padding-left: 0 !important; padding-right: 0 !important;
@@ -303,7 +340,8 @@
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-logo">Ember <span>by Victoria Lewis</span></div>
-  <div class="nav-links">
+  <button class="nav-toggle" id="nav-toggle" aria-label="Open navigation"><span></span><span></span><span></span></button>
+  <div class="nav-links" id="nav-links">
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/TeNX4q3g8VlFNirhLOl1?notrack=true">Home</a>
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Services</a>
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/xSJEwDoTtk7bHBZCGd74">Ignite</a>
@@ -323,7 +361,7 @@
         <p>My passion is productivity and efficiency. Wait - don't scroll. I know those words don't sound exciting, but stay with me.</p>
         <p>When your systems and client experience actually <em>work together</em>, everything in your business feels easier. You get more time, less stress, and a business that finally runs smoothly behind the scenes.</p>
         <p>That's what I help business owners build - systems that <em>match</em> their brand, their clients, and their way of working.</p>
-        <a class="btn" href="https://app.usemotion.com/meet/victoria-lewis/disco">Book a Free Call →</a>
+        <a class="btn" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember">Book a Free Call →</a>
       </div>
       <div class="hero-img">
         <img src="https://www.victorialewis.co.uk/content-assets/public/eyJhbGciOiJIUzI1NiJ9.eyJvYmplY3Rfa2V5Ijoidjl2Nmtjd3dkYmZmcjA3ZjZsN2o3YnA5c3psNSIsImRvbWFpbiI6Ind3dy52aWN0b3JpYWxld2lzLmNvLnVrIn0.cDqxZHaAL_r-lIFs4aWZAY1PpDk74dIVkPwM9eJzU28" alt="Viki Lewis">
@@ -429,7 +467,7 @@
     <h2>Let's <em class="hi">chat.</em></h2>
     <p class="lead">Whether you want to map out your whole system or just get one thing sorted - book a free call and let's work out what makes sense for you.</p>
     <p style="margin-top:8px; color:rgba(242,225,205,0.45); font-size:0.9rem;">No pressure. Just clear next steps.</p>
-    <a class="btn" href="https://app.usemotion.com/meet/victoria-lewis/disco">Book a Free Call →</a>
+    <a class="btn" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember">Book a Free Call →</a>
   </div>
 </section>
 
@@ -440,5 +478,22 @@
   <p><a href="https://www.victorialewis.co.uk/privacy">Privacy Policy</a><a href="https://www.victorialewis.co.uk/terms">Terms of Service</a></p>
 </footer>
 
+<script>
+(function() {
+  var toggle = document.getElementById('nav-toggle');
+  var links  = document.getElementById('nav-links');
+  if (!toggle || !links) return;
+  toggle.addEventListener('click', function(e) {
+    e.stopPropagation();
+    links.classList.toggle('nav-open');
+  });
+  links.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() { links.classList.remove('nav-open'); });
+  });
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.nav')) links.classList.remove('nav-open');
+  });
+})();
+</script>
 </body>
 </html>

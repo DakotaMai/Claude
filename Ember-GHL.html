@@ -378,7 +378,44 @@
       .offer-body { padding: 32px 28px; }
     }
 
-    /* ── GHL OVERRIDES ── */
+    
+    /* ── MOBILE NAV ── */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px 4px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--cream);
+      border-radius: 2px;
+    }
+    @media (max-width: 600px) {
+      .nav { position: relative; }
+      .nav-toggle { display: flex; }
+      .nav-links.nav-open {
+        display: flex !important;
+        flex-direction: column;
+        align-items: flex-start;
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        background: var(--dark);
+        padding: 28px 28px;
+        gap: 22px;
+        border-bottom: 1px solid rgba(242,225,205,0.1);
+        z-index: 1000;
+      }
+    }
+
+/* ── GHL OVERRIDES ── */
     .page-section, .section-body, .container-fluid,
     .full-width, [data-section-id], .col-12, .row {
       padding-left: 0 !important; padding-right: 0 !important;
@@ -392,12 +429,14 @@
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-logo">Ember <span>by Victoria Lewis</span></div>
-  <div class="nav-links">
+  <button class="nav-toggle" id="nav-toggle" aria-label="Open navigation"><span></span><span></span><span></span></button>
+  <div class="nav-links" id="nav-links">
     <a class="nav-link nav-link--active" href="https://app.gohighlevel.com/v2/preview/TeNX4q3g8VlFNirhLOl1?notrack=true">Home</a>
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Services</a>
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/xSJEwDoTtk7bHBZCGd74">Ignite</a>
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/aSgfiQ8D7IZXCDCyPZrg?notrack=true">Spark</a>
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/q1PAkpQd08WxnTFUF8rt">Email Tech</a>
+    <a class="nav-link" href="#">Inferno</a>
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/F1NUq7LP9rtPnKCI9ycr">About</a>
   </div>
 </nav>
@@ -533,7 +572,7 @@
         </ul>
       </div>
     </div>
-    <a class="btn btn--dark" href="https://app.gohighlevel.com/v2/preview/F1NUq7LP9rtPnKCI9ycr">That's me - let's talk →</a>
+    <a class="btn btn--dark" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember">That's me - let's talk →</a>
   </div>
 </section>
 
@@ -550,7 +589,7 @@
       <li>You get your time - and your headspace - back</li>
     </ul>
     <div style="margin-top:52px;">
-      <a class="btn" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Let's fix it properly →</a>
+      <a class="btn" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember">Let's fix it properly →</a>
     </div>
   </div>
 </section>
@@ -631,5 +670,22 @@
   <p><a href="#">Privacy Policy</a><a href="#">Terms of Service</a></p>
 </footer>
 
+<script>
+(function() {
+  var toggle = document.getElementById('nav-toggle');
+  var links  = document.getElementById('nav-links');
+  if (!toggle || !links) return;
+  toggle.addEventListener('click', function(e) {
+    e.stopPropagation();
+    links.classList.toggle('nav-open');
+  });
+  links.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() { links.classList.remove('nav-open'); });
+  });
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.nav')) links.classList.remove('nav-open');
+  });
+})();
+</script>
 </body>
 </html>

@@ -270,7 +270,44 @@
       .case-card { padding: 32px 28px; }
     }
 
-    /* ── GHL OVERRIDES ── */
+    
+    /* ── MOBILE NAV ── */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px 4px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--cream);
+      border-radius: 2px;
+    }
+    @media (max-width: 600px) {
+      .nav { position: relative; }
+      .nav-toggle { display: flex; }
+      .nav-links.nav-open {
+        display: flex !important;
+        flex-direction: column;
+        align-items: flex-start;
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        background: var(--dark);
+        padding: 28px 28px;
+        gap: 22px;
+        border-bottom: 1px solid rgba(242,225,205,0.1);
+        z-index: 1000;
+      }
+    }
+
+/* ── GHL OVERRIDES ── */
     .page-section, .section-body, .container-fluid,
     .full-width, [data-section-id], .col-12, .row {
       padding: 0 !important;
@@ -284,7 +321,8 @@
 
 <nav class="nav">
   <div class="nav-logo">Ember <span>by Victoria Lewis</span></div>
-  <div class="nav-links">
+  <button class="nav-toggle" id="nav-toggle" aria-label="Open navigation"><span></span><span></span><span></span></button>
+  <div class="nav-links" id="nav-links">
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/TeNX4q3g8VlFNirhLOl1?notrack=true">Home</a>
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Services</a>
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/xSJEwDoTtk7bHBZCGd74">Ignite</a>
@@ -305,7 +343,7 @@
         <span class="hero-label">For businesses that have outgrown "just sort it out"</span>
         <p>Your business is doing well. Sales are up, leads are coming in, the team's busy. But underneath, things aren't keeping pace. Nobody's quite sure where your leads are actually coming from. The data doesn't join up. Processes live in someone's head - or a spreadsheet only one person understands.</p>
         <p>Your team is stretched thin just keeping today running, let alone fixing the plumbing.</p>
-        <a class="btn" href="#">Start a Conversation →</a>
+        <a class="btn" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember">Start a Conversation →</a>
       </div>
       <div class="trust-card">
         <div class="trust-item">
@@ -349,7 +387,7 @@
     </ul>
 
     <div style="margin-top:52px;">
-      <a class="btn btn--dark" href="#">This sounds like us →</a>
+      <a class="btn btn--dark" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember">This sounds like us →</a>
     </div>
   </div>
 </section>
@@ -385,7 +423,7 @@
         <p>I usually work alongside other consultants and agencies - coming in for the systems, data, and technical side while they focus on strategy, marketing, or growth.</p>
         <p style="margin-top:20px;">Most consultants diagnose and move on. I'm the implementation layer - the part that turns recommendations into reality, and makes sure your business can run with it once everyone else has gone.</p>
         <p style="margin-top:20px;">If you'd rather work with me directly, that's absolutely fine too.</p>
-        <a class="btn" href="#">Let's talk →</a>
+        <a class="btn" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember">Let's talk →</a>
       </div>
     </div>
   </div>
@@ -450,5 +488,22 @@
   <p><a href="#">Privacy Policy</a><a href="#">Terms of Service</a></p>
 </footer>
 
+<script>
+(function() {
+  var toggle = document.getElementById('nav-toggle');
+  var links  = document.getElementById('nav-links');
+  if (!toggle || !links) return;
+  toggle.addEventListener('click', function(e) {
+    e.stopPropagation();
+    links.classList.toggle('nav-open');
+  });
+  links.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() { links.classList.remove('nav-open'); });
+  });
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.nav')) links.classList.remove('nav-open');
+  });
+})();
+</script>
 </body>
 </html>
