@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ember Inferno - Ember by Victoria Lewis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@700&family=Livvic:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark:      #2a140c;
+      --cream:     #f2e1cd;
+      --orange:    #c75c33;
+      --card-text: #3a2820;
+      --h:         'Chivo', sans-serif;
+      --b:         'Livvic', sans-serif;
+    }
+
+    html, body {
+      font-size: 18px;
+      font-family: var(--b);
+      font-weight: 400;
+      line-height: 1.7;
+      background: var(--dark) !important;
+      color: var(--cream);
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* ── SECTIONS ── */
+    .s         { padding: 120px 64px; background: var(--dark); }
+    .s--orange { background: var(--orange); }
+    .s--cream  { background: var(--cream); }
+    .s--xl     { padding-top: 160px; padding-bottom: 160px; }
+    .s--sm     { padding-top: 80px; padding-bottom: 80px; }
+
+    /* ── INNER WIDTHS ── */
+    .w-narrow { max-width: 640px;  margin-left: auto; margin-right: auto; }
+    .w-mid    { max-width: 880px;  margin-left: auto; margin-right: auto; }
+    .w-wide   { max-width: 1200px; margin-left: auto; margin-right: auto; }
+
+    /* ── TYPE ── */
+    h1 {
+      font-family: var(--h);
+      font-size: clamp(3.8rem, 8vw, 8.5rem);
+      font-weight: 700;
+      letter-spacing: -0.045em;
+      line-height: 0.97;
+      color: var(--cream);
+    }
+    h2 {
+      font-family: var(--h);
+      font-size: clamp(2.8rem, 5.5vw, 5.2rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.03;
+      color: var(--cream);
+    }
+    h3 {
+      font-family: var(--h);
+      font-size: clamp(1.2rem, 2vw, 1.55rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+    p { margin-top: 1rem; }
+    p:first-child { margin-top: 0; }
+    .lead {
+      font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+      line-height: 1.75;
+      color: rgba(242,225,205,0.8);
+      margin-top: 28px;
+    }
+
+    em.hi { font-style: normal; color: var(--orange); }
+
+    .pre {
+      display: inline-block;
+      font-family: var(--b);
+      font-weight: 600;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      border: 1.5px solid var(--orange);
+      color: var(--orange);
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+
+    .bar {
+      width: 52px; height: 4px;
+      background: var(--orange);
+      border-radius: 2px;
+      margin-bottom: 32px;
+    }
+
+    /* ── COLOUR OVERRIDES ── */
+    .s--orange h2, .s--orange h3 { color: var(--cream); }
+    .s--orange p, .s--orange .lead { color: rgba(242,225,205,0.88); }
+    .s--orange em.hi { color: var(--dark); }
+    .s--orange .pre  { color: var(--cream); border-color: rgba(242,225,205,0.4); }
+    .s--orange .bar  { background: rgba(242,225,205,0.5); }
+
+    .s--cream h2, .s--cream h3 { color: var(--dark); }
+    .s--cream p, .s--cream .lead { color: rgba(42,20,12,0.72); }
+    .s--cream em.hi { color: var(--orange); }
+    .s--cream .pre  { color: var(--orange); border-color: var(--orange); }
+    .s--cream .bar  { background: var(--orange); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-block;
+      font-family: var(--b);
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.03em;
+      padding: 20px 48px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      margin-top: 40px;
+      background: var(--orange);
+      color: var(--cream) !important;
+    }
+    .btn:hover { opacity: 0.85; transform: translateY(-2px); }
+    .btn--dark  { background: var(--dark);  color: var(--cream) !important; }
+    .btn--cream { background: var(--cream); color: var(--dark)  !important; }
+
+    /* ── LISTS ── */
+    .bullet-list { list-style: none; margin-top: 28px; display: flex; flex-direction: column; gap: 14px; }
+    .bullet-list li { font-size: 1.05rem; line-height: 1.65; padding-left: 34px; position: relative; color: rgba(242,225,205,0.85); }
+    .bullet-list li::before { content: "→"; position: absolute; left: 0; color: var(--orange); font-weight: 600; }
+    .s--orange .bullet-list li { color: rgba(242,225,205,0.9); }
+    .s--orange .bullet-list li::before { color: rgba(242,225,205,0.7); }
+    .s--cream  .bullet-list li { color: rgba(42,20,12,0.78); }
+    .s--cream  .bullet-list li::before { color: var(--orange); }
+
+    .check-list { list-style: none; margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
+    .check-list li { font-size: 0.97rem; line-height: 1.65; padding-left: 28px; position: relative; color: rgba(42,20,12,0.72); }
+    .check-list li::before { content: "✓"; position: absolute; left: 0; color: var(--orange); font-weight: 700; }
+
+    /* ── NAV ── */
+    .nav {
+      background: var(--dark);
+      padding: 24px 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(242,225,205,0.07);
+    }
+    .nav-logo { font-family: var(--h); font-size: 1.15rem; color: var(--cream); letter-spacing: 0.1em; text-transform: uppercase; }
+    .nav-logo span { color: var(--orange); }
+    .nav-link { font-family: var(--b); font-size: 0.88rem; font-weight: 600; color: var(--orange); text-decoration: none; letter-spacing: 0.04em; }
+    .nav-link { color: rgba(242,225,205,0.5); }
+    .nav-link:hover { color: var(--cream); opacity: 1; }
+    .nav-link--active { color: var(--orange) !important; }
+    .nav-links { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+
+    /* ── HERO ── */
+    .hero { background: var(--dark); padding: 120px 64px 140px; }
+    .hero .pre { color: var(--orange); border-color: var(--orange); }
+    .hero h1   { margin-top: 24px; margin-bottom: 72px; }
+    .hero-lower {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 80px;
+      align-items: start;
+    }
+    .hero-label {
+      display: block;
+      font-family: var(--h);
+      font-size: clamp(1rem, 1.8vw, 1.3rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      color: var(--cream);
+      margin-bottom: 20px;
+    }
+    .hero-body p { color: rgba(242,225,205,0.78); font-size: 1.05rem; line-height: 1.78; margin-top: 0; }
+    .hero-body p + p { margin-top: 16px; }
+
+    /* ── TRUST CARD ── */
+    .trust-card {
+      background: rgba(242,225,205,0.06);
+      border: 1px solid rgba(242,225,205,0.12);
+      border-radius: 20px;
+      padding: 40px 36px;
+    }
+    .trust-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(242,225,205,0.08);
+    }
+    .trust-item:first-child { padding-top: 0; }
+    .trust-item:last-child  { border-bottom: none; padding-bottom: 0; }
+    .trust-n {
+      font-family: var(--h);
+      font-size: clamp(2.2rem, 3.5vw, 3rem);
+      letter-spacing: -0.05em;
+      line-height: 1;
+      color: var(--orange);
+    }
+    .trust-label { font-size: 0.88rem; color: rgba(242,225,205,0.55); line-height: 1.5; }
+
+    /* ── SPLIT ── */
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+
+    /* ── CASE STUDY ── */
+    .case-card {
+      background: rgba(42,20,12,0.25);
+      border: 1px solid rgba(242,225,205,0.1);
+      border-left: 4px solid var(--orange);
+      border-radius: 0 16px 16px 0;
+      padding: 40px 44px;
+      margin-top: 52px;
+    }
+    .case-label {
+      font-family: var(--b);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--orange);
+      display: block;
+      margin-bottom: 20px;
+    }
+    .case-card p { color: rgba(242,225,205,0.78); font-size: 0.97rem; line-height: 1.78; margin-top: 0; }
+    .case-card p + p { margin-top: 14px; }
+
+    /* ── AUDIT CTA ── */
+    .audit-card {
+      background: var(--cream);
+      border-radius: 24px;
+      padding: 64px 72px;
+      margin-top: 64px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 60px;
+      align-items: center;
+    }
+    .audit-card h3 { color: var(--dark); font-size: clamp(1.4rem, 2.5vw, 2rem); margin-bottom: 16px; }
+    .audit-card p  { color: rgba(42,20,12,0.68); font-size: 0.97rem; line-height: 1.75; margin-top: 0; }
+    .audit-card p + p { margin-top: 10px; }
+    .audit-card .btn { background: var(--dark); color: var(--cream) !important; margin-top: 0; white-space: nowrap; }
+
+    /* ── FOOTER ── */
+    .footer { background: var(--dark); border-top: 1px solid rgba(242,225,205,0.07); text-align: center; padding: 48px 64px; font-size: 0.8rem; color: rgba(242,225,205,0.32); }
+    .footer-brand { font-family: var(--h); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(242,225,205,0.55); display: block; margin-bottom: 12px; }
+    .footer a { color: rgba(242,225,205,0.32); text-decoration: underline; margin: 0 10px; }
+    .footer a:hover { color: var(--orange); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero-lower { grid-template-columns: 1fr; gap: 48px; }
+      .split { grid-template-columns: 1fr; gap: 48px; }
+      .audit-card { grid-template-columns: 1fr; gap: 32px; padding: 48px 40px; }
+    }
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      html, body { font-size: 16px; }
+      .s   { padding: 80px 28px; }
+      .s--xl { padding: 100px 28px; }
+      .hero { padding: 80px 28px 100px; }
+      .nav, .footer { padding-left: 28px; padding-right: 28px; }
+      .case-card { padding: 32px 28px; }
+    }
+
+    /* ── GHL OVERRIDES ── */
+    .page-section, .section-body, .container-fluid,
+    .full-width, [data-section-id], .col-12, .row {
+      padding: 0 !important;
+      margin: 0 !important;
+      max-width: none !important;
+      background: transparent !important;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">Ember <span>by Victoria Lewis</span></div>
+  <div class="nav-links">
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/TeNX4q3g8VlFNirhLOl1?notrack=true">Home</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Services</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/xSJEwDoTtk7bHBZCGd74">Ignite</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/aSgfiQ8D7IZXCDCyPZrg?notrack=true">Spark</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/q1PAkpQd08WxnTFUF8rt">Email Tech</a>
+    <a class="nav-link nav-link--active" href="#">Inferno</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/F1NUq7LP9rtPnKCI9ycr">About</a>
+  </div>
+</nav>
+
+<!-- 1. HERO -->
+<section class="hero">
+  <div class="w-wide">
+    <span class="pre">Systems, process &amp; revenue infrastructure for growing businesses</span>
+    <h1>Ember <em class="hi">Inferno.</em></h1>
+    <div class="hero-lower">
+      <div class="hero-body">
+        <span class="hero-label">For businesses that have outgrown "just sort it out"</span>
+        <p>Your business is doing well. Sales are up, leads are coming in, the team's busy. But underneath, things aren't keeping pace. Nobody's quite sure where your leads are actually coming from. The data doesn't join up. Processes live in someone's head - or a spreadsheet only one person understands.</p>
+        <p>Your team is stretched thin just keeping today running, let alone fixing the plumbing.</p>
+        <a class="btn" href="#">Start a Conversation →</a>
+      </div>
+      <div class="trust-card">
+        <div class="trust-item">
+          <span class="trust-n">25</span>
+          <span class="trust-label">Years of operational and systems experience inside large businesses and retail chains</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-n">End-to-end</span>
+          <span class="trust-label">From audit and diagnosis through to build, training, and embedded delivery</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-n">No report and run</span>
+          <span class="trust-label">We stay until the fixes land and your team can run with them</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. SOUND FAMILIAR - orange -->
+<section class="s s--orange s--xl">
+  <div class="w-wide">
+    <div class="split">
+      <div>
+        <div class="bar"></div>
+        <span class="pre">Sound familiar?</span>
+        <h2>The numbers are good. <em class="hi">The picture isn't.</em></h2>
+      </div>
+      <div>
+        <p class="lead" style="margin-top:0;">You're spending real money on marketing, but can't say with confidence what it's actually returning. Your team is busy - but a lot of that busy is firefighting, manual admin, and chasing leads that were never going to buy. Everyone's doing their best, but nobody owns the systems holding it all together.</p>
+      </div>
+    </div>
+
+    <ul class="bullet-list" style="margin-top:64px; display:grid; grid-template-columns:1fr 1fr; gap:16px 48px;">
+      <li>You're spending real money on ads but can't trace it to sales</li>
+      <li>Your CRM, website and ad accounts don't talk to each other</li>
+      <li>Your sales team loses hours to unqualified leads and dead-end enquiries</li>
+      <li>Processes work because of who's doing them, not how they're set up</li>
+      <li>Too much time goes on sales admin that should be automatic</li>
+      <li>Your team is stretched too thin to fix the things slowing them down</li>
+    </ul>
+
+    <div style="margin-top:52px;">
+      <a class="btn btn--dark" href="#">This sounds like us →</a>
+    </div>
+  </div>
+</section>
+
+<!-- 3. WHAT I DO - dark -->
+<section class="s s--xl">
+  <div class="w-wide">
+    <div class="split">
+      <div>
+        <div class="bar"></div>
+        <span class="pre">What I do</span>
+        <h2>I get into the detail. <em class="hi">Then I fix it.</em></h2>
+      </div>
+      <div>
+        <p class="lead" style="margin-top:0;">I spend time inside your business - talking to the people who run it day to day - to map exactly how things currently work. Where the gaps are. Where money's leaking. Where the data trail breaks down.</p>
+        <p style="color:rgba(242,225,205,0.72); margin-top:20px;">You get a clear, practical picture: what's broken, what it's costing you, and what to do about it.</p>
+        <p style="color:rgba(242,225,205,0.72); margin-top:20px;">From there, if you want it, I can stay and put it right. Not as a consultant who hands over a report and disappears - as an embedded technical partner who builds the fixes, trains your team to use them, and stays long enough to see the results land.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. WORKING WITH CONSULTANTS - cream -->
+<section class="s s--cream s--xl">
+  <div class="w-wide">
+    <div class="split">
+      <div>
+        <div class="bar"></div>
+        <span class="pre">Working with consultants &amp; agencies</span>
+        <h2>Already working with someone? <em class="hi">Even better.</em></h2>
+      </div>
+      <div>
+        <p>I usually work alongside other consultants and agencies - coming in for the systems, data, and technical side while they focus on strategy, marketing, or growth.</p>
+        <p style="margin-top:20px;">Most consultants diagnose and move on. I'm the implementation layer - the part that turns recommendations into reality, and makes sure your business can run with it once everyone else has gone.</p>
+        <p style="margin-top:20px;">If you'd rather work with me directly, that's absolutely fine too.</p>
+        <a class="btn" href="#">Let's talk →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. BACKGROUND - dark -->
+<section class="s s--xl">
+  <div class="w-wide">
+    <div class="split">
+      <div>
+        <div class="bar"></div>
+        <span class="pre">Background</span>
+        <h2>25 years of fixing things <em class="hi">at scale.</em></h2>
+      </div>
+      <div>
+        <p class="lead" style="margin-top:0;">Before founding Ember, I spent 25 years working inside large businesses and retail chains - fixing inefficiencies, improving processes, and streamlining workflows long before automation was a buzzword.</p>
+        <p style="color:rgba(242,225,205,0.72); margin-top:20px;">Inferno brings that same approach to growing businesses that don't yet have an in-house systems function of their own - the people, the process thinking, and the hands-on delivery to match.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. CASE STUDY - cream -->
+<section class="s s--cream s--xl">
+  <div class="w-mid">
+    <div class="bar"></div>
+    <span class="pre">What this looks like in practice</span>
+    <h2>A real <em class="hi">example.</em></h2>
+
+    <div class="case-card">
+      <span class="case-label">Client story</span>
+      <p>A business spending tens of thousands a month on ads, with no visibility into which campaigns actually converted to sales. An audit uncovered a broken data link between their CRM and ad accounts, an unqualified-lead problem flooding their sales team, and a stalled e-commerce launch sitting on suppressed revenue.</p>
+      <p>The result: a clear roadmap - and an ongoing partnership to put it right.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7. WHERE TO START - dark -->
+<section class="s s--xl">
+  <div class="w-wide">
+    <div class="bar"></div>
+    <span class="pre">Where to start</span>
+    <h2>An <em class="hi">Inferno Audit.</em></h2>
+    <p class="lead" style="max-width:680px; margin-top:28px;">I come to you, spend time with the key people, and map what's really going on. You get a clear picture of what's working, what's not, and what it's costing you.</p>
+
+    <div class="audit-card">
+      <div>
+        <h3>No obligation to go further.</h3>
+        <p>The audit stands on its own - you'll walk away with a clear, honest picture of your business whether you continue with me or not.</p>
+        <p>That said, most businesses do.</p>
+      </div>
+      <div>
+        <a class="btn" href="#" style="margin-top:0;">Start a Conversation →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <span class="footer-brand">Ember by Victoria Lewis</span>
+  <p><a href="#">Privacy Policy</a><a href="#">Terms of Service</a></p>
+</footer>
+
+</body>
+</html>
