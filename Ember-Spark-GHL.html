@@ -180,15 +180,14 @@
     .hero-points { display: flex; flex-direction: column; gap: 36px; }
     .hero-point p { color: rgba(242,225,205,0.78); font-size: 1.05rem; line-height: 1.72; margin-top: 8px; }
     .hero-point-label { display: block; font-family: var(--h); font-size: 0.95rem; font-weight: 700; color: var(--orange); letter-spacing: -0.01em; }
-    .hero-img { border-radius: 20px; overflow: hidden; aspect-ratio: 4/3; }
+    .hero-img { border-radius: 20px; overflow: hidden; aspect-ratio: 1/1; }
     .hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     /* ── SPLIT ── */
     .split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: center;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
     }
 
     /* ── VIKI IN YOUR POCKET FLOW ── */
@@ -442,34 +441,34 @@
   <button class="nav-toggle" id="nav-toggle" aria-label="Open navigation"><span></span><span></span><span></span></button>
   <div class="nav-links" id="nav-links">
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/TeNX4q3g8VlFNirhLOl1?notrack=true">Home</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Services</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/xSJEwDoTtk7bHBZCGd74">Ignite</a>
-    <a class="nav-link nav-link--active" href="https://app.gohighlevel.com/v2/preview/aSgfiQ8D7IZXCDCyPZrg?notrack=true">Spark</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/q1PAkpQd08WxnTFUF8rt">Email Tech</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Work with Me</a>
     <a class="nav-link" href="#">Inferno</a>
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/F1NUq7LP9rtPnKCI9ycr">About</a>
+    <a class="nav-link nav-link--active" href="https://app.gohighlevel.com/v2/preview/aSgfiQ8D7IZXCDCyPZrg?notrack=true">Spark</a>
   </div>
 </nav>
 
 <!-- 1. HERO - dark -->
 <section class="hero">
   <div class="w-wide">
-    <span class="pre">The membership for business owners who are done Googling</span>
-    <h1>Spark.</h1>
+    <span class="pre">Spark — the membership</span>
+    <h1>Google has four million answers. <em class="hi">None of them useful.</em></h1>
     <div class="hero-lower">
-      <div class="hero-points">
-        <div class="hero-point">
-          <span class="hero-point-label">Your very own expert in your pocket</span>
-          <p>Got a question about your systems, a tool you can't figure out, a workflow driving you mad, or trying to work out where AI actually fits in your business? Don't Google it. Ask me.</p>
+      <div>
+        <div class="hero-points">
+          <div class="hero-point">
+            <span class="hero-point-label">Me in your pocket</span>
+            <p>Got a question about business strategy, your systems, an AI workflow, or a tool you can't figure out? Don't Google it. Post it. I'll answer it directly — often with a short video showing you exactly what to do.</p>
+          </div>
+          <div class="hero-point">
+            <span class="hero-point-label">Direct access. Real answers.</span>
+            <p>Spark is a £27/month membership with direct access to me. No rabbit holes, no forums, no guessing. Just a straight answer from someone who actually knows.</p>
+          </div>
         </div>
-        <div class="hero-point">
-          <span class="hero-point-label">Clear answers without rabbit holes.</span>
-          <p>Spark is a low-cost membership with direct access to me, a growing vault of real answers to real business problems, short courses on tools and AI, and custom GPTs built to help you move faster.</p>
-        </div>
+        <a class="btn" href="https://www.victorialewis.co.uk/free" style="display:inline-block; margin-top:48px;">Join Spark for £27/month →</a>
       </div>
       <div class="hero-img">
-        <img src="https://www.victorialewis.co.uk/content-assets/public/eyJhbGciOiJIUzI1NiJ9.eyJvYmplY3Rfa2V5IjoiZG03OW52bnRlbXF1ZmpkdWx0a2RudDhzdWN6eCIsImRvbWFpbiI6Ind3dy52aWN0b3JpYWxld2lzLmNvLnVrIn0.PXutdfB4_2RutPzXCfV3vOnmvH6H5YqEnIrw_aF7eM4" alt="Spark membership">
-        <a class="btn" href="https://www.victorialewis.co.uk/free" style="display:block; text-align:center; margin-top:24px;">Join Spark for £27/month →</a>
+        <img src="https://assets.cdn.filesafe.space/gGF2noIJlyzuSf2qJqHz/media/6a5135de708c41d4df9125ba.jpg" alt="Spark membership">
       </div>
     </div>
   </div>
@@ -482,7 +481,7 @@
       <div>
         <div class="bar"></div>
         <span class="pre">Sound familiar?</span>
-        <h2>You've got a question. Google has four million answers. <em class="hi">None of them useful.</em></h2>
+        <h2>You want a straight answer. <em class="hi">Not a rabbit hole.</em></h2>
       </div>
       <div>
         <p>You just want to know if you're doing this right. Whether it's an automation, a new tool, a process that's stuck in your head, or figuring out if AI could actually save you time - the answer is out there somewhere. Buried under six hours of YouTube and three contradictory Reddit threads.</p>

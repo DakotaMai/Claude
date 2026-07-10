@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Services - Ember by Victoria Lewis</title>
+  <title>Work with Me - Ember by Victoria Lewis</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@700&family=Livvic:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -169,11 +169,11 @@
     .hero-points { display: flex; flex-direction: column; gap: 36px; }
     .hero-point p { color: rgba(242,225,205,0.78); font-size: 1.05rem; line-height: 1.72; margin-top: 8px; }
     .hero-point-label { display: block; font-family: var(--h); font-size: 0.95rem; font-weight: 700; color: var(--orange); letter-spacing: -0.01em; }
-    .hero-img { border-radius: 20px; overflow: hidden; aspect-ratio: 4/3; }
+    .hero-img { border-radius: 20px; overflow: hidden; aspect-ratio: 3/4; }
     .hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     /* ── SPLIT ── */
-    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .split { display: flex; flex-direction: column; gap: 40px; }
 
     .ignite-badge {
       display: inline-block;
@@ -282,11 +282,15 @@
     .footer a { color: rgba(242,225,205,0.32); text-decoration: underline; margin: 0 10px; }
     .footer a:hover { color: var(--orange); }
 
+    /* ── ALSO GRID ── */
+    .also-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 1024px) {
       .svc-card { grid-template-columns: 260px 1fr; }
     }
     @media (max-width: 900px) {
+      .also-grid { grid-template-columns: 1fr; }
       .hero { padding: 80px 40px 100px; }
       .hero h1 { margin-bottom: 48px; }
       .hero-lower { grid-template-columns: 1fr; gap: 48px; }
@@ -364,12 +368,10 @@
   <button class="nav-toggle" id="nav-toggle" aria-label="Open navigation"><span></span><span></span><span></span></button>
   <div class="nav-links" id="nav-links">
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/TeNX4q3g8VlFNirhLOl1?notrack=true">Home</a>
-    <a class="nav-link nav-link--active" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Services</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/xSJEwDoTtk7bHBZCGd74">Ignite</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/aSgfiQ8D7IZXCDCyPZrg?notrack=true">Spark</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/q1PAkpQd08WxnTFUF8rt">Email Tech</a>
+    <a class="nav-link nav-link--active" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Work with Me</a>
     <a class="nav-link" href="#">Inferno</a>
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/F1NUq7LP9rtPnKCI9ycr">About</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/aSgfiQ8D7IZXCDCyPZrg?notrack=true">Spark</a>
   </div>
 </nav>
 
@@ -379,19 +381,21 @@
     <span class="pre">Business systems built around your business - not someone else's</span>
     <h1>The Ember <em class="hi">System.</em></h1>
     <div class="hero-lower">
-      <div class="hero-points">
-        <div class="hero-point">
-          <span class="hero-point-label">Your journey. Your system.</span>
-          <p>Every Ember build starts from scratch, designed around your specific client journey, your way of working, and the exact outcomes your business needs to deliver. Nothing is adapted from someone else's idea of how a business should run.</p>
+      <div>
+        <div class="hero-points">
+          <div class="hero-point">
+            <span class="hero-point-label">Your journey. Your system.</span>
+            <p>Every Ember build starts from scratch, designed around your specific client journey, your way of working, and the exact outcomes your business needs to deliver. Nothing is adapted from someone else's idea of how a business should run.</p>
+          </div>
+          <div class="hero-point">
+            <span class="hero-point-label">Modular by design.</span>
+            <p>You don't have to rebuild everything at once. Ember is structured in four clear phases - mapping, back end, front end, and marketing - so you can build what you need now and add more as your business grows.</p>
+          </div>
         </div>
-        <div class="hero-point">
-          <span class="hero-point-label">Modular by design.</span>
-          <p>You don't have to rebuild everything at once. Ember is structured in four clear phases - mapping, back end, front end, and marketing - so you can build what you need now and add more as your business grows.</p>
-        </div>
+        <a class="btn" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember" style="display:inline-block; margin-top:48px;">Book a Free Discovery Call →</a>
       </div>
       <div class="hero-img">
-        <img src="https://www.victorialewis.co.uk/content-assets/public/eyJhbGciOiJIUzI1NiJ9.eyJvYmplY3Rfa2V5IjoibXlydW13cXNiZnM2cTZmaXRndmFua2gwYmd4cCIsImRvbWFpbiI6Ind3dy52aWN0b3JpYWxld2lzLmNvLnVrIn0.l74gDNhY4USTXyjD7_xK9vDCKVb_r8bzkbASIuv5oow" alt="The Ember System">
-        <a class="btn" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember" style="display:block; text-align:center; margin-top:24px;">Book a Free Discovery Call →</a>
+        <img src="https://assets.cdn.filesafe.space/gGF2noIJlyzuSf2qJqHz/media/6a5135d9eada8c1f45f11155.jpg" alt="Work with me">
       </div>
     </div>
   </div>
@@ -438,7 +442,6 @@
         <p>You leave with a complete system blueprint. Every build that follows is built directly from this plan, which is why skipping it isn't an option.</p>
         <div class="svc-pricing">
           <span class="svc-add">£750</span>
-          <a class="btn" href="https://www.victorialewis.co.uk/ember-ignite" style="margin-top:0;">Learn More About Ignite →</a>
         </div>
       </div>
     </div>
@@ -578,7 +581,10 @@
 
     </div>
 
-    <p style="margin-top:40px; text-align:center; font-size:0.88rem; color:rgba(242,225,205,0.35);">Not sure which path fits? Book a free call - we'll work it out together in 30 minutes.</p>
+    <div style="text-align:center; margin-top:52px;">
+      <a class="btn" href="https://sites.leadconnectorhq.com/preview/ukjM1YdjYHAFHxPh3JPQ">Choose your modules &amp; sign up →</a>
+      <p style="margin-top:20px; font-size:0.88rem; color:rgba(242,225,205,0.45);">Not sure yet? <a href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember" style="color:rgba(242,225,205,0.65); text-decoration:underline;">Book a free discovery call</a> — we'll figure out the right path together.</p>
+    </div>
   </div>
 </section>
 
@@ -606,6 +612,33 @@
         <span style="font-family:var(--h); font-size:3.5rem; letter-spacing:-0.05em; color:var(--orange); display:block; line-height:1; margin-bottom:20px;">03</span>
         <h3 style="color:var(--cream); margin-bottom:12px;">We start with Ignite</h3>
         <p style="color:rgba(242,225,205,0.65); font-size:0.97rem; line-height:1.75; margin-top:0;">If it's a good fit, every project begins here - mapping your system before anything gets built. Everything else follows from this.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 6b. ALSO FROM EMBER - dark -->
+<section class="s s--sm">
+  <div class="w-wide">
+    <div style="text-align:center; margin-bottom:52px;">
+      <span class="pre">Also from Ember</span>
+      <h2 style="font-size:clamp(2rem,3.5vw,3rem);">Not quite the right fit?</h2>
+    </div>
+    <div class="also-grid">
+
+      <div style="background:rgba(242,225,205,0.05); border:1px solid rgba(242,225,205,0.1); border-radius:20px; padding:44px 40px;">
+        <span style="font-family:var(--b); font-weight:600; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--orange); display:block; margin-bottom:16px;">For growing businesses &amp; agencies</span>
+        <h3 style="color:var(--cream); margin-bottom:16px;">Inferno</h3>
+        <p style="color:rgba(242,225,205,0.68); font-size:0.97rem; line-height:1.75; margin-top:0;">Running a larger operation with real complexity — multiple revenue streams, a team, or an established client base? Inferno is a longer-term embedded partnership: systems, process and revenue infrastructure built around your business over 6–12 months.</p>
+        <a class="btn btn--cream" href="#" style="margin-top:28px;">Learn about Inferno →</a>
+      </div>
+
+      <div style="background:rgba(242,225,205,0.05); border:1px solid rgba(242,225,205,0.1); border-radius:20px; padding:44px 40px;">
+        <span style="font-family:var(--b); font-weight:600; font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:rgba(242,225,205,0.35); display:block; margin-bottom:16px;">Always available</span>
+        <h3 style="color:var(--cream); margin-bottom:16px;">Spark</h3>
+        <p style="color:rgba(242,225,205,0.68); font-size:0.97rem; line-height:1.75; margin-top:0;">Not ready for a full build, or just want expert answers on demand? Spark is a £27/month membership — direct access to me for business strategy, systems questions, AI workflows, and whatever's got you stuck.</p>
+        <a class="btn btn--cream" href="https://app.gohighlevel.com/v2/preview/aSgfiQ8D7IZXCDCyPZrg?notrack=true" style="margin-top:28px;">Learn about Spark →</a>
       </div>
 
     </div>

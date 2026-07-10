@@ -208,11 +208,11 @@
     .trust-label { font-size: 0.88rem; color: rgba(242,225,205,0.55); line-height: 1.5; }
 
     /* ── SPLIT ── */
-    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .split { display: flex; flex-direction: column; gap: 40px; }
 
     /* ── CASE STUDY ── */
     .case-card {
-      background: rgba(42,20,12,0.25);
+      background: rgba(255,255,255,0.06);
       border: 1px solid rgba(242,225,205,0.1);
       border-left: 4px solid var(--orange);
       border-radius: 0 16px 16px 0;
@@ -231,6 +231,12 @@
     }
     .case-card p { color: rgba(242,225,205,0.78); font-size: 0.97rem; line-height: 1.78; margin-top: 0; }
     .case-card p + p { margin-top: 14px; }
+    .s--cream .case-card {
+      background: var(--dark);
+      border-color: transparent;
+      border-left-color: var(--orange);
+    }
+    .s--cream .case-card p { color: rgba(242,225,205,0.78); }
 
     /* ── AUDIT CTA ── */
     .audit-card {
@@ -324,12 +330,10 @@
   <button class="nav-toggle" id="nav-toggle" aria-label="Open navigation"><span></span><span></span><span></span></button>
   <div class="nav-links" id="nav-links">
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/TeNX4q3g8VlFNirhLOl1?notrack=true">Home</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Services</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/xSJEwDoTtk7bHBZCGd74">Ignite</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/aSgfiQ8D7IZXCDCyPZrg?notrack=true">Spark</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/q1PAkpQd08WxnTFUF8rt">Email Tech</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Work with Me</a>
     <a class="nav-link nav-link--active" href="#">Inferno</a>
     <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/F1NUq7LP9rtPnKCI9ycr">About</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/aSgfiQ8D7IZXCDCyPZrg?notrack=true">Spark</a>
   </div>
 </nav>
 
@@ -343,21 +347,24 @@
         <span class="hero-label">For businesses that have outgrown "just sort it out"</span>
         <p>Your business is doing well. Sales are up, leads are coming in, the team's busy. But underneath, things aren't keeping pace. Nobody's quite sure where your leads are actually coming from. The data doesn't join up. Processes live in someone's head - or a spreadsheet only one person understands.</p>
         <p>Your team is stretched thin just keeping today running, let alone fixing the plumbing.</p>
-        <a class="btn" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember">Start a Conversation →</a>
+        <a class="btn" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember" style="display:inline-block; margin-top:40px;">Start a Conversation →</a>
       </div>
-      <div class="trust-card">
-        <div class="trust-item">
-          <span class="trust-n">25</span>
-          <span class="trust-label">Years of operational and systems experience inside large businesses and retail chains</span>
-        </div>
-        <div class="trust-item">
-          <span class="trust-n">End-to-end</span>
-          <span class="trust-label">From audit and diagnosis through to build, training, and embedded delivery</span>
-        </div>
-        <div class="trust-item">
-          <span class="trust-n">No report and run</span>
-          <span class="trust-label">We stay until the fixes land and your team can run with them</span>
-        </div>
+      <div style="border-radius:20px; overflow:hidden; aspect-ratio:4/3;">
+        <img src="https://assets.cdn.filesafe.space/gGF2noIJlyzuSf2qJqHz/media/6a5135e65271f552dfafff86.jpg" alt="Inferno" style="width:100%; height:100%; object-fit:cover; object-position:center 75%; display:block;">
+      </div>
+    </div>
+    <div class="trust-card" style="margin-top:64px;">
+      <div class="trust-item">
+        <span class="trust-n">25</span>
+        <span class="trust-label">Years of operational and systems experience inside large businesses and retail chains</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-n">End-to-end</span>
+        <span class="trust-label">From audit and diagnosis through to build, training, and embedded delivery</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-n">No report and run</span>
+        <span class="trust-label">We stay until the fixes land and your team can run with them</span>
       </div>
     </div>
   </div>
@@ -476,7 +483,7 @@
         <p>That said, most businesses do.</p>
       </div>
       <div>
-        <a class="btn" href="#" style="margin-top:0;">Start a Conversation →</a>
+        <a class="btn" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember" style="margin-top:0;">Start a Conversation →</a>
       </div>
     </div>
   </div>
