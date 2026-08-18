@@ -149,8 +149,6 @@
     text-align:center;
     padding:7px 12px;
   }
-  :root[data-theme="dark"] .notice-bar, @media (prefers-color-scheme:dark){ }
-
   /* ---------- nav ---------- */
   header.site{
     position:sticky; top:0; z-index:40;
@@ -207,7 +205,6 @@
     background:transparent; color:var(--text); border-color:var(--text);
   }
   .cta.ghost:hover{ background:var(--text); color:var(--bg); }
-  :root[data-theme="dark"] .cta:hover, .nav .cta:hover{ }
 
   .burger{ display:none; }
   #nav-toggle{ display:none; }
@@ -269,9 +266,9 @@
   /* ---------- sections ---------- */
   section{ padding:72px 0; border-bottom:1px solid var(--border); }
   section.tight{ padding:56px 0; }
-  .section-head{ max-width:62ch; margin-bottom:40px; }
-  .section-head h2{ font-size:clamp(1.6rem, 3vw, 2.3rem); }
-  .section-head p{ color:var(--text-muted); margin-top:14px; font-size:1.04rem; }
+  .section-head{ margin-bottom:40px; }
+  .section-head h2{ font-size:clamp(1.7rem, 3.4vw, 2.6rem); max-width:26ch; }
+  .section-head p{ color:var(--text-muted); margin-top:14px; font-size:1.04rem; max-width:62ch; }
 
   .pullquote{
     font-size:clamp(1.35rem, 2.6vw, 1.9rem);
@@ -320,6 +317,18 @@
   .ledger li:last-child{ border-bottom:none; }
   .ledger li::before{ content:"✓"; color:var(--river); font-weight:700; flex:none; }
 
+  .basic-hire{ display:grid; grid-template-columns:360px 1fr; align-items:stretch; }
+  .basic-hire .phead{ border-bottom:none; border-right:1px dashed var(--border); }
+  .basic-hire .ledger{
+    display:grid; grid-template-columns:1fr 1fr; gap:0 28px;
+    padding:26px; align-content:start;
+  }
+  @media (max-width:760px){
+    .basic-hire{ grid-template-columns:1fr; }
+    .basic-hire .phead{ border-right:none; border-bottom:1px dashed var(--border); }
+    .basic-hire .ledger{ grid-template-columns:1fr; }
+  }
+
   /* compare table */
   .tablewrap{ overflow-x:auto; margin-top:8px; border:1px solid var(--border); }
   table.compare{ width:100%; border-collapse:collapse; min-width:560px; background:var(--bg); }
@@ -351,15 +360,16 @@
   .not-booking{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; }
   @media (max-width:860px){ .not-booking{ grid-template-columns:1fr; } }
 
-  /* extras menu */
-  .extras-menu{ margin-top:22px; border:1px solid var(--border); background:var(--bg); }
-  .extras-menu .erow{
-    display:flex; justify-content:space-between; align-items:baseline; gap:16px;
-    padding:14px 22px; border-bottom:1px solid var(--border); font-size:0.95rem;
+  /* extras list */
+  .extras-list{
+    display:grid; grid-template-columns:1fr 1fr; gap:0 40px;
+    margin:20px 0 0; padding:0; list-style:none;
   }
-  .extras-menu .erow:last-child{ border-bottom:none; }
-  .extras-menu .erow span:last-child{ font-weight:700; color:var(--brass); white-space:nowrap; text-align:right; }
-  .extras-menu .erow .poa{ color:var(--text-muted); font-weight:600; font-style:italic; font-family:'Fraunces Italic'; }
+  @media (max-width:700px){ .extras-list{ grid-template-columns:1fr; } }
+  .extras-list li{
+    padding:12px 0 12px 22px; position:relative; border-bottom:1px solid var(--border); font-size:0.95rem;
+  }
+  .extras-list li::before{ content:"·"; position:absolute; left:0; color:var(--brass); font-weight:900; font-size:1.4rem; line-height:1; top:8px; }
   .extras-note{ margin-top:16px; font-size:0.92rem; color:var(--text-muted); }
 
   /* example days */
@@ -407,9 +417,11 @@
   .benefits-grid li::before{ content:"·"; position:absolute; left:0; color:var(--brass); font-weight:900; font-size:1.4rem; line-height:1; top:5px; }
 
   /* faq */
-  .faq{ max-width:760px; }
+  .faq{ columns:2; column-gap:56px; }
+  @media (max-width:760px){ .faq{ columns:1; } }
   details.faq-item{
     border-bottom:1px solid var(--border); padding:18px 0;
+    break-inside:avoid;
   }
   details.faq-item summary{
     cursor:pointer; list-style:none; font-weight:700; font-size:1.02rem;
@@ -554,7 +566,7 @@
       </div>
 
       <div class="packages reveal" style="grid-template-columns:1fr;">
-        <div class="package emph" style="max-width:560px;">
+        <div class="package emph basic-hire">
           <div class="phead">
             <span class="plabel">Basic hire — secures your booking</span>
             <div class="pname">Full-day venue hire</div>
@@ -576,30 +588,30 @@
         </div>
       </div>
 
-      <div class="section-head reveal" style="margin-top:56px; max-width:none;">
+      <div class="section-head reveal" style="margin-top:56px;">
         <p class="eyebrow">Build your day</p>
         <h2 style="font-size:1.5rem;">Optional extras — take whatever you fancy.</h2>
-        <p>This list isn't exhaustive — it's just an idea of what we can do. Bring in your own suppliers for anything else and we won't charge you extra for it.</p>
+        <p>This list isn't exhaustive — it's just an idea of what's available. Talk it through with Caroline when you visit and she'll put together your quote based on exactly what you want.</p>
       </div>
-      <div class="extras-menu reveal">
-        <div class="erow"><span>Catering for your guests</span><span class="poa">TBC</span></div>
-        <div class="erow"><span>Extra guests beyond 100 (per head)</span><span class="poa">TBC</span></div>
-        <div class="erow"><span>Chair covers</span><span class="poa">TBC</span></div>
-        <div class="erow"><span>Chair ties / ribbons</span><span class="poa">TBC</span></div>
-        <div class="erow"><span>Colour-matched table runners or tablecloths</span><span class="poa">TBC</span></div>
-        <div class="erow"><span>Ice cream station</span><span class="poa">TBC</span></div>
-        <div class="erow"><span>Wine on the table</span><span class="poa">TBC</span></div>
-        <div class="erow"><span>Cocktail &amp; bar upgrades</span><span class="poa">TBC</span></div>
-        <div class="erow"><span>Venue styling &amp; decor, via trusted local partners</span><span class="tnum">from £1,500</span></div>
-        <div class="erow"><span>Post-event clean-down service</span><span class="tnum">£150</span></div>
-        <div class="erow"><span>External supplier coordination</span><span class="tnum">£50 per supplier</span></div>
-      </div>
+      <ul class="extras-list reveal">
+        <li>Catering for your guests</li>
+        <li>Extra guests beyond 100</li>
+        <li>Chair covers</li>
+        <li>Chair ties / ribbons</li>
+        <li>Colour-matched table runners or tablecloths</li>
+        <li>Ice cream station</li>
+        <li>Wine on the table</li>
+        <li>Cocktail &amp; bar upgrades</li>
+        <li>Venue styling &amp; decor, via trusted local partners</li>
+        <li>Post-event clean-down service</li>
+        <li>External supplier coordination</li>
+      </ul>
       <p class="extras-note reveal">Need help finding a DJ, caterer, decorator or photographer? We'll connect you with trusted local suppliers — no charge for the introduction.</p>
 
-      <div class="section-head reveal" style="margin-top:56px; max-width:none;">
+      <div class="section-head reveal" style="margin-top:56px;">
         <p class="eyebrow">A few example days</p>
-        <h2 style="font-size:1.5rem;">Just to give you an idea — not a fixed menu.</h2>
-        <p>These are illustrative only. Your actual quote is built around exactly what you want, once we've talked it through.</p>
+        <h2 style="font-size:1.5rem;">Here's what it could look like.</h2>
+        <p>A quick idea of what you can have before you even pick up the phone. These are illustrative — your actual quote is built around exactly what you want, once we've talked it through.</p>
       </div>
       <div class="example-grid reveal">
         <div class="package">
@@ -826,7 +838,7 @@
   <!-- ENQUIRY -->
   <section id="enquiry" style="border-bottom:none;">
     <div class="wrap">
-      <div class="section-head reveal" style="max-width:none;">
+      <div class="section-head reveal" >
         <p class="eyebrow">Come and see it in person</p>
         <h2>Come and see what your wedding could look like.</h2>
         <p>The best way to experience The Civic is to see it in person. Book a relaxed wedding viewing and we'll talk through layout possibilities, guest numbers, pricing, package options and how we can help make your day feel effortless.</p>
