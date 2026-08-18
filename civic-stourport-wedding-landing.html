@@ -320,25 +320,6 @@
   .ledger li:last-child{ border-bottom:none; }
   .ledger li::before{ content:"✓"; color:var(--river); font-weight:700; flex:none; }
 
-  .addons{ margin-top:34px; display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-  @media (max-width:720px){ .addons{ grid-template-columns:1fr; } }
-  .addon{ background:var(--bg-sunken); border:1px solid var(--border); padding:20px 22px; }
-  .addon .price{ font-family:'Archivo Black'; color:var(--brass); font-size:1.2rem; }
-  .addon h4{ margin:6px 0 8px; font-size:1rem; }
-  .addon p{ margin:0; color:var(--text-muted); font-size:0.92rem; }
-
-  .receipt{
-    margin-top:40px;
-    background:var(--bg); border:1px solid var(--text);
-    max-width:420px;
-    padding:26px 26px 22px;
-  }
-  .receipt .rtitle{ font-family:'Archivo Black'; font-size:0.95rem; text-transform:uppercase; letter-spacing:0.03em; }
-  .receipt .row{ display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px dotted var(--border); font-size:0.95rem; }
-  .receipt .row span:last-child{ font-weight:700; }
-  .receipt .total{ display:flex; justify-content:space-between; padding-top:14px; font-family:'Archivo Black'; font-size:1.15rem; }
-  .receipt .foot{ margin-top:14px; font-size:0.85rem; color:var(--text-muted); }
-
   /* compare table */
   .tablewrap{ overflow-x:auto; margin-top:8px; border:1px solid var(--border); }
   table.compare{ width:100%; border-collapse:collapse; min-width:560px; background:var(--bg); }
@@ -369,6 +350,36 @@
 
   .not-booking{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; }
   @media (max-width:860px){ .not-booking{ grid-template-columns:1fr; } }
+
+  /* extras menu */
+  .extras-menu{ margin-top:22px; border:1px solid var(--border); background:var(--bg); }
+  .extras-menu .erow{
+    display:flex; justify-content:space-between; align-items:baseline; gap:16px;
+    padding:14px 22px; border-bottom:1px solid var(--border); font-size:0.95rem;
+  }
+  .extras-menu .erow:last-child{ border-bottom:none; }
+  .extras-menu .erow span:last-child{ font-weight:700; color:var(--brass); white-space:nowrap; text-align:right; }
+  .extras-menu .erow .poa{ color:var(--text-muted); font-weight:600; font-style:italic; font-family:'Fraunces Italic'; }
+  .extras-note{ margin-top:16px; font-size:0.92rem; color:var(--text-muted); }
+
+  /* example days */
+  .example-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:8px; }
+  @media (max-width:900px){ .example-grid{ grid-template-columns:1fr; } }
+  .package{ position:relative; }
+  .package .badge{
+    position:absolute; top:-1px; right:-1px;
+    background:var(--brass); color:#fff;
+    font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;
+    padding:6px 12px;
+  }
+
+  /* testimonials */
+  .testi-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:8px; }
+  @media (max-width:700px){ .testi-grid{ grid-template-columns:1fr; } }
+  .testi-card{ background:var(--bg-raised); border:1px dashed var(--brass); padding:26px; }
+  .testi-card .tstatus{ font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; color:var(--river); }
+  .testi-card blockquote{ margin:14px 0 0; font-family:'Fraunces Italic'; font-style:italic; font-size:1.05rem; color:var(--text-muted); }
+  .testi-card .tname{ margin-top:14px; font-weight:700; font-size:0.85rem; color:var(--text-muted); }
   .aside-card{ background:var(--bg-raised); border:1px solid var(--border); padding:26px; align-self:start; }
   .aside-card h3{ font-size:1.05rem; }
   .aside-card p{ color:var(--text-muted); margin-top:10px; font-size:0.95rem; }
@@ -537,23 +548,23 @@
   <section id="packages">
     <div class="wrap">
       <div class="section-head reveal">
-        <p class="eyebrow">Flexible wedding reception packages</p>
-        <h2>Two ways to do it. Both honestly priced.</h2>
-        <p>Whether you want a DIY celebration or a fully managed reception, we'll help you create a wedding that fits your budget and your style.</p>
+        <p class="eyebrow">Transparent, honest pricing</p>
+        <h2>One clear price. Build the rest exactly how you want it.</h2>
+        <p>Your basic hire is £1,000 — that's the number your booking is secured against. Everything below is optional: mix and match as much or as little as you like, and we'll put together your exact quote together when you visit. Nothing hidden, nothing sprung on you later.</p>
       </div>
 
-      <div class="packages reveal">
-        <div class="package">
+      <div class="packages reveal" style="grid-template-columns:1fr;">
+        <div class="package emph" style="max-width:560px;">
           <div class="phead">
-            <span class="plabel">Option 1</span>
-            <div class="pname">Flexible DIY wedding reception</div>
+            <span class="plabel">Basic hire — secures your booking</span>
+            <div class="pname">Full-day venue hire</div>
             <div class="pfrom">From</div>
             <div class="pprice tnum">£1,000</div>
-            <p class="pnote">Perfect for couples who want flexibility, value for money and the freedom to organise their wedding their own way.</p>
+            <p class="pnote">A 50% deposit against this amount confirms your date. Everything else is optional, added only if you want it.</p>
           </div>
           <ul class="ledger">
             <li>Full-day wedding reception venue hire</li>
-            <li>Tables and chairs</li>
+            <li>Tables, chairs and tablecloths</li>
             <li>Bar staff included</li>
             <li>Duty manager included</li>
             <li>Security included</li>
@@ -563,59 +574,81 @@
             <li>Bring your own caterers, DJs and suppliers</li>
           </ul>
         </div>
+      </div>
 
-        <div class="package emph">
+      <div class="section-head reveal" style="margin-top:56px; max-width:none;">
+        <p class="eyebrow">Build your day</p>
+        <h2 style="font-size:1.5rem;">Optional extras — take whatever you fancy.</h2>
+        <p>This list isn't exhaustive — it's just an idea of what we can do. Bring in your own suppliers for anything else and we won't charge you extra for it.</p>
+      </div>
+      <div class="extras-menu reveal">
+        <div class="erow"><span>Catering for your guests</span><span class="poa">Ask for a quote</span></div>
+        <div class="erow"><span>Extra guests beyond 100 (per head)</span><span class="poa">Ask for a quote</span></div>
+        <div class="erow"><span>Chair covers</span><span class="poa">Ask for a quote</span></div>
+        <div class="erow"><span>Chair ties / ribbons</span><span class="poa">Ask for a quote</span></div>
+        <div class="erow"><span>Colour-matched table runners or tablecloths</span><span class="poa">Ask for a quote</span></div>
+        <div class="erow"><span>Ice cream station</span><span class="poa">Ask for a quote</span></div>
+        <div class="erow"><span>Wine on the table</span><span class="poa">Ask for a quote</span></div>
+        <div class="erow"><span>Cocktail &amp; bar upgrades</span><span class="poa">Ask for a quote</span></div>
+        <div class="erow"><span>Venue styling &amp; decor, via trusted local partners</span><span class="tnum">from £1,500</span></div>
+        <div class="erow"><span>Post-event clean-down service</span><span class="tnum">£150</span></div>
+        <div class="erow"><span>External supplier coordination</span><span class="tnum">£50 per supplier</span></div>
+      </div>
+      <p class="extras-note reveal">Need help finding a DJ, caterer, decorator or photographer? We'll connect you with trusted local suppliers — no charge for the introduction.</p>
+
+      <div class="section-head reveal" style="margin-top:56px; max-width:none;">
+        <p class="eyebrow">A few example days</p>
+        <h2 style="font-size:1.5rem;">Just to give you an idea — not a fixed menu.</h2>
+        <p>These are illustrative only. Your actual quote is built around exactly what you want, once we've talked it through.</p>
+      </div>
+      <div class="example-grid reveal">
+        <div class="package">
           <div class="phead">
-            <span class="plabel">Option 2</span>
-            <div class="pname">"We'll handle it for you"</div>
-            <div class="pfrom">From, example for 100 guests</div>
+            <span class="plabel">Example day</span>
+            <div class="pname">Budget-friendly</div>
+            <div class="pfrom">Illustrative total</div>
+            <div class="pprice tnum">£1,300</div>
+            <p class="pnote">Basic hire, plus clean-down and three suppliers of your own.</p>
+          </div>
+          <ul class="ledger">
+            <li>Room hire, full-day venue — £1,000</li>
+            <li>Post-event clean-down — £150</li>
+            <li>3 suppliers, coordination at £50 each — £150</li>
+          </ul>
+        </div>
+        <div class="package">
+          <div class="phead">
+            <span class="plabel">Example day</span>
+            <div class="pname">Full-service, 100 guests</div>
+            <div class="pfrom">Illustrative total</div>
             <div class="pprice tnum">~£3,150</div>
-            <p class="pnote">Perfect for couples who want less stress, more support and a simpler planning experience.</p>
+            <p class="pnote">Basic hire with catering for 100 guests built in.</p>
           </div>
           <ul class="ledger">
             <li>Full venue hire</li>
             <li>Food for 100 guests</li>
-            <li>Bar staffing</li>
-            <li>Duty manager</li>
-            <li>Security</li>
-            <li>Tables and chairs</li>
-            <li>Venue coordination</li>
-            <li>Setup support</li>
+            <li>Bar staffing, duty manager, security</li>
+            <li>Tables, chairs and tablecloths</li>
+            <li>Venue coordination and setup support</li>
             <li>Post-event clean-down</li>
           </ul>
         </div>
-      </div>
-
-      <div class="addons reveal">
-        <div class="addon">
-          <div class="price tnum">£150</div>
-          <h4>Post-event clean-down service</h4>
-          <p>Leave the cleaning to us so you can enjoy the end of your wedding completely stress-free.</p>
+        <div class="package">
+          <span class="badge">Most popular</span>
+          <div class="phead">
+            <span class="plabel">Example day</span>
+            <div class="pname">The full treatment</div>
+            <div class="pfrom">Illustrative total</div>
+            <div class="pprice tnum" style="font-size:1.3rem;">Ask us for a quote</div>
+            <p class="pnote">Everything from the full-service day, dressed up a little more.</p>
+          </div>
+          <ul class="ledger">
+            <li>Everything in the full-service day</li>
+            <li>Chair covers and matching ribbons</li>
+            <li>Colour-matched table linen</li>
+            <li>Wine on the table</li>
+          </ul>
         </div>
-        <div class="addon">
-          <div class="price tnum">£50 <span style="font-size:0.6em; font-family:'Source Sans'; font-weight:700; color:var(--text-muted);">per supplier</span></div>
-          <h4>External supplier coordination</h4>
-          <p>Covers insurance checks, supplier coordination, basic risk assessments and venue liaison — for your own DJ, caterer, decor team or photobooth.</p>
-        </div>
-      </div>
-
-      <div class="receipt reveal">
-        <div class="rtitle">Typical DIY wedding — worked example</div>
-        <div class="row"><span>Room hire, full-day venue</span><span class="tnum">£1,000</span></div>
-        <div class="row"><span>Post-event clean-down</span><span class="tnum">£150</span></div>
-        <div class="row"><span>3 suppliers, coordination at £50 each</span><span class="tnum">£150</span></div>
-        <div class="total"><span>Total</span><span class="tnum">£1,300</span></div>
-        <p class="foot">A flexible wedding reception for up to 250 guests — a fraction of typical hotel venue pricing.</p>
-      </div>
-
-      <div class="section-head reveal" style="margin-top:64px;">
-        <p class="eyebrow">Optional upgrades</p>
-        <h2 style="font-size:1.5rem;">Add a little more, only if you want to.</h2>
-      </div>
-      <div class="value-grid reveal">
-        <div class="value-card"><h3 style="font-size:1rem;">Venue styling &amp; decor</h3><p>Professional room transformation via trusted local partners. Indicative packages from approximately +£1,500.</p></div>
-        <div class="value-card"><h3 style="font-size:1rem;">Cocktail &amp; bar upgrades</h3><p>Custom drinks packages and cocktail options to elevate your bar experience through the evening.</p></div>
-        <div class="value-card"><h3 style="font-size:1rem;">Supplier sourcing support</h3><p>Need a DJ, entertainment, decor, caterer or photographer? We'll connect you with trusted local suppliers.</p></div>
       </div>
     </div>
   </section>
@@ -631,7 +664,7 @@
         <table class="compare">
           <thead><tr><th>Feature</th><th>Typical local hotel</th><th>The Civic</th></tr></thead>
           <tbody>
-            <tr><td>Starting price</td><td class="tnum">£7,500+</td><td class="tnum">From ~£3,150</td></tr>
+            <tr><td>Starting price</td><td class="tnum">£7,500+</td><td class="tnum">From £1,000</td></tr>
             <tr><td>Package flexibility</td><td>Rigid packages</td><td>Flexible options</td></tr>
             <tr><td>Pricing transparency</td><td>Upsells &amp; hidden extras</td><td>Transparent pricing</td></tr>
             <tr><td>Experience</td><td>Corporate experience</td><td>Personal support</td></tr>
@@ -665,6 +698,29 @@
         <p>The difference isn't expensive branding or unnecessary extras. It's having the freedom to create a day that feels personal, welcoming and genuinely enjoyable for everyone there.</p>
         <p>Because you're not locked into rigid hotel packages, you can spend money on the things that matter most to you.</p>
       </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="tight" id="testimonials">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">In their words</p>
+        <h2 style="font-size:1.7rem;">From couples who've chosen The Civic.</h2>
+      </div>
+      <div class="testi-grid reveal">
+        <div class="testi-card">
+          <span class="tstatus">Booking for 2028</span>
+          <blockquote>Testimonial pending — swap in the quote once it's sent over.</blockquote>
+          <div class="tname">— Awaiting quote</div>
+        </div>
+        <div class="testi-card">
+          <span class="tstatus">Hosted their wedding with us</span>
+          <blockquote>Testimonial pending — swap in the quote once it's sent over.</blockquote>
+          <div class="tname">— Awaiting quote</div>
+        </div>
+      </div>
+      <p class="extras-note reveal">Two slots ready to go, styled to sit either side. Send over the actual quotes whenever suits and I'll drop them straight in.</p>
     </div>
   </section>
 
