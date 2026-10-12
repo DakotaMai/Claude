@@ -288,7 +288,7 @@ const S = {
   entries: [], timer: null,
   plan: { ids: [] }, planRaw: null, prevPlan: null,
   filter: "all", q: "", expanded: {}, sel: new Set(),
-  sweep: { gmail: { status: "idle" }, slack: { status: "idle" }, littlebird: { status: "idle" }, ai: { status: "idle" } },
+  sweep: { gmail: { status: "idle" }, slack: { status: "idle" }, whatsapp: { status: "idle" }, littlebird: { status: "idle" }, ai: { status: "idle" } },
   check: { status: "idle" }, imp: { status: "idle" }, review: null, cal: null,
   caps: { mcp: undefined, db: undefined }
 };
@@ -504,7 +504,7 @@ function buildLanes() {
 }
 
 /* ---------- rendering ---------- */
-const SRC = { gmail: "Email", slack: "Slack", littlebird: "Littlebird", clickup: "ClickUp", calendar: "Calendar", manual: "" };
+const SRC = { gmail: "Email", slack: "Slack", whatsapp: "WhatsApp", littlebird: "Littlebird", clickup: "ClickUp", calendar: "Calendar", manual: "" };
 function cardHTML(t, opts) {
   opts = opts || {};
   const planned = inPlan(t.id), timing = S.timer && S.timer.taskId === t.id;
@@ -700,6 +700,7 @@ function renderSources() {
   $("sources").innerHTML = (any ?
     pill("Email", S.sweep.gmail, s => `${s.count} new threads${s.flagged ? ` + ${s.flagged} in your action labels` : ""} read`) +
     pill("Slack", S.sweep.slack, s => `${s.count} searches read`) +
+    pill("WhatsApp", S.sweep.whatsapp, s => s.count ? `${s.count} chat${s.count === 1 ? "" : "s"} read via Littlebird` : "nothing new via Littlebird") +
     pill("Littlebird", S.sweep.littlebird, s => s.count ? "context read" : "nothing new") +
     pill("Claude", S.sweep.ai, s => `${s.count} new task${s.count === 1 ? "" : "s"} to review`) : "") +
     (c.lastSweep ? `<div class="src-pill"><span class="txt">Last sweep ${esc(new Date(c.lastSweep).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" }))}</span></div>` : "");
@@ -944,10 +945,14 @@ async function fetchSlack(since) {
   if (!ok.length) throw res[0].reason;
   return ok;
 }
-async function fetchLittlebird(start, queries, messages, max) {
-  const r = await read("Littlebird", "search_user_context", { search_queries: queries, search_queries_messages: messages, date_range: { start, end: "now" } }, { cache: false });
+async function fetchLittlebird(start, queries, messages, max, app) {
+  const input = { search_queries: queries, search_queries_messages: messages, date_range: { start, end: "now" } };
+  if (app) input.filters = { app };
+  const r = await read("Littlebird", "search_user_context", input, { cache: false });
   return asText(r.payload).slice(0, max);
 }
+const fetchWhatsApp = (start, max) => fetchLittlebird(start, ["WhatsApp chat with a client"],
+  ["someone asking me to do something", "client question waiting for my reply", "I promised to send or do something", "message about a deadline or meeting"], max || 16000, "WhatsApp");
 function clientListForAI() {
   const c = cfg();
   return [...new Set([...(c.groups || []).map(d => { const pj = projectsFor(d.name); return `${d.name}${(d.match || []).length ? ` (also known as: ${d.match.join(", ")})` : ""}${pj.length ? ` [sub-clients: ${pj.join(", ")}]` : ""}`; }), ...clientNames()])].join("\n");
@@ -959,7 +964,7 @@ async function writeSuggested(items, source0) {
     if (!x || typeof x.title !== "string" || !x.title.trim()) continue;
     const title = x.title.trim().slice(0, 140);
     if (seen.has(norm(title))) continue; seen.add(norm(title));
-    const source = ["gmail", "slack", "littlebird"].includes(x.source) ? x.source : source0;
+    const source = ["gmail", "slack", "whatsapp", "littlebird"].includes(x.source) ? x.source : source0;
     const id = (typeof x.threadId === "string" && /^[A-Za-z0-9]{6,40}$/.test(x.threadId)) ? "g" + x.threadId : "s" + hash(source + ":" + norm(title));
     if (canSave()) { try { const snap = await db.doc(`${P.tasks()}/${id}`).get(); if (snap.exists) continue; } catch (_) {} }
     await createTask({ title, client: clientName(String(x.client || "Unsorted").slice(0, 80)), project: typeof x.project === "string" && x.project.trim() ? x.project.trim().slice(0, 80) : null, source, sourceUrl: typeof x.sourceUrl === "string" && /^https:\/\//.test(x.sourceUrl) ? x.sourceUrl : "", context: String(x.context || "").slice(0, 200), estMins: Math.min(480, Math.max(5, Math.round(Number(x.estMins) || 30))), urgency: ["today", "soon", "later"].includes(x.urgency) ? x.urgency : "soon", due: /^\d{4}-\d{2}-\d{2}$/.test(x.dueDate || "") ? x.dueDate : null, status: "suggested" }, id);
@@ -970,22 +975,23 @@ async function writeSuggested(items, source0) {
 async function runSweep() {
   if (!mcp) return;
   const since = sinceDate();
-  ["gmail", "slack", "littlebird"].forEach(k => S.sweep[k] = { status: "busy", msg: "Reading…" });
+  ["gmail", "slack", "whatsapp", "littlebird"].forEach(k => S.sweep[k] = { status: "busy", msg: "Reading…" });
   S.sweep.ai = { status: "idle", msg: "Waiting for sources" }; renderSources();
-  const [g, s, l, fl] = await Promise.allSettled([fetchGmail(since), fetchSlack(since), fetchLittlebird(ymd(since),
+  const [g, s, l, fl, w] = await Promise.allSettled([fetchGmail(since), fetchSlack(since), fetchLittlebird(ymd(since),
     ["commitments and promises made to clients", "action items and follow-ups from meetings", "client requests with deadlines"],
-    ["someone asking for something to be done", "client waiting on a reply or deliverable"], 22000), fetchGmailLabels()]);
+    ["someone asking for something to be done", "client waiting on a reply or deliverable"], 22000), fetchGmailLabels(), fetchWhatsApp(ymd(since))]);
   const flagged = fl.status === "fulfilled" ? fl.value : [];
   S.sweep.gmail = g.status === "fulfilled" ? { status: "ok", count: g.value.length, flagged: flagged.length } : { status: "err", msg: errText(g.reason, "Gmail") };
   S.sweep.slack = s.status === "fulfilled" ? { status: "ok", count: s.value.length } : { status: "err", msg: errText(s.reason, "Slack") };
   S.sweep.littlebird = l.status === "fulfilled" ? { status: "ok", count: l.value.length > 200 ? 1 : 0 } : { status: "err", msg: errText(l.reason, "Littlebird") };
+  S.sweep.whatsapp = w.status === "fulfilled" ? { status: "ok", count: /\|\|\s*whatsapp/i.test(w.value) ? (w.value.match(/\|\|\s*whatsapp\s*\|\|/gi) || []).length : 0 } : { status: "err", msg: errText(w.reason, "Littlebird (WhatsApp)") };
   renderSources();
-  if (![g, s, l].some(x => x.status === "fulfilled")) { S.sweep.ai = { status: "err", msg: "No sources could be read, so there was nothing to sort." }; renderSources(); return; }
+  if (![g, s, l, w].some(x => x.status === "fulfilled")) { S.sweep.ai = { status: "err", msg: "No sources could be read, so there was nothing to sort." }; renderSources(); return; }
   if (!sample) { S.sweep.ai = { status: "err", msg: "Claude isn't available on this page, so new items can't be extracted." }; renderSources(); return; }
   S.sweep.ai = { status: "busy", msg: "Turning messages into tasks…" }; renderSources();
   const who = (S.me && S.me.name) || "the user";
   const existing = [...allTasks().values()].map(t => t.title).slice(0, 300);
-  const prompt = `You are helping ${who}, a freelance marketing-systems consultant, build her morning to-do list. Below are her recent emails, Slack messages and Littlebird context (screen captures and meeting notes). Extract every concrete action SHE needs to take.
+  const prompt = `You are helping ${who}, a freelance marketing-systems consultant, build her morning to-do list. Below are her recent emails, Slack messages, WhatsApp chats and Littlebird context (screen captures and meeting notes). Extract every concrete action SHE needs to take.
 
 Rules:
 - Only real actions for ${who}: replies owed, deliverables, fixes, approvals, follow-ups she promised, calls to book. Skip newsletters, marketing, receipts, automated notifications, FYIs, and things other people will do.
@@ -994,7 +1000,7 @@ Rules:
 - title: short imperative, max 90 chars, starting with a verb.
 - client: best match from the client list, using the exact name before any parenthesis; "Personal" for personal admin; "Unsorted" if none fits.
 - project: the sub-client if one applies (e.g. one of Authentic's clients), else null.
-- source: "gmail", "slack" or "littlebird". sourceUrl: the email viewUrl or Slack permalink if given, else "".
+- source: "gmail", "slack", "whatsapp" or "littlebird". sourceUrl: the email viewUrl or Slack permalink if given, else "".
 - context: one line, max 140 chars: who asked and what they need.
 - estMins: realistic minutes (5–480). urgency: "today" if someone is waiting or it's due within a day, "soon" this week, "later" otherwise.
 - dueDate: "YYYY-MM-DD" only if a date is stated, else null.
@@ -1022,6 +1028,9 @@ ${g.status === "fulfilled" ? JSON.stringify(g.value) : "(unavailable)"}
 SLACK:
 ${s.status === "fulfilled" ? s.value.join("\n\n---\n\n") : "(unavailable)"}
 
+WHATSAPP (captured by Littlebird; "[user]" is her):
+${w.status === "fulfilled" ? w.value : "(unavailable)"}
+
 LITTLEBIRD:
 ${l.status === "fulfilled" ? l.value : "(unavailable)"}`;
   let items;
@@ -1043,8 +1052,9 @@ async function runCheck() {
   try {
     const [a, b] = await Promise.all([
       fetchLittlebird(todayKey, ["client work done today", "documents, pages and automations edited today", "emails and messages sent to clients today", "meetings and calls today"], ["messages sent today about finished work", "replies sent to clients today"], 26000),
-      fetchLittlebird(todayKey, ["GoHighLevel, Shopify or Make work today", "time spent on each project today", "tasks completed today"], ["confirmation that something is done"], 20000)
-    ]);
+      fetchLittlebird(todayKey, ["GoHighLevel, Shopify or Make work today", "time spent on each project today", "tasks completed today"], ["confirmation that something is done"], 20000),
+      fetchWhatsApp(todayKey, 10000).catch(() => "")
+    ]).then(([a1, b1, c1]) => [a1, b1 + (c1 ? "\n\nWHATSAPP TODAY:\n" + c1 : "")]);
     lb = a + "\n\n" + b;
   } catch (e) { S.check = { status: "err", msg: errText(e, "Littlebird") }; renderToday(); return; }
   try { if (!S.cal || S.cal.date !== todayKey) await loadCalendar(todayKey); if (S.cal && !S.cal.err) calText = JSON.stringify(S.cal.events.map(e => ({ id: e.id, title: e.title, time: e.time, mins: e.mins }))); } catch (_) {}
