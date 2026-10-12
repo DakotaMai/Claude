@@ -696,7 +696,7 @@ function renderSources() {
   };
   const any = Object.values(S.sweep).some(s => s.status !== "idle");
   $("sources").innerHTML = (any ?
-    pill("Email", S.sweep.gmail, s => `${s.count} threads read`) +
+    pill("Email", S.sweep.gmail, s => `${s.count} new threads${s.flagged ? ` + ${s.flagged} in your action labels` : ""} read`) +
     pill("Slack", S.sweep.slack, s => `${s.count} searches read`) +
     pill("Littlebird", S.sweep.littlebird, s => s.count ? "context read" : "nothing new") +
     pill("Claude", S.sweep.ai, s => `${s.count} new task${s.count === 1 ? "" : "s"} to review`) : "") +
@@ -962,7 +962,17 @@ const clean = (s, n) => String(s || "").replace(/&#39;/g, "'").replace(/&amp;/g,
 const asText = (p) => typeof p === "string" ? p : (p && typeof p.result === "string") ? p.result : (p && typeof p.results === "string") ? p.results : JSON.stringify(p || "");
 async function fetchGmail(since) {
   const r = await read("Gmail", "search_threads", { query: `${cfg().gmailQuery || DEFAULTS.gmailQuery} after:${gmailDate(since)}`.trim(), pageSize: 40 }, { cache: false });
-  return ((r.payload && r.payload.threads) || []).map(t => { const ms = t.messages || []; const m = ms[ms.length - 1] || {}; return { from: m.sender, subject: clean(m.subject, 160), snippet: clean(m.snippet, 260), date: m.date, url: t.viewUrl || m.viewUrl }; });
+  return ((r.payload && r.payload.threads) || []).map(t => { const ms = t.messages || []; const m = ms[ms.length - 1] || {}; return { threadId: t.id, from: m.sender, subject: clean(m.subject, 160), snippet: clean(m.snippet, 260), date: m.date, url: t.viewUrl || m.viewUrl }; });
+}
+async function fetchGmailLabels() {
+  const labels = (cfg().actionLabels || []).filter(l => l && l.id);
+  if (!labels.length) return [];
+  const out = [];
+  for (const l of labels) {
+    const r = await read("Gmail", "search_threads", { query: `label:${l.id}`, pageSize: 30 }, { cache: false });
+    ((r.payload && r.payload.threads) || []).forEach(t => { const ms = t.messages || []; const m = ms[ms.length - 1] || {}; out.push({ label: l.name, threadId: t.id, from: m.sender, subject: clean(m.subject, 160), snippet: clean(m.snippet, 260), date: m.date, url: t.viewUrl || m.viewUrl }); });
+  }
+  return out;
 }
 async function fetchSlack(since) {
   const after = ymd(new Date(since.getTime() - DAY));
@@ -991,7 +1001,7 @@ async function writeSuggested(items, source0) {
     const title = x.title.trim().slice(0, 140);
     if (seen.has(norm(title))) continue; seen.add(norm(title));
     const source = ["gmail", "slack", "littlebird"].includes(x.source) ? x.source : source0;
-    const id = "s" + hash(source + ":" + norm(title));
+    const id = (typeof x.threadId === "string" && /^[A-Za-z0-9]{6,40}$/.test(x.threadId)) ? "g" + x.threadId : "s" + hash(source + ":" + norm(title));
     if (canSave()) { try { const snap = await db.doc(`${P.tasks()}/${id}`).get(); if (snap.exists) continue; } catch (_) {} }
     await createTask({ title, client: clientName(String(x.client || "Unsorted").slice(0, 80)), project: typeof x.project === "string" && x.project.trim() ? x.project.trim().slice(0, 80) : null, source, sourceUrl: typeof x.sourceUrl === "string" && /^https:\/\//.test(x.sourceUrl) ? x.sourceUrl : "", context: String(x.context || "").slice(0, 200), estMins: Math.min(480, Math.max(5, Math.round(Number(x.estMins) || 30))), urgency: ["today", "soon", "later"].includes(x.urgency) ? x.urgency : "soon", due: /^\d{4}-\d{2}-\d{2}$/.test(x.dueDate || "") ? x.dueDate : null, status: "suggested" }, id);
     fresh.push(title);
@@ -1003,10 +1013,11 @@ async function runSweep() {
   const since = sinceDate();
   ["gmail", "slack", "littlebird"].forEach(k => S.sweep[k] = { status: "busy", msg: "Reading…" });
   S.sweep.ai = { status: "idle", msg: "Waiting for sources" }; renderSources();
-  const [g, s, l] = await Promise.allSettled([fetchGmail(since), fetchSlack(since), fetchLittlebird(ymd(since),
+  const [g, s, l, fl] = await Promise.allSettled([fetchGmail(since), fetchSlack(since), fetchLittlebird(ymd(since),
     ["commitments and promises made to clients", "action items and follow-ups from meetings", "client requests with deadlines"],
-    ["someone asking for something to be done", "client waiting on a reply or deliverable"], 22000)]);
-  S.sweep.gmail = g.status === "fulfilled" ? { status: "ok", count: g.value.length } : { status: "err", msg: errText(g.reason, "Gmail") };
+    ["someone asking for something to be done", "client waiting on a reply or deliverable"], 22000), fetchGmailLabels()]);
+  const flagged = fl.status === "fulfilled" ? fl.value : [];
+  S.sweep.gmail = g.status === "fulfilled" ? { status: "ok", count: g.value.length, flagged: flagged.length } : { status: "err", msg: errText(g.reason, "Gmail") };
   S.sweep.slack = s.status === "fulfilled" ? { status: "ok", count: s.value.length } : { status: "err", msg: errText(s.reason, "Slack") };
   S.sweep.littlebird = l.status === "fulfilled" ? { status: "ok", count: l.value.length > 200 ? 1 : 0 } : { status: "err", msg: errText(l.reason, "Littlebird") };
   renderSources();
@@ -1028,6 +1039,8 @@ Rules:
 - context: one line, max 140 chars: who asked and what they need.
 - estMins: realistic minutes (5–480). urgency: "today" if someone is waiting or it's due within a day, "soon" this week, "later" otherwise.
 - dueDate: "YYYY-MM-DD" only if a date is stated, else null.
+- threadId: for anything from an email, copy that email's threadId exactly; else null.
+- FLAGGED EMAILS are ones she labelled herself as needing action. Make a task for each one unless it is already on her task list, even if it looks minor. Anything labelled ".ACTION TODAY" gets urgency "today".
 Return ONLY a JSON array. Return [] if nothing.
 
 Today is ${new Date().toDateString()}.
@@ -1040,6 +1053,9 @@ ${clientListForAI()}
 
 HER TASK LIST:
 ${existing.join("\n") || "(empty)"}
+
+FLAGGED EMAILS (her action labels):
+${flagged.length ? JSON.stringify(flagged) : "(none)"}
 
 EMAILS:
 ${g.status === "fulfilled" ? JSON.stringify(g.value) : "(unavailable)"}
@@ -1173,7 +1189,7 @@ function openSettings(groupsOverride) {
     <div class="field"><label for="s-people">People you pass work to</label><input id="s-people" value="${esc((c.people || []).join(", "))}"><span class="hint">Comma-separated first names.</span></div>
     <div class="field"><label for="s-notes">Notes for Claude</label><textarea id="s-notes" placeholder="e.g. Calls with Jess are Leighton work">${esc(c.notes || "")}</textarea><span class="hint">The morning sweep and day check read these when deciding which client something belongs to.</span></div>
     <div class="field"><label for="s-hours">Hours of focused work per day</label><input id="s-hours" type="number" min="1" max="14" step="0.5" value="${esc(c.hoursAvailable)}"></div>
-    <div class="field"><label for="s-gmail">Which emails to sweep</label><input id="s-gmail" value="${esc(c.gmailQuery)}"><span class="hint">Gmail search. The date is added for you.</span></div>
+    <div class="field"><label for="s-gmail">Which emails to sweep</label><input id="s-gmail" value="${esc(c.gmailQuery)}"><span class="hint">Gmail search for new mail since the last sweep. The date is added for you.${(c.actionLabels || []).length ? ` Everything in ${(c.actionLabels || []).map(l => esc(l.name)).join(" and ")} is also checked every time, however old.` : ""}</span></div>
     <h3>ClickUp</h3>
     <div class="field"><label for="s-me">Your name in ClickUp</label><input id="s-me" value="${esc(c.myClickupName)}"><span class="hint">Tasks assigned only to someone else are imported into Passed on.</span></div>
     <div class="field"><label for="s-hidden">Skip these ClickUp folders</label><input id="s-hidden" value="${esc((c.hidden || []).join(", "))}"></div>
