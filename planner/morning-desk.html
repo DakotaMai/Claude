@@ -144,6 +144,7 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .ib{border:1px solid var(--line);background:transparent;border-radius:6px;min-width:26px;height:24px;padding:0 6px;font-size:12px;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;gap:4px}
 .ib:hover{color:var(--ink);border-color:var(--muted)}
 .ib.on{background:var(--sun);color:var(--sun-ink);border-color:transparent}
+.ib.del:hover{color:var(--crit);border-color:var(--crit)}
 
 .today{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 24px);overflow:auto}
 .today.drop{outline:2px dashed var(--sun);outline-offset:3px}
@@ -521,8 +522,8 @@ function cardHTML(t, opts) {
   const pick = (planned || opts.delegated) ? "" : `<input type="checkbox" class="pick" id="pick-${esc(t.id)}" data-act="pick" data-id="${esc(t.id)}" ${picked ? "checked" : ""} aria-label="Select ${esc(t.title)}">`;
   const addBtn = opts.delegated ? "" : `<button class="add${planned ? " on" : ""}" data-act="add" data-id="${esc(t.id)}" type="button" ${planned ? 'disabled aria-label="Already on today\'s list"' : 'aria-label="Add to today"'}>${planned ? "Today ✓" : "+ Today"}</button>`;
   const icons = opts.delegated
-    ? `<button class="btn btn-sm" data-act="done" data-id="${esc(t.id)}" type="button">Done</button><button class="btn btn-sm btn-ghost" data-act="takeback" data-id="${esc(t.id)}" type="button">Take back</button>`
-    : `<button class="ib${timing ? " on" : ""}" data-act="timer" data-id="${esc(t.id)}" type="button" aria-label="${timing ? "Stop timer" : "Start timer"}" title="${timing ? "Stop timer" : "Start timer"}">${timing ? "■" : "▶"}</button><button class="ib" data-act="done" data-id="${esc(t.id)}" type="button" aria-label="Mark done" title="Mark done">✓</button>`;
+    ? `<button class="btn btn-sm" data-act="done" data-id="${esc(t.id)}" type="button">Done</button><button class="btn btn-sm btn-ghost" data-act="takeback" data-id="${esc(t.id)}" type="button">Take back</button><button class="ib del" data-act="del" data-id="${esc(t.id)}" type="button" aria-label="Delete task" title="Delete task">✕</button>`
+    : `<button class="ib${timing ? " on" : ""}" data-act="timer" data-id="${esc(t.id)}" type="button" aria-label="${timing ? "Stop timer" : "Start timer"}" title="${timing ? "Stop timer" : "Start timer"}">${timing ? "■" : "▶"}</button><button class="ib" data-act="done" data-id="${esc(t.id)}" type="button" aria-label="Mark done" title="Mark done">✓</button><button class="ib del" data-act="del" data-id="${esc(t.id)}" type="button" aria-label="Delete task" title="Delete task">✕</button>`;
   return `<article class="card${planned ? " is-planned" : ""}${picked ? " is-picked" : ""}${timing ? " is-timing" : ""}" draggable="${planned || opts.delegated ? "false" : "true"}" data-id="${esc(t.id)}">
     <div class="card-row">${pick}<button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button>${addBtn}</div>
     <div class="meta">${tags.join("")}</div>
@@ -713,7 +714,7 @@ function renderSelBar() {
   const bar = $("selbar");
   [...S.sel].forEach(id => { const t = getTask(id); if (!t || inPlan(id) || t.status !== "open") S.sel.delete(id); });
   const n = S.sel.size; bar.hidden = n === 0;
-  if (n) bar.innerHTML = `<span><b>${n}</b> selected</span><button class="btn btn-sun btn-sm" data-act="addsel" type="button">Add ${n} to today</button><button class="btn btn-sm" data-act="donesel" type="button">Mark done</button><button class="btn btn-sm btn-ghost" data-act="clearsel" type="button">Clear</button>`;
+  if (n) bar.innerHTML = `<span><b>${n}</b> selected</span><button class="btn btn-sun btn-sm" data-act="addsel" type="button">Add ${n} to today</button><button class="btn btn-sm" data-act="donesel" type="button">Mark done</button><button class="btn btn-sm" data-act="delsel" type="button">Delete</button><button class="btn btn-sm btn-ghost" data-act="clearsel" type="button">Clear</button>`;
 }
 function renderAll() { renderHeader(); renderTimer(); renderHours(); renderSources(); renderNotices(); renderTray(); renderEverything(); renderToday(); renderSelBar(); }
 
@@ -728,6 +729,17 @@ function addMany(ids) {
   const msg = added.length === 1 ? `Added to today: ${added[0]}` : `Added ${added.length} tasks to today.`;
   if (narrow()) { const tb = $("tabToday"); tb.classList.remove("pulse"); void tb.offsetWidth; tb.classList.add("pulse"); toast(msg, { act: "gotoday", label: "View Today" }); }
   else toast(msg);
+}
+function deleteTasks(ids) {
+  ids = ids.filter(id => getTask(id)); if (!ids.length) return;
+  const one = ids.length === 1 ? getTask(ids[0]) : null;
+  ids.forEach(id => { if (S.timer && S.timer.taskId === id) stopTimer(true); updateTask(id, { status: "dismissed" }); S.sel.delete(id); });
+  const before = S.plan.ids.length;
+  S.plan.ids = S.plan.ids.filter(x => !ids.includes(x));
+  if (S.plan.ids.length !== before) savePlan();
+  S.lastDeleted = ids.slice();
+  renderAll();
+  toast(one ? `Deleted: ${one.title}` : `Deleted ${ids.length} tasks.`, { act: "undodelmany", label: "Undo" });
 }
 function markDone(id) {
   const t = getTask(id); if (!t) return;
@@ -1236,6 +1248,9 @@ document.addEventListener("click", async (ev) => {
     case "drawerdone": { const fid = $("taskForm").dataset.id; const t = getTask(fid); if (!t) break; if (t.status === "done") setDone(fid, false); else markDone(fid); closeDrawer(); renderAll(); break; }
     case "drawerdelete": { const fid = $("taskForm").dataset.id; updateTask(fid, { status: "dismissed" }); S.plan.ids = S.plan.ids.filter(x => x !== fid); savePlan(); closeDrawer(); renderAll(); toast("Task deleted.", { act: "undodel", id: fid, label: "Undo" }); break; }
     case "undodel": updateTask(id, { status: "open" }); renderAll(); $("toastHost").innerHTML = ""; break;
+    case "del": deleteTasks([id]); break;
+    case "delsel": deleteTasks([...S.sel]); break;
+    case "undodelmany": (S.lastDeleted || []).forEach(x => updateTask(x, { status: "open" })); S.lastDeleted = []; renderAll(); $("toastHost").innerHTML = ""; break;
     case "logmanual": {
       const fid = $("taskForm").dataset.id; const t = getTask(fid); const mins = Math.round(Number($("f-mins").value) || 0);
       if (!t || mins < 1) { toast("Enter the minutes to log."); break; }
