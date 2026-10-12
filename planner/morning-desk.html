@@ -782,7 +782,7 @@ function guessProject(client, text) {
 function openMeeting(pre) {
   pre = pre || {};
   const date = pre.date || todayKey;
-  const durs = [15, 30, 45, 60, 90, 120, 180];
+  const durs = [15, 30, 45, 60, 90, 120, 180, 240, 300, 360, 420, 480];
   const dur = pre.mins || 30;
   const cal = S.cal && S.cal.date === date ? S.cal : null;
   const logged = new Set(S.entries.map(e => e.calEventId).filter(Boolean));
@@ -1019,6 +1019,9 @@ Return ONLY a JSON array. Return [] if nothing.
 
 Today is ${new Date().toDateString()}.
 
+NOTES FROM ${who.toUpperCase()} (follow these):
+${cfg().notes || "(none)"}
+
 CLIENTS:
 ${clientListForAI()}
 
@@ -1074,6 +1077,9 @@ Rules:
   - Meetings and calls she actually attended (seen in Littlebird or on the calendar): kind "meeting", include calEventId when it matches a calendar event. Skip calendar blocks that are focus time or reminders (e.g. "NO Calls", "Lift"), and skip meetings already logged.
 - newTasks: follow-ups she clearly committed to today that are not on the list. Max 8.
 - Clients: ${clientListForAI().split("\n").join("; ")}
+
+NOTES FROM HER (follow these):
+${cfg().notes || "(none)"}
 
 OPEN TASKS:
 ${JSON.stringify(open)}
@@ -1152,6 +1158,7 @@ function openSettings(groupsOverride) {
     <div id="growList" style="display:flex;flex-direction:column;gap:6px">${groups.map(row).join("")}</div>
     <button class="btn btn-sm" data-act="grow-add" type="button" style="align-self:flex-start">Add client</button>
     <div class="field"><label for="s-people">People you pass work to</label><input id="s-people" value="${esc((c.people || []).join(", "))}"><span class="hint">Comma-separated first names.</span></div>
+    <div class="field"><label for="s-notes">Notes for Claude</label><textarea id="s-notes" placeholder="e.g. Calls with Jess are Leighton work">${esc(c.notes || "")}</textarea><span class="hint">The morning sweep and day check read these when deciding which client something belongs to.</span></div>
     <div class="field"><label for="s-hours">Hours of focused work per day</label><input id="s-hours" type="number" min="1" max="14" step="0.5" value="${esc(c.hoursAvailable)}"></div>
     <div class="field"><label for="s-gmail">Which emails to sweep</label><input id="s-gmail" value="${esc(c.gmailQuery)}"><span class="hint">Gmail search. The date is added for you.</span></div>
     <h3>ClickUp</h3>
@@ -1176,7 +1183,8 @@ function collectSettings() {
     hidden: ($("s-hidden").value || "").split(",").map(s => s.trim()).filter(Boolean),
     hoursAvailable: Math.min(14, Math.max(1, Number($("s-hours").value) || 6)),
     myClickupName: ($("s-me").value || "").trim(),
-    gmailQuery: ($("s-gmail").value || "").trim() || DEFAULTS.gmailQuery
+    gmailQuery: ($("s-gmail").value || "").trim() || DEFAULTS.gmailQuery,
+    notes: ($("s-notes").value || "").trim()
   };
 }
 
