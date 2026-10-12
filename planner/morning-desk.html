@@ -158,6 +158,13 @@ a.pi-title:hover{text-decoration:underline}
 .grow-h{font-size:11px;font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
+.pick{flex:none;width:16px;height:16px;margin-top:2px;accent-color:var(--ink)}
+.card.is-picked{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.lane-sel{border:none;background:transparent;color:var(--muted);font-size:11.5px;padding:0 2px;text-decoration:underline;text-underline-offset:2px}
+.lane-sel:hover{color:var(--ink)}
+.selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);border-radius:12px;padding:8px 8px 8px 16px;display:flex;align-items:center;gap:10px;z-index:25;max-width:calc(100% - 32px);flex-wrap:wrap;box-shadow:0 6px 24px color-mix(in srgb,var(--ink) 30%,transparent)}
+.selbar .btn{border-color:transparent}
+.selbar .btn-ghost{color:var(--bg);opacity:.8}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;z-index:30;max-width:calc(100% - 32px)}
 
 @media (max-width: 900px){
@@ -209,6 +216,7 @@ a.pi-title:hover{text-decoration:underline}
   </main>
 </div>
 <div id="drawerHost"></div>
+<div class="selbar" id="selbar" hidden></div>
 <div id="toastHost"></div>
 
 <script>
@@ -223,7 +231,7 @@ const S = {
   lists: [], listMap: {}, cuTasks: [], cu: { status: "idle" },
   captured: [], capLoaded: false,
   plan: { items: [] }, planLoaded: false, prevPlan: null,
-  filter: "all", q: "", expanded: {}, sendOpen: null,
+  filter: "all", q: "", expanded: {}, sendOpen: null, sel: new Set(),
   sweep: { gmail: { status: "idle" }, slack: { status: "idle" }, littlebird: { status: "idle" }, ai: { status: "idle" } },
   caps: { mcp: undefined, db: undefined, sample: undefined, user: undefined }
 };
@@ -288,11 +296,12 @@ const P = {
   plans: () => `data/users/${S.uid}/days/plans`,
   plan: (d) => `data/users/${S.uid}/days/plans/${d}`
 };
-let planQueue = Promise.resolve();
+let planQueue = Promise.resolve(), planPending = 0;
 function savePlan() {
   if (!db || !S.uid) return;
   const snapshot = { date: todayKey, items: S.plan.items.map(x => Object.assign({}, x)), updatedAt: new Date().toISOString() };
-  planQueue = planQueue.then(() => db.doc(P.plan(todayKey)).set(snapshot)).catch(e => toast(`Couldn't save today's list: ${e.message || e.code}`));
+  planPending++;
+  planQueue = planQueue.then(() => db.doc(P.plan(todayKey)).set(snapshot)).catch(e => toast(`Couldn't save today's list: ${e.message || e.code}`)).finally(() => { planPending--; });
 }
 let setQueue = Promise.resolve();
 function saveSettings(patch) {
@@ -456,8 +465,10 @@ function cardHTML(it) {
     if (S.sendOpen === it.capId) acts = `<div class="sendbox">${listSelectHTML("sendList-" + it.capId, it.client)}<button class="btn btn-sm" data-act="send" data-id="${esc(it.capId)}" type="button">Create</button><button class="btn btn-sm btn-ghost" data-act="sendcancel" type="button">Cancel</button></div>`;
     else acts = `<div class="card-acts"><button class="btn btn-sm" data-act="sendopen" data-id="${esc(it.capId)}" type="button">Add to ClickUp</button><button class="btn btn-sm btn-ghost" data-act="dismiss" data-id="${esc(it.capId)}" type="button">Not a task</button></div>`;
   }
-  return `<article class="card${planned ? " is-planned" : ""}" draggable="${planned ? "false" : "true"}" data-key="${esc(it.key)}">
-    <div class="card-row">${title}<button class="add${planned ? " on" : ""}" data-act="add" data-key="${esc(it.key)}" type="button" ${planned ? 'aria-label="Already on today\'s list" disabled' : 'aria-label="Add to today"'}>${planned ? "Today ✓" : "+ Today"}</button></div>
+  const picked = !planned && S.sel.has(it.key);
+  const pick = planned ? "" : `<input type="checkbox" class="pick" id="pick-${esc(it.key)}" data-act="pick" data-key="${esc(it.key)}" ${picked ? "checked" : ""} aria-label="Select ${esc(it.title)}">`;
+  return `<article class="card${planned ? " is-planned" : ""}${picked ? " is-picked" : ""}" draggable="${planned ? "false" : "true"}" data-key="${esc(it.key)}">
+    <div class="card-row">${pick}${title}<button class="add${planned ? " on" : ""}" data-act="add" data-key="${esc(it.key)}" type="button" ${planned ? 'aria-label="Already on today\'s list" disabled' : 'aria-label="Add to today"'}>${planned ? "Today ✓" : "+ Today"}</button></div>
     <div class="meta">${tags.join("")}</div>
     ${it.ctx ? `<div class="ctx">${esc(it.ctx)}</div>` : ""}
     ${acts}
@@ -483,6 +494,7 @@ function laneHTML(g, isAdhoc) {
   return `<div class="lane" style="--lane:${laneColor(g.color)}" data-group="${esc(g.name)}">
     <div class="lane-h"><div style="min-width:0"><h3>${esc(g.name)}</h3>${g.space ? `<div class="sub">${esc(g.space)}</div>` : ""}</div>
     <span class="count">${g.items.length} open${overdue ? ` · <b>${overdue} late</b>` : ""}</span></div>
+    ${vis.some(i => !inPlan(i.key)) ? `<div><button class="lane-sel" data-act="selall" data-key="${esc(g.key)}" type="button">${vis.filter(i => !inPlan(i.key)).every(i => S.sel.has(i.key)) ? "Clear selection" : "Select all" + (S.filter !== "all" || S.q ? " shown" : "")}</button></div>` : ""}
     ${body}${more}</div>`;
 }
 
@@ -599,12 +611,27 @@ function findItem(key) {
   for (const g of buildModel()) { const it = g.items.find(i => i.key === key); if (it) return Object.assign({ group: g.name }, it); }
   return null;
 }
-function addToPlan(key) {
-  if (inPlan(key)) return;
-  const it = findItem(key); if (!it) return;
-  S.plan.items.push({ key, title: it.title, group: it.group, source: it.kind === "clickup" ? "clickup" : it.source, url: it.url || "", estMins: it.est || 30, done: false, cuId: it.cuId || null, capId: it.capId || null });
-  savePlan(); renderEverything(); renderToday();
-  toast(`Added to today: ${it.title}`);
+function addToPlan(key) { addMany([key]); }
+function addMany(keys) {
+  const all = new Map(); buildModel().forEach(g => g.items.forEach(it => all.set(it.key, Object.assign({ group: g.name }, it))));
+  const added = [];
+  keys.forEach(key => {
+    if (inPlan(key)) return;
+    const it = all.get(key); if (!it) return;
+    S.plan.items.push({ key, title: it.title, group: it.group, source: it.kind === "clickup" ? "clickup" : it.source, url: it.url || "", estMins: it.est || 30, done: false, cuId: it.cuId || null, capId: it.capId || null });
+    added.push(it.title);
+  });
+  keys.forEach(k => S.sel.delete(k));
+  if (added.length) savePlan();
+  renderEverything(); renderToday(); renderSelBar();
+  if (added.length) toast(added.length === 1 ? `Added to today: ${added[0]}` : `Added ${added.length} tasks to today.`);
+}
+function renderSelBar() {
+  const bar = $("selbar");
+  [...S.sel].forEach(k => { if (inPlan(k)) S.sel.delete(k); });
+  const n = S.sel.size;
+  bar.hidden = n === 0;
+  if (n) bar.innerHTML = `<span><b>${n}</b> selected</span><button class="btn btn-sun btn-sm" data-act="addsel" type="button">Add ${n} to today</button><button class="btn btn-sm btn-ghost" data-act="clearsel" type="button">Clear</button>`;
 }
 
 /* ---------- ClickUp writes ---------- */
@@ -807,6 +834,15 @@ document.addEventListener("click", async (ev) => {
   const items = S.plan.items;
   switch (act) {
     case "add": addToPlan(el.dataset.key); break;
+    case "addsel": addMany([...S.sel]); break;
+    case "clearsel": S.sel.clear(); renderEverything(); renderSelBar(); break;
+    case "selall": {
+      const g = buildModel().find(x => x.key === el.dataset.key); if (!g) break;
+      const keys = g.items.filter(passesFilter).filter(i => !inPlan(i.key)).map(i => i.key);
+      const allOn = keys.every(k => S.sel.has(k));
+      keys.forEach(k => allOn ? S.sel.delete(k) : S.sel.add(k));
+      renderEverything(); renderSelBar(); break;
+    }
     case "expand": S.expanded[el.dataset.key] = !S.expanded[el.dataset.key]; renderEverything(); break;
     case "settings": openSettings(); break;
     case "dismiss": updateCaptured(el.dataset.id, { status: "dismissed" }); renderEverything(); break;
@@ -863,6 +899,11 @@ document.addEventListener("click", async (ev) => {
 });
 document.addEventListener("change", (ev) => {
   const el = ev.target; const i = Number(el.dataset.i);
+  if (el.dataset.act === "pick") {
+    el.checked ? S.sel.add(el.dataset.key) : S.sel.delete(el.dataset.key);
+    const card = el.closest(".card"); if (card) card.classList.toggle("is-picked", el.checked);
+    renderSelBar(); return;
+  }
   if (el.dataset.act === "toggle") {
     const it = S.plan.items[i]; it.done = el.checked;
     if (it.capId) updateCaptured(it.capId, { status: el.checked ? "done" : "open" });
@@ -933,7 +974,7 @@ renderAll();
       S.capLoaded = true; renderEverything(); renderToday();
     }, e => toast(`Couldn't load swept items: ${e.message || e.code}`));
     db.doc(P.plan(todayKey)).onSnapshot(snap => {
-      if (snap.metadata && snap.metadata.hasPendingWrites) return;
+      if ((snap.metadata && snap.metadata.hasPendingWrites) || planPending > 0) return;
       S.plan = snap.exists ? Object.assign({ items: [] }, snap.data()) : { items: [] };
       S.planLoaded = true; renderToday(); renderEverything();
     }, e => toast(`Couldn't load today's list: ${e.message || e.code}`));
