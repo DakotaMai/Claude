@@ -281,7 +281,7 @@ table.log tr.total td{font-weight:600;border-top:2px solid var(--ink)}
 "use strict";
 
 /* ---------- state ---------- */
-const DEFAULTS = { groups: [], hidden: [], people: ["Kate", "Nat"], hoursAvailable: 6, gmailQuery: "in:inbox category:primary", myClickupName: "", lastSweep: null, clickupImportedAt: null };
+const DEFAULTS = { groups: [], hidden: [], people: ["Kate", "Nat"], hoursAvailable: 6, gmailQuery: "in:inbox category:primary", myClickupName: "", lastSweep: null, lastTaskBackup: null };
 const S = {
   uid: null, me: null, settings: null,
   sets: { open: [], suggested: [], done: [] }, loaded: { open: false, suggested: false, done: false, plan: false },
@@ -581,15 +581,17 @@ function renderEverything() {
     }).join("")}</div>`;
   }
   if (internal.length) html += `<div class="section-h"><h2>Your business &amp; admin</h2></div><div class="lanes adhoc">${internal.map(g => laneHTML(g, true)).join("")}</div>`;
-  if (S.loaded.open && !S.sets.open.length) html += `<div class="lane-empty">No open tasks yet. Add one with New task, run the morning sweep, or import from ClickUp.</div>`;
+  if (S.loaded.open && !S.sets.open.length) html += `<div class="lane-empty">No open tasks yet. Add one with New task or run the morning sweep.</div>`;
   $("everything").innerHTML = html;
 }
 function renderNotices() {
   const c = cfg(); let html = "";
   if (S.caps.mcp === null && S.caps.db === null) html += `<div class="notice crit">This page can't reach your account here. Open it inside claude.ai to load your tasks and connectors.</div>`;
   else if (S.caps.db !== undefined && !canSave()) html += `<div class="notice crit">Sign in to claude.ai to save tasks. Nothing you change here will be kept.</div>`;
-  if (canSave() && S.loaded.open && !c.clickupImportedAt && mcp) {
-    html += `<div class="notice sun"><span><b>Bring your ClickUp tasks over.</b> One-off import of your open tasks into your client lanes. Authentic's client lists become sub-clients, and anything assigned to Kate or Nat goes into Passed on.</span><button class="btn btn-sm btn-ink" data-act="import" type="button" ${S.imp.status === "busy" ? "disabled" : ""}>${S.imp.status === "busy" ? esc(S.imp.msg || "Importing…") : "Import from ClickUp"}</button>${S.imp.status === "err" ? `<span style="color:var(--crit)">${esc(S.imp.msg)}</span>` : ""}</div>`;
+  if (canSave() && S.loaded.open && S.sets.open.length) {
+    const last = c.lastTaskBackup ? Date.parse(c.lastTaskBackup) : 0;
+    const days = last ? Math.floor((Date.now() - last) / DAY) : null;
+    if (days === null || days >= 7) html += `<div class="notice sun"><span>${days === null ? "You haven't backed up your tasks yet." : `It's been ${days} days since your last task backup.`} Save a copy each week in case you ever need it.</span><button class="btn btn-sm btn-ink" data-act="exporttasks" type="button">Export tasks</button></div>`;
   }
   $("notices").innerHTML = html;
 }
@@ -885,69 +887,26 @@ async function exportCSV(ym) {
   catch (e) { if (!(e && e.code === "declined")) toast(`Couldn't save the file: ${(e && e.message) || "unknown error"}`); }
 }
 
-/* ---------- ClickUp import ---------- */
-function buildListMap(payload) {
-  const root = payload && payload.hierarchy && payload.hierarchy.root;
-  const map = {};
-  (root && root.children || []).forEach(space => {
-    if (space.type !== "space") return;
-    const walk = (node, top) => (node.children || []).forEach(ch => {
-      if (ch.type === "folder") walk(ch, top || ch.name);
-      else if (ch.type === "list") map[ch.id] = { id: ch.id, name: ch.name, space: space.name, spaceId: space.id, group: top || ch.name, inFolder: !!top };
-    });
-    walk(space, null);
-  });
-  return map;
-}
-async function importClickUp() {
-  if (!mcp || !canSave()) return;
-  const c = cfg();
-  S.imp = { status: "busy", msg: "Reading ClickUp…" }; renderNotices();
+async function exportTasks() {
+  if (!downloads) { toast("Saving files isn't available in this view."); return; }
+  let tasks;
   try {
-    const h = await read("ClickUp", "clickup_get_workspace_hierarchy", { max_depth: "2", limit: 50 }, { cache: false });
-    const lists = buildListMap(h.payload);
-    const spaceIds = [...new Set(Object.values(lists).map(l => l.spaceId))];
-    let page = 0, all = [];
-    for (let i = 0; i < 10; i++) {
-      const input = { order_by: "updated", page, subtasks: true }; if (spaceIds.length) input.space_ids = spaceIds;
-      const r = await read("ClickUp", "clickup_filter_tasks", input, { cache: false });
-      const p = r.payload || {}; all = all.concat(Array.isArray(p.tasks) ? p.tasks : []);
-      if (!p.has_more) break; page = p.next_page != null ? p.next_page : page + 1;
-    }
-    const have = new Set([...allTasks().values()].map(t => t.cuId).filter(Boolean));
-    const hidden = (c.hidden || []).map(norm);
-    const me = norm(c.myClickupName);
-    const people = c.people || [];
-    const fresh = all.filter(t => !have.has(t.id));
-    let n = 0;
-    for (const t of fresh) {
-      const l = lists[t.list && t.list.id] || { name: (t.list && t.list.name) || "", group: (t.list && t.list.name) || "Unsorted", space: "", inFolder: false };
-      if (hidden.includes(norm(l.group))) continue;
-      const byGroup = defFor(l.group), bySpace = byGroup ? null : defFor(l.space);
-      const def = byGroup || bySpace;
-      const client = def ? def.name : l.group;
-      const project = bySpace && !l.inFolder ? l.name : null;
-      const assignees = (t.assignees || []).map(a => a.username || "");
-      const mine = !assignees.length || !me || assignees.some(a => norm(a) === me);
-      let delegatedTo = null;
-      if (!mine) {
-        const first = assignees.find(a => norm(a) !== me) || "";
-        delegatedTo = people.find(p => norm(first).startsWith(norm(p)) || norm(first).split(" ")[0] === norm(p)) || first.split(" ")[0] || null;
-      }
-      const due = t.due_date ? ymd(new Date(Number(t.due_date))) : null;
-      const others = assignees.filter(a => norm(a) !== me);
-      const notes = [l.name && l.name !== l.group && !project ? `ClickUp list: ${l.name}` : "", mine && others.length ? `Shared with ${others.join(", ")}` : ""].filter(Boolean).join("\n");
-      await createTask({ title: t.name, client, project, due, notes, source: "clickup", cuId: t.id, cuUrl: t.url || "", inProgress: norm(t.status) === "in progress", delegatedTo, delegatedAt: delegatedTo ? new Date(Number(t.date_updated) || Date.now()).toISOString() : null });
-      n++;
-      if (n % 5 === 0) { S.imp.msg = `Importing ${n} of ${fresh.length}…`; renderNotices(); }
-    }
-    await saveSettings({ clickupImportedAt: new Date().toISOString() });
-    S.imp = { status: "ok" };
-    renderAll();
-    toast(n ? `Imported ${n} task${n === 1 ? "" : "s"} from ClickUp.` : "Nothing new to import from ClickUp.");
-  } catch (e) {
-    S.imp = { status: "err", msg: errText(e, "ClickUp") }; renderNotices();
-  }
+    const q = canSave() ? await db.collection(P.tasks()).get() : null;
+    tasks = q ? q.docs.map(d => Object.assign({ id: d.id }, d.data())) : [...allTasks().values()];
+  } catch (e) { toast(`Couldn't read your tasks: ${(e && (e.message || e.code)) || "unknown error"}`); return; }
+  tasks = tasks.filter(t => t.status !== "dismissed");
+  const label = { open: "Open", done: "Done", suggested: "To review" };
+  const order = { open: 0, suggested: 1, done: 2 };
+  tasks.sort((a, b) => (order[a.status] ?? 3) - (order[b.status] ?? 3) || clientName(a.client).localeCompare(clientName(b.client)) || String(a.due || "9999").localeCompare(String(b.due || "9999")));
+  const rows = [["Status", "Task", "Client", "Sub-client / project", "Due", "Estimate (mins)", "Time logged (mins)", "Passed to", "In progress", "On today's list", "Source", "Source link", "Notes", "Created", "Done on"]];
+  tasks.forEach(t => rows.push([label[t.status] || t.status, t.title, clientName(t.client), t.project || "", t.due || "", t.estMins || "", t.minsLogged || 0, t.delegatedTo || "", t.inProgress ? "Yes" : "", inPlan(t.id) ? "Yes" : "", SRC[t.source] || t.source || "", t.sourceUrl || t.cuUrl || "", t.notes || t.context || "", String(t.createdAt || "").slice(0, 10), t.doneDate || ""]));
+  const csv = rows.map(r => r.map(v => { const x = String(v ?? ""); return /[",\n]/.test(x) ? `"${x.replace(/"/g, '""')}"` : x; }).join(",")).join("\n");
+  try {
+    await downloads.save({ filename: `morning-desk-tasks-${todayKey}.csv`, data: csv });
+    await saveSettings({ lastTaskBackup: new Date().toISOString() });
+    renderNotices();
+    toast(`Saved ${tasks.length} tasks.`);
+  } catch (e) { if (!(e && e.code === "declined")) toast(`Couldn't save the file: ${(e && e.message) || "unknown error"}`); }
 }
 
 /* ---------- morning sweep ---------- */
@@ -1084,7 +1043,7 @@ async function runCheck() {
   try {
     const [a, b] = await Promise.all([
       fetchLittlebird(todayKey, ["client work done today", "documents, pages and automations edited today", "emails and messages sent to clients today", "meetings and calls today"], ["messages sent today about finished work", "replies sent to clients today"], 26000),
-      fetchLittlebird(todayKey, ["GoHighLevel, Shopify, ClickUp or Make work today", "time spent on each project today", "tasks completed today"], ["confirmation that something is done"], 20000)
+      fetchLittlebird(todayKey, ["GoHighLevel, Shopify or Make work today", "time spent on each project today", "tasks completed today"], ["confirmation that something is done"], 20000)
     ]);
     lb = a + "\n\n" + b;
   } catch (e) { S.check = { status: "err", msg: errText(e, "Littlebird") }; renderToday(); return; }
@@ -1176,7 +1135,7 @@ function openSettings(groupsOverride) {
       <input id="g-name-${i}" value="${esc(g.name)}" placeholder="Client name" aria-label="Client name">
       <select id="g-kind-${i}" aria-label="Lane type"><option value="retainer"${!g.kind || g.kind === "retainer" ? " selected" : ""}>Retainer</option><option value="adhoc"${g.kind === "adhoc" ? " selected" : ""}>Ad-hoc</option><option value="internal"${g.kind === "internal" ? " selected" : ""}>Own business</option></select>
       <select class="gbill" id="g-bill-${i}" aria-label="Billing"><option value="fixed"${g.billing !== "hourly" ? " selected" : ""}>Fixed fee</option><option value="hourly"${g.billing === "hourly" ? " selected" : ""}>Hourly</option></select>
-      <input class="gmatch" id="g-match-${i}" value="${esc((g.match || []).join(", "))}" placeholder="Other names, ClickUp folders" aria-label="Other names">
+      <input class="gmatch" id="g-match-${i}" value="${esc((g.match || []).join(", "))}" placeholder="Other names, nicknames" aria-label="Other names">
       <input id="g-hours-${i}" type="number" min="0" step="0.5" value="${esc(g.hours || "")}" placeholder="h/mo" aria-label="Monthly hours">
       <button class="btn btn-sm btn-ghost" data-act="grow-del" data-i="${i}" type="button" aria-label="Remove">×</button>
     </div>`;
@@ -1190,10 +1149,9 @@ function openSettings(groupsOverride) {
     <div class="field"><label for="s-notes">Notes for Claude</label><textarea id="s-notes" placeholder="e.g. Calls with Jess are Leighton work">${esc(c.notes || "")}</textarea><span class="hint">The morning sweep and day check read these when deciding which client something belongs to.</span></div>
     <div class="field"><label for="s-hours">Hours of focused work per day</label><input id="s-hours" type="number" min="1" max="14" step="0.5" value="${esc(c.hoursAvailable)}"></div>
     <div class="field"><label for="s-gmail">Which emails to sweep</label><input id="s-gmail" value="${esc(c.gmailQuery)}"><span class="hint">Gmail search for new mail since the last sweep. The date is added for you.${(c.actionLabels || []).length ? ` Everything in ${(c.actionLabels || []).map(l => esc(l.name)).join(" and ")} is also checked every time, however old.` : ""}</span></div>
-    <h3>ClickUp</h3>
-    <div class="field"><label for="s-me">Your name in ClickUp</label><input id="s-me" value="${esc(c.myClickupName)}"><span class="hint">Tasks assigned only to someone else are imported into Passed on.</span></div>
-    <div class="field"><label for="s-hidden">Skip these ClickUp folders</label><input id="s-hidden" value="${esc((c.hidden || []).join(", "))}"></div>
-    <div class="row"><button class="btn btn-sm" data-act="import" type="button" ${mcp ? "" : "disabled"}>${c.clickupImportedAt ? "Import anything new from ClickUp" : "Import from ClickUp"}</button>${c.clickupImportedAt ? `<span class="ctx">Last imported ${esc(new Date(c.clickupImportedAt).toLocaleDateString())}. Tasks already imported are skipped.</span>` : ""}</div>
+    <h3>Backup</h3>
+    <div class="row"><button class="btn btn-sm" data-act="exporttasks" type="button">Export tasks (CSV)</button><button class="btn btn-sm" data-act="export" data-month="${thisMonth}" type="button">Export ${esc(monthName)} time (CSV)</button></div>
+    <span class="ctx">${c.lastTaskBackup ? `Last task backup ${esc(new Date(c.lastTaskBackup).toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" }))}.` : "No task backup yet."} The export includes every task you haven't deleted: open, finished, passed on and waiting for review.</span>
     <div class="row"><button class="btn btn-sun" data-act="save-settings" type="button">Save settings</button></div>
   </div></div>`;
 }
@@ -1209,9 +1167,7 @@ function collectSettings() {
   return {
     groups,
     people: ($("s-people").value || "").split(",").map(s => s.trim()).filter(Boolean),
-    hidden: ($("s-hidden").value || "").split(",").map(s => s.trim()).filter(Boolean),
     hoursAvailable: Math.min(14, Math.max(1, Number($("s-hours").value) || 6)),
-    myClickupName: ($("s-me").value || "").trim(),
     gmailQuery: ($("s-gmail").value || "").trim() || DEFAULTS.gmailQuery,
     notes: ($("s-notes").value || "").trim()
   };
@@ -1260,7 +1216,7 @@ document.addEventListener("click", async (ev) => {
     case "timelog": openTimeLog(); break;
     case "logmonth": openTimeLog(el.dataset.month); break;
     case "export": exportCSV(el.dataset.month); break;
-    case "import": closeDrawer(); importClickUp(); break;
+    case "exporttasks": exportTasks(); break;
     case "closedrawer": case "drawerbg": closeDrawer(); break;
     case "drawerdone": { const fid = $("taskForm").dataset.id; const t = getTask(fid); if (!t) break; if (t.status === "done") setDone(fid, false); else markDone(fid); closeDrawer(); renderAll(); break; }
     case "drawerdelete": { const fid = $("taskForm").dataset.id; updateTask(fid, { status: "dismissed" }); S.plan.ids = S.plan.ids.filter(x => x !== fid); savePlan(); closeDrawer(); renderAll(); toast("Task deleted.", { act: "undodel", id: fid, label: "Undo" }); break; }
