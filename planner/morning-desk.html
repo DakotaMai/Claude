@@ -762,13 +762,13 @@ function openSettings() {
   const folderNames = [...new Set(S.lists.map(l => l.group))].sort();
   const row = (g, i) => `<div class="grow" data-row="${i}">
       <input id="g-name-${i}" value="${esc(g.name)}" placeholder="Client name" aria-label="Client name">
-      <select id="g-kind-${i}" aria-label="Lane type"><option value="retainer"${g.kind !== "internal" ? " selected" : ""}>Retainer</option><option value="internal"${g.kind === "internal" ? " selected" : ""}>Own business</option></select>
+      <select id="g-kind-${i}" aria-label="Lane type"><option value="retainer"${!g.kind || g.kind === "retainer" ? " selected" : ""}>Retainer</option><option value="adhoc"${g.kind === "adhoc" ? " selected" : ""}>Ad-hoc</option><option value="internal"${g.kind === "internal" ? " selected" : ""}>Own business</option></select>
       <input class="gmatch" id="g-match-${i}" value="${esc((g.match || []).join(", "))}" placeholder="ClickUp folders or spaces" aria-label="ClickUp folders or spaces" list="folderList">
       <button class="btn btn-sm btn-ghost" data-act="grow-del" data-i="${i}" type="button" aria-label="Remove">×</button>
     </div>`;
   $("drawerHost").innerHTML = `<div class="drawer" id="drawer"><div class="drawer-in" role="dialog" aria-label="Settings">
     <div class="row" style="justify-content:space-between"><h2>Settings</h2><button class="btn btn-ghost" data-act="close-settings" type="button">Close</button></div>
-    <div class="field"><label>Client lanes</label><div class="hint">Each lane gathers the ClickUp folders or spaces you list, plus anything the sweep finds for that client. Retainers get the big lanes at the top; colours follow the order.</div></div>
+    <div class="field"><label>Client lanes</label><div class="hint">Each lane gathers the ClickUp folders or spaces you list, plus anything the sweep finds for that client. Retainers get the big coloured lanes at the top. Ad-hoc lanes sit below with any ClickUp folders you haven't named here.</div></div>
     <div class="grow grow-h"><span>Name</span><span>Type</span><span class="gmatch">ClickUp folders / spaces</span><span></span></div>
     <div id="growList" style="display:flex;flex-direction:column;gap:6px">${groups.map(row).join("")}</div>
     <datalist id="folderList">${folderNames.map(f => `<option value="${esc(f)}">`).join("")}</datalist>
@@ -789,7 +789,7 @@ function readGroupRows() {
 }
 function collectSettings() {
   let ri = 0;
-  const groups = readGroupRows().filter(g => g.name).map(g => Object.assign(g, { color: g.kind === "internal" ? 5 : (ri++ % 4) + 1 }));
+  const groups = readGroupRows().filter(g => g.name).map(g => Object.assign(g, { color: g.kind === "internal" ? 5 : g.kind === "adhoc" ? 0 : (ri++ % 4) + 1 }));
   return {
     groups,
     hidden: ($("s-hidden").value || "").split(",").map(s => s.trim()).filter(Boolean),
