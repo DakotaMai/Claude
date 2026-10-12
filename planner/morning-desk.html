@@ -64,7 +64,10 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .notice.crit{border-left-color:var(--crit)}
 
 /* Tabs (phone) */
-.tabs{display:none;gap:6px;margin-bottom:12px}
+.tabs{display:none;gap:6px;margin-bottom:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--bg);padding-block:8px}
+.tab.pulse{animation:tabpulse .9s ease 2}
+@keyframes tabpulse{50%{background:var(--sun);color:var(--sun-ink);border-color:var(--sun)}}
+.toast button{margin-left:10px;border:none;background:var(--sun);color:var(--sun-ink);border-radius:6px;padding:2px 9px;font-weight:600}
 .tab{flex:1;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px;font-weight:600}
 .tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 
@@ -167,7 +170,7 @@ a.pi-title:hover{text-decoration:underline}
 .selbar .btn-ghost{color:var(--bg);opacity:.8}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;z-index:30;max-width:calc(100% - 32px)}
 
-@media (max-width: 900px){
+@media (max-width: 720px){
   .tabs{display:flex}
   .desk{grid-template-columns:minmax(0,1fr)}
   .desk[data-tab="all"] .pane-today{display:none}
@@ -249,10 +252,11 @@ const fmtMins = (m) => { m = Math.round(m || 0); const h = Math.floor(m / 60), r
 const norm = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 function hash(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
 
-function toast(msg) {
+const narrow = () => window.matchMedia("(max-width: 720px)").matches;
+function toast(msg, action) {
   const host = $("toastHost");
-  host.innerHTML = `<div class="toast" role="status">${esc(msg)}</div>`;
-  clearTimeout(toast._t); toast._t = setTimeout(() => { host.innerHTML = ""; }, 3200);
+  host.innerHTML = `<div class="toast" role="status">${esc(msg)}${action ? `<button data-act="${esc(action.act)}" type="button">${esc(action.label)}</button>` : ""}</div>`;
+  clearTimeout(toast._t); toast._t = setTimeout(() => { host.innerHTML = ""; }, action ? 6000 : 3200);
 }
 
 /* ---------- capability helpers ---------- */
@@ -624,7 +628,13 @@ function addMany(keys) {
   keys.forEach(k => S.sel.delete(k));
   if (added.length) savePlan();
   renderEverything(); renderToday(); renderSelBar();
-  if (added.length) toast(added.length === 1 ? `Added to today: ${added[0]}` : `Added ${added.length} tasks to today.`);
+  if (added.length) {
+    const msg = added.length === 1 ? `Added to today: ${added[0]}` : `Added ${added.length} tasks to today.`;
+    if (narrow()) {
+      const t = $("tabToday"); t.classList.remove("pulse"); void t.offsetWidth; t.classList.add("pulse");
+      toast(msg, { act: "gotoday", label: "View Today" });
+    } else toast(msg);
+  }
 }
 function renderSelBar() {
   const bar = $("selbar");
@@ -835,6 +845,7 @@ document.addEventListener("click", async (ev) => {
   switch (act) {
     case "add": addToPlan(el.dataset.key); break;
     case "addsel": addMany([...S.sel]); break;
+    case "gotoday": setTab("today"); $("toastHost").innerHTML = ""; window.scrollTo({ top: 0 }); break;
     case "clearsel": S.sel.clear(); renderEverything(); renderSelBar(); break;
     case "selall": {
       const g = buildModel().find(x => x.key === el.dataset.key); if (!g) break;
