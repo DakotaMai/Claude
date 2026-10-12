@@ -239,6 +239,7 @@ table.log tr.total td{font-weight:600;border-top:2px solid var(--ink)}
       <h1 id="hello">Build today's list</h1>
     </div>
     <div class="top-actions">
+      <button class="btn btn-ghost" id="fsBtn" type="button" hidden>Full screen</button>
       <button class="btn btn-ghost" id="settingsBtn" type="button">Settings</button>
       <button class="btn" id="meetBtn" type="button">Log a meeting</button>
       <button class="btn" id="newBtn" type="button">New task</button>
@@ -1315,6 +1316,18 @@ $("sweepBtn").addEventListener("click", runSweep);
 $("newBtn").addEventListener("click", () => openTask(null));
 $("meetBtn").addEventListener("click", () => openMeeting());
 $("settingsBtn").addEventListener("click", () => openSettings());
+(function () {
+  const b = $("fsBtn");
+  const can = document.fullscreenEnabled && document.documentElement.requestFullscreen;
+  if (!can) return;
+  b.hidden = false;
+  const sync = () => { b.textContent = document.fullscreenElement ? "Exit full screen" : "Full screen"; };
+  b.addEventListener("click", () => {
+    const p = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    if (p && p.catch) p.catch(() => { b.hidden = true; toast("Full screen isn't available here. Use your browser's full screen instead."); });
+  });
+  document.addEventListener("fullscreenchange", sync);
+})();
 $("tabAll").addEventListener("click", () => setTab("all"));
 $("tabToday").addEventListener("click", () => setTab("today"));
 
