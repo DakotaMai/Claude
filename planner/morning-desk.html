@@ -3,8 +3,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a planning desk. Left = everything on your plate, in client lanes (retainers first, ad-hoc below).
-   Right = the Today column you build each morning, with a capacity bar against your available hours. */
+/* Layout: a planning desk. Left = everything on your plate in client lanes (retainers, ad-hoc, passed on).
+   Right = the Today column with a capacity bar. Hours meters sit under the header; a timer bar pins to the top while timing. */
 :root{
   --bg:#f3f4f7; --surface:#ffffff; --sunk:#e9ecf1; --ink:#161d29; --muted:#5a6475; --line:#dbe0e8;
   --sun:#f5b800; --sun-ink:#1d1600;
@@ -30,17 +30,16 @@
 
 *{box-sizing:border-box}
 html,body{background:var(--bg);color:var(--ink)}
-body{font-family:var(--f-body);font-size:14px;line-height:1.45;padding-inline:16px;padding-block:0 40px}
+body{font-family:var(--f-body);font-size:14px;line-height:1.45;padding-inline:16px;padding-block:0 60px}
 a{color:inherit}
 button,select,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--c4);outline-offset:2px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
-
 .wrap{max-width:1500px;margin:0 auto}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 
-/* Header */
-.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-block:22px 16px}
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-block:22px 14px}
 .eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px);line-height:1.05;margin:2px 0 0;text-wrap:balance;letter-spacing:-.01em}
 .top-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -49,82 +48,108 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .btn[disabled]{opacity:.55;cursor:default}
 .btn-sun{background:var(--sun);color:var(--sun-ink);border-color:transparent;font-weight:600;padding:9px 16px;font-size:15px}
 .btn-sun:hover{filter:brightness(1.05);border-color:transparent}
+.btn-ink{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .btn-sm{padding:3px 9px;font-size:12.5px;border-radius:6px}
 .btn-ghost{background:transparent;border-color:transparent;color:var(--muted)}
 .btn-ghost:hover{color:var(--ink);border-color:var(--line)}
 
-/* Source strip */
+.timerbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:16;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--ink);color:var(--bg);border-radius:0 0 12px 12px;padding:8px 14px;margin-bottom:6px}
+.timerbar .clock{font-family:var(--f-mono);font-size:18px;font-variant-numeric:tabular-nums}
+.timerbar .what{flex:1;min-width:0;overflow-wrap:anywhere}
+.timerbar .what span{opacity:.7;font-size:12.5px}
+.rec{width:10px;height:10px;border-radius:50%;background:var(--sun);animation:pulse 1.2s infinite alternate;flex:none}
+
+.hours{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:14px}
+.meter{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.meter-h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.meter-h b{font-weight:600;font-size:13px;overflow-wrap:anywhere;min-width:0}
+.meter-h .num{font-size:12px;color:var(--muted);white-space:nowrap}
+.meter-h .num strong{color:var(--ink);font-weight:500}
+.mbar{height:6px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.mbar span{display:block;height:100%;background:var(--lane,var(--ink))}
+.mbar.over span{background:var(--crit)}
+.meter .sub{font-size:11.5px;color:var(--muted);overflow-wrap:anywhere}
+
 .sources{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
 .src-pill{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 6px;font-size:12.5px;max-width:100%}
 .src-pill .txt{min-width:0;overflow-wrap:anywhere}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--c0);flex:none}
 .dot.ok{background:var(--ok)} .dot.err{background:var(--crit)} .dot.busy{background:var(--sun);animation:pulse 1s infinite alternate}
 @keyframes pulse{from{opacity:.35}to{opacity:1}}
-.notice{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--warn);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13.5px}
+.notice{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--warn);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13.5px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .notice.crit{border-left-color:var(--crit)}
+.notice.sun{border-left-color:var(--sun)}
 
-/* Tabs (phone) */
 .tabs{display:none;gap:6px;margin-bottom:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--bg);padding-block:8px}
-.tab.pulse{animation:tabpulse .9s ease 2}
-@keyframes tabpulse{50%{background:var(--sun);color:var(--sun-ink);border-color:var(--sun)}}
-.toast button{margin-left:10px;border:none;background:var(--sun);color:var(--sun-ink);border-radius:6px;padding:2px 9px;font-weight:600}
 .tab{flex:1;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px;font-weight:600}
 .tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab.pulse{animation:tabpulse .9s ease 2}
+@keyframes tabpulse{50%{background:var(--sun);color:var(--sun-ink);border-color:var(--sun)}}
 
-/* Main grid */
-.desk{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:20px;align-items:start}
+.desk{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px;align-items:start}
 .pane{min-width:0}
-
-/* Filter bar */
 .filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px}
 .chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 11px;font-size:12.5px;font-weight:500}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .search{flex:1 1 180px;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px}
-
-.section-h{display:flex;align-items:baseline;gap:10px;margin:18px 0 10px}
+.section-h{display:flex;align-items:baseline;gap:10px;margin:18px 0 10px;flex-wrap:wrap}
 .section-h h2{font-family:var(--f-display);font-weight:700;font-size:18px;margin:0}
 .section-h .eyebrow{margin-left:auto}
 
-/* Lanes */
+.tray{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--sun);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px;margin-bottom:6px}
+.tray-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tray-h h2{font-family:var(--f-display);font-weight:700;font-size:17px;margin:0}
+.sug{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;border-top:1px solid var(--line);padding-top:8px}
+.sug-main{min-width:0;display:flex;flex-direction:column;gap:3px}
+.sug-acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.sug select{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:1px 4px;font-size:12px;max-width:200px}
+
 .lanes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
 .lane{background:var(--sunk);border-radius:var(--r);padding:10px;min-width:0;display:flex;flex-direction:column;gap:8px;border-top:4px solid var(--lane,var(--c0))}
-.lane-h{display:flex;align-items:center;gap:8px;padding:2px 2px 4px}
+.lane-h{display:flex;align-items:center;gap:8px;padding:2px 2px 0}
 .lane-h h3{font-family:var(--f-display);font-weight:700;font-size:15.5px;margin:0;min-width:0;overflow-wrap:anywhere}
-.lane-h .sub{font-size:11.5px;color:var(--muted)}
 .count{margin-left:auto;font-family:var(--f-mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
 .count b{color:var(--crit);font-weight:500}
+.lane-tools{display:flex;gap:10px;padding:0 2px}
+.lane-sel{border:none;background:transparent;color:var(--muted);font-size:11.5px;padding:0;text-decoration:underline;text-underline-offset:2px}
+.lane-sel:hover{color:var(--ink)}
 .lane-empty{font-size:12.5px;color:var(--muted);padding:6px 4px}
 .more{align-self:flex-start}
 .adhoc{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
 .adhoc .lane{border-top-width:2px}
 
-/* Cards */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:5px;min-width:0}
-.card.is-planned{opacity:.55}
+.card.is-planned{opacity:.6}
+.card.is-picked{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.card.is-timing{border-color:var(--sun);box-shadow:0 0 0 1px var(--sun)}
 .card.dragging{opacity:.4}
 .card-row{display:flex;gap:8px;align-items:flex-start}
-.card-title{flex:1;min-width:0;font-weight:500;text-decoration:none;overflow-wrap:anywhere}
-a.card-title:hover{text-decoration:underline}
+.pick{flex:none;width:16px;height:16px;margin-top:2px;accent-color:var(--ink)}
+.tlink{flex:1;min-width:0;font-weight:500;text-align:left;background:none;border:none;padding:0;overflow-wrap:anywhere;line-height:1.4}
+.tlink:hover{text-decoration:underline}
 .add{flex:none;border:1px solid var(--line);background:transparent;border-radius:6px;padding:1px 7px;font-size:12px;font-weight:600;color:var(--muted)}
 .add:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .add.on{background:var(--ok-bg);color:var(--ok);border-color:transparent;cursor:default}
 .meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:11.5px;color:var(--muted)}
 .tag{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.03em;border-radius:4px;padding:1px 5px;background:var(--sunk);color:var(--muted);white-space:nowrap}
-.tag.src{font-weight:500}
 .tag.crit{background:var(--crit-bg);color:var(--crit)}
 .tag.warn{background:var(--warn-bg);color:var(--warn)}
-.tag.new{background:var(--sun);color:var(--sun-ink)}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}
+.tag.sun{background:var(--sun);color:var(--sun-ink)}
+.tag.proj{background:transparent;border:1px solid var(--line);color:var(--ink)}
 .ctx{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
-.card-acts{display:flex;flex-wrap:wrap;gap:6px}
-.sendbox{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.sendbox select{flex:1 1 160px;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:3px 6px;font-size:12.5px}
+.ext{font-size:11.5px;color:var(--muted);text-decoration:none}
+.ext:hover{text-decoration:underline;color:var(--ink)}
+.icons{display:flex;gap:4px;margin-left:auto}
+.ib{border:1px solid var(--line);background:transparent;border-radius:6px;min-width:26px;height:24px;padding:0 6px;font-size:12px;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.ib:hover{color:var(--ink);border-color:var(--muted)}
+.ib.on{background:var(--sun);color:var(--sun-ink);border-color:transparent}
 
-/* Today column */
 .today{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 24px);overflow:auto}
 .today.drop{outline:2px dashed var(--sun);outline-offset:3px}
 .today h2{font-family:var(--f-display);font-weight:700;font-size:22px;margin:0}
 .cap{display:flex;flex-direction:column;gap:6px}
-.cap-nums{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.cap-nums{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-family:var(--f-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 .cap-nums b{color:var(--ink);font-weight:500}
 .bar{height:10px;border-radius:999px;background:var(--sunk);overflow:hidden;display:flex}
 .bar span{display:block;height:100%}
@@ -133,42 +158,63 @@ a.card-title:hover{text-decoration:underline}
 .bar.over .todo{background:var(--crit)}
 .plan{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .pi{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:start;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--surface);border-left:4px solid var(--lane,var(--c0))}
-.pi.done .pi-title{text-decoration:line-through;color:var(--muted)}
+.pi.done .tlink{text-decoration:line-through;color:var(--muted)}
 .pi.over{box-shadow:0 -2px 0 var(--sun)}
+.pi.is-timing{border-color:var(--sun);border-left-color:var(--sun)}
 .pi input[type=checkbox]{width:17px;height:17px;margin-top:2px;accent-color:var(--ok)}
 .pi-main{min-width:0;display:flex;flex-direction:column;gap:4px}
-.pi-title{font-weight:500;overflow-wrap:anywhere;text-decoration:none}
-a.pi-title:hover{text-decoration:underline}
 .pi-side{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
 .pi-side select{border:1px solid var(--line);background:var(--surface);border-radius:6px;font-family:var(--f-mono);font-size:11.5px;padding:2px 4px}
 .mini{display:flex;gap:2px}
 .mini button{border:none;background:transparent;color:var(--muted);padding:0 4px;font-size:13px;line-height:1.4;border-radius:4px}
 .mini button:hover{background:var(--sunk);color:var(--ink)}
 .empty-today{border:1.5px dashed var(--line);border-radius:10px;padding:18px 14px;color:var(--muted);font-size:13px;text-align:center}
-.quick{display:flex;gap:6px}
-.quick input{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 10px}
+.quick{display:flex;gap:6px;flex-wrap:wrap}
+.quick input{flex:1 1 160px;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 10px}
+.quick select{flex:0 1 140px;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px}
+.today-foot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
 
-/* Settings drawer */
 .drawer{position:fixed;inset:0;background:color-mix(in srgb,var(--ink) 35%,transparent);display:flex;justify-content:flex-end;z-index:20}
-.drawer-in{width:min(520px,100%);height:100%;background:var(--surface);overflow:auto;padding:20px 18px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;border-left:1px solid var(--line)}
+.drawer-in{width:min(600px,100%);height:100%;background:var(--surface);overflow:auto;padding:20px 18px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;border-left:1px solid var(--line)}
 .drawer h2{font-family:var(--f-display);font-size:22px;margin:0}
-.field{display:flex;flex-direction:column;gap:4px}
-.field label{font-weight:600;font-size:13px}
+.drawer h3{font-family:var(--f-display);font-size:16px;margin:6px 0 0}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label,.flabel{font-weight:600;font-size:13px}
 .field .hint{font-size:12px;color:var(--muted)}
 .field input,.field textarea,.field select{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 10px;min-width:0}
-.grow{display:grid;grid-template-columns:minmax(0,1.1fr) 100px minmax(0,1.4fr) auto;gap:6px;align-items:center}
+.field textarea{min-height:90px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grow{display:grid;grid-template-columns:minmax(0,1.1fr) 100px 96px minmax(0,1.2fr) 60px auto;gap:6px;align-items:center}
 .grow input,.grow select{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 7px;min-width:0;font-size:13px}
 .grow-h{font-size:11px;font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.entries{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:12.5px}
+.entries li{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);padding-block:4px}
+.chk{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.chk input[type=checkbox]{margin-top:3px;width:16px;height:16px;accent-color:var(--ok);flex:none}
+.chk .body{min-width:0;display:flex;flex-direction:column;gap:2px}
+.chk .mins{border:1px solid var(--line);background:var(--surface);border-radius:6px;width:70px;padding:2px 6px;font-family:var(--f-mono);font-size:12px}
+.tablewrap{overflow-x:auto}
+table.log{width:100%;border-collapse:collapse;font-size:13px}
+table.log th{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:right;font-weight:500;padding:6px 8px;border-bottom:1px solid var(--line)}
+table.log th:first-child,table.log td:first-child{text-align:left}
+table.log td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+table.log td:first-child{font-family:var(--f-body);white-space:normal}
+table.log tr.client td{font-weight:600}
+table.log tr.client td:first-child{border-left:4px solid var(--lane,var(--c0));padding-left:8px}
+table.log tr.sub td{color:var(--muted);font-size:12.5px}
+table.log tr.sub td:first-child{padding-left:26px}
+table.log tr.total td{font-weight:600;border-top:2px solid var(--ink)}
+.cal{display:flex;flex-direction:column;gap:6px}
+.calrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+.calrow .time{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap}
 
-.pick{flex:none;width:16px;height:16px;margin-top:2px;accent-color:var(--ink)}
-.card.is-picked{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
-.lane-sel{border:none;background:transparent;color:var(--muted);font-size:11.5px;padding:0 2px;text-decoration:underline;text-underline-offset:2px}
-.lane-sel:hover{color:var(--ink)}
 .selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);border-radius:12px;padding:8px 8px 8px 16px;display:flex;align-items:center;gap:10px;z-index:25;max-width:calc(100% - 32px);flex-wrap:wrap;box-shadow:0 6px 24px color-mix(in srgb,var(--ink) 30%,transparent)}
 .selbar .btn{border-color:transparent}
 .selbar .btn-ghost{color:var(--bg);opacity:.8}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;z-index:30;max-width:calc(100% - 32px)}
+.toast button{margin-left:10px;border:none;background:var(--sun);color:var(--sun-ink);border-radius:6px;padding:2px 9px;font-weight:600}
 
 @media (max-width: 720px){
   .tabs{display:flex}
@@ -176,12 +222,16 @@ a.pi-title:hover{text-decoration:underline}
   .desk[data-tab="all"] .pane-today{display:none}
   .desk[data-tab="today"] .pane-all{display:none}
   .today{position:static;max-height:none}
-  .grow{grid-template-columns:minmax(0,1fr) 90px;}
-  .grow .gmatch{grid-column:1 / -1}
+  .grow{grid-template-columns:minmax(0,1fr) 96px 60px auto}
+  .grow .gbill{grid-column:1 / 2;order:5}
+  .grow .gmatch{grid-column:2 / -1;order:6}
+  .grow-h .gmatch,.grow-h .gbill{display:none}
+  .two,.three{grid-template-columns:1fr}
 }
 </style>
 
 <div class="wrap">
+  <div id="timerHost"></div>
   <header class="top">
     <div>
       <div class="eyebrow" id="dateLine">Morning planning</div>
@@ -189,11 +239,13 @@ a.pi-title:hover{text-decoration:underline}
     </div>
     <div class="top-actions">
       <button class="btn btn-ghost" id="settingsBtn" type="button">Settings</button>
-      <button class="btn" id="refreshCu" type="button">Refresh ClickUp</button>
+      <button class="btn" id="meetBtn" type="button">Log a meeting</button>
+      <button class="btn" id="newBtn" type="button">New task</button>
       <button class="btn btn-sun" id="sweepBtn" type="button">Run morning sweep</button>
     </div>
   </header>
 
+  <div class="hours" id="hours"></div>
   <div class="sources" id="sources"></div>
   <div id="notices"></div>
 
@@ -204,10 +256,10 @@ a.pi-title:hover{text-decoration:underline}
 
   <main class="desk" id="desk" data-tab="all">
     <section class="pane pane-all" aria-label="Everything on your plate">
+      <div id="tray"></div>
       <div class="filters">
         <button class="chip" data-filter="all" aria-pressed="true" type="button">All</button>
         <button class="chip" data-filter="due" aria-pressed="false" type="button">Overdue &amp; due this week</button>
-        <button class="chip" data-filter="new" aria-pressed="false" type="button">From the sweep</button>
         <button class="chip" data-filter="progress" aria-pressed="false" type="button">In progress</button>
         <input class="search" id="search" type="search" placeholder="Search tasks" aria-label="Search tasks">
       </div>
@@ -227,18 +279,18 @@ a.pi-title:hover{text-decoration:underline}
 "use strict";
 
 /* ---------- state ---------- */
-const DEFAULTS = { groups: [], hidden: [], hoursAvailable: 6, gmailQuery: "in:inbox category:primary", includeTeam: false, myClickupName: "", lastSweep: null };
+const DEFAULTS = { groups: [], hidden: [], people: ["Kate", "Nat"], hoursAvailable: 6, gmailQuery: "in:inbox category:primary", myClickupName: "", lastSweep: null, clickupImportedAt: null };
 const S = {
-  uid: null, me: null,
-  settings: null, settingsLoaded: false,
-  lists: [], listMap: {}, cuTasks: [], cu: { status: "idle" },
-  captured: [], capLoaded: false,
-  plan: { items: [] }, planLoaded: false, prevPlan: null,
-  filter: "all", q: "", expanded: {}, sendOpen: null, sel: new Set(),
+  uid: null, me: null, settings: null,
+  sets: { open: [], suggested: [], done: [] }, loaded: { open: false, suggested: false, done: false, plan: false },
+  entries: [], timer: null,
+  plan: { ids: [] }, planRaw: null, prevPlan: null,
+  filter: "all", q: "", expanded: {}, sel: new Set(),
   sweep: { gmail: { status: "idle" }, slack: { status: "idle" }, littlebird: { status: "idle" }, ai: { status: "idle" } },
-  caps: { mcp: undefined, db: undefined, sample: undefined, user: undefined }
+  check: { status: "idle" }, imp: { status: "idle" }, review: null, cal: null,
+  caps: { mcp: undefined, db: undefined }
 };
-let mcp = null, db = null, sample = null, userApi = null;
+let mcp = null, db = null, sample = null, userApi = null, downloads = null;
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -246,340 +298,393 @@ const cfg = () => Object.assign({}, DEFAULTS, S.settings || {});
 const pad = (n) => String(n).padStart(2, "0");
 const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 const todayKey = ymd(new Date());
+const thisMonth = todayKey.slice(0, 7);
+const monthStart = thisMonth + "-01";
+const monthLabel = (ym) => new Date(ym + "-15T12:00:00").toLocaleDateString(undefined, { month: "long", year: "numeric" });
+const monthName = new Date().toLocaleDateString(undefined, { month: "long" });
+const nextMonth = (ym) => { const d = new Date(ym + "-15T12:00:00"); d.setMonth(d.getMonth() + 1); return ymd(d).slice(0, 7); };
+const prevMonth = (ym) => { const d = new Date(ym + "-15T12:00:00"); d.setMonth(d.getMonth() - 1); return ymd(d).slice(0, 7); };
 const startOfDay = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
 const DAY = 86400000;
 const fmtMins = (m) => { m = Math.round(m || 0); const h = Math.floor(m / 60), r = m % 60; return h ? (r ? `${h}h ${r}m` : `${h}h`) : `${r}m`; };
+const fmtHours = (m) => (Math.round((m || 0) / 6) / 10).toString().replace(/\.0$/, "") + "h";
 const norm = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+const newId = () => "t" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 function hash(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
-
 const narrow = () => window.matchMedia("(max-width: 720px)").matches;
+
 function toast(msg, action) {
   const host = $("toastHost");
-  host.innerHTML = `<div class="toast" role="status">${esc(msg)}${action ? `<button data-act="${esc(action.act)}" type="button">${esc(action.label)}</button>` : ""}</div>`;
-  clearTimeout(toast._t); toast._t = setTimeout(() => { host.innerHTML = ""; }, action ? 6000 : 3200);
+  host.innerHTML = `<div class="toast" role="status">${esc(msg)}${action ? `<button data-act="${esc(action.act)}" data-id="${esc(action.id || "")}" type="button">${esc(action.label)}</button>` : ""}</div>`;
+  clearTimeout(toast._t); toast._t = setTimeout(() => { host.innerHTML = ""; }, action ? 6500 : 3200);
 }
-
-/* ---------- capability helpers ---------- */
 function use(name) {
   try { return (window.claude && window.claude.use) ? window.claude.use(name).catch(() => null) : Promise.resolve(null); }
   catch (e) { return Promise.resolve(null); }
 }
-
 function errText(e, server) {
   const c = e && e.code;
   switch (c) {
     case "needs_reauth": return `${server} needs reconnecting. Reconnect it in claude.ai Settings → Connectors, then try again.`;
-    case "server_not_connected": case "selection_required": case "server_not_found":
-      return `${server} isn't connected. Add it in claude.ai Settings → Connectors.`;
+    case "server_not_connected": case "selection_required": case "server_not_found": return `${server} isn't connected. Add it in claude.ai Settings → Connectors.`;
     case "not_in_manifest": return `${server} is switched off for this page. Turn it on in the page's Permissions menu.`;
     case "approval_required": case "consent_required": return `${server} is waiting for your OK. Run it again and choose Allow.`;
     case "blocked_by_policy": return `Your organisation blocks this ${server} action.`;
     case "server_unavailable": return `${server} didn't answer. Give it a minute and try again.`;
     case "tool_error": return `${server} said: ${e.message || "the request failed"}`;
-    case "not_granted": case "capability_disabled": case "capability_removed":
-      return "Connectors aren't available in this view. Open the page inside claude.ai.";
+    case "not_granted": case "capability_disabled": case "capability_removed": return "Connectors aren't available in this view. Open the page inside claude.ai.";
     default: return `${server} failed: ${(e && e.message) || "unknown error"}`;
   }
 }
-
+const sampleErr = (e) => e && e.code === "not_granted" ? "Claude isn't allowed on this page. Allow it from the page's Permissions menu."
+  : e && e.code === "rate_limited" ? "Claude is busy. Try again in a few minutes."
+  : `Claude couldn't read it: ${(e && e.message) || "unknown error"}`;
 async function read(server, tool, input, opts) {
   try { return await mcp.callTool(server, tool, input, opts); }
   catch (e) {
-    if (e && e.retryable) {
-      await new Promise(r => setTimeout(r, (e.retryAfterMs || 800) + Math.random() * 700));
-      return await mcp.callTool(server, tool, input, opts);
-    }
+    if (e && e.retryable) { await new Promise(r => setTimeout(r, (e.retryAfterMs || 800) + Math.random() * 700)); return await mcp.callTool(server, tool, input, opts); }
     throw e;
   }
 }
 
-/* ---------- db paths & writes ---------- */
+/* ---------- db ---------- */
 const P = {
   settings: () => `data/users/${S.uid}/settings`,
+  timer: () => `data/users/${S.uid}/timer`,
+  tasks: () => `data/users/${S.uid}/tasks/items`,
+  entries: () => `data/users/${S.uid}/time/entries`,
   inbox: () => `data/users/${S.uid}/inbox/items`,
   plans: () => `data/users/${S.uid}/days/plans`,
   plan: (d) => `data/users/${S.uid}/days/plans/${d}`
 };
+const canSave = () => !!(db && S.uid);
+const fail = (what) => (e) => toast(`Couldn't ${what}: ${(e && (e.message || e.code)) || "unknown error"}`);
+
+function allTasks() { const m = new Map(); [...S.sets.done, ...S.sets.suggested, ...S.sets.open].forEach(t => m.set(t.id, t)); return m; }
+const getTask = (id) => allTasks().get(id);
+function placeLocal(t) {
+  ["open", "suggested", "done"].forEach(k => { S.sets[k] = S.sets[k].filter(x => x.id !== t.id); });
+  if (t.status === "open") S.sets.open.push(t);
+  else if (t.status === "suggested") S.sets.suggested.push(t);
+  else if (t.status === "done" && (t.doneDate || "") >= monthStart) S.sets.done.push(t);
+}
+function createTask(data, id) {
+  id = id || newId();
+  const t = Object.assign({ title: "", client: "Unsorted", project: null, due: null, estMins: 30, notes: "", status: "open", source: "manual", sourceUrl: "", context: "", urgency: null, delegatedTo: null, delegatedAt: null, inProgress: false, cuId: null, cuUrl: "", createdAt: new Date().toISOString(), doneAt: null, doneDate: null, minsLogged: 0 }, data);
+  placeLocal(Object.assign({ id }, t));
+  if (canSave()) return db.doc(`${P.tasks()}/${id}`).set(t).then(() => id).catch(e => { fail("save the task")(e); return id; });
+  return Promise.resolve(id);
+}
+function updateTask(id, patch) {
+  const cur = getTask(id); if (!cur) return Promise.resolve();
+  Object.keys(patch).forEach(k => patch[k] === undefined && delete patch[k]);
+  placeLocal(Object.assign({}, cur, patch));
+  if (canSave()) return db.doc(`${P.tasks()}/${id}`).update(patch).catch(fail("update the task"));
+  return Promise.resolve();
+}
+function setDone(id, done) {
+  return updateTask(id, done ? { status: "done", doneAt: new Date().toISOString(), doneDate: todayKey, inProgress: false } : { status: "open", doneAt: null, doneDate: null });
+}
 let planQueue = Promise.resolve(), planPending = 0;
 function savePlan() {
-  if (!db || !S.uid) return;
-  const snapshot = { date: todayKey, items: S.plan.items.map(x => Object.assign({}, x)), updatedAt: new Date().toISOString() };
+  if (!canSave()) return;
+  const data = { date: todayKey, ids: S.plan.ids.slice(), updatedAt: new Date().toISOString() };
   planPending++;
-  planQueue = planQueue.then(() => db.doc(P.plan(todayKey)).set(snapshot)).catch(e => toast(`Couldn't save today's list: ${e.message || e.code}`)).finally(() => { planPending--; });
+  planQueue = planQueue.then(() => db.doc(P.plan(todayKey)).set(data)).catch(fail("save today's list")).finally(() => { planPending--; });
 }
 let setQueue = Promise.resolve();
 function saveSettings(patch) {
   S.settings = Object.assign({}, cfg(), patch);
-  if (!db || !S.uid) return Promise.resolve();
+  if (!canSave()) return Promise.resolve();
   const data = Object.assign({}, S.settings);
-  setQueue = setQueue.then(() => db.doc(P.settings()).set(data)).catch(e => toast(`Couldn't save settings: ${e.message || e.code}`));
+  setQueue = setQueue.then(() => db.doc(P.settings()).set(data)).catch(fail("save settings"));
   return setQueue;
 }
-function updateCaptured(id, patch) {
-  const it = S.captured.find(c => c.id === id); if (it) Object.assign(it, patch);
-  if (db && S.uid) db.doc(`${P.inbox()}/${id}`).update(patch).catch(e => toast(`Couldn't update item: ${e.message || e.code}`));
+function logTime(entry) {
+  const e = Object.assign({ taskId: null, title: "", client: "Unsorted", project: null, kind: "work", date: todayKey, start: new Date().toISOString(), mins: 0, source: "manual", note: "", calEventId: null }, entry);
+  if (!(e.mins > 0)) return Promise.resolve();
+  const id = newId();
+  if (e.date >= monthStart) S.entries.push(Object.assign({ id }, e));
+  const jobs = [];
+  if (e.taskId) { const t = getTask(e.taskId); if (t) jobs.push(updateTask(e.taskId, { minsLogged: (Number(t.minsLogged) || 0) + e.mins })); }
+  if (canSave()) jobs.push(db.doc(`${P.entries()}/${id}`).set(e).catch(fail("log time")));
+  return Promise.all(jobs);
 }
 
-/* ---------- ClickUp structure ---------- */
-function buildListMap(payload) {
-  const root = payload && payload.hierarchy && payload.hierarchy.root;
-  const lists = [], map = {};
-  (root && root.children || []).forEach(space => {
-    if (space.type !== "space") return;
-    const walk = (node, topFolder) => {
-      (node.children || []).forEach(ch => {
-        if (ch.type === "folder") walk(ch, topFolder || ch.name);
-        else if (ch.type === "list") {
-          const rec = { id: ch.id, name: ch.name, space: space.name, spaceId: space.id, group: topFolder || ch.name, inFolder: !!topFolder };
-          lists.push(rec); map[ch.id] = rec;
-        }
-      });
-    };
-    walk(space, null);
-  });
-  S.lists = lists; S.listMap = map;
-}
-
-function groupDefFor(groupName, spaceName) {
-  const g = norm(groupName), sp = norm(spaceName);
-  return (cfg().groups || []).find(def => (def.match || []).some(m => { const n = norm(m); return n && (n === g || n === sp); }) || norm(def.name) === g) || null;
-}
-function isHidden(groupName) { return (cfg().hidden || []).some(h => norm(h) === norm(groupName)); }
-
-async function loadClickUp(force) {
-  if (!mcp) return;
-  S.cu = { status: "busy" }; renderSources();
-  try {
-    const h = await read("ClickUp", "clickup_get_workspace_hierarchy", { max_depth: "2", limit: 50 }, { cache: { staleTime: 300000, gcTime: 86400000, refresh: !!force } });
-    buildListMap(h.payload);
-    const spaceIds = [...new Set(S.lists.map(l => l.spaceId))];
-    let page = 0, all = [];
-    for (let i = 0; i < 10; i++) {
-      const input = { order_by: "updated", page, subtasks: true };
-      if (spaceIds.length) input.space_ids = spaceIds;
-      const r = await read("ClickUp", "clickup_filter_tasks", input, { cache: { staleTime: 120000, refresh: !!force } });
-      const p = r.payload || {};
-      all = all.concat(Array.isArray(p.tasks) ? p.tasks : []);
-      if (!p.has_more) break;
-      page = (p.next_page != null) ? p.next_page : page + 1;
-    }
-    S.cuTasks = all;
-    S.cu = { status: "ok", at: (h.cache && h.cache.storedAt) || Date.now(), count: all.length };
-  } catch (e) {
-    S.cu = { status: "err", msg: errText(e, "ClickUp"), code: e && e.code };
-    if (["needs_reauth", "server_not_connected", "not_in_manifest", "blocked_by_policy"].includes(e && e.code)) S.cuTasks = [];
-  }
+/* ---------- timer ---------- */
+async function startTimer(taskId) {
+  if (S.timer && S.timer.taskId === taskId) return stopTimer();
+  if (S.timer && S.timer.taskId) await stopTimer(true);
+  const t = getTask(taskId); if (!t) return;
+  S.timer = { taskId, startedAt: new Date().toISOString() };
+  if (t.status === "open" && !t.inProgress) updateTask(taskId, { inProgress: true });
+  if (canSave()) db.doc(P.timer()).set(S.timer).catch(fail("start the timer"));
   renderAll();
 }
+async function stopTimer(quiet) {
+  const tm = S.timer; if (!tm || !tm.taskId) return;
+  S.timer = null;
+  if (canSave()) db.doc(P.timer()).set({ taskId: null, startedAt: null }).catch(fail("stop the timer"));
+  const mins = Math.round((Date.now() - Date.parse(tm.startedAt)) / 60000);
+  const t = getTask(tm.taskId);
+  if (mins >= 1 && t) { await logTime({ taskId: tm.taskId, title: t.title, client: t.client, project: t.project || null, start: tm.startedAt, mins, source: "timer" }); if (!quiet) toast(`Logged ${fmtMins(mins)} on ${t.title}`); }
+  else if (!quiet) toast("Timer stopped. Under a minute, so nothing was logged.");
+  renderAll();
+}
+function clockText() {
+  if (!S.timer || !S.timer.startedAt) return "";
+  const s = Math.max(0, Math.floor((Date.now() - Date.parse(S.timer.startedAt)) / 1000));
+  return `${Math.floor(s / 3600)}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`;
+}
+setInterval(() => { const c = $("clock"); if (c) c.textContent = clockText(); }, 1000);
 
-/* ---------- building the "everything" model ---------- */
-function dueInfo(ms) {
-  if (!ms) return null;
-  const d = new Date(Number(ms) || ms); if (isNaN(d)) return null;
+/* ---------- clients ---------- */
+function defFor(name) {
+  const n = norm(name); if (!n) return null;
+  return (cfg().groups || []).find(d => norm(d.name) === n || (d.match || []).some(m => norm(m) === n)) || null;
+}
+const clientName = (name) => { const d = defFor(name); return d ? d.name : (name && norm(name) !== "unsorted" ? name : "Unsorted"); };
+const laneColor = (idx) => `var(--c${[1, 2, 3, 4, 5].includes(Number(idx)) ? Number(idx) : 0})`;
+const colorFor = (name) => { const d = defFor(name); return laneColor(d ? d.color : 0); };
+function clientNames() { return [...new Set([...(cfg().groups || []).map(g => g.name), ...[...allTasks().values()].map(t => clientName(t.client)), "Personal", "Unsorted"])]; }
+function clientOptions(selected) {
+  const names = clientNames(); const sel = clientName(selected || "Unsorted");
+  if (!names.includes(sel)) names.push(sel);
+  return names.map(n => `<option value="${esc(n)}"${n === sel ? " selected" : ""}>${esc(n)}</option>`).join("");
+}
+function projectsFor(client) {
+  const c = clientName(client);
+  return [...new Set([...[...allTasks().values()].filter(t => clientName(t.client) === c && t.project).map(t => t.project), ...S.entries.filter(e => clientName(e.client) === c && e.project).map(e => e.project)])].sort();
+}
+const projectList = (client) => `<datalist id="projList">${projectsFor(client).map(p => `<option value="${esc(p)}">`).join("")}</datalist>`;
+
+function dueInfo(due) {
+  if (!due) return null;
+  const d = new Date(due + "T12:00:00"); if (isNaN(d)) return null;
   const diff = Math.round((startOfDay(d) - startOfDay(new Date())) / DAY);
   let label, tone = "";
   if (diff < 0) { label = `Overdue ${-diff}d`; tone = "crit"; }
   else if (diff === 0) { label = "Due today"; tone = "warn"; }
   else if (diff === 1) { label = "Due tomorrow"; tone = "warn"; }
-  else if (diff < 7) { label = "Due " + d.toLocaleDateString(undefined, { weekday: "short" }); }
+  else if (diff < 7) label = "Due " + d.toLocaleDateString(undefined, { weekday: "short" });
   else label = "Due " + d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
   return { diff, label, tone };
 }
-
-function isMine(t) {
-  const c = cfg();
-  if (c.includeTeam || !c.myClickupName) return true;
-  const a = t.assignees || [];
-  return a.length === 0 || a.some(x => norm(x.username) === norm(c.myClickupName));
+const inPlan = (id) => S.plan.ids.includes(id);
+function passesFilter(t) {
+  if (S.q && !norm([t.title, t.notes, t.context, t.client, t.project].join(" ")).includes(norm(S.q))) return false;
+  const d = dueInfo(t.due);
+  if (S.filter === "due") return !!(d && d.diff < 7) || t.urgency === "today";
+  if (S.filter === "progress") return !!t.inProgress;
+  return true;
 }
-
-function buildModel() {
-  const c = cfg();
+function rank(t) {
+  const d = dueInfo(t.due);
+  if (d && d.diff < 0) return 0;
+  if (d && d.diff <= 1) return 1;
+  if (t.urgency === "today") return 1.5;
+  if (d && d.diff < 7) return 2;
+  if (t.inProgress) return 3;
+  return 4;
+}
+function buildLanes() {
   const groups = new Map();
-  const ensure = (name, def, space) => {
+  const ensure = (name) => {
+    const def = defFor(name);
     const key = def ? "def:" + def.name : "g:" + name;
-    if (!groups.has(key)) groups.set(key, { key, name: def ? def.name : name, kind: def ? (def.kind || "retainer") : "adhoc", color: def ? def.color : 0, space: def ? "" : space, items: [] });
+    if (!groups.has(key)) groups.set(key, { key, name: def ? def.name : name, kind: def ? (def.kind || "retainer") : "adhoc", color: def ? def.color : 0, items: [] });
     return groups.get(key);
   };
-  (c.groups || []).forEach(def => ensure(def.name, def));
-
-  S.cuTasks.forEach(t => {
-    if (!isMine(t)) return;
-    const l = S.listMap[t.list && t.list.id] || { name: (t.list && t.list.name) || "ClickUp", group: (t.list && t.list.name) || "ClickUp", space: "" };
-    if (isHidden(l.group)) return;
-    const def = groupDefFor(l.group, l.space);
-    const g = ensure(l.group, def, l.space !== l.group ? l.space : "");
-    g.items.push({ key: "cu:" + t.id, kind: "clickup", cuId: t.id, title: t.name, url: t.url, due: dueInfo(t.due_date), status: t.status, list: l.name !== l.group ? l.name : "", updated: Number(t.date_updated) || 0, others: (t.assignees || []).filter(a => !c.myClickupName || norm(a.username) !== norm(c.myClickupName)).map(a => a.username) });
-  });
-
-  S.captured.filter(x => x.status === "open").forEach(x => {
-    let def = (c.groups || []).find(d => norm(d.name) === norm(x.client) || (d.match || []).some(m => norm(m) === norm(x.client)));
-    let name = def ? def.name : (x.client && norm(x.client) !== "unsorted" ? x.client : "Unsorted");
-    if (!def) { const l = S.lists.find(l => norm(l.group) === norm(name)); if (l) { def = groupDefFor(l.group, l.space); if (def) name = def.name; } }
-    const g = ensure(name, def, "");
-    g.items.push({ key: "cap:" + x.id, kind: "captured", capId: x.id, title: x.title, url: x.sourceUrl, source: x.source, ctx: x.context, est: x.estMins, urgency: x.urgency, due: x.dueDate ? dueInfo(new Date(x.dueDate + "T12:00:00").getTime()) : null, updated: Date.parse(x.createdAt) || 0, client: name });
-  });
-
-  const rank = (it) => {
-    if (it.due && it.due.diff < 0) return 0;
-    if (it.due && it.due.diff <= 1) return 1;
-    if (it.kind === "captured" && it.urgency === "today") return 1.5;
-    if (it.due && it.due.diff < 7) return 2;
-    if (it.kind === "captured") return 2.5;
-    if (norm(it.status) === "in progress") return 3;
-    return 4;
-  };
-  groups.forEach(g => g.items.sort((a, b) => rank(a) - rank(b) || ((a.due ? a.due.diff : 999) - (b.due ? b.due.diff : 999)) || b.updated - a.updated));
+  (cfg().groups || []).forEach(def => ensure(def.name));
+  S.sets.open.filter(t => !t.delegatedTo).forEach(t => ensure(clientName(t.client)).items.push(t));
+  groups.forEach(g => g.items.sort((a, b) => rank(a) - rank(b) || ((dueInfo(a.due) || { diff: 999 }).diff - (dueInfo(b.due) || { diff: 999 }).diff) || String(b.createdAt).localeCompare(String(a.createdAt))));
   return [...groups.values()];
 }
 
-function passesFilter(it) {
-  if (S.q) { const q = norm(S.q); if (!norm(it.title + " " + (it.ctx || "") + " " + (it.list || "")).includes(q)) return false; }
-  switch (S.filter) {
-    case "due": return !!(it.due && it.due.diff < 7) || (it.kind === "captured" && it.urgency === "today");
-    case "new": return it.kind === "captured";
-    case "progress": return norm(it.status) === "in progress";
-    default: return true;
-  }
-}
-
 /* ---------- rendering ---------- */
-const SRC = { clickup: "ClickUp", gmail: "Email", slack: "Slack", littlebird: "Littlebird", manual: "Added" };
-const laneColor = (idx) => `var(--c${[1, 2, 3, 4, 5].includes(Number(idx)) ? Number(idx) : 0})`;
-function colorForGroupName(name) {
-  const def = (cfg().groups || []).find(d => norm(d.name) === norm(name));
-  return laneColor(def ? def.color : 0);
-}
-const inPlan = (key) => S.plan.items.some(p => p.key === key);
-
-function cardHTML(it) {
-  const planned = inPlan(it.key);
+const SRC = { gmail: "Email", slack: "Slack", littlebird: "Littlebird", clickup: "ClickUp", calendar: "Calendar", manual: "" };
+function cardHTML(t, opts) {
+  opts = opts || {};
+  const planned = inPlan(t.id), timing = S.timer && S.timer.taskId === t.id;
+  const picked = !planned && S.sel.has(t.id);
+  const d = dueInfo(t.due);
   const tags = [];
-  tags.push(`<span class="tag src">${esc(it.kind === "clickup" ? "ClickUp" : SRC[it.source] || "Sweep")}</span>`);
-  if (it.kind === "captured") tags.push(`<span class="tag new">New</span>`);
-  if (it.due) tags.push(`<span class="tag ${it.due.tone}">${esc(it.due.label)}</span>`);
-  else if (it.kind === "captured" && it.urgency === "today") tags.push(`<span class="tag warn">Wants a reply today</span>`);
-  if (it.kind === "clickup" && it.status && norm(it.status) !== "to do") tags.push(`<span class="tag">${esc(it.status)}</span>`);
-  if (it.kind === "clickup" && it.list) tags.push(`<span>${esc(it.list)}</span>`);
-  if (it.others && it.others.length) tags.push(`<span>with ${esc(it.others.join(", "))}</span>`);
-  if (it.est) tags.push(`<span class="tag">~${esc(fmtMins(it.est))}</span>`);
-  const title = it.url ? `<a class="card-title" href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.title)}</a>` : `<span class="card-title">${esc(it.title)}</span>`;
-  let acts = "";
-  if (it.kind === "captured") {
-    if (S.sendOpen === it.capId) acts = `<div class="sendbox">${listSelectHTML("sendList-" + it.capId, it.client)}<button class="btn btn-sm" data-act="send" data-id="${esc(it.capId)}" type="button">Create</button><button class="btn btn-sm btn-ghost" data-act="sendcancel" type="button">Cancel</button></div>`;
-    else acts = `<div class="card-acts"><button class="btn btn-sm" data-act="sendopen" data-id="${esc(it.capId)}" type="button">Add to ClickUp</button><button class="btn btn-sm btn-ghost" data-act="dismiss" data-id="${esc(it.capId)}" type="button">Not a task</button></div>`;
-  }
-  const picked = !planned && S.sel.has(it.key);
-  const pick = planned ? "" : `<input type="checkbox" class="pick" id="pick-${esc(it.key)}" data-act="pick" data-key="${esc(it.key)}" ${picked ? "checked" : ""} aria-label="Select ${esc(it.title)}">`;
-  return `<article class="card${planned ? " is-planned" : ""}${picked ? " is-picked" : ""}" draggable="${planned ? "false" : "true"}" data-key="${esc(it.key)}">
-    <div class="card-row">${pick}${title}<button class="add${planned ? " on" : ""}" data-act="add" data-key="${esc(it.key)}" type="button" ${planned ? 'aria-label="Already on today\'s list" disabled' : 'aria-label="Add to today"'}>${planned ? "Today ✓" : "+ Today"}</button></div>
+  if (t.project) tags.push(`<span class="tag proj">${esc(t.project)}</span>`);
+  if (d) tags.push(`<span class="tag ${d.tone}">${esc(d.label)}</span>`);
+  else if (t.urgency === "today") tags.push(`<span class="tag warn">Someone's waiting</span>`);
+  if (t.inProgress) tags.push(`<span class="tag">in progress</span>`);
+  if (SRC[t.source]) tags.push(`<span class="tag">${esc(SRC[t.source])}</span>`);
+  if (opts.delegated) { const days = t.delegatedAt ? Math.floor((Date.now() - Date.parse(t.delegatedAt)) / DAY) : null; if (days != null) tags.push(`<span class="tag ${days > 5 ? "warn" : ""}">passed ${days === 0 ? "today" : days + "d ago"}</span>`); tags.push(`<span>${esc(clientName(t.client))}</span>`); }
+  tags.push(`<span class="tag">~${esc(fmtMins(t.estMins || 30))}</span>`);
+  if (t.minsLogged) tags.push(`<span class="tag ok">${esc(fmtMins(t.minsLogged))} logged</span>`);
+  const link = t.sourceUrl || t.cuUrl;
+  const pick = (planned || opts.delegated) ? "" : `<input type="checkbox" class="pick" id="pick-${esc(t.id)}" data-act="pick" data-id="${esc(t.id)}" ${picked ? "checked" : ""} aria-label="Select ${esc(t.title)}">`;
+  const addBtn = opts.delegated ? "" : `<button class="add${planned ? " on" : ""}" data-act="add" data-id="${esc(t.id)}" type="button" ${planned ? 'disabled aria-label="Already on today\'s list"' : 'aria-label="Add to today"'}>${planned ? "Today ✓" : "+ Today"}</button>`;
+  const icons = opts.delegated
+    ? `<button class="btn btn-sm" data-act="done" data-id="${esc(t.id)}" type="button">Done</button><button class="btn btn-sm btn-ghost" data-act="takeback" data-id="${esc(t.id)}" type="button">Take back</button>`
+    : `<button class="ib${timing ? " on" : ""}" data-act="timer" data-id="${esc(t.id)}" type="button" aria-label="${timing ? "Stop timer" : "Start timer"}" title="${timing ? "Stop timer" : "Start timer"}">${timing ? "■" : "▶"}</button><button class="ib" data-act="done" data-id="${esc(t.id)}" type="button" aria-label="Mark done" title="Mark done">✓</button>`;
+  return `<article class="card${planned ? " is-planned" : ""}${picked ? " is-picked" : ""}${timing ? " is-timing" : ""}" draggable="${planned || opts.delegated ? "false" : "true"}" data-id="${esc(t.id)}">
+    <div class="card-row">${pick}<button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button>${addBtn}</div>
     <div class="meta">${tags.join("")}</div>
-    ${it.ctx ? `<div class="ctx">${esc(it.ctx)}</div>` : ""}
-    ${acts}
+    ${t.context && !t.notes ? `<div class="ctx">${esc(t.context)}</div>` : ""}
+    <div class="row">${link ? `<a class="ext" href="${esc(link)}" target="_blank" rel="noopener">Open source ↗</a>` : ""}<div class="icons">${icons}</div></div>
   </article>`;
 }
-
-function listSelectHTML(id, clientName) {
-  const def = (cfg().groups || []).find(d => norm(d.name) === norm(clientName));
-  const matches = (l) => norm(l.group) === norm(clientName) || (def && (def.match || []).some(m => norm(m) === norm(l.group) || norm(m) === norm(l.space)));
-  const sorted = S.lists.slice().sort((a, b) => (matches(b) - matches(a)) || a.group.localeCompare(b.group));
-  const opts = sorted.filter(l => !isHidden(l.group)).map(l => `<option value="${esc(l.id)}">${esc(l.group === l.name ? l.name : l.group + " › " + l.name)}</option>`).join("");
-  return `<select id="${esc(id)}" aria-label="ClickUp list">${opts || '<option value="">Load ClickUp first</option>'}</select>`;
-}
-
 function laneHTML(g, isAdhoc) {
   const vis = g.items.filter(passesFilter);
-  const overdue = g.items.filter(i => i.due && i.due.diff < 0).length;
+  const overdue = g.items.filter(t => { const d = dueInfo(t.due); return d && d.diff < 0; }).length;
   const limit = isAdhoc ? 4 : 8;
   const open = S.expanded[g.key];
   const shown = open ? vis : vis.slice(0, limit);
-  const body = shown.map(cardHTML).join("") || `<div class="lane-empty">${g.items.length ? "Nothing matches this filter." : "Nothing open here."}</div>`;
+  const pickable = vis.filter(t => !inPlan(t.id));
+  const body = shown.map(t => cardHTML(t)).join("") || `<div class="lane-empty">${g.items.length ? "Nothing matches this filter." : "Nothing open here."}</div>`;
   const more = vis.length > limit ? `<button class="btn btn-sm btn-ghost more" data-act="expand" data-key="${esc(g.key)}" type="button">${open ? "Show fewer" : `Show all ${vis.length}`}</button>` : "";
-  return `<div class="lane" style="--lane:${laneColor(g.color)}" data-group="${esc(g.name)}">
-    <div class="lane-h"><div style="min-width:0"><h3>${esc(g.name)}</h3>${g.space ? `<div class="sub">${esc(g.space)}</div>` : ""}</div>
-    <span class="count">${g.items.length} open${overdue ? ` · <b>${overdue} late</b>` : ""}</span></div>
-    ${vis.some(i => !inPlan(i.key)) ? `<div><button class="lane-sel" data-act="selall" data-key="${esc(g.key)}" type="button">${vis.filter(i => !inPlan(i.key)).every(i => S.sel.has(i.key)) ? "Clear selection" : "Select all" + (S.filter !== "all" || S.q ? " shown" : "")}</button></div>` : ""}
-    ${body}${more}</div>`;
+  const tools = `<div class="lane-tools"><button class="lane-sel" data-act="newin" data-client="${esc(g.name)}" type="button">+ New</button>${pickable.length ? `<button class="lane-sel" data-act="selall" data-key="${esc(g.key)}" type="button">${pickable.every(t => S.sel.has(t.id)) ? "Clear selection" : "Select all" + (S.filter !== "all" || S.q ? " shown" : "")}</button>` : ""}</div>`;
+  return `<div class="lane" style="--lane:${laneColor(g.color)}">
+    <div class="lane-h"><h3>${esc(g.name)}</h3><span class="count">${g.items.length} open${overdue ? ` · <b>${overdue} late</b>` : ""}</span></div>
+    ${tools}${body}${more}</div>`;
 }
-
+function renderTray() {
+  const sug = S.sets.suggested.slice().sort((a, b) => (a.urgency === "today" ? 0 : 1) - (b.urgency === "today" ? 0 : 1));
+  if (!sug.length) { $("tray").innerHTML = ""; return; }
+  $("tray").innerHTML = `<div class="tray">
+    <div class="tray-h"><h2>From the sweep</h2><span class="tag sun">${sug.length} to review</span><span style="margin-left:auto" class="row"><button class="btn btn-sm" data-act="keepall" type="button">Keep all</button><button class="btn btn-sm btn-ghost" data-act="dismissall" type="button">Dismiss all</button></span></div>
+    ${sug.map(t => `<div class="sug">
+      <div class="sug-main"><div style="font-weight:500;overflow-wrap:anywhere">${esc(t.title)}</div>
+        <div class="meta"><span class="tag">${esc(SRC[t.source] || "Sweep")}</span>${t.urgency === "today" ? '<span class="tag warn">Someone\'s waiting</span>' : ""}<span class="tag">~${esc(fmtMins(t.estMins))}</span>
+        <select id="sugc-${esc(t.id)}" data-act="sugclient" data-id="${esc(t.id)}" aria-label="Client">${clientOptions(t.client)}</select>
+        ${t.project ? `<span class="tag proj">${esc(t.project)}</span>` : ""}
+        ${t.sourceUrl ? `<a class="ext" href="${esc(t.sourceUrl)}" target="_blank" rel="noopener">Open ↗</a>` : ""}</div>
+        ${t.context ? `<div class="ctx">${esc(t.context)}</div>` : ""}</div>
+      <div class="sug-acts"><button class="btn btn-sm" data-act="keep" data-id="${esc(t.id)}" type="button">Keep</button><button class="btn btn-sm btn-ink" data-act="keeptoday" data-id="${esc(t.id)}" type="button">Keep + Today</button><button class="btn btn-sm btn-ghost" data-act="dismiss" data-id="${esc(t.id)}" type="button">Dismiss</button></div>
+    </div>`).join("")}
+  </div>`;
+}
 function renderEverything() {
-  const host = $("everything");
-  if (!S.caps.mcp && S.caps.mcp !== undefined) {
-    host.innerHTML = `<div class="notice crit">This page can't reach your connectors here. Open it inside claude.ai to load ClickUp, Gmail, Slack and Littlebird.</div>`;
-    return;
-  }
-  const model = buildModel();
-  const retainers = model.filter(g => g.kind === "retainer");
-  const internal = model.filter(g => g.kind === "internal");
-  const adhoc = model.filter(g => g.kind === "adhoc" && g.items.length).sort((a, b) => (a.name === "Unsorted" ? -1 : b.name === "Unsorted" ? 1 : 0) || b.items.length - a.items.length);
-  const loading = S.cu.status === "busy" && !S.cuTasks.length;
+  const lanes = buildLanes();
+  const retainers = lanes.filter(g => g.kind === "retainer");
+  const internal = lanes.filter(g => g.kind === "internal");
+  const adhoc = lanes.filter(g => g.kind === "adhoc" && g.items.length).sort((a, b) => (a.name === "Unsorted" ? -1 : b.name === "Unsorted" ? 1 : 0) || b.items.length - a.items.length);
+  const delegated = S.sets.open.filter(t => t.delegatedTo);
   let html = "";
-  if (loading) html += `<div class="lane-empty">Loading your ClickUp tasks…</div>`;
-  if (retainers.length) {
-    html += `<div class="section-h"><h2>Retainer clients</h2><span class="eyebrow">${retainers.reduce((n, g) => n + g.items.length, 0)} open</span></div><div class="lanes">${retainers.map(g => laneHTML(g, false)).join("")}</div>`;
-  } else if (!loading) {
-    html += `<div class="notice">Name your four retainer clients in <button class="btn btn-sm" data-act="settings" type="button">Settings</button> and they'll get their own lanes. Until then, everything is grouped by ClickUp folder below.</div>`;
-  }
+  if (!S.loaded.open && canSave()) html += `<div class="lane-empty">Loading your tasks…</div>`;
+  if (retainers.length) html += `<div class="section-h"><h2>Retainer clients</h2><span class="eyebrow">${retainers.reduce((n, g) => n + g.items.length, 0)} open</span></div><div class="lanes">${retainers.map(g => laneHTML(g, false)).join("")}</div>`;
   if (adhoc.length) html += `<div class="section-h"><h2>Ad-hoc &amp; project clients</h2><span class="eyebrow">${adhoc.reduce((n, g) => n + g.items.length, 0)} open</span></div><div class="lanes adhoc">${adhoc.map(g => laneHTML(g, true)).join("")}</div>`;
+  if (delegated.length) {
+    const byPerson = {};
+    delegated.forEach(t => { (byPerson[t.delegatedTo] = byPerson[t.delegatedTo] || []).push(t); });
+    html += `<div class="section-h"><h2>Passed on</h2><span class="eyebrow">${delegated.length} with your team</span></div><div class="lanes adhoc">${Object.keys(byPerson).sort().map(p => {
+      const items = byPerson[p].filter(passesFilter).sort((a, b) => String(a.delegatedAt).localeCompare(String(b.delegatedAt)));
+      return `<div class="lane" style="--lane:var(--c5)"><div class="lane-h"><h3>${esc(p)}</h3><span class="count">${byPerson[p].length} open</span></div>${items.map(t => cardHTML(t, { delegated: true })).join("") || '<div class="lane-empty">Nothing matches this filter.</div>'}</div>`;
+    }).join("")}</div>`;
+  }
   if (internal.length) html += `<div class="section-h"><h2>Your business &amp; admin</h2></div><div class="lanes adhoc">${internal.map(g => laneHTML(g, true)).join("")}</div>`;
-  if (!loading && !retainers.length && !adhoc.length && !internal.length && S.cu.status !== "err") html += `<div class="lane-empty">No open tasks yet. Refresh ClickUp or run the morning sweep.</div>`;
-  host.innerHTML = html;
+  if (S.loaded.open && !S.sets.open.length) html += `<div class="lane-empty">No open tasks yet. Add one with New task, run the morning sweep, or import from ClickUp.</div>`;
+  $("everything").innerHTML = html;
 }
-
-function renderToday() {
-  const host = $("today");
+function renderNotices() {
+  const c = cfg(); let html = "";
+  if (S.caps.mcp === null && S.caps.db === null) html += `<div class="notice crit">This page can't reach your account here. Open it inside claude.ai to load your tasks and connectors.</div>`;
+  else if (S.caps.db !== undefined && !canSave()) html += `<div class="notice crit">Sign in to claude.ai to save tasks. Nothing you change here will be kept.</div>`;
+  if (canSave() && S.loaded.open && !c.clickupImportedAt && mcp) {
+    html += `<div class="notice sun"><span><b>Bring your ClickUp tasks over.</b> One-off import of your open tasks into your client lanes. Authentic's client lists become sub-clients, and anything assigned to Kate or Nat goes into Passed on.</span><button class="btn btn-sm btn-ink" data-act="import" type="button" ${S.imp.status === "busy" ? "disabled" : ""}>${S.imp.status === "busy" ? esc(S.imp.msg || "Importing…") : "Import from ClickUp"}</button>${S.imp.status === "err" ? `<span style="color:var(--crit)">${esc(S.imp.msg)}</span>` : ""}</div>`;
+  }
+  $("notices").innerHTML = html;
+}
+function tally(entries) {
+  const out = {};
+  entries.forEach(e => {
+    const c = clientName(e.client), p = e.project || "", k = e.kind === "meeting" ? "meet" : "work", m = Number(e.mins) || 0;
+    const o = out[c] = out[c] || { work: 0, meet: 0, total: 0, projects: {} };
+    o[k] += m; o.total += m;
+    const pp = o.projects[p] = o.projects[p] || { work: 0, meet: 0, total: 0 };
+    pp[k] += m; pp.total += m;
+  });
+  return out;
+}
+function renderHours() {
   const c = cfg();
-  const items = S.plan.items;
-  const total = items.reduce((n, i) => n + (Number(i.estMins) || 0), 0);
-  const done = items.filter(i => i.done).reduce((n, i) => n + (Number(i.estMins) || 0), 0);
+  const t = tally(S.entries);
+  const retainers = (c.groups || []).filter(g => (g.kind || "retainer") === "retainer");
+  let html = retainers.map(g => {
+    const o = t[g.name] || { total: 0, meet: 0, projects: {} }, m = o.total;
+    const hourly = g.billing === "hourly", cap = hourly ? 0 : (Number(g.hours) || 0) * 60;
+    const pct = cap ? Math.min(100, (m / cap) * 100) : 0;
+    let sub;
+    if (hourly) { const top = Object.entries(o.projects).filter(([p]) => p).sort((a, b) => b[1].total - a[1].total).slice(0, 3).map(([p, v]) => `${esc(p)} ${fmtHours(v.total)}`).join(" · "); sub = `Billed hourly${top ? " · " + top : ""}`; }
+    else sub = cap ? (m > cap ? `${fmtHours(m - cap)} over the retainer` : `${fmtHours(cap - m)} left in ${monthName}`) : `Set monthly hours in Settings`;
+    if (o.meet) sub += ` · ${fmtHours(o.meet)} meetings`;
+    return `<div class="meter" style="--lane:${laneColor(g.color)}"><div class="meter-h"><b>${esc(g.name)}</b><span class="num"><strong>${fmtHours(m)}</strong>${cap ? ` / ${fmtHours(cap)}` : ""}</span></div>
+      <div class="mbar${cap && m > cap ? " over" : ""}"><span style="width:${cap ? pct : (m ? 100 : 0)}%;${cap ? "" : "opacity:.4"}"></span></div>
+      <div class="sub">${sub}</div></div>`;
+  }).join("");
+  const retNames = new Set(retainers.map(g => g.name));
+  const other = Object.keys(t).filter(n => !retNames.has(n));
+  const otherMins = other.reduce((s, n) => s + t[n].total, 0);
+  const top = other.sort((a, b) => t[b].total - t[a].total).slice(0, 3).map(n => `${esc(n)} ${fmtHours(t[n].total)}`).join(" · ");
+  html += `<div class="meter"><div class="meter-h"><b>Everything else in ${esc(monthName)}</b><span class="num"><strong>${fmtHours(otherMins)}</strong></span></div><div class="sub">${top || "No other time logged yet"}</div>
+    <div class="row"><button class="btn btn-sm" data-act="timelog" type="button">Time log</button><button class="btn btn-sm btn-ghost" data-act="export" data-month="${thisMonth}" type="button">Export CSV</button></div></div>`;
+  $("hours").innerHTML = html;
+}
+function renderTimer() {
+  const t = S.timer && S.timer.taskId ? getTask(S.timer.taskId) : null;
+  $("timerHost").innerHTML = t ? `<div class="timerbar" role="status"><span class="rec"></span><span class="clock" id="clock">${clockText()}</span><span class="what">${esc(t.title)} <span>· ${esc(clientName(t.client))}${t.project ? " · " + esc(t.project) : ""}</span></span><button class="btn btn-sm btn-sun" data-act="stoptimer" type="button">Stop &amp; log</button></div>` : "";
+}
+function renderToday() {
+  const host = $("today"); const c = cfg();
+  const tasks = S.plan.ids.map(id => getTask(id)).filter(Boolean);
+  const total = tasks.reduce((n, t) => n + (Number(t.estMins) || 30), 0);
+  const doneMins = tasks.filter(t => t.status === "done").reduce((n, t) => n + (Number(t.estMins) || 30), 0);
+  const todays = S.entries.filter(e => e.date === todayKey);
+  const logged = todays.reduce((n, e) => n + (Number(e.mins) || 0), 0);
+  const meetings = todays.filter(e => e.kind === "meeting").reduce((n, e) => n + (Number(e.mins) || 0), 0);
   const avail = (Number(c.hoursAvailable) || 6) * 60;
   const scale = Math.max(avail, total) || 1;
   const over = total > avail;
   let running = 0;
-  const ordered = items.filter(i => !i.done).concat(items.filter(i => i.done));
-  const rows = ordered.map(i => {
-    const idx = items.indexOf(i);
-    running += i.done ? 0 : (Number(i.estMins) || 0);
-    const pastCap = !i.done && running > avail && (running - (Number(i.estMins) || 0)) <= avail;
-    const title = i.url ? `<a class="pi-title" href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title)}</a>` : `<span class="pi-title">${esc(i.title)}</span>`;
-    const est = [15, 30, 45, 60, 90, 120, 180, 240].map(m => `<option value="${m}"${Number(i.estMins) === m ? " selected" : ""}>${fmtMins(m)}</option>`).join("");
-    let extra = "";
-    if (i.done && i.cuId && !i.closedInCU) extra = `<button class="btn btn-sm" data-act="closecu" data-i="${idx}" type="button">Close in ClickUp</button>`;
-    if (i.closedInCU) extra = `<span class="tag" style="background:var(--ok-bg);color:var(--ok)">Closed in ClickUp</span>`;
-    if (!i.cuId && i.capId && S.sendOpen === "plan:" + idx) extra = `<div class="sendbox">${listSelectHTML("planList-" + idx, i.group)}<button class="btn btn-sm" data-act="sendplan" data-i="${idx}" type="button">Create</button><button class="btn btn-sm btn-ghost" data-act="sendcancel" type="button">Cancel</button></div>`;
-    else if (!i.cuId && (i.capId || i.source === "manual")) extra = `<button class="btn btn-sm btn-ghost" data-act="sendplanopen" data-i="${idx}" type="button">Add to ClickUp</button>`;
-    return `<li class="pi${i.done ? " done" : ""}${pastCap ? " over" : ""}" style="--lane:${colorForGroupName(i.group)}" draggable="true" data-i="${idx}">
-      <input type="checkbox" id="pi-${idx}" ${i.done ? "checked" : ""} data-act="toggle" data-i="${idx}" aria-label="Mark done">
-      <div class="pi-main">${title}<div class="meta"><span>${esc(i.group || "")}</span><span class="tag src">${esc(SRC[i.source] || "")}</span></div>${extra}</div>
-      <div class="pi-side"><select id="est-${idx}" data-act="est" data-i="${idx}" aria-label="Time estimate">${est}</select>
-      <div class="mini"><button data-act="up" data-i="${idx}" type="button" aria-label="Move up">↑</button><button data-act="down" data-i="${idx}" type="button" aria-label="Move down">↓</button><button data-act="remove" data-i="${idx}" type="button" aria-label="Remove from today">×</button></div></div>
+  const ordered = tasks.filter(t => t.status !== "done").concat(tasks.filter(t => t.status === "done"));
+  const rows = ordered.map(t => {
+    const idx = S.plan.ids.indexOf(t.id);
+    const done = t.status === "done", timing = S.timer && S.timer.taskId === t.id;
+    const est = Number(t.estMins) || 30;
+    running += done ? 0 : est;
+    const pastCap = !done && running > avail && (running - est) <= avail;
+    const ests = [15, 30, 45, 60, 90, 120, 180, 240].map(m => `<option value="${m}"${est === m ? " selected" : ""}>${fmtMins(m)}</option>`).join("");
+    return `<li class="pi${done ? " done" : ""}${pastCap ? " over" : ""}${timing ? " is-timing" : ""}" style="--lane:${colorFor(t.client)}" draggable="true" data-i="${idx}">
+      <input type="checkbox" id="pi-${esc(t.id)}" ${done ? "checked" : ""} data-act="toggle" data-id="${esc(t.id)}" aria-label="Mark done">
+      <div class="pi-main"><button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button>
+        <div class="meta"><span>${esc(clientName(t.client))}${t.project ? " · " + esc(t.project) : ""}</span>${t.minsLogged ? `<span class="tag ok">${esc(fmtMins(t.minsLogged))} logged</span>` : ""}${t.delegatedTo ? `<span class="tag">with ${esc(t.delegatedTo)}</span>` : ""}</div></div>
+      <div class="pi-side"><div class="mini">${done ? "" : `<button class="ib${timing ? " on" : ""}" data-act="timer" data-id="${esc(t.id)}" type="button" aria-label="${timing ? "Stop timer" : "Start timer"}">${timing ? "■" : "▶"}</button>`}</div>
+        <select id="est-${esc(t.id)}" data-act="est" data-id="${esc(t.id)}" aria-label="Time estimate">${ests}</select>
+        <div class="mini"><button data-act="up" data-i="${idx}" type="button" aria-label="Move up">↑</button><button data-act="down" data-i="${idx}" type="button" aria-label="Move down">↓</button><button data-act="remove" data-i="${idx}" type="button" aria-label="Remove from today">×</button></div></div>
     </li>`;
   }).join("");
-
   let carry = "";
-  if (S.prevPlan && !items.length) {
-    const left = (S.prevPlan.items || []).filter(i => !i.done);
-    if (left.length) {
-      const d = new Date(S.prevPlan.date + "T12:00:00").toLocaleDateString(undefined, { weekday: "long" });
-      carry = `<div class="notice">${left.length} unfinished from ${esc(d)}. <button class="btn btn-sm" data-act="carry" type="button">Bring them over</button></div>`;
-    }
+  if (S.prevPlan && !S.plan.ids.length) {
+    const left = (S.prevPlan.ids || []).filter(id => { const t = getTask(id); return t && t.status === "open"; });
+    if (left.length) carry = `<div class="notice">${left.length} unfinished from ${esc(new Date(S.prevPlan.date + "T12:00:00").toLocaleDateString(undefined, { weekday: "long" }))}. <button class="btn btn-sm" data-act="carry" type="button">Bring them over</button></div>`;
   }
-  const noDb = S.caps.db === null || (S.caps.user !== undefined && !S.uid);
+  const chk = S.check;
   host.innerHTML = `
     <div><div class="eyebrow">${esc(new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" }))}</div><h2>Today</h2></div>
     <div class="cap">
-      <div class="cap-nums"><span><b>${fmtMins(total)}</b> planned · ${fmtMins(done)} done</span><span>${fmtMins(avail)} available</span></div>
-      <div class="bar${over ? " over" : ""}" role="img" aria-label="${fmtMins(total)} planned of ${fmtMins(avail)}"><span class="done" style="width:${(done / scale) * 100}%"></span><span class="todo" style="width:${((total - done) / scale) * 100}%"></span></div>
+      <div class="cap-nums"><span><b>${fmtMins(total)}</b> planned · ${fmtMins(doneMins)} done</span><span>${fmtMins(avail)} available</span></div>
+      <div class="bar${over ? " over" : ""}" role="img" aria-label="${fmtMins(total)} planned of ${fmtMins(avail)}"><span class="done" style="width:${(doneMins / scale) * 100}%"></span><span class="todo" style="width:${((total - doneMins) / scale) * 100}%"></span></div>
+      <div class="cap-nums"><span>Logged today: <b>${fmtMins(logged)}</b>${meetings ? ` · ${fmtMins(meetings)} in meetings` : ""}</span></div>
       ${over ? `<div class="ctx" style="color:var(--crit)">${fmtMins(total - avail)} over. Items after the yellow line won't fit.</div>` : ""}
     </div>
-    ${noDb ? `<div class="notice">Sign in to claude.ai to save today's list. Changes here won't be kept.</div>` : ""}
     ${carry}
-    ${rows ? `<ol class="plan" id="planList">${rows}</ol>` : `<div class="empty-today">Pick tasks from your lanes with <b>+ Today</b>, or drag them here.<br>Aim for about ${fmtMins(avail)} of work.</div>`}
-    <form class="quick" id="quickForm"><input id="quickInput" placeholder="Add something not in the list" aria-label="Add a task to today" autocomplete="off"><button class="btn" type="submit">Add</button></form>
-    ${items.some(i => i.done) ? `<button class="btn btn-sm btn-ghost" data-act="cleardone" type="button" style="align-self:flex-start">Clear finished</button>` : ""}`;
-  $("tabToday").textContent = items.length ? `Today (${items.filter(i => !i.done).length})` : "Today";
+    ${rows ? `<ol class="plan">${rows}</ol>` : `<div class="empty-today">Pick tasks from your lanes with <b>+ Today</b>, tick several and add them together, or drag them here.<br>Aim for about ${fmtMins(avail)} of work.</div>`}
+    <form class="quick" id="quickForm"><input id="quickInput" placeholder="Add a new task to today" aria-label="New task for today" autocomplete="off"><select id="quickClient" aria-label="Client">${clientOptions("Unsorted")}</select><button class="btn" type="submit">Add</button></form>
+    <div class="today-foot">
+      <button class="btn btn-sm" data-act="meeting" type="button">Log a meeting or call</button>
+      <button class="btn btn-sm" data-act="check" type="button" ${chk.status === "busy" ? "disabled" : ""}>${chk.status === "busy" ? esc(chk.msg || "Checking…") : "Check my day with Littlebird"}</button>
+      ${tasks.some(t => t.status === "done") ? `<button class="btn btn-sm btn-ghost" data-act="cleardone" type="button">Clear finished</button>` : ""}
+      ${chk.status === "err" ? `<div class="ctx" style="color:var(--crit);flex-basis:100%">${esc(chk.msg)}</div>` : ""}
+      <div class="ctx" style="flex-basis:100%">The day check looks at what Littlebird saw you work on today, then suggests what to tick off and what time to log.</div>
+    </div>`;
+  $("tabToday").textContent = S.plan.ids.length ? `Today (${tasks.filter(t => t.status !== "done").length})` : "Today";
 }
-
 function renderSources() {
   const c = cfg();
   const pill = (label, st, okText) => {
@@ -587,100 +692,267 @@ function renderSources() {
     const txt = st.status === "busy" ? (st.msg || "Checking…") : st.status === "err" ? st.msg : st.status === "ok" ? okText(st) : (st.msg || "Not checked yet");
     return `<div class="src-pill"><span class="dot ${cls}"></span><span class="txt"><b>${label}</b> · ${esc(txt)}</span></div>`;
   };
-  const ago = (t) => { if (!t) return ""; const m = Math.round((Date.now() - t) / 60000); return m < 1 ? "just now" : m < 60 ? `${m} min ago` : `${Math.round(m / 60)}h ago`; };
-  $("sources").innerHTML =
-    pill("ClickUp", S.cu, s => `${s.count} open tasks · ${ago(s.at)}`) +
+  const any = Object.values(S.sweep).some(s => s.status !== "idle");
+  $("sources").innerHTML = (any ?
     pill("Email", S.sweep.gmail, s => `${s.count} threads read`) +
-    pill("Slack", S.sweep.slack, s => `${s.count} message batches read`) +
-    pill("Littlebird", S.sweep.littlebird, s => `${s.count ? "context read" : "nothing new"}`) +
-    pill("Claude", S.sweep.ai, s => `${s.count} new task${s.count === 1 ? "" : "s"} found`) +
+    pill("Slack", S.sweep.slack, s => `${s.count} searches read`) +
+    pill("Littlebird", S.sweep.littlebird, s => s.count ? "context read" : "nothing new") +
+    pill("Claude", S.sweep.ai, s => `${s.count} new task${s.count === 1 ? "" : "s"} to review`) : "") +
     (c.lastSweep ? `<div class="src-pill"><span class="txt">Last sweep ${esc(new Date(c.lastSweep).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" }))}</span></div>` : "");
   const busy = Object.values(S.sweep).some(s => s.status === "busy");
   $("sweepBtn").disabled = busy || !mcp;
   $("sweepBtn").textContent = busy ? "Sweeping…" : "Run morning sweep";
-  $("refreshCu").disabled = S.cu.status === "busy" || !mcp;
 }
-
 function renderHeader() {
   const name = S.me && S.me.name ? S.me.name.split(" ")[0] : "";
   const h = new Date().getHours();
   $("hello").textContent = name ? `${h < 12 ? "Morning" : h < 18 ? "Afternoon" : "Evening"}, ${name}. What's today?` : "Build today's list";
   $("dateLine").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 }
-
-function renderAll() { renderHeader(); renderSources(); renderEverything(); renderToday(); }
-
-/* ---------- plan actions ---------- */
-function findItem(key) {
-  for (const g of buildModel()) { const it = g.items.find(i => i.key === key); if (it) return Object.assign({ group: g.name }, it); }
-  return null;
-}
-function addToPlan(key) { addMany([key]); }
-function addMany(keys) {
-  const all = new Map(); buildModel().forEach(g => g.items.forEach(it => all.set(it.key, Object.assign({ group: g.name }, it))));
-  const added = [];
-  keys.forEach(key => {
-    if (inPlan(key)) return;
-    const it = all.get(key); if (!it) return;
-    S.plan.items.push({ key, title: it.title, group: it.group, source: it.kind === "clickup" ? "clickup" : it.source, url: it.url || "", estMins: it.est || 30, done: false, cuId: it.cuId || null, capId: it.capId || null });
-    added.push(it.title);
-  });
-  keys.forEach(k => S.sel.delete(k));
-  if (added.length) savePlan();
-  renderEverything(); renderToday(); renderSelBar();
-  if (added.length) {
-    const msg = added.length === 1 ? `Added to today: ${added[0]}` : `Added ${added.length} tasks to today.`;
-    if (narrow()) {
-      const t = $("tabToday"); t.classList.remove("pulse"); void t.offsetWidth; t.classList.add("pulse");
-      toast(msg, { act: "gotoday", label: "View Today" });
-    } else toast(msg);
-  }
-}
 function renderSelBar() {
   const bar = $("selbar");
-  [...S.sel].forEach(k => { if (inPlan(k)) S.sel.delete(k); });
-  const n = S.sel.size;
-  bar.hidden = n === 0;
-  if (n) bar.innerHTML = `<span><b>${n}</b> selected</span><button class="btn btn-sun btn-sm" data-act="addsel" type="button">Add ${n} to today</button><button class="btn btn-sm btn-ghost" data-act="clearsel" type="button">Clear</button>`;
+  [...S.sel].forEach(id => { const t = getTask(id); if (!t || inPlan(id) || t.status !== "open") S.sel.delete(id); });
+  const n = S.sel.size; bar.hidden = n === 0;
+  if (n) bar.innerHTML = `<span><b>${n}</b> selected</span><button class="btn btn-sun btn-sm" data-act="addsel" type="button">Add ${n} to today</button><button class="btn btn-sm" data-act="donesel" type="button">Mark done</button><button class="btn btn-sm btn-ghost" data-act="clearsel" type="button">Clear</button>`;
+}
+function renderAll() { renderHeader(); renderTimer(); renderHours(); renderSources(); renderNotices(); renderTray(); renderEverything(); renderToday(); renderSelBar(); }
+
+/* ---------- plan actions ---------- */
+function addMany(ids) {
+  const added = [];
+  ids.forEach(id => { const t = getTask(id); if (!t || inPlan(id)) return; if (t.status === "suggested") updateTask(id, { status: "open" }); S.plan.ids.push(id); added.push(t.title); });
+  ids.forEach(id => S.sel.delete(id));
+  if (added.length) savePlan();
+  renderAll();
+  if (!added.length) return;
+  const msg = added.length === 1 ? `Added to today: ${added[0]}` : `Added ${added.length} tasks to today.`;
+  if (narrow()) { const tb = $("tabToday"); tb.classList.remove("pulse"); void tb.offsetWidth; tb.classList.add("pulse"); toast(msg, { act: "gotoday", label: "View Today" }); }
+  else toast(msg);
+}
+function markDone(id) {
+  const t = getTask(id); if (!t) return;
+  if (S.timer && S.timer.taskId === id) stopTimer(true);
+  setDone(id, true); renderAll();
+  toast(`Done: ${t.title}`, { act: "undodone", id, label: "Undo" });
 }
 
-/* ---------- ClickUp writes ---------- */
-async function createInClickUp(listId, title, ctx, url, dueDate) {
-  const desc = [ctx, url ? `Source: ${url}` : ""].filter(Boolean).join("\n\n");
-  const input = { name: title, list_id: listId, assignees: ["me"] };
-  if (desc) input.markdown_description = desc;
-  if (dueDate) input.due_date = dueDate;
-  const r = await mcp.callTool("ClickUp", "clickup_create_task", input);
-  const p = r.payload || {};
-  const t = p.task || p;
-  return { id: t.id || null, url: t.url || (t.id ? `https://app.clickup.com/t/${t.id}` : "") };
+/* ---------- task drawer ---------- */
+function openTask(id, preset) {
+  const t = id ? getTask(id) : Object.assign({ title: "", client: "Unsorted", project: "", estMins: 30, notes: "", due: null, delegatedTo: null, status: "open" }, preset || {});
+  if (!t) return;
+  const people = [...new Set([...(cfg().people || []), ...(t.delegatedTo ? [t.delegatedTo] : [])])];
+  const ests = [15, 30, 45, 60, 90, 120, 180, 240, 360, 480].map(m => `<option value="${m}"${Number(t.estMins || 30) === m ? " selected" : ""}>${fmtMins(m)}</option>`).join("");
+  const entries = id ? S.entries.filter(e => e.taskId === id).sort((a, b) => String(b.start).localeCompare(String(a.start))) : [];
+  const link = t.sourceUrl || t.cuUrl;
+  $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><form class="drawer-in" id="taskForm" role="dialog" aria-label="${id ? "Edit task" : "New task"}" data-id="${esc(id || "")}">
+    <div class="row" style="justify-content:space-between"><h2>${id ? "Task" : "New task"}</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>
+    <div class="field"><label for="f-title">What needs doing</label><input id="f-title" value="${esc(t.title)}" required autocomplete="off"></div>
+    <div class="two">
+      <div class="field"><label for="f-client">Client</label><select id="f-client" data-act="clientpick">${clientOptions(t.client)}</select></div>
+      <div class="field"><label for="f-proj">Sub-client or project</label><input id="f-proj" list="projList" value="${esc(t.project || "")}" placeholder="Optional, e.g. an Authentic client" autocomplete="off">${projectList(t.client)}</div>
+      <div class="field"><label for="f-due">Due</label><input id="f-due" type="date" value="${esc(t.due || "")}"></div>
+      <div class="field"><label for="f-est">Estimate</label><select id="f-est">${ests}</select></div>
+      <div class="field"><label for="f-del">Passed to</label><select id="f-del"><option value="">Nobody, I'm doing it</option>${people.map(p => `<option value="${esc(p)}"${t.delegatedTo === p ? " selected" : ""}>${esc(p)}</option>`).join("")}</select></div>
+    </div>
+    <div class="field"><label for="f-notes">Notes</label><textarea id="f-notes">${esc(t.notes || t.context || "")}</textarea></div>
+    <label class="row"><input type="checkbox" id="f-prog" ${t.inProgress ? "checked" : ""}> In progress</label>
+    ${id ? "" : `<label class="row"><input type="checkbox" id="f-today"> Add to today as well</label>`}
+    ${link ? `<a class="ext" href="${esc(link)}" target="_blank" rel="noopener">Open the original ${esc(SRC[t.source] || "source")} ↗</a>` : ""}
+    <div class="row"><button class="btn btn-sun" type="submit">${id ? "Save" : "Create task"}</button>
+      ${id ? `<button class="btn" data-act="drawerdone" type="button">${t.status === "done" ? "Reopen" : "Mark done"}</button><button class="btn btn-ghost" data-act="drawerdelete" type="button">Delete</button>` : ""}</div>
+    ${id ? `<h3>Time</h3>
+      <div class="row num" style="font-size:13px">${fmtMins(t.minsLogged || 0)} logged</div>
+      <div class="row"><input id="f-mins" type="number" min="1" step="5" placeholder="Minutes" aria-label="Minutes to log" style="width:110px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--surface)"><input id="f-mdate" type="date" value="${todayKey}" aria-label="Date" style="border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--surface)"><button class="btn btn-sm" data-act="logmanual" type="button">Log time</button></div>
+      ${entries.length ? `<ul class="entries">${entries.map(e => `<li><span>${esc(new Date(e.date + "T12:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" }))} · ${esc(e.source === "littlebird" ? "from Littlebird" : e.source)}</span><span class="num">${fmtMins(e.mins)}</span></li>`).join("")}</ul>` : ""}` : ""}
+  </form></div>`;
+  setTimeout(() => { const f = $("f-title"); if (f && !id) f.focus(); }, 0);
+}
+function closeDrawer() { $("drawerHost").innerHTML = ""; S.review = null; S.cal = null; }
+
+/* ---------- meetings & calls ---------- */
+function guessClient(text) {
+  const n = " " + norm(text) + " ";
+  for (const g of (cfg().groups || [])) for (const w of [g.name, ...(g.match || [])]) { const k = norm(w); if (k && k.length > 2 && n.includes(" " + k + " ")) return g.name; }
+  return "";
+}
+function guessProject(client, text) {
+  const n = " " + norm(text) + " ";
+  return projectsFor(client).find(p => n.includes(" " + norm(p) + " ")) || "";
+}
+function openMeeting(pre) {
+  pre = pre || {};
+  const date = pre.date || todayKey;
+  const durs = [15, 30, 45, 60, 90, 120, 180];
+  const dur = pre.mins || 30;
+  const cal = S.cal && S.cal.date === date ? S.cal : null;
+  const logged = new Set(S.entries.map(e => e.calEventId).filter(Boolean));
+  let calHTML = "";
+  if (!mcp) calHTML = `<div class="ctx">Calendar isn't available in this view.</div>`;
+  else if (!cal) calHTML = `<div class="ctx">Loading your calendar…</div>`;
+  else if (cal.err) calHTML = `<div class="ctx" style="color:var(--crit)">${esc(cal.err)}</div>`;
+  else if (!cal.events.length) calHTML = `<div class="ctx">No timed events on this day.</div>`;
+  else calHTML = `<div class="cal">${cal.events.map((ev, i) => `<div class="calrow"><span class="time">${esc(ev.time)}</span><span style="min-width:0;overflow-wrap:anywhere"><b>${esc(ev.title)}</b><br><span class="ctx">${fmtMins(ev.mins)}${ev.client ? " · " + esc(ev.client) : ""}</span></span>${logged.has(ev.id) ? `<span class="tag ok">Logged</span>` : `<button class="btn btn-sm" data-act="calpick" data-i="${i}" type="button">Use</button>`}</div>`).join("")}</div>`;
+  $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><form class="drawer-in" id="meetForm" role="dialog" aria-label="Log a meeting or call" data-cal="${esc(pre.calEventId || "")}">
+    <div class="row" style="justify-content:space-between"><h2>Log a meeting or call</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>
+    <div class="field"><label for="m-title">What was it</label><input id="m-title" value="${esc(pre.title || "")}" placeholder="e.g. Weekly call with Mike" required autocomplete="off"></div>
+    <div class="two">
+      <div class="field"><label for="m-client">Client</label><select id="m-client" data-act="clientpick">${clientOptions(pre.client || "Unsorted")}</select></div>
+      <div class="field"><label for="m-proj">Sub-client or project</label><input id="m-proj" list="projList" value="${esc(pre.project || "")}" placeholder="Optional" autocomplete="off">${projectList(pre.client || "Unsorted")}</div>
+    </div>
+    <div class="three">
+      <div class="field"><label for="m-date">Date</label><input id="m-date" type="date" value="${esc(date)}" data-act="meetdate"></div>
+      <div class="field"><label for="m-start">Start</label><input id="m-start" type="time" value="${esc(pre.start || "")}"></div>
+      <div class="field"><label for="m-dur">Length</label><select id="m-dur">${[...new Set([...durs, dur])].sort((a, b) => a - b).map(m => `<option value="${m}"${m === dur ? " selected" : ""}>${fmtMins(m)}</option>`).join("")}</select></div>
+    </div>
+    <div class="field"><label for="m-note">Notes</label><input id="m-note" value="${esc(pre.note || "")}" autocomplete="off"></div>
+    <div class="row"><button class="btn btn-sun" type="submit">Log it</button></div>
+    <h3>From your calendar</h3>
+    ${calHTML}
+  </form></div>`;
+  if (mcp && !cal) loadCalendar(date);
+}
+async function loadCalendar(date) {
+  const end = ymd(new Date(new Date(date + "T12:00:00").getTime() + DAY));
+  try {
+    const r = await read("Google Calendar", "list_events", { startTime: `${date}T00:00:00`, endTime: `${end}T00:00:00`, orderBy: "startTime", pageSize: 50 }, { cache: { staleTime: 60000 } });
+    const events = ((r.payload && r.payload.events) || []).filter(ev => ev.start && ev.start.dateTime && ev.end && ev.end.dateTime && ev.status !== "cancelled" && !(ev.attendees || []).some(a => a.self && a.responseStatus === "declined")).map(ev => {
+      const s = new Date(ev.start.dateTime), e = new Date(ev.end.dateTime);
+      const text = [ev.summary, ...(ev.attendees || []).map(a => a.email)].join(" ");
+      const client = guessClient(text);
+      return { id: ev.id, title: ev.summary || "(no title)", start: `${pad(s.getHours())}:${pad(s.getMinutes())}`, time: `${pad(s.getHours())}:${pad(s.getMinutes())}–${pad(e.getHours())}:${pad(e.getMinutes())}`, mins: Math.max(5, Math.round((e - s) / 60000)), client, project: client ? guessProject(client, text) : "" };
+    });
+    S.cal = { date, events };
+  } catch (e) { S.cal = { date, events: [], err: errText(e, "Google Calendar") }; }
+  if ($("meetForm")) openMeeting(readMeetForm());
+}
+function readMeetForm() {
+  return { title: $("m-title").value, client: $("m-client").value, project: $("m-proj").value, date: $("m-date").value || todayKey, start: $("m-start").value, mins: Number($("m-dur").value) || 30, note: $("m-note").value, calEventId: $("meetForm").dataset.cal || null };
 }
 
-/* ---------- the sweep ---------- */
-function sinceDate() {
+/* ---------- time log ---------- */
+const monthCache = {};
+async function entriesFor(ym) {
+  if (ym === thisMonth) return S.entries;
+  if (monthCache[ym]) return monthCache[ym];
+  if (!canSave()) return [];
+  const q = await db.collection(P.entries()).where("date", ">=", ym + "-01").where("date", "<", nextMonth(ym) + "-01").get();
+  return (monthCache[ym] = q.docs.map(d => Object.assign({ id: d.id }, d.data())));
+}
+async function openTimeLog(ym) {
+  ym = ym || thisMonth;
+  $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><div class="drawer-in" role="dialog" aria-label="Time log"><div class="row" style="justify-content:space-between"><h2>Time log</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div><div class="ctx">Loading ${esc(monthLabel(ym))}…</div></div></div>`;
+  let entries;
+  try { entries = await entriesFor(ym); } catch (e) { entries = []; toast(`Couldn't load ${monthLabel(ym)}: ${e.message || e.code}`); }
+  const c = cfg(), t = tally(entries);
+  const order = [...(c.groups || []).map(g => g.name).filter(n => t[n]), ...Object.keys(t).filter(n => !(c.groups || []).some(g => g.name === n)).sort((a, b) => t[b].total - t[a].total)];
+  const sum = { work: 0, meet: 0, total: 0 };
+  const rows = order.map(n => {
+    const o = t[n], def = defFor(n); sum.work += o.work; sum.meet += o.meet; sum.total += o.total;
+    const cap = def && def.billing !== "hourly" && def.hours ? Number(def.hours) * 60 : 0;
+    const projs = Object.entries(o.projects).filter(([p]) => p);
+    const subRows = projs.length ? Object.entries(o.projects).sort((a, b) => (a[0] ? 0 : 1) - (b[0] ? 0 : 1) || b[1].total - a[1].total).map(([p, v]) => `<tr class="sub"><td>${esc(p || "General")}</td><td>${fmtHours(v.work)}</td><td>${fmtHours(v.meet)}</td><td>${fmtHours(v.total)}</td><td></td></tr>`).join("") : "";
+    return `<tr class="client" style="--lane:${laneColor(def ? def.color : 0)}"><td>${esc(n)}${def && def.billing === "hourly" ? ' <span class="tag">hourly</span>' : ""}</td><td>${fmtHours(o.work)}</td><td>${fmtHours(o.meet)}</td><td>${fmtHours(o.total)}</td><td>${cap ? `<span class="${o.total > cap ? "tag crit" : ""}">${fmtHours(cap)}</span>` : ""}</td></tr>${subRows}`;
+  }).join("");
+  const recent = entries.slice().sort((a, b) => String(b.date + b.start).localeCompare(String(a.date + a.start))).slice(0, 40);
+  $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><div class="drawer-in" role="dialog" aria-label="Time log">
+    <div class="row" style="justify-content:space-between"><h2>Time log</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>
+    <div class="row"><button class="btn btn-sm" data-act="logmonth" data-month="${prevMonth(ym)}" type="button" aria-label="Previous month">←</button><b style="font-family:var(--f-display);font-size:17px">${esc(monthLabel(ym))}</b>${ym < thisMonth ? `<button class="btn btn-sm" data-act="logmonth" data-month="${nextMonth(ym)}" type="button" aria-label="Next month">→</button>` : ""}<button class="btn btn-sm" data-act="export" data-month="${ym}" type="button" style="margin-left:auto">Export CSV</button></div>
+    ${order.length ? `<div class="tablewrap"><table class="log"><thead><tr><th>Client</th><th>Work</th><th>Meetings</th><th>Total</th><th>Retainer</th></tr></thead><tbody>${rows}<tr class="total"><td>Total</td><td>${fmtHours(sum.work)}</td><td>${fmtHours(sum.meet)}</td><td>${fmtHours(sum.total)}</td><td></td></tr></tbody></table></div>` : `<div class="empty-today">No time logged in ${esc(monthLabel(ym))} yet.</div>`}
+    ${recent.length ? `<h3>Latest entries</h3><ul class="entries">${recent.map(e => `<li><span>${esc(new Date(e.date + "T12:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" }))} · ${esc(clientName(e.client))}${e.project ? " · " + esc(e.project) : ""} · ${esc(e.title)}${e.kind === "meeting" ? ' <span class="tag">meeting</span>' : ""}</span><span class="num">${fmtMins(e.mins)}</span></li>`).join("")}</ul>` : ""}
+  </div></div>`;
+}
+async function exportCSV(ym) {
+  ym = ym || thisMonth;
+  let entries; try { entries = await entriesFor(ym); } catch (e) { toast(`Couldn't load ${monthLabel(ym)}.`); return; }
+  const rows = [["Date", "Client", "Sub-client / project", "Type", "Task or meeting", "Minutes", "Hours", "Source", "Note"]];
+  entries.slice().sort((a, b) => String(a.date).localeCompare(String(b.date))).forEach(e => rows.push([e.date, clientName(e.client), e.project || "", e.kind === "meeting" ? "Meeting" : "Work", e.title, e.mins, (e.mins / 60).toFixed(2), e.source, e.note || ""]));
+  const csv = rows.map(r => r.map(v => { const s = String(v ?? ""); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; }).join(",")).join("\n");
+  if (!downloads) { toast("Saving files isn't available in this view."); return; }
+  try { await downloads.save({ filename: `time-${ym}.csv`, data: csv }); toast("Saved."); }
+  catch (e) { if (!(e && e.code === "declined")) toast(`Couldn't save the file: ${(e && e.message) || "unknown error"}`); }
+}
+
+/* ---------- ClickUp import ---------- */
+function buildListMap(payload) {
+  const root = payload && payload.hierarchy && payload.hierarchy.root;
+  const map = {};
+  (root && root.children || []).forEach(space => {
+    if (space.type !== "space") return;
+    const walk = (node, top) => (node.children || []).forEach(ch => {
+      if (ch.type === "folder") walk(ch, top || ch.name);
+      else if (ch.type === "list") map[ch.id] = { id: ch.id, name: ch.name, space: space.name, spaceId: space.id, group: top || ch.name, inFolder: !!top };
+    });
+    walk(space, null);
+  });
+  return map;
+}
+async function importClickUp() {
+  if (!mcp || !canSave()) return;
   const c = cfg();
-  const now = Date.now();
+  S.imp = { status: "busy", msg: "Reading ClickUp…" }; renderNotices();
+  try {
+    const h = await read("ClickUp", "clickup_get_workspace_hierarchy", { max_depth: "2", limit: 50 }, { cache: false });
+    const lists = buildListMap(h.payload);
+    const spaceIds = [...new Set(Object.values(lists).map(l => l.spaceId))];
+    let page = 0, all = [];
+    for (let i = 0; i < 10; i++) {
+      const input = { order_by: "updated", page, subtasks: true }; if (spaceIds.length) input.space_ids = spaceIds;
+      const r = await read("ClickUp", "clickup_filter_tasks", input, { cache: false });
+      const p = r.payload || {}; all = all.concat(Array.isArray(p.tasks) ? p.tasks : []);
+      if (!p.has_more) break; page = p.next_page != null ? p.next_page : page + 1;
+    }
+    const have = new Set([...allTasks().values()].map(t => t.cuId).filter(Boolean));
+    const hidden = (c.hidden || []).map(norm);
+    const me = norm(c.myClickupName);
+    const people = c.people || [];
+    const fresh = all.filter(t => !have.has(t.id));
+    let n = 0;
+    for (const t of fresh) {
+      const l = lists[t.list && t.list.id] || { name: (t.list && t.list.name) || "", group: (t.list && t.list.name) || "Unsorted", space: "", inFolder: false };
+      if (hidden.includes(norm(l.group))) continue;
+      const byGroup = defFor(l.group), bySpace = byGroup ? null : defFor(l.space);
+      const def = byGroup || bySpace;
+      const client = def ? def.name : l.group;
+      const project = bySpace && !l.inFolder ? l.name : null;
+      const assignees = (t.assignees || []).map(a => a.username || "");
+      const mine = !assignees.length || !me || assignees.some(a => norm(a) === me);
+      let delegatedTo = null;
+      if (!mine) {
+        const first = assignees.find(a => norm(a) !== me) || "";
+        delegatedTo = people.find(p => norm(first).startsWith(norm(p)) || norm(first).split(" ")[0] === norm(p)) || first.split(" ")[0] || null;
+      }
+      const due = t.due_date ? ymd(new Date(Number(t.due_date))) : null;
+      const others = assignees.filter(a => norm(a) !== me);
+      const notes = [l.name && l.name !== l.group && !project ? `ClickUp list: ${l.name}` : "", mine && others.length ? `Shared with ${others.join(", ")}` : ""].filter(Boolean).join("\n");
+      await createTask({ title: t.name, client, project, due, notes, source: "clickup", cuId: t.id, cuUrl: t.url || "", inProgress: norm(t.status) === "in progress", delegatedTo, delegatedAt: delegatedTo ? new Date(Number(t.date_updated) || Date.now()).toISOString() : null });
+      n++;
+      if (n % 5 === 0) { S.imp.msg = `Importing ${n} of ${fresh.length}…`; renderNotices(); }
+    }
+    await saveSettings({ clickupImportedAt: new Date().toISOString() });
+    S.imp = { status: "ok" };
+    renderAll();
+    toast(n ? `Imported ${n} task${n === 1 ? "" : "s"} from ClickUp.` : "Nothing new to import from ClickUp.");
+  } catch (e) {
+    S.imp = { status: "err", msg: errText(e, "ClickUp") }; renderNotices();
+  }
+}
+
+/* ---------- morning sweep ---------- */
+function sinceDate() {
+  const c = cfg(), now = Date.now();
   let since = c.lastSweep ? Date.parse(c.lastSweep) - 2 * 3600000 : now - DAY;
-  since = Math.min(since, now - DAY);
-  since = Math.max(since, now - 7 * DAY);
+  since = Math.min(since, now - DAY); since = Math.max(since, now - 7 * DAY);
   return new Date(since);
 }
 const gmailDate = (d) => `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())}`;
 const clean = (s, n) => String(s || "").replace(/&#39;/g, "'").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/[͏​-‏­]/g, "").replace(/\s+/g, " ").trim().slice(0, n);
 const asText = (p) => typeof p === "string" ? p : (p && typeof p.result === "string") ? p.result : (p && typeof p.results === "string") ? p.results : JSON.stringify(p || "");
-
 async function fetchGmail(since) {
-  const q = `${cfg().gmailQuery || DEFAULTS.gmailQuery} after:${gmailDate(since)}`.trim();
-  const r = await read("Gmail", "search_threads", { query: q, pageSize: 40 }, { cache: false });
-  const threads = (r.payload && r.payload.threads) || [];
-  return threads.map(t => {
-    const ms = t.messages || []; const m = ms[ms.length - 1] || {};
-    return { from: m.sender, subject: clean(m.subject, 160), snippet: clean(m.snippet, 260), date: m.date, url: t.viewUrl || m.viewUrl, messages: t.messageCount };
-  });
+  const r = await read("Gmail", "search_threads", { query: `${cfg().gmailQuery || DEFAULTS.gmailQuery} after:${gmailDate(since)}`.trim(), pageSize: 40 }, { cache: false });
+  return ((r.payload && r.payload.threads) || []).map(t => { const ms = t.messages || []; const m = ms[ms.length - 1] || {}; return { from: m.sender, subject: clean(m.subject, 160), snippet: clean(m.snippet, 260), date: m.date, url: t.viewUrl || m.viewUrl }; });
 }
 async function fetchSlack(since) {
-  const d = new Date(since.getTime() - DAY);
-  const after = ymd(d);
+  const after = ymd(new Date(since.getTime() - DAY));
   const base = { limit: 20, include_context: false, sort: "timestamp", max_context_length: 500, natural_language_query: "requests, questions or tasks for me" };
   const res = await Promise.allSettled([
     read("Slack", "slack_search_public_and_private", Object.assign({}, base, { filters: `is:dm after:${after}` }), { cache: false }),
@@ -690,63 +962,68 @@ async function fetchSlack(since) {
   if (!ok.length) throw res[0].reason;
   return ok;
 }
-async function fetchLittlebird(since) {
-  const r = await read("Littlebird", "search_user_context", {
-    search_queries: ["commitments and promises made to clients", "action items and follow-ups from meetings", "client requests with deadlines"],
-    search_queries_messages: ["someone asking for something to be done", "client waiting on a reply or deliverable"],
-    date_range: { start: ymd(since), end: "now" }
-  }, { cache: false });
-  return asText(r.payload).slice(0, 22000);
+async function fetchLittlebird(start, queries, messages, max) {
+  const r = await read("Littlebird", "search_user_context", { search_queries: queries, search_queries_messages: messages, date_range: { start, end: "now" } }, { cache: false });
+  return asText(r.payload).slice(0, max);
 }
-
+function clientListForAI() {
+  const c = cfg();
+  return [...new Set([...(c.groups || []).map(d => { const pj = projectsFor(d.name); return `${d.name}${(d.match || []).length ? ` (also known as: ${d.match.join(", ")})` : ""}${pj.length ? ` [sub-clients: ${pj.join(", ")}]` : ""}`; }), ...clientNames()])].join("\n");
+}
+async function writeSuggested(items, source0) {
+  const seen = new Set([...allTasks().values()].map(t => norm(t.title)));
+  const fresh = [];
+  for (const x of (Array.isArray(items) ? items : []).slice(0, 50)) {
+    if (!x || typeof x.title !== "string" || !x.title.trim()) continue;
+    const title = x.title.trim().slice(0, 140);
+    if (seen.has(norm(title))) continue; seen.add(norm(title));
+    const source = ["gmail", "slack", "littlebird"].includes(x.source) ? x.source : source0;
+    const id = "s" + hash(source + ":" + norm(title));
+    if (canSave()) { try { const snap = await db.doc(`${P.tasks()}/${id}`).get(); if (snap.exists) continue; } catch (_) {} }
+    await createTask({ title, client: clientName(String(x.client || "Unsorted").slice(0, 80)), project: typeof x.project === "string" && x.project.trim() ? x.project.trim().slice(0, 80) : null, source, sourceUrl: typeof x.sourceUrl === "string" && /^https:\/\//.test(x.sourceUrl) ? x.sourceUrl : "", context: String(x.context || "").slice(0, 200), estMins: Math.min(480, Math.max(5, Math.round(Number(x.estMins) || 30))), urgency: ["today", "soon", "later"].includes(x.urgency) ? x.urgency : "soon", due: /^\d{4}-\d{2}-\d{2}$/.test(x.dueDate || "") ? x.dueDate : null, status: "suggested" }, id);
+    fresh.push(title);
+  }
+  return fresh;
+}
 async function runSweep() {
   if (!mcp) return;
   const since = sinceDate();
   ["gmail", "slack", "littlebird"].forEach(k => S.sweep[k] = { status: "busy", msg: "Reading…" });
-  S.sweep.ai = { status: "idle", msg: "Waiting for sources" };
-  renderSources();
-  const cuP = loadClickUp(true);
-  const [g, s, l] = await Promise.allSettled([fetchGmail(since), fetchSlack(since), fetchLittlebird(since)]);
+  S.sweep.ai = { status: "idle", msg: "Waiting for sources" }; renderSources();
+  const [g, s, l] = await Promise.allSettled([fetchGmail(since), fetchSlack(since), fetchLittlebird(ymd(since),
+    ["commitments and promises made to clients", "action items and follow-ups from meetings", "client requests with deadlines"],
+    ["someone asking for something to be done", "client waiting on a reply or deliverable"], 22000)]);
   S.sweep.gmail = g.status === "fulfilled" ? { status: "ok", count: g.value.length } : { status: "err", msg: errText(g.reason, "Gmail") };
   S.sweep.slack = s.status === "fulfilled" ? { status: "ok", count: s.value.length } : { status: "err", msg: errText(s.reason, "Slack") };
   S.sweep.littlebird = l.status === "fulfilled" ? { status: "ok", count: l.value.length > 200 ? 1 : 0 } : { status: "err", msg: errText(l.reason, "Littlebird") };
   renderSources();
-  await cuP;
   if (![g, s, l].some(x => x.status === "fulfilled")) { S.sweep.ai = { status: "err", msg: "No sources could be read, so there was nothing to sort." }; renderSources(); return; }
   if (!sample) { S.sweep.ai = { status: "err", msg: "Claude isn't available on this page, so new items can't be extracted." }; renderSources(); return; }
-
   S.sweep.ai = { status: "busy", msg: "Turning messages into tasks…" }; renderSources();
-  const c = cfg();
-  const clientNames = [...new Set([...(c.groups || []).map(d => `${d.name}${(d.match || []).length ? ` (also: ${d.match.join(", ")})` : ""}`), ...S.lists.filter(l => !isHidden(l.group)).map(l => l.group)])];
-  const existing = S.cuTasks.map(t => t.name).slice(0, 250);
-  const already = S.captured.filter(x => x.status !== "dismissed").map(x => x.title).slice(0, 150);
   const who = (S.me && S.me.name) || "the user";
+  const existing = [...allTasks().values()].map(t => t.title).slice(0, 300);
   const prompt = `You are helping ${who}, a freelance marketing-systems consultant, build her morning to-do list. Below are her recent emails, Slack messages and Littlebird context (screen captures and meeting notes). Extract every concrete action SHE needs to take.
 
 Rules:
 - Only real actions for ${who}: replies owed, deliverables, fixes, approvals, follow-ups she promised, calls to book. Skip newsletters, marketing, receipts, automated notifications, FYIs, and things other people will do.
-- Skip anything already covered by an existing ClickUp task or an already-captured item (lists below). Same job in different words counts as covered.
-- Merge duplicates that appear across sources into one task.
-- title: short imperative, max 90 chars, starting with a verb (e.g. "Reply to Paula about Shopify timeline").
-- client: pick the best match from the client list, using the exact name before any parenthesis. Use "Unsorted" if none fits.
-- source: "gmail", "slack" or "littlebird" (where the clearest evidence is).
-- sourceUrl: the email viewUrl or Slack permalink if one is given, else "".
+- Skip anything already on her task list (below). Same job in different words counts as already listed.
+- Merge duplicates across sources into one task.
+- title: short imperative, max 90 chars, starting with a verb.
+- client: best match from the client list, using the exact name before any parenthesis; "Personal" for personal admin; "Unsorted" if none fits.
+- project: the sub-client if one applies (e.g. one of Authentic's clients), else null.
+- source: "gmail", "slack" or "littlebird". sourceUrl: the email viewUrl or Slack permalink if given, else "".
 - context: one line, max 140 chars: who asked and what they need.
-- estMins: realistic estimate in minutes (5–240).
-- urgency: "today" if someone is waiting or it's due within a day, "soon" for this week, "later" otherwise.
+- estMins: realistic minutes (5–480). urgency: "today" if someone is waiting or it's due within a day, "soon" this week, "later" otherwise.
 - dueDate: "YYYY-MM-DD" only if a date is stated, else null.
-Return ONLY a JSON array (no prose). Return [] if there is nothing.
+Return ONLY a JSON array. Return [] if nothing.
 
 Today is ${new Date().toDateString()}.
 
 CLIENTS:
-${clientNames.join("\n")}
+${clientListForAI()}
 
-EXISTING CLICKUP TASKS:
-${existing.join("\n")}
-
-ALREADY CAPTURED:
-${already.join("\n") || "(none)"}
+HER TASK LIST:
+${existing.join("\n") || "(empty)"}
 
 EMAILS:
 ${g.status === "fulfilled" ? JSON.stringify(g.value) : "(unavailable)"}
@@ -756,72 +1033,138 @@ ${s.status === "fulfilled" ? s.value.join("\n\n---\n\n") : "(unavailable)"}
 
 LITTLEBIRD:
 ${l.status === "fulfilled" ? l.value : "(unavailable)"}`;
-
   let items;
-  try {
-    items = await sample.json(prompt, { modelTier: "default", cache: false });
-  } catch (e) {
-    const msg = e && e.code === "not_granted" ? "Claude isn't allowed on this page. Allow it from the page's Permissions menu."
-      : e && e.code === "rate_limited" ? "Claude is busy. Try the sweep again in a few minutes."
-      : `Claude couldn't sort the sweep: ${(e && e.message) || "unknown error"}`;
-    S.sweep.ai = { status: "err", msg }; renderSources(); return;
-  }
+  try { items = await sample.json(prompt, { modelTier: "default", cache: false }); }
+  catch (e) { S.sweep.ai = { status: "err", msg: sampleErr(e) }; renderSources(); return; }
   if (!Array.isArray(items)) items = (items && Array.isArray(items.tasks)) ? items.tasks : [];
-  const seen = new Set([...S.captured.map(x => norm(x.title)), ...S.cuTasks.map(t => norm(t.name))]);
-  const now = new Date().toISOString();
-  const fresh = [];
-  items.slice(0, 50).forEach(x => {
-    if (!x || typeof x.title !== "string" || !x.title.trim()) return;
-    const title = x.title.trim().slice(0, 140);
-    if (seen.has(norm(title))) return; seen.add(norm(title));
-    const source = ["gmail", "slack", "littlebird"].includes(x.source) ? x.source : "gmail";
-    const url = typeof x.sourceUrl === "string" && /^https:\/\//.test(x.sourceUrl) ? x.sourceUrl : "";
-    const est = Math.min(240, Math.max(5, Math.round(Number(x.estMins) || 30)));
-    const doc = { title, client: String(x.client || "Unsorted").slice(0, 80), source, sourceUrl: url, context: String(x.context || "").slice(0, 200), estMins: est, urgency: ["today", "soon", "later"].includes(x.urgency) ? x.urgency : "soon", dueDate: /^\d{4}-\d{2}-\d{2}$/.test(x.dueDate || "") ? x.dueDate : null, status: "open", createdAt: now };
-    fresh.push(Object.assign({ id: "c" + hash(source + ":" + norm(title)) }, doc));
-  });
-  if (db && S.uid) {
-    for (const f of fresh) { const { id, ...data } = f; try { await db.doc(`${P.inbox()}/${id}`).set(data); } catch (e) { toast(`Couldn't save "${f.title}": ${e.message || e.code}`); } }
-  } else {
-    S.captured = S.captured.concat(fresh);
-  }
+  const fresh = await writeSuggested(items, "gmail");
   S.sweep.ai = { status: "ok", count: fresh.length };
-  await saveSettings({ lastSweep: now });
-  if (fresh.length) S.filter = "all";
+  await saveSettings({ lastSweep: new Date().toISOString() });
   renderAll();
-  toast(fresh.length ? `Found ${fresh.length} new task${fresh.length === 1 ? "" : "s"}. They're marked New in their client lanes.` : "Sweep done. Nothing new beyond what's already in ClickUp.");
+  toast(fresh.length ? `Found ${fresh.length} new task${fresh.length === 1 ? "" : "s"}. Review them at the top.` : "Sweep done. Nothing new.");
 }
 
-/* ---------- settings drawer ---------- */
-function openSettings() {
+/* ---------- Littlebird day check ---------- */
+async function runCheck() {
+  if (!mcp || !sample) { S.check = { status: "err", msg: "Littlebird and Claude need to be available on this page for the day check." }; renderToday(); return; }
+  S.check = { status: "busy", msg: "Reading your day…" }; renderToday();
+  let lb, calText = "(calendar unavailable)";
+  try {
+    const [a, b] = await Promise.all([
+      fetchLittlebird(todayKey, ["client work done today", "documents, pages and automations edited today", "emails and messages sent to clients today", "meetings and calls today"], ["messages sent today about finished work", "replies sent to clients today"], 26000),
+      fetchLittlebird(todayKey, ["GoHighLevel, Shopify, ClickUp or Make work today", "time spent on each project today", "tasks completed today"], ["confirmation that something is done"], 20000)
+    ]);
+    lb = a + "\n\n" + b;
+  } catch (e) { S.check = { status: "err", msg: errText(e, "Littlebird") }; renderToday(); return; }
+  try { if (!S.cal || S.cal.date !== todayKey) await loadCalendar(todayKey); if (S.cal && !S.cal.err) calText = JSON.stringify(S.cal.events.map(e => ({ id: e.id, title: e.title, time: e.time, mins: e.mins }))); } catch (_) {}
+  S.check = { status: "busy", msg: "Matching against your tasks…" }; renderToday();
+  const open = S.sets.open.map(t => ({ id: t.id, title: t.title, client: clientName(t.client), project: t.project || null, plannedToday: inPlan(t.id) }));
+  const loggedToday = S.entries.filter(e => e.date === todayKey).map(e => ({ taskId: e.taskId, client: clientName(e.client), project: e.project, kind: e.kind, title: e.title, mins: e.mins, calEventId: e.calEventId }));
+  const prompt = `You are reviewing ${(S.me && S.me.name) || "the user"}'s working day from Littlebird screen and meeting context plus her calendar, to make sure her task list and time log are complete. It is now ${new Date().toString()}.
+
+Return ONLY JSON in this exact shape:
+{"done":[{"taskId":"...","evidence":"one line"}],
+ "time":[{"taskId":"... or null","kind":"work" or "meeting","calEventId":"... or null","client":"client name","project":"sub-client or null","title":"short description","mins":number,"evidence":"one line"}],
+ "newTasks":[{"title":"...","client":"...","project":"... or null","estMins":number,"context":"one line"}]}
+
+Rules:
+- done: only open tasks with clear evidence they were finished today (sent, published, built, confirmed). Use exact taskIds.
+- time: time she spent TODAY that is NOT already in the time log. Use screen timestamps to judge durations. Be conservative, round to 5 minutes, skip anything under 10 minutes.
+  - Work on a task: kind "work", with its taskId. Other client work: taskId null with the client name.
+  - Meetings and calls she actually attended (seen in Littlebird or on the calendar): kind "meeting", include calEventId when it matches a calendar event. Skip calendar blocks that are focus time or reminders (e.g. "NO Calls", "Lift"), and skip meetings already logged.
+- newTasks: follow-ups she clearly committed to today that are not on the list. Max 8.
+- Clients: ${clientListForAI().split("\n").join("; ")}
+
+OPEN TASKS:
+${JSON.stringify(open)}
+
+ALREADY LOGGED TODAY:
+${JSON.stringify(loggedToday)}
+
+TODAY'S CALENDAR:
+${calText}
+
+LITTLEBIRD CONTEXT FOR TODAY:
+${lb}`;
+  let out;
+  try { out = await sample.json(prompt, { modelTier: "default", cache: false }); }
+  catch (e) { S.check = { status: "err", msg: sampleErr(e) }; renderToday(); return; }
+  const ids = new Set(S.sets.open.map(t => t.id));
+  const loggedCal = new Set(S.entries.map(e => e.calEventId).filter(Boolean));
+  const review = {
+    done: (out && Array.isArray(out.done) ? out.done : []).filter(x => x && ids.has(x.taskId)).slice(0, 30),
+    time: (out && Array.isArray(out.time) ? out.time : []).filter(x => x && Number(x.mins) >= 5 && !(x.calEventId && loggedCal.has(x.calEventId))).map(x => Object.assign({}, x, { taskId: ids.has(x.taskId) ? x.taskId : null, kind: x.kind === "meeting" ? "meeting" : "work", mins: Math.min(600, Math.round(Number(x.mins) / 5) * 5) })).slice(0, 30),
+    newTasks: (out && Array.isArray(out.newTasks) ? out.newTasks : []).filter(x => x && typeof x.title === "string").slice(0, 8)
+  };
+  S.check = { status: "ok" }; renderToday();
+  openReview(review);
+}
+function openReview(r) {
+  S.review = r;
+  const none = !r.done.length && !r.time.length && !r.newTasks.length;
+  const meetings = r.time.map((x, i) => [x, i]).filter(([x]) => x.kind === "meeting");
+  const work = r.time.map((x, i) => [x, i]).filter(([x]) => x.kind !== "meeting");
+  const timeRow = ([x, i]) => { const t = x.taskId ? getTask(x.taskId) : null; const cl = clientName(t ? t.client : x.client), pj = (t && t.project) || x.project; return `<div class="chk"><input type="checkbox" id="rv-t-${i}" checked aria-label="Log this time"><span class="body" style="flex:1"><b>${esc(t ? t.title : (x.title || "Work"))}</b><span class="ctx">${esc(cl)}${pj ? " · " + esc(pj) : ""} · ${esc(x.evidence || "")}</span></span><input class="mins" type="number" min="5" step="5" id="rv-tm-${i}" value="${x.mins}" aria-label="Minutes"></div>`; };
+  $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><div class="drawer-in" role="dialog" aria-label="Day check">
+    <div class="row" style="justify-content:space-between"><h2>Your day, checked</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>
+    <div class="ctx">Based on what Littlebird and your calendar show for today. Untick anything that's wrong, adjust minutes, then apply.</div>
+    ${none ? `<div class="empty-today">Nothing to add. Your list and time log already match your day.</div>` : ""}
+    ${r.done.length ? `<h3>Looks finished</h3>${r.done.map((x, i) => { const t = getTask(x.taskId); return `<label class="chk"><input type="checkbox" id="rv-d-${i}" checked><span class="body"><b>${esc(t ? t.title : "")}</b><span class="ctx">${esc(x.evidence || "")}</span></span></label>`; }).join("")}` : ""}
+    ${work.length ? `<h3>Work time to log</h3>${work.map(timeRow).join("")}` : ""}
+    ${meetings.length ? `<h3>Meetings and calls</h3>${meetings.map(timeRow).join("")}` : ""}
+    ${r.newTasks.length ? `<h3>Follow-ups you mentioned</h3>${r.newTasks.map((x, i) => `<label class="chk"><input type="checkbox" id="rv-n-${i}" checked><span class="body"><b>${esc(x.title)}</b><span class="ctx">${esc(clientName(x.client))}${x.project ? " · " + esc(x.project) : ""}${x.context ? " · " + esc(x.context) : ""}</span></span></label>`).join("")}` : ""}
+    ${none ? "" : `<div class="row"><button class="btn btn-sun" data-act="applyreview" type="button">Apply ticked</button></div>`}
+  </div></div>`;
+}
+async function applyReview() {
+  const r = S.review; if (!r) return;
+  let d = 0, m = 0, n = 0;
+  r.done.forEach((x, i) => { if ($("rv-d-" + i).checked) { setDone(x.taskId, true); d++; } });
+  for (let i = 0; i < r.time.length; i++) {
+    if (!$("rv-t-" + i).checked) continue;
+    const x = r.time[i], mins = Math.round(Number($("rv-tm-" + i).value) || 0); if (mins < 1) continue;
+    const t = x.taskId ? getTask(x.taskId) : null;
+    await logTime({ taskId: x.taskId, title: t ? t.title : (x.title || "Work"), client: clientName(t ? t.client : x.client), project: (t && t.project) || (typeof x.project === "string" && x.project ? x.project : null), kind: x.kind, calEventId: x.calEventId || null, mins, source: "littlebird", note: x.evidence || "" });
+    m += mins;
+  }
+  const picks = r.newTasks.filter((x, i) => $("rv-n-" + i).checked).map(x => Object.assign({ source: "littlebird" }, x));
+  if (picks.length) n = (await writeSuggested(picks, "littlebird")).length;
+  closeDrawer(); renderAll();
+  toast([d && `${d} ticked off`, m && `${fmtMins(m)} logged`, n && `${n} follow-up${n === 1 ? "" : "s"} to review`].filter(Boolean).join(" · ") || "Nothing applied.");
+}
+
+/* ---------- settings ---------- */
+function openSettings(groupsOverride) {
   const c = cfg();
-  const groups = (c.groups || []).length ? c.groups : [{ name: "", kind: "retainer", color: 1, match: [] }];
-  const folderNames = [...new Set(S.lists.map(l => l.group))].sort();
+  const groups = groupsOverride || ((c.groups || []).length ? c.groups : [{ name: "", kind: "retainer", match: [] }]);
   const row = (g, i) => `<div class="grow" data-row="${i}">
       <input id="g-name-${i}" value="${esc(g.name)}" placeholder="Client name" aria-label="Client name">
       <select id="g-kind-${i}" aria-label="Lane type"><option value="retainer"${!g.kind || g.kind === "retainer" ? " selected" : ""}>Retainer</option><option value="adhoc"${g.kind === "adhoc" ? " selected" : ""}>Ad-hoc</option><option value="internal"${g.kind === "internal" ? " selected" : ""}>Own business</option></select>
-      <input class="gmatch" id="g-match-${i}" value="${esc((g.match || []).join(", "))}" placeholder="ClickUp folders or spaces" aria-label="ClickUp folders or spaces" list="folderList">
+      <select class="gbill" id="g-bill-${i}" aria-label="Billing"><option value="fixed"${g.billing !== "hourly" ? " selected" : ""}>Fixed fee</option><option value="hourly"${g.billing === "hourly" ? " selected" : ""}>Hourly</option></select>
+      <input class="gmatch" id="g-match-${i}" value="${esc((g.match || []).join(", "))}" placeholder="Other names, ClickUp folders" aria-label="Other names">
+      <input id="g-hours-${i}" type="number" min="0" step="0.5" value="${esc(g.hours || "")}" placeholder="h/mo" aria-label="Monthly hours">
       <button class="btn btn-sm btn-ghost" data-act="grow-del" data-i="${i}" type="button" aria-label="Remove">×</button>
     </div>`;
-  $("drawerHost").innerHTML = `<div class="drawer" id="drawer"><div class="drawer-in" role="dialog" aria-label="Settings">
-    <div class="row" style="justify-content:space-between"><h2>Settings</h2><button class="btn btn-ghost" data-act="close-settings" type="button">Close</button></div>
-    <div class="field"><label>Client lanes</label><div class="hint">Each lane gathers the ClickUp folders or spaces you list, plus anything the sweep finds for that client. Retainers get the big coloured lanes at the top. Ad-hoc lanes sit below with any ClickUp folders you haven't named here.</div></div>
-    <div class="grow grow-h"><span>Name</span><span>Type</span><span class="gmatch">ClickUp folders / spaces</span><span></span></div>
+  $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><div class="drawer-in" role="dialog" aria-label="Settings">
+    <div class="row" style="justify-content:space-between"><h2>Settings</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>
+    <div class="field"><span class="flabel">Clients</span><div class="hint">Retainers get the big coloured lanes and an hours meter. For fixed-fee retainers, h/mo is the allowance. Hourly clients show hours used with no cap. "Other names" helps the sweep and calendar recognise a client (e.g. Goat for John Mckie).</div></div>
+    <div class="grow grow-h"><span>Name</span><span>Type</span><span class="gbill">Billing</span><span class="gmatch">Other names</span><span>h/mo</span><span></span></div>
     <div id="growList" style="display:flex;flex-direction:column;gap:6px">${groups.map(row).join("")}</div>
-    <datalist id="folderList">${folderNames.map(f => `<option value="${esc(f)}">`).join("")}</datalist>
-    <button class="btn btn-sm" data-act="grow-add" type="button" style="align-self:flex-start">Add lane</button>
-    <div class="field"><label for="s-hidden">Hide these folders</label><input id="s-hidden" value="${esc((c.hidden || []).join(", "))}"><span class="hint">Comma-separated, e.g. template folders.</span></div>
+    <button class="btn btn-sm" data-act="grow-add" type="button" style="align-self:flex-start">Add client</button>
+    <div class="field"><label for="s-people">People you pass work to</label><input id="s-people" value="${esc((c.people || []).join(", "))}"><span class="hint">Comma-separated first names.</span></div>
     <div class="field"><label for="s-hours">Hours of focused work per day</label><input id="s-hours" type="number" min="1" max="14" step="0.5" value="${esc(c.hoursAvailable)}"></div>
-    <div class="field"><label for="s-me">Your name in ClickUp</label><input id="s-me" value="${esc(c.myClickupName)}"><span class="hint">Used to hide tasks assigned only to your team.</span></div>
-    <div class="field"><label><input type="checkbox" id="s-team" ${c.includeTeam ? "checked" : ""}> Show your team's tasks too</label></div>
     <div class="field"><label for="s-gmail">Which emails to sweep</label><input id="s-gmail" value="${esc(c.gmailQuery)}"><span class="hint">Gmail search. The date is added for you.</span></div>
+    <h3>ClickUp</h3>
+    <div class="field"><label for="s-me">Your name in ClickUp</label><input id="s-me" value="${esc(c.myClickupName)}"><span class="hint">Tasks assigned only to someone else are imported into Passed on.</span></div>
+    <div class="field"><label for="s-hidden">Skip these ClickUp folders</label><input id="s-hidden" value="${esc((c.hidden || []).join(", "))}"></div>
+    <div class="row"><button class="btn btn-sm" data-act="import" type="button" ${mcp ? "" : "disabled"}>${c.clickupImportedAt ? "Import anything new from ClickUp" : "Import from ClickUp"}</button>${c.clickupImportedAt ? `<span class="ctx">Last imported ${esc(new Date(c.clickupImportedAt).toLocaleDateString())}. Tasks already imported are skipped.</span>` : ""}</div>
     <div class="row"><button class="btn btn-sun" data-act="save-settings" type="button">Save settings</button></div>
   </div></div>`;
 }
 function readGroupRows() {
   return [...document.querySelectorAll("#growList .grow")].map(r => {
     const i = r.dataset.row;
-    return { name: ($("g-name-" + i).value || "").trim(), kind: $("g-kind-" + i).value, match: ($("g-match-" + i).value || "").split(",").map(s => s.trim()).filter(Boolean) };
+    return { name: ($("g-name-" + i).value || "").trim(), kind: $("g-kind-" + i).value, billing: $("g-bill-" + i).value, match: ($("g-match-" + i).value || "").split(",").map(s => s.trim()).filter(Boolean), hours: Number($("g-hours-" + i).value) || null };
   });
 }
 function collectSettings() {
@@ -829,174 +1172,204 @@ function collectSettings() {
   const groups = readGroupRows().filter(g => g.name).map(g => Object.assign(g, { color: g.kind === "internal" ? 5 : g.kind === "adhoc" ? 0 : (ri++ % 4) + 1 }));
   return {
     groups,
+    people: ($("s-people").value || "").split(",").map(s => s.trim()).filter(Boolean),
     hidden: ($("s-hidden").value || "").split(",").map(s => s.trim()).filter(Boolean),
     hoursAvailable: Math.min(14, Math.max(1, Number($("s-hours").value) || 6)),
     myClickupName: ($("s-me").value || "").trim(),
-    includeTeam: $("s-team").checked,
     gmailQuery: ($("s-gmail").value || "").trim() || DEFAULTS.gmailQuery
   };
 }
 
 /* ---------- events ---------- */
+const setTab = (t) => { $("desk").dataset.tab = t; $("tabAll").setAttribute("aria-selected", String(t === "all")); $("tabToday").setAttribute("aria-selected", String(t === "today")); };
 document.addEventListener("click", async (ev) => {
   const el = ev.target.closest("[data-act]"); if (!el) return;
-  const act = el.dataset.act, i = Number(el.dataset.i);
-  const items = S.plan.items;
+  const act = el.dataset.act, id = el.dataset.id, i = Number(el.dataset.i);
+  if (act === "drawerbg" && ev.target !== el) return;
   switch (act) {
-    case "add": addToPlan(el.dataset.key); break;
+    case "add": addMany([id]); break;
     case "addsel": addMany([...S.sel]); break;
-    case "gotoday": setTab("today"); $("toastHost").innerHTML = ""; window.scrollTo({ top: 0 }); break;
-    case "clearsel": S.sel.clear(); renderEverything(); renderSelBar(); break;
+    case "donesel": { const ids = [...S.sel]; ids.forEach(x => setDone(x, true)); S.sel.clear(); renderAll(); toast(`Marked ${ids.length} done.`); break; }
+    case "clearsel": S.sel.clear(); renderAll(); break;
     case "selall": {
-      const g = buildModel().find(x => x.key === el.dataset.key); if (!g) break;
-      const keys = g.items.filter(passesFilter).filter(i => !inPlan(i.key)).map(i => i.key);
-      const allOn = keys.every(k => S.sel.has(k));
-      keys.forEach(k => allOn ? S.sel.delete(k) : S.sel.add(k));
+      const g = buildLanes().find(x => x.key === el.dataset.key); if (!g) break;
+      const ids = g.items.filter(passesFilter).filter(t => !inPlan(t.id)).map(t => t.id);
+      const on = ids.every(x => S.sel.has(x)); ids.forEach(x => on ? S.sel.delete(x) : S.sel.add(x));
       renderEverything(); renderSelBar(); break;
     }
     case "expand": S.expanded[el.dataset.key] = !S.expanded[el.dataset.key]; renderEverything(); break;
-    case "settings": openSettings(); break;
-    case "dismiss": updateCaptured(el.dataset.id, { status: "dismissed" }); renderEverything(); break;
-    case "sendopen": S.sendOpen = el.dataset.id; renderEverything(); break;
-    case "sendplanopen": S.sendOpen = "plan:" + i; renderToday(); break;
-    case "sendcancel": S.sendOpen = null; renderEverything(); renderToday(); break;
-    case "send": case "sendplan": {
-      const capId = act === "send" ? el.dataset.id : items[i].capId;
-      const sel = $(act === "send" ? "sendList-" + capId : "planList-" + i);
-      if (!sel || !sel.value) { toast("Pick a ClickUp list first."); break; }
-      const cap = S.captured.find(x => x.id === capId);
-      const src = cap || items[i];
-      el.disabled = true; el.textContent = "Creating…";
-      try {
-        const t = await createInClickUp(sel.value, src.title, cap ? cap.context : "", cap ? cap.sourceUrl : src.url, cap ? cap.dueDate : null);
-        if (cap) updateCaptured(capId, { status: "sent", cuId: t.id });
-        items.forEach(p => { if ((capId && p.capId === capId) || (act === "sendplan" && p === items[i])) { p.cuId = t.id; if (t.url) p.url = t.url; if (t.id) p.key = "cu:" + t.id; } });
-        savePlan(); S.sendOpen = null; toast("Created in ClickUp.");
-        loadClickUp(true);
-      } catch (e) { toast(errText(e, "ClickUp")); el.disabled = false; el.textContent = "Create"; }
-      renderEverything(); renderToday(); break;
+    case "edit": openTask(id); break;
+    case "newin": openTask(null, { client: el.dataset.client }); break;
+    case "timer": startTimer(id); break;
+    case "stoptimer": stopTimer(); break;
+    case "done": markDone(id); break;
+    case "undodone": setDone(id, false); renderAll(); $("toastHost").innerHTML = ""; break;
+    case "takeback": updateTask(id, { delegatedTo: null, delegatedAt: null }); renderAll(); break;
+    case "keep": updateTask(id, { status: "open", client: $("sugc-" + id) ? $("sugc-" + id).value : undefined }); renderAll(); break;
+    case "keeptoday": updateTask(id, { status: "open", client: $("sugc-" + id) ? $("sugc-" + id).value : undefined }); addMany([id]); break;
+    case "dismiss": updateTask(id, { status: "dismissed" }); renderAll(); break;
+    case "keepall": S.sets.suggested.slice().forEach(t => updateTask(t.id, { status: "open", client: $("sugc-" + t.id) ? $("sugc-" + t.id).value : t.client })); renderAll(); break;
+    case "dismissall": S.sets.suggested.slice().forEach(t => updateTask(t.id, { status: "dismissed" })); renderAll(); break;
+    case "up": if (i > 0) { const a = S.plan.ids; [a[i - 1], a[i]] = [a[i], a[i - 1]]; savePlan(); renderToday(); } break;
+    case "down": if (i < S.plan.ids.length - 1) { const a = S.plan.ids; [a[i + 1], a[i]] = [a[i], a[i + 1]]; savePlan(); renderToday(); } break;
+    case "remove": S.plan.ids.splice(i, 1); savePlan(); renderAll(); break;
+    case "cleardone": S.plan.ids = S.plan.ids.filter(x => { const t = getTask(x); return t && t.status !== "done"; }); savePlan(); renderAll(); break;
+    case "carry": { const left = (S.prevPlan.ids || []).filter(x => { const t = getTask(x); return t && t.status === "open"; }); S.plan.ids = left.concat(S.plan.ids.filter(x => !left.includes(x))); savePlan(); renderAll(); break; }
+    case "gotoday": setTab("today"); $("toastHost").innerHTML = ""; window.scrollTo({ top: 0 }); break;
+    case "check": runCheck(); break;
+    case "applyreview": applyReview(); break;
+    case "meeting": openMeeting(); break;
+    case "calpick": { const e = S.cal && S.cal.events[i]; if (!e) break; const cur = readMeetForm(); openMeeting({ title: e.title, client: e.client || cur.client, project: e.project || "", date: S.cal.date, start: e.start, mins: e.mins, calEventId: e.id }); break; }
+    case "timelog": openTimeLog(); break;
+    case "logmonth": openTimeLog(el.dataset.month); break;
+    case "export": exportCSV(el.dataset.month); break;
+    case "import": closeDrawer(); importClickUp(); break;
+    case "closedrawer": case "drawerbg": closeDrawer(); break;
+    case "drawerdone": { const fid = $("taskForm").dataset.id; const t = getTask(fid); if (!t) break; if (t.status === "done") setDone(fid, false); else markDone(fid); closeDrawer(); renderAll(); break; }
+    case "drawerdelete": { const fid = $("taskForm").dataset.id; updateTask(fid, { status: "dismissed" }); S.plan.ids = S.plan.ids.filter(x => x !== fid); savePlan(); closeDrawer(); renderAll(); toast("Task deleted.", { act: "undodel", id: fid, label: "Undo" }); break; }
+    case "undodel": updateTask(id, { status: "open" }); renderAll(); $("toastHost").innerHTML = ""; break;
+    case "logmanual": {
+      const fid = $("taskForm").dataset.id; const t = getTask(fid); const mins = Math.round(Number($("f-mins").value) || 0);
+      if (!t || mins < 1) { toast("Enter the minutes to log."); break; }
+      await logTime({ taskId: fid, title: t.title, client: t.client, project: t.project || null, mins, date: $("f-mdate").value || todayKey, source: "manual" });
+      openTask(fid); renderAll(); toast(`Logged ${fmtMins(mins)}.`); break;
     }
-    case "up": if (i > 0) { [items[i - 1], items[i]] = [items[i], items[i - 1]]; savePlan(); renderToday(); } break;
-    case "down": if (i < items.length - 1) { [items[i + 1], items[i]] = [items[i], items[i + 1]]; savePlan(); renderToday(); } break;
-    case "remove": items.splice(i, 1); savePlan(); renderToday(); renderEverything(); break;
-    case "cleardone": S.plan.items = items.filter(x => !x.done); savePlan(); renderToday(); renderEverything(); break;
-    case "closecu": {
-      el.disabled = true; el.textContent = "Closing…";
-      try {
-        await mcp.callTool("ClickUp", "clickup_update_task", { task_id: items[i].cuId, status: "complete" });
-        items[i].closedInCU = true; savePlan(); toast("Closed in ClickUp."); loadClickUp(true);
-      } catch (e) {
-        toast(e && e.code === "tool_error" ? "ClickUp didn't accept the status \"complete\" for this list. Close it in ClickUp instead." : errText(e, "ClickUp"));
-        el.disabled = false; el.textContent = "Close in ClickUp";
-      }
-      renderToday(); break;
-    }
-    case "carry": {
-      const left = (S.prevPlan.items || []).filter(x => !x.done).map(x => Object.assign({}, x, { done: false }));
-      S.plan.items = left.concat(items.filter(x => !left.some(l => l.key === x.key)));
-      savePlan(); renderToday(); renderEverything(); break;
-    }
-    case "close-settings": $("drawerHost").innerHTML = ""; break;
-    case "grow-add": {
-      const rows = readGroupRows(); rows.push({ name: "", kind: "retainer", match: [] });
-      const keep = cfg(); S.settings = Object.assign({}, keep, { groups: rows }); openSettings(); S.settings = keep; break;
-    }
-    case "grow-del": {
-      const rows = readGroupRows(); rows.splice(i, 1);
-      const keep = cfg(); S.settings = Object.assign({}, keep, { groups: rows }); openSettings(); S.settings = keep; break;
-    }
-    case "save-settings": { const patch = collectSettings(); $("drawerHost").innerHTML = ""; await saveSettings(patch); renderAll(); toast("Settings saved."); break; }
+    case "grow-add": { const rows = readGroupRows(); rows.push({ name: "", kind: "retainer", match: [] }); openSettings(rows); break; }
+    case "grow-del": { const rows = readGroupRows(); rows.splice(i, 1); openSettings(rows); break; }
+    case "save-settings": { const patch = collectSettings(); closeDrawer(); await saveSettings(patch); renderAll(); toast("Settings saved."); break; }
   }
 });
 document.addEventListener("change", (ev) => {
-  const el = ev.target; const i = Number(el.dataset.i);
-  if (el.dataset.act === "pick") {
-    el.checked ? S.sel.add(el.dataset.key) : S.sel.delete(el.dataset.key);
-    const card = el.closest(".card"); if (card) card.classList.toggle("is-picked", el.checked);
-    renderSelBar(); return;
-  }
-  if (el.dataset.act === "toggle") {
-    const it = S.plan.items[i]; it.done = el.checked;
-    if (it.capId) updateCaptured(it.capId, { status: el.checked ? "done" : "open" });
-    savePlan(); renderToday(); renderEverything();
-  } else if (el.dataset.act === "est") { S.plan.items[i].estMins = Number(el.value); savePlan(); renderToday(); }
+  const el = ev.target, id = el.dataset.id;
+  if (el.dataset.act === "pick") { el.checked ? S.sel.add(id) : S.sel.delete(id); const card = el.closest(".card"); if (card) card.classList.toggle("is-picked", el.checked); renderSelBar(); }
+  else if (el.dataset.act === "toggle") { if (el.checked && S.timer && S.timer.taskId === id) stopTimer(true); setDone(id, el.checked); renderAll(); }
+  else if (el.dataset.act === "est") { updateTask(id, { estMins: Number(el.value) }); renderToday(); }
+  else if (el.dataset.act === "sugclient") { updateTask(id, { client: el.value }); }
+  else if (el.dataset.act === "clientpick") { const dl = $("projList"); if (dl) dl.outerHTML = projectList(el.value); }
+  else if (el.dataset.act === "meetdate") { S.cal = null; openMeeting(readMeetForm()); }
 });
-document.addEventListener("submit", (ev) => {
-  if (ev.target.id !== "quickForm") return;
-  ev.preventDefault();
-  const v = ($("quickInput").value || "").trim(); if (!v) return;
-  S.plan.items.push({ key: "m:" + Date.now().toString(36), title: v, group: "", source: "manual", url: "", estMins: 30, done: false, cuId: null, capId: null });
-  savePlan(); renderToday(); setTimeout(() => { const q = $("quickInput"); if (q) q.focus(); }, 0);
+document.addEventListener("submit", async (ev) => {
+  const f = ev.target;
+  if (f.id === "quickForm") {
+    ev.preventDefault();
+    const v = ($("quickInput").value || "").trim(); if (!v) return;
+    const cid = await createTask({ title: v, client: $("quickClient").value || "Unsorted" });
+    S.plan.ids.push(cid); savePlan(); renderAll();
+    setTimeout(() => { const q = $("quickInput"); if (q) q.focus(); }, 0);
+  } else if (f.id === "taskForm") {
+    ev.preventDefault();
+    const fid = f.dataset.id, del = $("f-del").value || null;
+    const data = { title: $("f-title").value.trim(), client: $("f-client").value, project: $("f-proj").value.trim() || null, due: $("f-due").value || null, estMins: Number($("f-est").value) || 30, notes: $("f-notes").value, inProgress: $("f-prog").checked, delegatedTo: del };
+    if (!data.title) return;
+    if (fid) {
+      const t = getTask(fid);
+      if (del && del !== t.delegatedTo) data.delegatedAt = new Date().toISOString();
+      if (!del) data.delegatedAt = null;
+      updateTask(fid, data);
+    } else {
+      if (del) data.delegatedAt = new Date().toISOString();
+      const nid = await createTask(data);
+      if ($("f-today") && $("f-today").checked) { S.plan.ids.push(nid); savePlan(); }
+    }
+    closeDrawer(); renderAll(); toast(fid ? "Saved." : "Task created.");
+  } else if (f.id === "meetForm") {
+    ev.preventDefault();
+    const m = readMeetForm(); if (!m.title.trim()) return;
+    const start = m.start ? new Date(`${m.date}T${m.start}:00`).toISOString() : new Date(`${m.date}T12:00:00`).toISOString();
+    await logTime({ title: m.title.trim(), client: m.client, project: m.project.trim() || null, kind: "meeting", date: m.date, start, mins: m.mins, source: m.calEventId ? "calendar" : "manual", note: m.note, calEventId: m.calEventId });
+    toast(`Logged ${fmtMins(m.mins)} meeting for ${m.client}.`);
+    openMeeting({ date: m.date, client: m.client }); renderAll();
+  }
 });
 document.querySelectorAll("[data-filter]").forEach(b => b.addEventListener("click", () => {
   S.filter = b.dataset.filter;
   document.querySelectorAll("[data-filter]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
   renderEverything();
 }));
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("drawerHost").innerHTML) closeDrawer(); });
 $("search").addEventListener("input", (e) => { S.q = e.target.value; renderEverything(); });
 $("sweepBtn").addEventListener("click", runSweep);
-$("refreshCu").addEventListener("click", () => loadClickUp(true));
-$("settingsBtn").addEventListener("click", openSettings);
-const setTab = (t) => { $("desk").dataset.tab = t; $("tabAll").setAttribute("aria-selected", String(t === "all")); $("tabToday").setAttribute("aria-selected", String(t === "today")); };
+$("newBtn").addEventListener("click", () => openTask(null));
+$("meetBtn").addEventListener("click", () => openMeeting());
+$("settingsBtn").addEventListener("click", () => openSettings());
 $("tabAll").addEventListener("click", () => setTab("all"));
 $("tabToday").addEventListener("click", () => setTab("today"));
 
-/* drag: cards → Today, and reorder within Today */
 let drag = null;
 document.addEventListener("dragstart", (e) => {
-  const card = e.target.closest && e.target.closest(".card[data-key]");
+  const card = e.target.closest && e.target.closest(".card[data-id]");
   const pi = e.target.closest && e.target.closest(".pi[data-i]");
-  if (card) { drag = { type: "card", key: card.dataset.key }; card.classList.add("dragging"); }
-  else if (pi) { drag = { type: "plan", i: Number(pi.dataset.i) }; }
+  if (card) { drag = { type: "card", id: card.dataset.id }; card.classList.add("dragging"); }
+  else if (pi) drag = { type: "plan", i: Number(pi.dataset.i) };
   else return;
   try { e.dataTransfer.setData("text/plain", "x"); e.dataTransfer.effectAllowed = "move"; } catch (_) {}
 });
 document.addEventListener("dragend", () => { drag = null; document.querySelectorAll(".dragging").forEach(x => x.classList.remove("dragging")); $("today").classList.remove("drop"); });
 document.addEventListener("dragover", (e) => { if (drag && e.target.closest && e.target.closest("#today")) { e.preventDefault(); $("today").classList.add("drop"); } });
-document.addEventListener("dragleave", (e) => { if (e.target.id === "today") $("today").classList.remove("drop"); });
 document.addEventListener("drop", (e) => {
   if (!drag || !(e.target.closest && e.target.closest("#today"))) return;
   e.preventDefault(); $("today").classList.remove("drop");
-  if (drag.type === "card") addToPlan(drag.key);
-  else {
-    const target = e.target.closest(".pi[data-i]");
-    const items = S.plan.items; const from = drag.i; const to = target ? Number(target.dataset.i) : items.length - 1;
-    if (from !== to) { const [m] = items.splice(from, 1); items.splice(to, 0, m); savePlan(); renderToday(); }
-  }
+  if (drag.type === "card") addMany([drag.id]);
+  else { const target = e.target.closest(".pi[data-i]"); const a = S.plan.ids; const from = drag.i, to = target ? Number(target.dataset.i) : a.length - 1; if (from !== to) { const [m] = a.splice(from, 1); a.splice(to, 0, m); savePlan(); renderToday(); } }
   drag = null;
 });
+
+/* ---------- carry over data from the first version ---------- */
+let migrated = false;
+async function migrate() {
+  if (migrated || !canSave() || !S.loaded.open || !S.loaded.suggested || !S.loaded.plan) return;
+  migrated = true;
+  try {
+    const q = await db.collection(P.inbox()).where("status", "==", "open").get();
+    for (const d of q.docs) {
+      const x = d.data(); const id = "s" + d.id;
+      if (!getTask(id)) await createTask({ title: x.title, client: clientName(x.client), source: x.source || "gmail", sourceUrl: x.sourceUrl || "", context: x.context || "", estMins: x.estMins || 30, urgency: x.urgency || "soon", due: x.dueDate || null, status: "suggested", createdAt: x.createdAt || new Date().toISOString() }, id);
+      await db.doc(`${P.inbox()}/${d.id}`).update({ status: "migrated" });
+    }
+  } catch (_) {}
+  const raw = S.planRaw;
+  if (raw && Array.isArray(raw.items) && !Array.isArray(raw.ids)) {
+    const ids = [];
+    for (const it of raw.items) {
+      let t = it.cuId ? [...allTasks().values()].find(x => x.cuId === it.cuId) : null;
+      if (!t) {
+        const nid = await createTask({ title: it.title, client: clientName(it.group), estMins: it.estMins || 30, source: it.source === "clickup" ? "clickup" : "manual", cuId: it.cuId || null, cuUrl: it.url || "", status: it.done ? "done" : "open", doneDate: it.done ? todayKey : null });
+        t = getTask(nid);
+      }
+      if (t) ids.push(t.id);
+    }
+    S.plan.ids = ids; savePlan(); renderAll();
+  }
+}
 
 /* ---------- boot ---------- */
 renderAll();
 (async function boot() {
-  [mcp, db, sample, userApi] = await Promise.all([use("mcp"), use("db"), use("sample"), use("user")]);
-  S.caps = { mcp, db, sample, user: userApi };
-  if (userApi) {
-    try { S.uid = await userApi.id(); } catch (_) {}
-    try { S.me = await userApi.me(); } catch (_) {}
-  }
-  if (db && S.uid) {
-    db.doc(P.settings()).onSnapshot(snap => {
-      S.settings = snap.exists ? snap.data() : null; S.settingsLoaded = true; renderAll();
-    }, e => toast(`Couldn't load settings: ${e.message || e.code}`));
-    db.collection(P.inbox()).where("status", "==", "open").onSnapshot(snap => {
-      const sent = S.captured.filter(x => x.status !== "open");
-      S.captured = snap.docs.map(d => Object.assign({ id: d.id }, d.data())).concat(sent.filter(x => !snap.docs.some(d => d.id === x.id)));
-      S.capLoaded = true; renderEverything(); renderToday();
-    }, e => toast(`Couldn't load swept items: ${e.message || e.code}`));
+  [mcp, db, sample, userApi, downloads] = await Promise.all([use("mcp"), use("db"), use("sample"), use("user"), use("downloads")]);
+  S.caps = { mcp, db };
+  if (userApi) { try { S.uid = await userApi.id(); } catch (_) {} try { S.me = await userApi.me(); } catch (_) {} }
+  if (canSave()) {
+    const tasks = db.collection(P.tasks());
+    const onErr = fail("load your tasks");
+    db.doc(P.settings()).onSnapshot(snap => { S.settings = snap.exists ? snap.data() : null; renderAll(); }, fail("load settings"));
+    const watch = (key, q) => q.onSnapshot(snap => { S.sets[key] = snap.docs.map(d => Object.assign({ id: d.id }, d.data())); S.loaded[key] = true; renderAll(); migrate(); }, onErr);
+    watch("open", tasks.where("status", "==", "open"));
+    watch("suggested", tasks.where("status", "==", "suggested"));
+    tasks.where("doneDate", ">=", monthStart).onSnapshot(snap => { S.sets.done = snap.docs.map(d => Object.assign({ id: d.id }, d.data())).filter(t => t.status === "done"); S.loaded.done = true; renderAll(); }, onErr);
+    db.collection(P.entries()).where("date", ">=", monthStart).onSnapshot(snap => { S.entries = snap.docs.map(d => Object.assign({ id: d.id }, d.data())); renderAll(); }, fail("load your time log"));
+    db.doc(P.timer()).onSnapshot(snap => { const d = snap.exists ? snap.data() : null; S.timer = d && d.taskId ? d : null; renderAll(); }, () => {});
     db.doc(P.plan(todayKey)).onSnapshot(snap => {
       if ((snap.metadata && snap.metadata.hasPendingWrites) || planPending > 0) return;
-      S.plan = snap.exists ? Object.assign({ items: [] }, snap.data()) : { items: [] };
-      S.planLoaded = true; renderToday(); renderEverything();
-    }, e => toast(`Couldn't load today's list: ${e.message || e.code}`));
-    db.collection(P.plans()).orderBy("date", "desc").limit(4).get().then(q => {
-      const prev = q.docs.map(d => d.data()).find(d => d && d.date && d.date < todayKey);
+      const d = snap.exists ? snap.data() : null;
+      S.planRaw = d; S.plan = { ids: d && Array.isArray(d.ids) ? d.ids.slice() : [] };
+      S.loaded.plan = true; renderAll(); migrate();
+    }, fail("load today's list"));
+    db.collection(P.plans()).orderBy("date", "desc").limit(5).get().then(q => {
+      const prev = q.docs.map(d => d.data()).find(d => d && d.date && d.date < todayKey && Array.isArray(d.ids));
       if (prev) { S.prevPlan = prev; renderToday(); }
     }).catch(() => {});
   }
   renderAll();
-  if (mcp) loadClickUp(false);
-  else { S.cu = { status: "err", msg: "Connectors aren't available in this view. Open the page inside claude.ai." }; renderAll(); }
 })();
 })();
 </script>
