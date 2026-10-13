@@ -263,6 +263,7 @@ table.log tr.total td{font-weight:600;border-top:2px solid var(--ink)}
         <button class="chip" data-filter="all" aria-pressed="true" type="button">All</button>
         <button class="chip" data-filter="due" aria-pressed="false" type="button">Overdue &amp; due this week</button>
         <button class="chip" data-filter="progress" aria-pressed="false" type="button">In progress</button>
+        <button class="chip" data-act="completed" type="button">Completed ✓</button>
         <input class="search" id="search" type="search" placeholder="Search tasks" aria-label="Search tasks">
       </div>
       <div id="everything"></div>
@@ -299,11 +300,11 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<"
 const cfg = () => Object.assign({}, DEFAULTS, S.settings || {});
 const pad = (n) => String(n).padStart(2, "0");
 const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-const todayKey = ymd(new Date());
-const thisMonth = todayKey.slice(0, 7);
-const monthStart = thisMonth + "-01";
+let todayKey = ymd(new Date());
+let thisMonth = todayKey.slice(0, 7);
+let monthStart = thisMonth + "-01";
 const monthLabel = (ym) => new Date(ym + "-15T12:00:00").toLocaleDateString(undefined, { month: "long", year: "numeric" });
-const monthName = new Date().toLocaleDateString(undefined, { month: "long" });
+let monthName = new Date().toLocaleDateString(undefined, { month: "long" });
 const nextMonth = (ym) => { const d = new Date(ym + "-15T12:00:00"); d.setMonth(d.getMonth() + 1); return ymd(d).slice(0, 7); };
 const prevMonth = (ym) => { const d = new Date(ym + "-15T12:00:00"); d.setMonth(d.getMonth() - 1); return ymd(d).slice(0, 7); };
 const startOfDay = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
@@ -683,6 +684,7 @@ function renderToday() {
     <div class="today-foot">
       <button class="btn btn-sm" data-act="meeting" type="button">Log a meeting or call</button>
       <button class="btn btn-sm" data-act="check" type="button" ${chk.status === "busy" ? "disabled" : ""}>${chk.status === "busy" ? esc(chk.msg || "Checking…") : "Check my day with Littlebird"}</button>
+      <button class="btn btn-sm btn-ghost" data-act="completed" type="button">Completed${S.sets.done.length ? ` (${S.sets.done.filter(t => (t.doneDate || "") >= ymd(new Date(Date.now() - 6 * DAY))).length} this week)` : ""}</button>
       ${tasks.some(t => t.status === "done") ? `<button class="btn btn-sm btn-ghost" data-act="cleardone" type="button">Clear finished</button>` : ""}
       ${chk.status === "err" ? `<div class="ctx" style="color:var(--crit);flex-basis:100%">${esc(chk.msg)}</div>` : ""}
       <div class="ctx" style="flex-basis:100%">The day check looks at what Littlebird saw you work on today, then suggests what to tick off and what time to log.</div>
@@ -1227,6 +1229,9 @@ document.addEventListener("click", async (ev) => {
     case "logmonth": openTimeLog(el.dataset.month); break;
     case "export": exportCSV(el.dataset.month); break;
     case "exporttasks": exportTasks(); break;
+    case "completed": openCompleted(); break;
+    case "olderdone": openCompleted(true); break;
+    case "reopen": { setDone(id, false); if (olderDone) olderDone = olderDone.filter(t => t.id !== id); openCompleted(); renderAll(); toast("Reopened. It's back in its client lane."); break; }
     case "closedrawer": case "drawerbg": closeDrawer(); break;
     case "drawerdone": { const fid = $("taskForm").dataset.id; const t = getTask(fid); if (!t) break; if (t.status === "done") setDone(fid, false); else markDone(fid); closeDrawer(); renderAll(); break; }
     case "drawerdelete": { const fid = $("taskForm").dataset.id; updateTask(fid, { status: "dismissed" }); S.plan.ids = S.plan.ids.filter(x => x !== fid); savePlan(); closeDrawer(); renderAll(); toast("Task deleted.", { act: "undodel", id: fid, label: "Undo" }); break; }
@@ -1360,6 +1365,70 @@ async function migrate() {
   }
 }
 
+/* ---------- day and month subscriptions (re-run when the date changes) ---------- */
+const unsub = { done: null, entries: null, plan: null };
+function subscribeMonth() {
+  if (unsub.done) unsub.done(); if (unsub.entries) unsub.entries();
+  const tasks = db.collection(P.tasks());
+  unsub.done = tasks.where("doneDate", ">=", monthStart).onSnapshot(snap => { S.sets.done = snap.docs.map(d => Object.assign({ id: d.id }, d.data())).filter(t => t.status === "done"); S.loaded.done = true; renderAll(); }, fail("load your finished tasks"));
+  unsub.entries = db.collection(P.entries()).where("date", ">=", monthStart).onSnapshot(snap => { S.entries = snap.docs.map(d => Object.assign({ id: d.id }, d.data())); renderAll(); }, fail("load your time log"));
+}
+function subscribeDay() {
+  if (unsub.plan) unsub.plan();
+  const key = todayKey;
+  unsub.plan = db.doc(P.plan(key)).onSnapshot(snap => {
+    if (key !== todayKey) return;
+    if ((snap.metadata && snap.metadata.hasPendingWrites) || planPending > 0) return;
+    const d = snap.exists ? snap.data() : null;
+    S.planRaw = d; S.plan = { ids: d && Array.isArray(d.ids) ? d.ids.slice() : [] };
+    S.loaded.plan = true; renderAll(); migrate();
+  }, fail("load today's list"));
+  db.collection(P.plans()).orderBy("date", "desc").limit(5).get().then(q => {
+    const prev = q.docs.map(d => d.data()).find(d => d && d.date && d.date < todayKey && Array.isArray(d.ids));
+    if (prev) { S.prevPlan = prev; renderToday(); }
+  }).catch(() => {});
+}
+function checkNewDay() {
+  const k = ymd(new Date());
+  if (k === todayKey) return;
+  const yesterday = { date: todayKey, ids: S.plan.ids.slice() };
+  const newMonth = k.slice(0, 7) !== thisMonth;
+  todayKey = k; thisMonth = k.slice(0, 7); monthStart = thisMonth + "-01";
+  monthName = new Date().toLocaleDateString(undefined, { month: "long" });
+  S.plan = { ids: [] }; S.planRaw = null; S.prevPlan = yesterday.ids.length ? yesterday : S.prevPlan;
+  S.sel.clear(); S.check = { status: "idle" };
+  if (canSave()) { if (newMonth) subscribeMonth(); subscribeDay(); }
+  renderAll();
+  toast("Good morning. Today's list is fresh. Yesterday's finished tasks are in Completed.");
+}
+setInterval(checkNewDay, 60000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) checkNewDay(); });
+window.addEventListener("focus", checkNewDay);
+
+/* ---------- completed ---------- */
+let olderDone = null;
+async function openCompleted(loadOlder) {
+  if (loadOlder && canSave() && !olderDone) {
+    try {
+      const q = await db.collection(P.tasks()).where("doneDate", "<", monthStart).orderBy("doneDate", "desc").limit(300).get();
+      olderDone = q.docs.map(d => Object.assign({ id: d.id }, d.data())).filter(t => t.status === "done");
+    } catch (e) { toast(`Couldn't load earlier tasks: ${(e && (e.message || e.code)) || "unknown error"}`); olderDone = []; }
+  }
+  const all = S.sets.done.concat(olderDone || []).sort((a, b) => String(b.doneAt || b.doneDate).localeCompare(String(a.doneAt || a.doneDate)));
+  const byDay = new Map();
+  all.forEach(t => { const d = t.doneDate || "Unknown"; if (!byDay.has(d)) byDay.set(d, []); byDay.get(d).push(t); });
+  const weekAgo = ymd(new Date(Date.now() - 6 * DAY));
+  const thisWeek = all.filter(t => (t.doneDate || "") >= weekAgo).length;
+  const dayLabel = (d) => d === todayKey ? "Today" : d === ymd(new Date(Date.now() - DAY)) ? "Yesterday" : new Date(d + "T12:00:00").toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" });
+  $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><div class="drawer-in" role="dialog" aria-label="Completed tasks">
+    <div class="row" style="justify-content:space-between"><h2>Completed</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>
+    <div class="ctx">${thisWeek} finished in the last 7 days · ${S.sets.done.length} in ${esc(monthName)}</div>
+    ${all.length ? [...byDay.entries()].map(([d, list]) => `<h3>${esc(dayLabel(d))} <span class="ctx" style="font-family:var(--f-body);font-weight:400">${list.length}</span></h3>
+      <ul class="entries">${list.map(t => `<li><span style="min-width:0;overflow-wrap:anywhere"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${colorFor(t.client)};margin-right:6px"></span>${esc(t.title)} <span class="ctx">· ${esc(clientName(t.client))}${t.project ? " · " + esc(t.project) : ""}${t.minsLogged ? " · " + fmtMins(t.minsLogged) + " logged" : ""}</span></span><button class="btn btn-sm btn-ghost" data-act="reopen" data-id="${esc(t.id)}" type="button">Reopen</button></li>`).join("")}</ul>`).join("") : `<div class="empty-today">Nothing finished yet${olderDone ? "" : ` in ${esc(monthName)}`}.</div>`}
+    ${olderDone ? "" : `<button class="btn btn-sm" data-act="olderdone" type="button" style="align-self:flex-start">Show earlier months</button>`}
+  </div></div>`;
+}
+
 /* ---------- boot ---------- */
 renderAll();
 (async function boot() {
@@ -1373,19 +1442,9 @@ renderAll();
     const watch = (key, q) => q.onSnapshot(snap => { S.sets[key] = snap.docs.map(d => Object.assign({ id: d.id }, d.data())); S.loaded[key] = true; renderAll(); migrate(); }, onErr);
     watch("open", tasks.where("status", "==", "open"));
     watch("suggested", tasks.where("status", "==", "suggested"));
-    tasks.where("doneDate", ">=", monthStart).onSnapshot(snap => { S.sets.done = snap.docs.map(d => Object.assign({ id: d.id }, d.data())).filter(t => t.status === "done"); S.loaded.done = true; renderAll(); }, onErr);
-    db.collection(P.entries()).where("date", ">=", monthStart).onSnapshot(snap => { S.entries = snap.docs.map(d => Object.assign({ id: d.id }, d.data())); renderAll(); }, fail("load your time log"));
     db.doc(P.timer()).onSnapshot(snap => { const d = snap.exists ? snap.data() : null; S.timer = d && d.taskId ? d : null; renderAll(); }, () => {});
-    db.doc(P.plan(todayKey)).onSnapshot(snap => {
-      if ((snap.metadata && snap.metadata.hasPendingWrites) || planPending > 0) return;
-      const d = snap.exists ? snap.data() : null;
-      S.planRaw = d; S.plan = { ids: d && Array.isArray(d.ids) ? d.ids.slice() : [] };
-      S.loaded.plan = true; renderAll(); migrate();
-    }, fail("load today's list"));
-    db.collection(P.plans()).orderBy("date", "desc").limit(5).get().then(q => {
-      const prev = q.docs.map(d => d.data()).find(d => d && d.date && d.date < todayKey && Array.isArray(d.ids));
-      if (prev) { S.prevPlan = prev; renderToday(); }
-    }).catch(() => {});
+    subscribeMonth();
+    subscribeDay();
   }
   renderAll();
 })();
