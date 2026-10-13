@@ -683,11 +683,12 @@ function renderToday() {
     <form class="quick" id="quickForm"><input id="quickInput" placeholder="Add a new task to today" aria-label="New task for today" autocomplete="off"><select id="quickClient" aria-label="Client">${clientOptions("Unsorted")}</select><button class="btn" type="submit">Add</button></form>
     <div class="today-foot">
       <button class="btn btn-sm" data-act="meeting" type="button">Log a meeting or call</button>
-      <button class="btn btn-sm" data-act="check" type="button" ${chk.status === "busy" ? "disabled" : ""}>${chk.status === "busy" ? esc(chk.msg || "Checking…") : "Check my day with Littlebird"}</button>
+      <button class="btn btn-sm${checkDue() ? " btn-sun" : ""}" data-act="check" type="button" ${chk.status === "busy" ? "disabled" : ""}>${chk.status === "busy" ? esc(chk.msg || "Checking…") : checkDue() ? "Time to check your day" : "Check my day with Littlebird"}</button>
+      <label class="ctx row" style="gap:4px">for <input type="date" id="checkDate" value="${esc(S.checkDate && S.checkDate <= todayKey ? S.checkDate : todayKey)}" max="${todayKey}" aria-label="Day to check" style="border:1px solid var(--line);border-radius:6px;padding:2px 4px;background:var(--surface);font-size:12px"></label>
       <button class="btn btn-sm btn-ghost" data-act="completed" type="button">Completed${S.sets.done.length ? ` (${S.sets.done.filter(t => (t.doneDate || "") >= ymd(new Date(Date.now() - 6 * DAY))).length} this week)` : ""}</button>
       ${tasks.some(t => t.status === "done") ? `<button class="btn btn-sm btn-ghost" data-act="cleardone" type="button">Clear finished</button>` : ""}
       ${chk.status === "err" ? `<div class="ctx" style="color:var(--crit);flex-basis:100%">${esc(chk.msg)}</div>` : ""}
-      <div class="ctx" style="flex-basis:100%">The day check looks at what Littlebird saw you work on today, then suggests what to tick off and what time to log.</div>
+      <div class="ctx" style="flex-basis:100%">The day check looks at what Littlebird saw you work on, then suggests what to tick off and what time to log. Pick an earlier date to fill in a day you missed.</div>
     </div>`;
   $("tabToday").textContent = S.plan.ids.length ? `Today (${tasks.filter(t => t.status !== "done").length})` : "Today";
 }
@@ -947,14 +948,14 @@ async function fetchSlack(since) {
   if (!ok.length) throw res[0].reason;
   return ok;
 }
-async function fetchLittlebird(start, queries, messages, max, app) {
-  const input = { search_queries: queries, search_queries_messages: messages, date_range: { start, end: "now" } };
+async function fetchLittlebird(start, queries, messages, max, app, end) {
+  const input = { search_queries: queries, search_queries_messages: messages, date_range: { start, end: end || (start === todayKey ? "now" : start) } };
   if (app) input.filters = { app };
   const r = await read("Littlebird", "search_user_context", input, { cache: false });
   return asText(r.payload).slice(0, max);
 }
-const fetchWhatsApp = (start, max) => fetchLittlebird(start, ["WhatsApp chat with a client"],
-  ["someone asking me to do something", "client question waiting for my reply", "I promised to send or do something", "message about a deadline or meeting"], max || 16000, "WhatsApp");
+const fetchWhatsApp = (start, max, end) => fetchLittlebird(start, ["WhatsApp chat with a client"],
+  ["someone asking me to do something", "client question waiting for my reply", "I promised to send or do something", "message about a deadline or meeting"], max || 16000, "WhatsApp", end || "now");
 function clientListForAI() {
   const c = cfg();
   return [...new Set([...(c.groups || []).map(d => { const pj = projectsFor(d.name); return `${d.name}${(d.match || []).length ? ` (also known as: ${d.match.join(", ")})` : ""}${pj.length ? ` [sub-clients: ${pj.join(", ")}]` : ""}`; }), ...clientNames()])].join("\n");
@@ -981,7 +982,7 @@ async function runSweep() {
   S.sweep.ai = { status: "idle", msg: "Waiting for sources" }; renderSources();
   const [g, s, l, fl, w] = await Promise.allSettled([fetchGmail(since), fetchSlack(since), fetchLittlebird(ymd(since),
     ["commitments and promises made to clients", "action items and follow-ups from meetings", "client requests with deadlines"],
-    ["someone asking for something to be done", "client waiting on a reply or deliverable"], 22000), fetchGmailLabels(), fetchWhatsApp(ymd(since))]);
+    ["someone asking for something to be done", "client waiting on a reply or deliverable"], 22000, null, "now"), fetchGmailLabels(), fetchWhatsApp(ymd(since))]);
   const flagged = fl.status === "fulfilled" ? fl.value : [];
   S.sweep.gmail = g.status === "fulfilled" ? { status: "ok", count: g.value.length, flagged: flagged.length } : { status: "err", msg: errText(g.reason, "Gmail") };
   S.sweep.slack = s.status === "fulfilled" ? { status: "ok", count: s.value.length } : { status: "err", msg: errText(s.reason, "Slack") };
@@ -1047,23 +1048,33 @@ ${l.status === "fulfilled" ? l.value : "(unavailable)"}`;
 }
 
 /* ---------- Littlebird day check ---------- */
+function checkDue() {
+  const now = new Date();
+  return now.getHours() * 60 + now.getMinutes() >= 17 * 60 + 30 && cfg().lastCheckDate !== todayKey && S.check.status !== "busy" && canSave();
+}
+setInterval(() => { const d = checkDue(); if (d !== S.remindShown) { S.remindShown = d; renderToday(); if (d) toast("It's half five. Run Check my day to log today's time.", { act: "check", label: "Check now" }); } }, 60000);
 async function runCheck() {
+  const day = ($("checkDate") && $("checkDate").value) || todayKey;
+  const isToday = day === todayKey;
+  S.checkDate = day;
+  const dayName = isToday ? "today" : new Date(day + "T12:00:00").toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" });
   if (!mcp || !sample) { S.check = { status: "err", msg: "Littlebird and Claude need to be available on this page for the day check." }; renderToday(); return; }
-  S.check = { status: "busy", msg: "Reading your day…" }; renderToday();
+  S.check = { status: "busy", msg: isToday ? "Reading your day…" : `Reading ${dayName}…` }; renderToday();
   let lb, calText = "(calendar unavailable)";
   try {
     const [a, b] = await Promise.all([
-      fetchLittlebird(todayKey, ["client work done today", "documents, pages and automations edited today", "emails and messages sent to clients today", "meetings and calls today"], ["messages sent today about finished work", "replies sent to clients today"], 26000),
-      fetchLittlebird(todayKey, ["GoHighLevel, Shopify or Make work today", "time spent on each project today", "tasks completed today"], ["confirmation that something is done"], 20000),
-      fetchWhatsApp(todayKey, 10000).catch(() => "")
+      fetchLittlebird(day, ["client work done today", "documents, pages and automations edited today", "emails and messages sent to clients today", "meetings and calls today"], ["messages sent today about finished work", "replies sent to clients today"], 26000),
+      fetchLittlebird(day, ["GoHighLevel, Shopify or Make work today", "time spent on each project today", "tasks completed today"], ["confirmation that something is done"], 20000),
+      fetchWhatsApp(day, 10000, isToday ? "now" : day).catch(() => "")
     ]).then(([a1, b1, c1]) => [a1, b1 + (c1 ? "\n\nWHATSAPP TODAY:\n" + c1 : "")]);
     lb = a + "\n\n" + b;
   } catch (e) { S.check = { status: "err", msg: errText(e, "Littlebird") }; renderToday(); return; }
-  try { if (!S.cal || S.cal.date !== todayKey) await loadCalendar(todayKey); if (S.cal && !S.cal.err) calText = JSON.stringify(S.cal.events.map(e => ({ id: e.id, title: e.title, time: e.time, mins: e.mins }))); } catch (_) {}
+  try { if (!S.cal || S.cal.date !== day) await loadCalendar(day); if (S.cal && !S.cal.err) calText = JSON.stringify(S.cal.events.map(e => ({ id: e.id, title: e.title, time: e.time, mins: e.mins }))); } catch (_) {}
   S.check = { status: "busy", msg: "Matching against your tasks…" }; renderToday();
   const open = S.sets.open.map(t => ({ id: t.id, title: t.title, client: clientName(t.client), project: t.project || null, plannedToday: inPlan(t.id) }));
-  const loggedToday = S.entries.filter(e => e.date === todayKey).map(e => ({ taskId: e.taskId, client: clientName(e.client), project: e.project, kind: e.kind, title: e.title, mins: e.mins, calEventId: e.calEventId }));
-  const prompt = `You are reviewing ${(S.me && S.me.name) || "the user"}'s working day from Littlebird screen and meeting context plus her calendar, to make sure her task list and time log are complete. It is now ${new Date().toString()}.
+  const dayEntries = day >= monthStart ? S.entries : await entriesFor(day.slice(0, 7)).catch(() => []);
+  const loggedToday = dayEntries.filter(e => e.date === day).map(e => ({ taskId: e.taskId, client: clientName(e.client), project: e.project, kind: e.kind, title: e.title, mins: e.mins, calEventId: e.calEventId }));
+  const prompt = `You are reviewing ${(S.me && S.me.name) || "the user"}'s working day (${isToday ? "today" : dayName}) from Littlebird screen and meeting context plus her calendar, to make sure her task list and time log are complete. It is now ${new Date().toString()}.
 
 Return ONLY JSON in this exact shape:
 {"done":[{"taskId":"...","evidence":"one line"}],
@@ -1071,11 +1082,11 @@ Return ONLY JSON in this exact shape:
  "newTasks":[{"title":"...","client":"...","project":"... or null","estMins":number,"context":"one line"}]}
 
 Rules:
-- done: only open tasks with clear evidence they were finished today (sent, published, built, confirmed). Use exact taskIds.
-- time: time she spent TODAY that is NOT already in the time log. Use screen timestamps to judge durations. Be conservative, round to 5 minutes, skip anything under 10 minutes.
+- done: only open tasks with clear evidence they were finished on that day (sent, published, built, confirmed). Use exact taskIds.
+- time: time she spent ON THAT DAY that is NOT already in the time log. Use screen timestamps to judge durations. Be conservative, round to 5 minutes, skip anything under 10 minutes.
   - Work on a task: kind "work", with its taskId. Other client work: taskId null with the client name.
   - Meetings and calls she actually attended (seen in Littlebird or on the calendar): kind "meeting", include calEventId when it matches a calendar event. Skip calendar blocks that are focus time or reminders (e.g. "NO Calls", "Lift"), and skip meetings already logged.
-- newTasks: follow-ups she clearly committed to today that are not on the list. Max 8.
+- newTasks: follow-ups she clearly committed to that day that are not on the list. Max 8.
 - Clients: ${clientListForAI().split("\n").join("; ")}
 
 NOTES FROM HER (follow these):
@@ -1084,13 +1095,13 @@ ${cfg().notes || "(none)"}
 OPEN TASKS:
 ${JSON.stringify(open)}
 
-ALREADY LOGGED TODAY:
+ALREADY LOGGED THAT DAY:
 ${JSON.stringify(loggedToday)}
 
-TODAY'S CALENDAR:
+CALENDAR THAT DAY:
 ${calText}
 
-LITTLEBIRD CONTEXT FOR TODAY:
+LITTLEBIRD CONTEXT FOR THAT DAY:
 ${lb}`;
   let out;
   try { out = await sample.json(prompt, { modelTier: "default", cache: false }); }
@@ -1102,7 +1113,10 @@ ${lb}`;
     time: (out && Array.isArray(out.time) ? out.time : []).filter(x => x && Number(x.mins) >= 5 && !(x.calEventId && loggedCal.has(x.calEventId))).map(x => Object.assign({}, x, { taskId: ids.has(x.taskId) ? x.taskId : null, kind: x.kind === "meeting" ? "meeting" : "work", mins: Math.min(600, Math.round(Number(x.mins) / 5) * 5) })).slice(0, 30),
     newTasks: (out && Array.isArray(out.newTasks) ? out.newTasks : []).filter(x => x && typeof x.title === "string").slice(0, 8)
   };
-  S.check = { status: "ok" }; renderToday();
+  review.day = day; review.dayName = dayName;
+  S.check = { status: "ok" };
+  if (isToday) saveSettings({ lastCheckDate: todayKey });
+  renderToday();
   openReview(review);
 }
 function openReview(r) {
@@ -1112,7 +1126,7 @@ function openReview(r) {
   const work = r.time.map((x, i) => [x, i]).filter(([x]) => x.kind !== "meeting");
   const timeRow = ([x, i]) => { const t = x.taskId ? getTask(x.taskId) : null; const cl = clientName(t ? t.client : x.client), pj = (t && t.project) || x.project; return `<div class="chk"><input type="checkbox" id="rv-t-${i}" checked aria-label="Log this time"><span class="body" style="flex:1"><b>${esc(t ? t.title : (x.title || "Work"))}</b><span class="ctx">${esc(cl)}${pj ? " · " + esc(pj) : ""} · ${esc(x.evidence || "")}</span></span><input class="mins" type="number" min="5" step="5" id="rv-tm-${i}" value="${x.mins}" aria-label="Minutes"></div>`; };
   $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><div class="drawer-in" role="dialog" aria-label="Day check">
-    <div class="row" style="justify-content:space-between"><h2>Your day, checked</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>
+    <div class="row" style="justify-content:space-between"><h2>${r.day && r.day !== todayKey ? esc(r.dayName) + ", checked" : "Your day, checked"}</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>
     <div class="ctx">Based on what Littlebird and your calendar show for today. Untick anything that's wrong, adjust minutes, then apply.</div>
     ${none ? `<div class="empty-today">Nothing to add. Your list and time log already match your day.</div>` : ""}
     ${r.done.length ? `<h3>Looks finished</h3>${r.done.map((x, i) => { const t = getTask(x.taskId); return `<label class="chk"><input type="checkbox" id="rv-d-${i}" checked><span class="body"><b>${esc(t ? t.title : "")}</b><span class="ctx">${esc(x.evidence || "")}</span></span></label>`; }).join("")}` : ""}
@@ -1127,12 +1141,13 @@ async function applyReview() {
   S.review = null;
   document.querySelectorAll('[data-act="applyreview"]').forEach(x => { x.disabled = true; x.textContent = "Applying…"; });
   let d = 0, m = 0, n = 0;
-  r.done.forEach((x, i) => { if ($("rv-d-" + i).checked) { setDone(x.taskId, true); d++; } });
+  const day = r.day || todayKey;
+  r.done.forEach((x, i) => { if ($("rv-d-" + i).checked) { updateTask(x.taskId, { status: "done", doneAt: new Date(day + "T17:00:00").toISOString(), doneDate: day, inProgress: false }); d++; } });
   for (let i = 0; i < r.time.length; i++) {
     if (!$("rv-t-" + i).checked) continue;
     const x = r.time[i], mins = Math.round(Number($("rv-tm-" + i).value) || 0); if (mins < 1) continue;
     const t = x.taskId ? getTask(x.taskId) : null;
-    await logTime({ taskId: x.taskId, title: t ? t.title : (x.title || "Work"), client: clientName(t ? t.client : x.client), project: (t && t.project) || (typeof x.project === "string" && x.project ? x.project : null), kind: x.kind, calEventId: x.calEventId || null, mins, source: "littlebird", note: x.evidence || "" });
+    await logTime({ taskId: x.taskId, title: t ? t.title : (x.title || "Work"), client: clientName(t ? t.client : x.client), project: (t && t.project) || (typeof x.project === "string" && x.project ? x.project : null), kind: x.kind, calEventId: x.calEventId || null, mins, date: day, start: new Date(day + "T12:00:00").toISOString(), source: "littlebird", note: x.evidence || "" });
     m += mins;
   }
   const picks = r.newTasks.filter((x, i) => $("rv-n-" + i).checked).map(x => Object.assign({ source: "littlebird" }, x));
