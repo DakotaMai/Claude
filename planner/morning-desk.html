@@ -1124,6 +1124,8 @@ function openReview(r) {
 }
 async function applyReview() {
   const r = S.review; if (!r) return;
+  S.review = null;
+  document.querySelectorAll('[data-act="applyreview"]').forEach(x => { x.disabled = true; x.textContent = "Applying…"; });
   let d = 0, m = 0, n = 0;
   r.done.forEach((x, i) => { if ($("rv-d-" + i).checked) { setDone(x.taskId, true); d++; } });
   for (let i = 0; i < r.time.length; i++) {
