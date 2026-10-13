@@ -146,7 +146,7 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .ib.on{background:var(--sun);color:var(--sun-ink);border-color:transparent}
 .ib.del:hover{color:var(--crit);border-color:var(--crit)}
 
-.today{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 24px);overflow:auto}
+.today{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
 .today.drop{outline:2px dashed var(--sun);outline-offset:3px}
 .today h2{font-family:var(--f-display);font-weight:700;font-size:22px;margin:0}
 .cap{display:flex;flex-direction:column;gap:6px}
@@ -253,7 +253,6 @@ table.log tr.total td{font-weight:600;border-top:2px solid var(--ink)}
   .desk{grid-template-columns:minmax(0,1fr)}
   .desk[data-tab="all"] .pane-today{display:none}
   .desk[data-tab="today"] .pane-all{display:none}
-  .today{position:static;max-height:none}
   .grow{grid-template-columns:minmax(0,1fr) 96px 60px auto}
   .grow .gbill{grid-column:1 / 2;order:5}
   .grow .gmatch{grid-column:2 / -1;order:6}
