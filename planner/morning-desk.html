@@ -181,6 +181,20 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .life li input{width:16px;height:16px;margin-top:2px;accent-color:var(--ok);flex:none}
 .life li.done span.t{text-decoration:line-through;color:var(--muted)}
 .life .when{font-family:var(--f-mono);font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap}
+.habit{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:5px 0}
+.habit input{width:17px;height:17px;accent-color:var(--ok);margin:0}
+.habit .hn{min-width:0;overflow-wrap:anywhere;cursor:pointer}
+.habit.done .hn{color:var(--muted)}
+.habit .hs{grid-column:2 / -1;display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
+.dots{display:flex;gap:3px}
+.dots i{width:9px;height:9px;border-radius:50%;border:1px solid color-mix(in srgb,var(--muted) 50%,transparent);display:block}
+.dots i.on{background:var(--ok);border-color:var(--ok)}
+.dots i.now{box-shadow:0 0 0 1.5px var(--ink)}
+.dots i.fut{opacity:.35}
+.hgoal{font-family:var(--f-mono);font-size:11px;margin-left:auto;white-space:nowrap}
+.hgoal.met{color:var(--ok);font-weight:500}
+.hrow{display:grid;grid-template-columns:minmax(0,1fr) 120px auto;gap:6px;align-items:center}
+.hrow input,.hrow select{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 7px;min-width:0;font-size:13px}
 .daypick{display:flex;gap:3px;flex-wrap:wrap}
 .daypick label{display:inline-flex}
 .daypick input{position:absolute;opacity:0;width:1px;height:1px}
@@ -371,6 +385,7 @@ async function read(server, tool, input, opts) {
 const P = {
   settings: () => `data/users/${S.uid}/settings`,
   timer: () => `data/users/${S.uid}/timer`,
+  habits: () => `data/users/${S.uid}/habits`,
   tasks: () => `data/users/${S.uid}/tasks/items`,
   entries: () => `data/users/${S.uid}/time/entries`,
   inbox: () => `data/users/${S.uid}/inbox/items`,
@@ -658,16 +673,8 @@ function renderToday() {
   const isLife = (t) => clientName(t.client) === "Personal";
   const tasks = planTasks.filter(t => !isLife(t));
   const lifeTasks = planTasks.filter(isLife);
-  const dow = new Date().getDay();
-  const rhythm = (c.lifeItems || []).filter(x => x && x.title && (x.days || []).includes(dow));
-  const lifeDone = S.plan.lifeDone || [];
-  const lifeCount = rhythm.length + lifeTasks.length;
-  const lifeTicked = rhythm.filter(x => lifeDone.includes(x.id)).length + lifeTasks.filter(t => t.status === "done").length;
-  const lifeHTML = lifeCount ? `<div class="life" aria-label="Life">
-      <div class="life-h"><h3>Life</h3><span class="ctx">${lifeTicked} of ${lifeCount} today</span><button class="btn btn-sm btn-ghost" data-act="settings" type="button" style="margin-left:auto">Edit</button></div>
-      <ul>${rhythm.map(x => { const d = lifeDone.includes(x.id); return `<li class="${d ? "done" : ""}"><label><input type="checkbox" id="life-${esc(x.id)}" data-act="lifetoggle" data-id="${esc(x.id)}" ${d ? "checked" : ""}><span class="t">${esc(x.title)}</span>${x.time ? `<span class="when">${esc(x.time)}</span>` : ""}</label></li>`; }).join("")}
-      ${lifeTasks.map(t => `<li class="${t.status === "done" ? "done" : ""}"><label><input type="checkbox" id="pi-${esc(t.id)}" data-act="toggle" data-id="${esc(t.id)}" ${t.status === "done" ? "checked" : ""}><span class="t">${esc(t.title)}</span></label></li>`).join("")}</ul>
-    </div>` : "";
+  const habits = (c.habits || []).filter(h => h && h.name);
+  const lifeHTML = (habits.length || lifeTasks.length) ? habitBoxHTML(habits, lifeTasks) : "";
   const total = tasks.reduce((n, t) => n + (Number(t.estMins) || 30), 0);
   const doneMins = tasks.filter(t => t.status === "done").reduce((n, t) => n + (Number(t.estMins) || 30), 0);
   const todays = S.entries.filter(e => e.date === todayKey);
@@ -1188,22 +1195,20 @@ async function applyReview() {
 }
 
 /* ---------- settings ---------- */
-const DAYS = [[1, "M"], [2, "T"], [3, "W"], [4, "T"], [5, "F"], [6, "S"], [0, "S"]];
-function lifeRowHTML(x, i) {
-  return `<div class="lrow" data-lrow="${i}" data-lid="${esc(x.id || "")}">
-    <input type="text" id="lf-t-${i}" value="${esc(x.title || "")}" placeholder="e.g. 20 minute walk" aria-label="Life item">
-    <input type="text" id="lf-w-${i}" value="${esc(x.time || "")}" placeholder="time" aria-label="Time (optional)">
-    <span class="daypick">${DAYS.map(([d, l]) => `<label><input type="checkbox" id="lf-d-${i}-${d}" ${(x.days || []).includes(d) ? "checked" : ""} aria-label="${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d]}"><span>${l}</span></label>`).join("")}</span>
-    <button class="btn btn-sm btn-ghost" data-act="life-del" data-i="${i}" type="button" aria-label="Remove">×</button>
+function habitRowHTML(h, i) {
+  return `<div class="hrow" data-hrow="${i}" data-hid="${esc(h.id || "")}">
+    <input type="text" id="hb-n-${i}" value="${esc(h.name || "")}" placeholder="e.g. Mobility" aria-label="Habit">
+    <select id="hb-t-${i}" aria-label="Times per week">${[1, 2, 3, 4, 5, 6, 7].map(n => `<option value="${n}"${Number(h.target || 7) === n ? " selected" : ""}>${n === 7 ? "Every day" : n + "× a week"}</option>`).join("")}</select>
+    <button class="btn btn-sm btn-ghost" data-act="habit-del" data-i="${i}" type="button" aria-label="Remove">×</button>
   </div>`;
 }
-function readLifeRows() {
-  return [...document.querySelectorAll("#lifeList .lrow")].map(r => {
-    const i = r.dataset.lrow;
-    return { id: r.dataset.lid || ("l" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5)), title: ($("lf-t-" + i).value || "").trim(), time: ($("lf-w-" + i).value || "").trim(), days: DAYS.map(([d]) => d).filter(d => $(`lf-d-${i}-${d}`).checked) };
+function readHabitRows() {
+  return [...document.querySelectorAll("#habitList .hrow")].map(r => {
+    const i = r.dataset.hrow;
+    return { id: r.dataset.hid || ("h" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5)), name: ($("hb-n-" + i).value || "").trim(), target: Number($("hb-t-" + i).value) || 7 };
   });
 }
-function openSettings(groupsOverride, lifeOverride) {
+function openSettings(groupsOverride, habitOverride) {
   const c = cfg();
   const groups = groupsOverride || ((c.groups || []).length ? c.groups : [{ name: "", kind: "retainer", match: [] }]);
   const row = (g, i) => `<div class="grow" data-row="${i}">
@@ -1220,10 +1225,10 @@ function openSettings(groupsOverride, lifeOverride) {
     <div class="grow grow-h"><span>Name</span><span>Type</span><span class="gbill">Billing</span><span class="gmatch">Other names</span><span>h/mo</span><span></span></div>
     <div id="growList" style="display:flex;flex-direction:column;gap:6px">${groups.map(row).join("")}</div>
     <button class="btn btn-sm" data-act="grow-add" type="button" style="align-self:flex-start">Add client</button>
-    <h3>Life</h3>
-    <div class="field"><span class="hint">The things outside work you want to fit into your day. They show in a Life box in Today on the days you pick, and don't count towards work hours. Tasks under the Personal client show there too.</span></div>
-    <div id="lifeList" style="display:flex;flex-direction:column;gap:6px">${(lifeOverride || c.lifeItems || []).map(lifeRowHTML).join("")}</div>
-    <button class="btn btn-sm" data-act="life-add" type="button" style="align-self:flex-start">Add life item</button>
+    <h3>Habits</h3>
+    <div class="field"><span class="hint">The things outside work you want to do more often. Tick them off in Today whenever they happen, with no set times. The dots show your week. Personal tasks you add to Today show in the same box.</span></div>
+    <div id="habitList" style="display:flex;flex-direction:column;gap:6px">${(habitOverride || c.habits || []).map(habitRowHTML).join("")}</div>
+    <button class="btn btn-sm" data-act="habit-add" type="button" style="align-self:flex-start">Add habit</button>
     <h3>Work</h3>
     <div class="field"><label for="s-people">People you pass work to</label><input id="s-people" value="${esc((c.people || []).join(", "))}"><span class="hint">Comma-separated first names.</span></div>
     <div class="field"><label for="s-notes">Notes for Claude</label><textarea id="s-notes" placeholder="e.g. Calls with Jess are Leighton work">${esc(c.notes || "")}</textarea><span class="hint">The morning sweep and day check read these when deciding which client something belongs to.</span></div>
@@ -1250,7 +1255,7 @@ function collectSettings() {
     hoursAvailable: Math.min(14, Math.max(1, Number($("s-hours").value) || 6)),
     gmailQuery: ($("s-gmail").value || "").trim() || DEFAULTS.gmailQuery,
     notes: ($("s-notes").value || "").trim(),
-    lifeItems: readLifeRows().filter(x => x.title)
+    habits: readHabitRows().filter(x => x.name)
   };
 }
 
@@ -1315,10 +1320,10 @@ document.addEventListener("click", async (ev) => {
       await logTime({ taskId: fid, title: t.title, client: t.client, project: t.project || null, mins, date: $("f-mdate").value || todayKey, source: "manual" });
       openTask(fid); renderAll(); toast(`Logged ${fmtMins(mins)}.`); break;
     }
-    case "grow-add": { const rows = readGroupRows(); rows.push({ name: "", kind: "retainer", match: [] }); openSettings(rows, readLifeRows()); break; }
-    case "grow-del": { const rows = readGroupRows(); rows.splice(i, 1); openSettings(rows, readLifeRows()); break; }
-    case "life-add": { const l = readLifeRows(); l.push({ title: "", time: "", days: [1, 2, 3, 4, 5] }); openSettings(readGroupRows(), l); break; }
-    case "life-del": { const l = readLifeRows(); l.splice(i, 1); openSettings(readGroupRows(), l); break; }
+    case "grow-add": { const rows = readGroupRows(); rows.push({ name: "", kind: "retainer", match: [] }); openSettings(rows, readHabitRows()); break; }
+    case "grow-del": { const rows = readGroupRows(); rows.splice(i, 1); openSettings(rows, readHabitRows()); break; }
+    case "habit-add": { const l = readHabitRows(); l.push({ name: "", target: 5 }); openSettings(readGroupRows(), l); break; }
+    case "habit-del": { const l = readHabitRows(); l.splice(i, 1); openSettings(readGroupRows(), l); break; }
     case "save-settings": { const patch = collectSettings(); closeDrawer(); await saveSettings(patch); renderAll(); toast("Settings saved."); break; }
   }
 });
@@ -1326,11 +1331,7 @@ document.addEventListener("change", (ev) => {
   const el = ev.target, id = el.dataset.id;
   if (el.dataset.act === "pick") { el.checked ? S.sel.add(id) : S.sel.delete(id); const card = el.closest(".card"); if (card) card.classList.toggle("is-picked", el.checked); renderSelBar(); }
   else if (el.dataset.act === "toggle") { if (el.checked && S.timer && S.timer.taskId === id) stopTimer(true); setDone(id, el.checked); renderAll(); }
-  else if (el.dataset.act === "lifetoggle") {
-    const ld = S.plan.lifeDone = (S.plan.lifeDone || []).filter(x => x !== id);
-    if (el.checked) ld.push(id);
-    savePlan(); renderToday();
-  }
+  else if (el.dataset.act === "habittoggle") { toggleHabit(id, el.checked); }
   else if (el.dataset.act === "est") { updateTask(id, { estMins: Number(el.value) }); renderToday(); }
   else if (el.dataset.act === "sugclient") { updateTask(id, { client: el.value }); }
   else if (el.dataset.act === "clientpick") { const dl = $("projList"); if (dl) dl.outerHTML = projectList(el.value); }
@@ -1442,6 +1443,49 @@ async function migrate() {
   }
 }
 
+/* ---------- habits ---------- */
+let habitQueue = Promise.resolve();
+function habitDone(id, day) { return ((S.habitLog || {})[day] || []).includes(id); }
+function toggleHabit(id, on) {
+  const log = S.habitLog = Object.assign({}, S.habitLog || {});
+  const list = (log[todayKey] || []).filter(x => x !== id);
+  if (on) list.push(id);
+  log[todayKey] = list;
+  const cutoff = ymd(new Date(Date.now() - 120 * DAY));
+  Object.keys(log).forEach(k => { if (k < cutoff || !(log[k] || []).length) delete log[k]; });
+  renderToday();
+  if (canSave()) { const data = { log: Object.assign({}, log) }; habitQueue = habitQueue.then(() => db.doc(P.habits()).set(data)).catch(fail("save your habits")); }
+}
+function weekDays() {
+  const now = new Date(); const mon = new Date(now.getFullYear(), now.getMonth(), now.getDate() - ((now.getDay() + 6) % 7));
+  return [0, 1, 2, 3, 4, 5, 6].map(i => ymd(new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + i)));
+}
+function streak(id) {
+  let n = 0; let d = new Date();
+  if (!habitDone(id, ymd(d))) d = new Date(d.getTime() - DAY);
+  while (habitDone(id, ymd(d)) && n < 400) { n++; d = new Date(d.getTime() - DAY); }
+  return n;
+}
+function habitBoxHTML(habits, lifeTasks) {
+  const week = weekDays();
+  const doneToday = habits.filter(h => habitDone(h.id, todayKey)).length + lifeTasks.filter(t => t.status === "done").length;
+  const total = habits.length + lifeTasks.length;
+  const rows = habits.map(h => {
+    const on = habitDone(h.id, todayKey);
+    const count = week.filter(d => habitDone(h.id, d)).length;
+    const target = Number(h.target) || 7;
+    const st = streak(h.id);
+    const dots = week.map(d => `<i class="${habitDone(h.id, d) ? "on" : ""}${d === todayKey ? " now" : ""}${d > todayKey ? " fut" : ""}" title="${esc(new Date(d + "T12:00:00").toLocaleDateString(undefined, { weekday: "long" }))}"></i>`).join("");
+    return `<li class="habit${on ? " done" : ""}"><input type="checkbox" id="hb-${esc(h.id)}" data-act="habittoggle" data-id="${esc(h.id)}" ${on ? "checked" : ""}><label class="hn" for="hb-${esc(h.id)}">${esc(h.name)}</label><span></span>
+      <span class="hs"><span class="dots" aria-label="${count} of 7 days this week">${dots}</span>${st >= 2 ? `<span>${st}-day streak</span>` : ""}<span class="hgoal${count >= target ? " met" : ""}">${count}/${target === 7 ? 7 : target} this week</span></span></li>`;
+  }).join("");
+  const tasks = lifeTasks.map(t => `<li class="habit${t.status === "done" ? " done" : ""}"><input type="checkbox" id="pi-${esc(t.id)}" data-act="toggle" data-id="${esc(t.id)}" ${t.status === "done" ? "checked" : ""}><label class="hn" for="pi-${esc(t.id)}">${esc(t.title)}</label><span class="tag">personal</span></li>`).join("");
+  return `<div class="life" aria-label="Habits">
+    <div class="life-h"><h3>Habits</h3><span class="ctx">${doneToday} of ${total} today</span><button class="btn btn-sm btn-ghost" data-act="settings" type="button" style="margin-left:auto">Edit</button></div>
+    <ul>${rows}${tasks}</ul>
+  </div>`;
+}
+
 /* ---------- day and month subscriptions (re-run when the date changes) ---------- */
 const unsub = { done: null, entries: null, plan: null };
 function subscribeMonth() {
@@ -1520,6 +1564,7 @@ renderAll();
     watch("open", tasks.where("status", "==", "open"));
     watch("suggested", tasks.where("status", "==", "suggested"));
     db.doc(P.timer()).onSnapshot(snap => { const d = snap.exists ? snap.data() : null; S.timer = d && d.taskId ? d : null; renderAll(); }, () => {});
+    db.doc(P.habits()).onSnapshot(snap => { const d = snap.exists ? snap.data() : null; S.habitLog = (d && d.log) || {}; renderToday(); }, () => {});
     subscribeMonth();
     subscribeDay();
   }
