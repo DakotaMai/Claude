@@ -1,0 +1,48 @@
+<!-- ============================================================
+ EMBER META TRACKING - SITE-WIDE
+ GHL: Sites > Websites > Ember > Settings > Tracking code > FOOTER.
+ The pixel base code (ID 2705856096530680) stays in the HEAD box.
+
+ Replaces the page-level fbq snippets on Ignite and Booking
+ Confirmation - remove those, or events will fire twice.
+
+ Events:
+   ViewContent      every page except home + booking-confirmed
+   InitiateCheckout click on any disco-call booking link, any page
+   Lead             booking-confirmed page, once per visit
+ ============================================================ -->
+<script>
+(function() {
+  if (typeof window.fbq !== 'function') return;
+
+  var BOOKING_LINK = 'widget/bookings/disco-call-ember';
+  var path = location.pathname.replace(/\/+$/, '') || '/';
+  var page = document.title.split(' - ')[0].trim() || path;
+
+  function eventId(name) {
+    return name + '.' + Date.now() + '.' + Math.random().toString(36).slice(2, 8);
+  }
+
+  // Lead: only on the page the Disco Call calendar redirects to
+  if (path === '/booking-confirmed') {
+    var seen = false;
+    try { seen = sessionStorage.getItem('ember_lead_sent') === '1'; } catch (e) {}
+    if (!seen) {
+      fbq('track', 'Lead', { content_name: 'Disco call' }, { eventID: eventId('lead') });
+      try { sessionStorage.setItem('ember_lead_sent', '1'); } catch (e) {}
+    }
+    return;
+  }
+
+  if (path !== '/') {
+    fbq('track', 'ViewContent', { content_name: page });
+  }
+
+  // InitiateCheckout: any booking CTA, wherever it sits on the page
+  document.addEventListener('click', function(e) {
+    var a = e.target.closest && e.target.closest('a[href*="' + BOOKING_LINK + '"]');
+    if (!a) return;
+    fbq('track', 'InitiateCheckout', { content_name: page }, { eventID: eventId('ic') });
+  }, true);
+})();
+</script>
