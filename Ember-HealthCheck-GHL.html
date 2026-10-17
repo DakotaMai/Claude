@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Systems Health Check - Ember by Victoria Lewis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@700&family=Livvic:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark:      #2a140c;
+      --cream:     #f2e1cd;
+      --orange:    #c75c33;
+      --card-text: #3a2820;
+      --h:         'Chivo', sans-serif;
+      --b:         'Livvic', sans-serif;
+    }
+
+    html, body {
+      font-size: 18px;
+      font-family: var(--b);
+      font-weight: 400;
+      line-height: 1.7;
+      background: var(--dark) !important;
+      color: var(--cream);
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* ── SECTIONS ── */
+    .s         { padding: 120px 64px; background: var(--dark); width: 100vw; margin-left: calc(50% - 50vw); }
+    .s--orange { background: var(--orange); }
+    .s--cream  { background: var(--cream); }
+    .s--sm     { padding-top: 80px; padding-bottom: 80px; }
+
+    /* ── INNER WIDTHS ── */
+    .w-narrow { max-width: 640px;  margin-left: auto; margin-right: auto; }
+    .w-mid    { max-width: 880px;  margin-left: auto; margin-right: auto; }
+    .w-wide   { max-width: 1200px; margin-left: auto; margin-right: auto; }
+
+    /* ── TYPE ── */
+    h1 {
+      font-family: var(--h);
+      font-size: clamp(3.2rem, 7vw, 7rem);
+      font-weight: 700;
+      letter-spacing: -0.045em;
+      line-height: 0.97;
+      color: var(--cream);
+    }
+    h2 {
+      font-family: var(--h);
+      font-size: clamp(2.2rem, 4.5vw, 4rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      color: var(--cream);
+    }
+    h3 {
+      font-family: var(--h);
+      font-size: clamp(1.2rem, 2vw, 1.55rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+    p { margin-top: 1rem; }
+    p:first-child { margin-top: 0; }
+    .lead {
+      font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+      line-height: 1.75;
+      color: rgba(242,225,205,0.8);
+      margin-top: 28px;
+    }
+
+    em.hi { font-style: normal; color: var(--orange); }
+
+    .pre {
+      display: inline-block;
+      font-family: var(--b);
+      font-weight: 600;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      border: 1.5px solid var(--orange);
+      color: var(--orange);
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+
+    .bar {
+      width: 52px; height: 4px;
+      background: var(--orange);
+      border-radius: 2px;
+      margin-bottom: 32px;
+    }
+
+    /* ── COLOUR OVERRIDES ── */
+    .s--cream h2, .s--cream h3 { color: var(--dark); }
+    .s--cream p, .s--cream .lead { color: rgba(42,20,12,0.72); }
+    .s--cream em.hi { color: var(--orange); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-block;
+      font-family: var(--b);
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.03em;
+      padding: 20px 48px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      margin-top: 40px;
+      background: var(--orange);
+      color: var(--cream) !important;
+    }
+    .btn:hover { opacity: 0.85; transform: translateY(-2px); }
+    .btn--dark  { background: var(--dark);  color: var(--cream) !important; }
+
+    .text-btn {
+      background: none;
+      border: none;
+      font-family: var(--b);
+      font-weight: 600;
+      font-size: 0.88rem;
+      letter-spacing: 0.04em;
+      color: rgba(242,225,205,0.5);
+      cursor: pointer;
+      padding: 8px 0;
+    }
+    .text-btn:hover { color: var(--cream); }
+    .text-btn[hidden] { display: none; }
+
+    /* ── LISTS ── */
+    .bullet-list { list-style: none; margin-top: 28px; display: flex; flex-direction: column; gap: 14px; }
+    .bullet-list li { font-size: 1.05rem; line-height: 1.65; padding-left: 34px; position: relative; color: rgba(242,225,205,0.85); }
+    .bullet-list li::before { content: "→"; position: absolute; left: 0; color: var(--orange); font-weight: 600; }
+
+    /* ── NAV ── */
+    .nav {
+      background: var(--dark);
+      padding: 24px 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(242,225,205,0.07);
+    }
+    .nav-logo { font-family: var(--h); font-size: 1.15rem; color: var(--cream); letter-spacing: 0.1em; text-transform: uppercase; }
+    .nav-logo span { color: var(--orange); }
+    .nav-link { font-family: var(--b); font-size: 0.88rem; font-weight: 600; text-decoration: none; letter-spacing: 0.04em; color: rgba(242,225,205,0.5); }
+    .nav-link:hover { color: var(--cream); opacity: 1; }
+    .nav-link--active { color: var(--orange) !important; }
+    .nav-links { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+
+    /* ── HERO ── */
+    .hero { background: var(--dark); padding: 120px 64px 100px; }
+    .hero h1 { margin-top: 24px; }
+    .hero .lead { max-width: 680px; }
+    .hero-meta { display: flex; gap: 32px; flex-wrap: wrap; margin-top: 36px; }
+    .hero-meta span { font-size: 0.88rem; color: rgba(242,225,205,0.55); }
+    .hero-meta span::before { content: "✓"; color: var(--orange); font-weight: 700; margin-right: 10px; }
+
+    /* ── QUIZ CARD ── */
+    .quiz-card {
+      background: var(--cream);
+      border-radius: 24px;
+      padding: 56px 64px;
+      color: var(--dark);
+    }
+    .progress {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 36px;
+    }
+    .progress-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(42,20,12,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: var(--orange);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    .progress-count { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; color: rgba(42,20,12,0.5); white-space: nowrap; }
+
+    .q-area {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 14px;
+    }
+    .q-text {
+      font-family: var(--h);
+      font-size: clamp(1.4rem, 2.6vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+      color: var(--dark);
+    }
+    .q-text:focus { outline: none; }
+    .options { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; }
+    .option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      font-family: var(--b);
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--card-text);
+      background: rgba(42,20,12,0.04);
+      border: 1.5px solid rgba(42,20,12,0.14);
+      border-radius: 12px;
+      padding: 18px 22px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .option:hover { border-color: var(--orange); background: rgba(199,92,51,0.06); }
+    .option:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+    .option[aria-pressed="true"] { border-color: var(--orange); background: rgba(199,92,51,0.12); font-weight: 600; }
+    .quiz-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; min-height: 36px; }
+    .quiz-foot .text-btn { color: rgba(42,20,12,0.5); }
+    .quiz-foot .text-btn:hover { color: var(--dark); }
+
+    /* ── RESULTS ── */
+    .result-head {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 56px;
+      align-items: center;
+    }
+    .score-ring {
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      background: conic-gradient(var(--orange) calc(var(--pct) * 1%), rgba(242,225,205,0.1) 0);
+      position: relative;
+    }
+    .score-ring::after {
+      content: "";
+      position: absolute; inset: 14px;
+      border-radius: 50%;
+      background: var(--dark);
+    }
+    .score-num {
+      position: relative; z-index: 1;
+      font-family: var(--h);
+      font-size: 3.4rem;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      color: var(--cream);
+      text-align: center;
+    }
+    .score-num small { display: block; font-family: var(--b); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(242,225,205,0.5); margin-top: 8px; }
+
+    .areas { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 56px; margin-top: 72px; }
+    .area-row { display: flex; flex-direction: column; gap: 10px; }
+    .area-top { display: flex; justify-content: space-between; gap: 16px; font-size: 0.95rem; }
+    .area-name { font-weight: 600; color: var(--cream); }
+    .area-pct { color: rgba(242,225,205,0.55); font-variant-numeric: tabular-nums; }
+    .area-track { height: 8px; background: rgba(242,225,205,0.1); border-radius: 4px; overflow: hidden; }
+    .area-fill { height: 100%; border-radius: 4px; background: rgba(242,225,205,0.55); }
+    .area-row--weak .area-fill { background: var(--orange); }
+    .area-row--weak .area-name::after {
+      content: "Look here first";
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--orange);
+      margin-left: 12px;
+    }
+
+    .fix-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; }
+    .fix-card {
+      background: var(--dark);
+      border-left: 4px solid var(--orange);
+      border-radius: 0 16px 16px 0;
+      padding: 36px 36px;
+    }
+    .fix-card h3 { color: var(--cream); margin-bottom: 14px; }
+    .fix-card p { color: rgba(242,225,205,0.78) !important; font-size: 0.97rem; line-height: 1.75; margin-top: 0; }
+    .fix-card p + p { margin-top: 12px; }
+    .fix-label { display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; }
+
+    .cta-card {
+      background: var(--cream);
+      border-radius: 24px;
+      padding: 64px 72px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 60px;
+      align-items: center;
+    }
+    .cta-card h3 { color: var(--dark); font-size: clamp(1.4rem, 2.5vw, 2rem); margin-bottom: 16px; }
+    .cta-card p  { color: rgba(42,20,12,0.68); font-size: 0.97rem; line-height: 1.75; margin-top: 0; }
+    .cta-card p + p { margin-top: 10px; }
+    .cta-card .btn { background: var(--dark); margin-top: 0; white-space: nowrap; }
+
+    [hidden] { display: none !important; }
+
+    /* ── LEAD CAPTURE ── */
+    .field { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+    .field label { font-size: 0.85rem; font-weight: 600; color: var(--card-text); }
+    .field input[type="text"], .field input[type="email"] {
+      font-family: var(--b);
+      font-size: 1rem;
+      color: var(--dark);
+      background: #fff;
+      border: 1.5px solid rgba(42,20,12,0.18);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .field input:focus { outline: none; border-color: var(--orange); }
+    .consent { display: flex; gap: 12px; align-items: flex-start; margin-top: 20px; font-size: 0.85rem; line-height: 1.55; color: rgba(42,20,12,0.7); }
+    .consent input { margin-top: 4px; accent-color: var(--orange); width: 18px; height: 18px; flex-shrink: 0; }
+    .form-error { color: #a33a16; font-size: 0.88rem; font-weight: 600; margin-top: 16px; }
+    .capture-card .btn { margin-top: 28px; }
+
+    /* ── PATH ── */
+    .why { font-size: 1.05rem; line-height: 1.75; color: rgba(242,225,205,0.78); max-width: 760px; margin-top: 24px; }
+    .modules { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .module {
+      font-size: 0.85rem; font-weight: 600; letter-spacing: 0.02em;
+      padding: 8px 16px; border-radius: 100px;
+      background: rgba(42,20,12,0.06); color: rgba(42,20,12,0.55);
+      border: 1.5px dashed rgba(42,20,12,0.2);
+    }
+    .module--on { background: var(--orange); color: var(--cream); border: 1.5px solid var(--orange); }
+    .path-price { font-family: var(--h); font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.04em; line-height: 1; color: var(--dark); margin-top: 28px; }
+    .path-price small { display: block; font-family: var(--b); font-size: 0.8rem; letter-spacing: 0.06em; color: rgba(42,20,12,0.55); margin-top: 8px; }
+    .cta-card p + p { margin-top: 12px; }
+    .cta-actions { display: flex; flex-direction: column; align-items: stretch; gap: 14px; }
+    .cta-actions .btn { text-align: center; }
+    .cta-actions .btn--ghost { background: transparent; border: 1.5px solid rgba(42,20,12,0.25); color: var(--dark) !important; }
+
+    /* ── FOOTER ── */
+    .footer { background: var(--dark); border-top: 1px solid rgba(242,225,205,0.07); text-align: center; padding: 48px 64px; font-size: 0.8rem; color: rgba(242,225,205,0.32); }
+    .footer-brand { font-family: var(--h); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(242,225,205,0.55); display: block; margin-bottom: 12px; }
+    .footer a { color: rgba(242,225,205,0.32); text-decoration: underline; margin: 0 10px; }
+    .footer a:hover { color: var(--orange); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .result-head { grid-template-columns: 1fr; gap: 40px; }
+      .areas, .fix-cards { grid-template-columns: 1fr; }
+      .cta-card { grid-template-columns: 1fr; gap: 32px; padding: 48px 40px; }
+    }
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      html, body { font-size: 16px; }
+      .s   { padding: 80px 16px; }
+      .hero { padding: 80px 28px 72px; }
+      .nav, .footer { padding-left: 28px; padding-right: 28px; }
+      .quiz-card { padding: 32px 22px; border-radius: 18px; }
+      .cta-card { padding: 36px 24px; }
+      .cta-card .btn { white-space: normal; text-align: center; width: 100%; }
+      .fix-card { padding: 28px 24px; }
+      .score-ring { width: 160px; height: 160px; }
+      .score-num { font-size: 2.8rem; }
+    }
+
+    /* ── MOBILE NAV ── */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px 4px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--cream);
+      border-radius: 2px;
+    }
+    @media (max-width: 600px) {
+      .nav { position: relative; }
+      .nav-toggle { display: flex; }
+      .nav-links.nav-open {
+        display: flex !important;
+        flex-direction: column;
+        align-items: flex-start;
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        background: var(--dark);
+        padding: 28px 28px;
+        gap: 22px;
+        border-bottom: 1px solid rgba(242,225,205,0.1);
+        z-index: 1000;
+      }
+    }
+
+/* ── GHL OVERRIDES ── */
+    .page-section, .section-body, .container-fluid,
+    .full-width, [data-section-id], .col-12, .row {
+      padding: 0 !important;
+      margin: 0 !important;
+      max-width: none !important;
+      background: transparent !important;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">Ember <span>by Victoria Lewis</span></div>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Open navigation"><span></span><span></span><span></span></button>
+  <div class="nav-links" id="nav-links">
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/TeNX4q3g8VlFNirhLOl1?notrack=true">Home</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Work with Me</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/xSJEwDoTtk7bHBZCGd74">Ignite</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/q1PAkpQd08WxnTFUF8rt">Email Tech</a>
+    <a class="nav-link" href="https://sites.leadconnectorhq.com/preview/Om4rvJa59QheZ3t8PWK9">Inferno</a>
+    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/F1NUq7LP9rtPnKCI9ycr">About</a>
+  </div>
+</nav>
+
+<!-- 1. HERO -->
+<section class="hero" id="hero">
+  <div class="w-wide">
+    <span class="pre">Ember · Systems Health Check</span>
+    <h1>Is your business <em class="hi">running hot?</em></h1>
+    <p class="lead">A few questions about your business, then twelve on how it actually runs. You'll get a score, a breakdown across six areas, the two places I'd look first, and the Ember path that fits where you are.</p>
+    <div class="hero-meta">
+      <span>3 minutes</span>
+      <span>Tailored to your business size</span>
+      <span>Honest answers, honest picture</span>
+    </div>
+    <button class="btn" id="start-btn" type="button">Start the Health Check →</button>
+  </div>
+</section>
+
+<!-- 2. QUIZ - orange -->
+<section class="s s--orange s--sm" id="quiz-section" hidden>
+  <div class="w-mid">
+    <div class="quiz-card" id="quiz-card">
+      <div id="question-view">
+        <div class="progress">
+          <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+          <span class="progress-count" id="progress-count"></span>
+        </div>
+        <span class="q-area" id="q-area"></span>
+        <h2 class="q-text" id="q-text" tabindex="-1"></h2>
+        <div class="options" id="options" role="group" aria-labelledby="q-text"></div>
+        <div class="quiz-foot">
+          <button class="text-btn" id="back-btn" type="button">← Back</button>
+          <span></span>
+        </div>
+      </div>
+
+      <form class="capture-card" id="capture-view" hidden novalidate>
+        <span class="q-area">Your results are ready</span>
+        <h2 class="q-text" id="capture-title" tabindex="-1">Where should I send your results?</h2>
+        <p style="color:rgba(42,20,12,0.68); margin-top:16px;">You'll see them straight away, and I'll email you a copy so you can come back to it.</p>
+        <div class="field">
+          <label for="cap-name">First name</label>
+          <input type="text" id="cap-name" name="first_name" autocomplete="given-name" required>
+        </div>
+        <div class="field">
+          <label for="cap-email">Email</label>
+          <input type="email" id="cap-email" name="email" autocomplete="email" required>
+        </div>
+        <label class="consent">
+          <input type="checkbox" id="cap-consent">
+          <span>Send me Viki's weekly tips on systems, automations and AI workflows too. Unsubscribe any time.</span>
+        </label>
+        <p class="form-error" id="cap-error" hidden></p>
+        <button class="btn btn--dark" type="submit">Show My Results →</button>
+        <div class="quiz-foot">
+          <button class="text-btn" id="capture-back" type="button">← Back</button>
+          <span></span>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- 3. RESULTS - dark -->
+<section class="s" id="results-section" hidden>
+  <div class="w-wide">
+    <div class="result-head">
+      <div class="score-ring" id="score-ring" style="--pct:0;">
+        <div class="score-num"><span id="score-num">0</span><small>out of 100</small></div>
+      </div>
+      <div>
+        <div class="bar"></div>
+        <span class="pre">Your result</span>
+        <h2 id="band-title"></h2>
+        <p class="lead" id="band-body" style="margin-top:20px;"></p>
+      </div>
+    </div>
+
+    <div class="areas" id="areas"></div>
+  </div>
+</section>
+
+<!-- 4. WHERE TO LOOK - cream -->
+<section class="s s--cream" id="fixes-section" hidden>
+  <div class="w-wide">
+    <div class="bar"></div>
+    <span class="pre">Where I'd start</span>
+    <h2>Your two <em class="hi">pressure points.</em></h2>
+    <div class="fix-cards" id="fix-cards"></div>
+  </div>
+</section>
+
+<!-- 5. YOUR PATH - dark -->
+<section class="s" id="path-section" hidden>
+  <div class="w-wide">
+    <div class="bar"></div>
+    <span class="pre">Your Ember path</span>
+    <h2 id="path-title"></h2>
+    <p class="why" id="path-why"></p>
+
+    <div class="cta-card" style="margin-top:56px;">
+      <div id="path-body"></div>
+      <div class="cta-actions">
+        <a class="btn" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember" id="path-cta"></a>
+        <a class="btn btn--ghost" id="path-more"></a>
+      </div>
+    </div>
+    <p id="path-alt" style="color:rgba(242,225,205,0.5); font-size:0.95rem; margin-top:40px;"></p>
+    <button class="text-btn" id="retake-btn" type="button" style="margin-top:24px;">↺ Retake the Health Check</button>
+  </div>
+</section>
+
+<footer class="footer">
+  <span class="footer-brand">Ember by Victoria Lewis</span>
+  <p style="margin-bottom:16px;"><a href="https://sites.leadconnectorhq.com/preview/Om4rvJa59QheZ3t8PWK9" style="color:rgba(242,225,205,0.45); font-size:0.78rem; text-decoration:none; letter-spacing:0.02em;">Working with a consultant or agency? →</a></p>
+  <p><a href="#">Privacy Policy</a><a href="#">Terms of Service</a></p>
+</footer>
+
+<script>
+(function() {
+  var toggle = document.getElementById('nav-toggle');
+  var links  = document.getElementById('nav-links');
+  if (!toggle || !links) return;
+  toggle.addEventListener('click', function(e) {
+    e.stopPropagation();
+    links.classList.toggle('nav-open');
+  });
+  links.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() { links.classList.remove('nav-open'); });
+  });
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.nav')) links.classList.remove('nav-open');
+  });
+})();
+</script>
+
+<script>
+(function() {
+  /* ── LEAD CAPTURE ──
+     Paste a GHL inbound webhook URL here (Automation > Workflows > trigger "Inbound Webhook")
+     to ask for name + email before results. Leave empty to show results straight away. */
+  var LEAD_WEBHOOK_URL = '';
+
+  var LINKS = {
+    call:    'https://api.leadconnectorhq.com/widget/bookings/disco-call-ember',
+    ignite:  'https://app.gohighlevel.com/v2/preview/xSJEwDoTtk7bHBZCGd74',
+    inferno: 'https://sites.leadconnectorhq.com/preview/Om4rvJa59QheZ3t8PWK9'
+  };
+
+  /* ── INTAKE ── decides the track; values are what the routing reads */
+  var INTAKE = [
+    { key: 'size', q: 'How many people work in your business, including you?',
+      o: [['solo', 'Just me'], ['small', '2 - 5'], ['mid', '6 - 20'], ['large', 'More than 20']] },
+    { key: 'streams', q: 'How many revenue streams does the business have?',
+      o: [['one', 'One main offer'], ['few', 'Two or three related offers'], ['many', 'Several distinct revenue lines']] },
+    { key: 'tech', q: 'Who looks after your systems and tech?',
+      o: [['owner', 'Me'], ['freelancer', 'A VA or freelancer, as and when'], ['sidejob', 'Someone on the team, on top of their day job'], ['dedicated', 'A dedicated person or team']] },
+    { key: 'focus', q: 'What matters most right now?',
+      o: [['time', 'Getting my time back'], ['build', 'Building things properly so I can grow'], ['scale', 'Scaling - more team, more spend, more complexity'], ['visibility', 'Seeing what\'s actually working']] }
+  ];
+
+  // Solo -> Ignite & Build. 6+ -> Inferno. 2-5 -> Inferno only with at least two growth signals.
+  function routeTrack(p) {
+    if (p.size === 'solo') return 'ignite';
+    if (p.size === 'mid' || p.size === 'large') return 'inferno';
+    return growthSignals(p).length >= 2 ? 'inferno' : 'ignite';
+  }
+  function growthSignals(p) {
+    var s = [];
+    if (p.streams === 'many') s.push('several revenue lines');
+    if (p.tech !== 'dedicated') s.push('nobody dedicated to your systems');
+    if (p.focus === 'scale' || p.focus === 'visibility') s.push('growth on the agenda');
+    return s;
+  }
+
+  /* ── TRACKS ── six areas, two questions each, options scored 3 (healthy) to 0 */
+  var TRACKS = {
+    ignite: {
+      areas: {
+        journey:   { name: 'Client journey', module: 'Ignite',
+          fix: ['There\'s no map behind it yet.', 'You can probably feel where things wobble, but there\'s no clear picture of how a client should move from first enquiry to signed. Ignite starts here: mapping every touchpoint so you know exactly what to build, and in what order.'] },
+        backend:   { name: 'CRM & pipeline', module: 'The Engine Room',
+          fix: ['Leads live in too many places.', 'Inbox, DMs, notes app, memory. When there\'s no single place tracking every lead and client, things fall through the cracks. The Engine Room builds a CRM and pipeline around how you actually sell.'] },
+        admin:     { name: 'Onboarding & admin', module: 'The Engine Room',
+          fix: ['Every yes creates a pile of admin.', 'Contracts, invoices, welcome emails, setup - all by hand, every time. These are the most predictable steps in your business, which makes them the easiest to automate properly in The Engine Room.'] },
+        website:   { name: 'Website', module: 'The Front End',
+          fix: ['Your website isn\'t pulling its weight.', 'Either it doesn\'t feel like you, or it isn\'t connected to anything behind it. The Front End builds a site from scratch around your brand, wired into your back end so every enquiry lands where it should.'] },
+        marketing: { name: 'Marketing & nurture', module: 'The Map',
+          fix: ['People who aren\'t ready yet just disappear.', 'Without a way to capture and nurture them, you\'re relying on people being ready to buy the moment they find you. The Map builds the lead magnets, landing pages and email sequences that keep the right people moving towards a yes.'] },
+        owner:     { name: 'Owner dependency', module: 'The Engine Room',
+          fix: ['It all runs through you.', 'Every question, decision and process comes back to you, so the business can\'t move without you. The Engine Room\'s automations take the repeatable work off your plate for good.'] }
+      },
+      questions: [
+        { area: 'journey', q: 'Could you sketch your client journey, from first enquiry to signed client, right now?',
+          o: ['Yes - it\'s mapped and my systems follow it', 'Roughly - it\'s in my head', 'Sort of - it changes with every client', 'Not really'] },
+        { area: 'journey', q: 'Do you know where potential clients drop off before they buy?',
+          o: ['Yes, and I\'ve fixed most of it', 'I have a hunch', 'Not sure', 'I don\'t track it at all'] },
+        { area: 'backend', q: 'Where do you keep track of leads and clients?',
+          o: ['A CRM with a pipeline I actually use', 'A spreadsheet', 'My inbox, DMs and notes', 'My memory, mostly'] },
+        { area: 'backend', q: 'How do people book a call with you?',
+          o: ['A booking link with automatic confirmations and reminders', 'A booking link, but nothing else happens', 'Back-and-forth emails to find a time', 'Whatever works at the time'] },
+        { area: 'admin', q: 'When someone says yes, what happens next?',
+          o: ['Contract, invoice and welcome go out automatically', 'A few bits are automated', 'I do it all by hand', 'It depends on the day'] },
+        { area: 'admin', q: 'How long does onboarding a new client take you?',
+          o: ['Minutes - it mostly runs itself', 'An hour or two', 'Half a day or more', 'I\'d rather not think about it'] },
+        { area: 'website', q: 'How do you feel about sending someone to your website?',
+          o: ['Proud - it sounds like me and it converts', 'It\'s fine', 'I\'d rather they didn\'t look too closely', 'I don\'t really have one'] },
+        { area: 'website', q: 'When someone fills in a form on your website, where does it go?',
+          o: ['Straight into my CRM, with a follow-up triggered', 'Into my inbox', 'Honestly, I\'m not sure', 'There isn\'t a form'] },
+        { area: 'marketing', q: 'If someone isn\'t ready to buy yet, how do you stay in touch?',
+          o: ['A lead magnet and nurture sequence do it for me', 'They join my newsletter', 'I follow up when I remember', 'I don\'t - they just drift off'] },
+        { area: 'marketing', q: 'When someone joins your email list, what do they get?',
+          o: ['A welcome sequence that leads towards my offers', 'A single welcome email', 'Whatever I send next, whenever that is', 'I don\'t really have a list'] },
+        { area: 'owner', q: 'If you took two weeks off, what would happen?',
+          o: ['Things would tick along fine', 'A few things would wait for me', 'Most things would stop', 'I can\'t take two weeks off'] },
+        { area: 'owner', q: 'How much of your week goes on admin you\'ve done a hundred times before?',
+          o: ['Almost none', 'A couple of hours', 'A day or more', 'Most of it'] }
+      ],
+      bands: [
+        { min: 75, title: 'Solid foundations. <em class="hi">Ready to build on.</em>',
+          body: 'You\'ve got more in place than most. The gains now are in connecting it all up and filling the gaps below, so growth doesn\'t land back on your plate.' },
+        { min: 45, title: 'It works. <em class="hi">Because you do.</em>',
+          body: 'Your business runs, but mostly because you\'re holding it together. Every new client adds a little more weight, and there\'s only so much one person can carry.' },
+        { min: 0, title: 'You are the system. <em class="hi">That\'s the problem.</em>',
+          body: 'Right now it all lives in your head and your inbox. That\'s not a criticism - it\'s how most businesses start. But it\'s also why stepping away feels impossible.' }
+      ]
+    },
+
+    inferno: {
+      areas: {
+        visibility: { name: 'Marketing visibility',
+          fix: ['You\'re spending without seeing.', 'Right now it\'s hard to say which channels actually turn into revenue, so budget decisions are made on gut feel. The fix is usually a clean data trail: consistent lead sources, tracking that survives the jump from ad to CRM, and one report everyone trusts.'] },
+        data:       { name: 'Connected data',
+          fix: ['Your tools don\'t talk to each other.', 'Details get re-keyed, numbers don\'t match between systems, and nobody\'s sure which one is right. The fix is deciding where each piece of data lives, then connecting everything else to it so it flows without anyone copying and pasting.'] },
+        leads:      { name: 'Lead quality',
+          fix: ['Your team\'s time goes on the wrong leads.', 'Good people are spending hours on enquiries that were never going to buy. The fix is qualifying before a human gets involved: smarter forms, routing by lead type, and automated nurture for the "not yet" pile.'] },
+        process:    { name: 'Process ownership',
+          fix: ['It works because of who, not how.', 'Key processes live in someone\'s head or a spreadsheet only one person understands. The fix is mapping how the work really happens, then building it into your systems so it runs the same way whoever\'s in that day.'] },
+        admin:      { name: 'Admin & automation',
+          fix: ['Admin is eating your selling time.', 'Onboarding, follow-ups and handovers are still manual, so they slip when it\'s busy. These are the most predictable steps in your business, which makes them the easiest to automate properly.'] },
+        capacity:   { name: 'Systems capacity',
+          fix: ['Nobody owns the plumbing.', 'Your team is too stretched keeping today running to fix what\'s slowing them down, and when something breaks it lands on whoever\'s nearest. This is exactly the gap an embedded systems partner fills.'] }
+      },
+      questions: [
+        { area: 'visibility', q: 'If I asked which channel brought in last month\'s best client, could you tell me?',
+          o: ['Yes - it\'s in a report I can pull in a couple of clicks', 'Roughly, after some digging', 'Someone would have a good guess', 'Honestly, no idea'] },
+        { area: 'visibility', q: 'How confident are you that your marketing spend is tracked all the way through to actual sales?',
+          o: ['Very - I can see return per campaign', 'We track leads, but not what they turn into', 'We see clicks and not much after that', 'We\'re not really tracking it'] },
+        { area: 'data', q: 'Do your CRM, website and ad accounts share data automatically?',
+          o: ['Yes, it all syncs and the numbers match', 'Mostly, with a few gaps we work around', 'Some bits connect, a lot is exported and imported', 'They\'re separate islands'] },
+        { area: 'data', q: 'When a new lead comes in, how many times are their details typed in by hand?',
+          o: ['None - it all flows automatically', 'Once', 'Two or three times, across different tools', 'We\'re not sure where they all end up'] },
+        { area: 'leads', q: 'How much of your sales team\'s time goes on leads that were never going to buy?',
+          o: ['Very little', 'Some, but it\'s manageable', 'A noticeable chunk of every week', 'Most of it, if we\'re honest'] },
+        { area: 'leads', q: 'Do new enquiries get qualified before they reach a person?',
+          o: ['Yes - forms and routing sort them first', 'There\'s a basic form, but everyone gets a call', 'Someone sifts them by hand', 'Everything goes straight to the team'] },
+        { area: 'process', q: 'If your most experienced team member was off for two weeks, what would happen?',
+          o: ['Business as usual - it\'s all documented and built in', 'A few hiccups, nothing major', 'Things would stall until they\'re back', 'Honestly? Chaos'] },
+        { area: 'process', q: 'Where do your key processes live?',
+          o: ['Built into our systems, with documentation to match', 'Written down, though not always followed', 'In a few spreadsheets and old docs', 'In people\'s heads'] },
+        { area: 'admin', q: 'After a deal closes, how much of onboarding happens automatically?',
+          o: ['Nearly all of it - contracts, invoices, welcome, setup', 'About half', 'A few emails go out, the rest is manual', 'All manual'] },
+        { area: 'admin', q: 'Follow-ups on quotes and proposals are...',
+          o: ['Automated, with a nudge to the team if needed', 'Tracked in the CRM, sent by hand', 'Done when someone remembers', 'Often missed'] },
+        { area: 'capacity', q: 'Does anyone on your team have time set aside to improve your systems?',
+          o: ['Yes - it\'s someone\'s actual job', 'Occasionally, when it gets bad enough', 'Rarely - we\'re too busy delivering', 'Never'] },
+        { area: 'capacity', q: 'When something breaks in your tech, who fixes it?',
+          o: ['A named person or partner who owns it', 'Whoever knows most about that tool', 'Usually me, the owner', 'It often just stays broken'] }
+      ],
+      bands: [
+        { min: 75, title: 'Well built. <em class="hi">Worth protecting.</em>',
+          body: 'Your foundations are solid. The gains from here are in the detail - tightening the weaker areas below before growth puts pressure on them.' },
+        { min: 45, title: 'Holding together. <em class="hi">Leaking underneath.</em>',
+          body: 'Things work, mostly because your people make them work. That costs you time and money every week, and it gets more expensive as you grow.' },
+        { min: 0, title: 'Running on effort. <em class="hi">Not on systems.</em>',
+          body: 'Your business is being held together by hard work, not infrastructure. That\'s not a criticism - it\'s what happens when growth outpaces the plumbing. But it isn\'t sustainable.' }
+      ]
+    }
+  };
+
+  /* ── IGNITE & BUILD PATHS ── as priced on the Ignite page */
+  var PATHS = {
+    'core':     { name: 'The Foundation', price: '£2,250' },
+    'core+fe':  { name: 'Core + Front End', price: '£3,250' },
+    'core+map': { name: 'Core + Marketing', price: '£3,250' },
+    'all':      { name: 'The Full System', price: '£4,250' }
+  };
+  var BOLT_ON_THRESHOLD = 67; // add a bolt-on when that area scores below this
+
+  var SIZE_LABEL = { solo: 'just you', small: 'a team of 2 - 5', mid: 'a team of 6 - 20', large: 'a team of more than 20' };
+
+  /* ── STATE ── */
+  var profile = {}, track = null, answers = [], step = 0;
+
+  var el = function(id) { return document.getElementById(id); };
+  var hero = el('hero'), quizSection = el('quiz-section');
+  var resultSections = ['results-section', 'fixes-section', 'path-section'].map(el);
+
+  function totalSteps() { return INTAKE.length + 12; }
+  function track_() { return TRACKS[track]; }
+
+  function fire(name, params, standard) {
+    if (typeof window.fbq === 'function') window.fbq(standard ? 'track' : 'trackCustom', name, params || {});
+  }
+
+  function renderStep() {
+    el('question-view').hidden = false;
+    el('capture-view').hidden = true;
+
+    var isIntake = step < INTAKE.length;
+    var item, area, options, selected;
+    if (isIntake) {
+      item = INTAKE[step];
+      area = 'About your business';
+      options = item.o.map(function(o) { return o[1]; });
+      selected = item.o.map(function(o) { return o[0]; }).indexOf(profile[item.key]);
+    } else {
+      var i = step - INTAKE.length;
+      item = track_().questions[i];
+      area = track_().areas[item.area].name;
+      options = item.o;
+      selected = answers[i] === undefined ? -1 : 3 - answers[i];
+    }
+
+    el('progress-fill').style.width = (step / totalSteps() * 100) + '%';
+    el('progress-count').textContent = (step + 1) + ' of ' + totalSteps();
+    el('q-area').textContent = area;
+    el('q-text').textContent = item.q;
+    el('back-btn').hidden = step === 0;
+
+    var wrap = el('options');
+    wrap.innerHTML = '';
+    options.forEach(function(label, n) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'option';
+      b.textContent = label;
+      b.setAttribute('aria-pressed', n === selected ? 'true' : 'false');
+      b.addEventListener('click', function() { choose(n); });
+      wrap.appendChild(b);
+    });
+    focusCard('q-text');
+  }
+
+  function focusCard(headingId) {
+    el(headingId).focus({ preventScroll: true });
+    // Keep the progress bar in view on small screens
+    var card = el('quiz-card');
+    if (card.getBoundingClientRect().top < 0) card.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function choose(n) {
+    if (step < INTAKE.length) {
+      var item = INTAKE[step];
+      profile[item.key] = item.o[n][0];
+      if (step === INTAKE.length - 1) {
+        var next = routeTrack(profile);
+        if (next !== track) { track = next; answers = []; }
+      }
+    } else {
+      answers[step - INTAKE.length] = 3 - n;
+    }
+
+    if (step < totalSteps() - 1) {
+      step++;
+      renderStep();
+    } else if (LEAD_WEBHOOK_URL) {
+      showCapture();
+    } else {
+      showResults();
+    }
+  }
+
+  /* ── SCORING ── */
+  function score() {
+    var t = track_(), totals = {}, max = {};
+    t.questions.forEach(function(item, i) {
+      totals[item.area] = (totals[item.area] || 0) + answers[i];
+      max[item.area] = (max[item.area] || 0) + 3;
+    });
+    var sum = answers.reduce(function(a, b) { return a + b; }, 0);
+    var pct = Math.round(sum / (t.questions.length * 3) * 100);
+    var areas = Object.keys(t.areas).map(function(k) {
+      return { key: k, pct: Math.round(totals[k] / max[k] * 100) };
+    });
+    var weakest = areas.slice().sort(function(a, b) { return a.pct - b.pct; }).slice(0, 2)
+      .map(function(r) { return r.key; });
+    var byKey = {};
+    areas.forEach(function(r) { byKey[r.key] = r.pct; });
+    return { pct: pct, areas: areas, byKey: byKey, weakest: weakest,
+             band: t.bands.filter(function(b) { return pct >= b.min; })[0] };
+  }
+
+  /* ── LEAD CAPTURE ── */
+  function showCapture() {
+    el('question-view').hidden = true;
+    el('capture-view').hidden = false;
+    el('progress-fill').style.width = '100%';
+    focusCard('capture-title');
+  }
+
+  el('capture-view').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var name = el('cap-name').value.trim();
+    var email = el('cap-email').value.trim();
+    var err = el('cap-error');
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      err.textContent = 'Pop your first name and a valid email in and I\'ll show your results.';
+      err.hidden = false;
+      return;
+    }
+    err.hidden = true;
+
+    var r = score();
+    var data = new URLSearchParams({
+      first_name: name,
+      email: email,
+      newsletter_opt_in: el('cap-consent').checked ? 'yes' : 'no',
+      track: track === 'ignite' ? 'Ignite & Build' : 'Inferno',
+      score: r.pct,
+      band: r.band.title.replace(/<[^>]+>/g, ''),
+      weakest_areas: r.weakest.map(function(k) { return track_().areas[k].name; }).join(', '),
+      team_size: profile.size, revenue_streams: profile.streams, tech_owner: profile.tech, focus: profile.focus
+    });
+    r.areas.forEach(function(a) { data.append('area_' + a.key, a.pct); });
+    // Form-encoded + no-cors keeps this a "simple" request, so no CORS preflight is needed
+    try { fetch(LEAD_WEBHOOK_URL, { method: 'POST', mode: 'no-cors', body: data }); } catch (x) {}
+
+    fire('CompleteRegistration', { content_name: 'Systems Health Check' }, true);
+    showResults();
+  });
+
+  el('capture-back').addEventListener('click', function() { renderStep(); });
+
+  /* ── RESULTS ── */
+  function showResults() {
+    var t = track_(), r = score();
+
+    el('score-ring').style.setProperty('--pct', r.pct);
+    el('score-num').textContent = r.pct;
+    el('band-title').innerHTML = r.band.title;
+    el('band-body').textContent = r.band.body;
+
+    el('areas').innerHTML = r.areas.map(function(a) {
+      var weak = r.weakest.indexOf(a.key) > -1;
+      return '<div class="area-row' + (weak ? ' area-row--weak' : '') + '">' +
+        '<div class="area-top"><span class="area-name">' + t.areas[a.key].name + '</span><span class="area-pct">' + a.pct + '%</span></div>' +
+        '<div class="area-track"><div class="area-fill" style="width:' + Math.max(a.pct, 3) + '%"></div></div></div>';
+    }).join('');
+
+    el('fix-cards').innerHTML = r.weakest.map(function(k) {
+      var area = t.areas[k], f = area.fix;
+      var label = area.name + (area.module ? ' · ' + area.module : '');
+      return '<div class="fix-card"><span class="fix-label">' + label + '</span><h3>' + f[0] + '</h3><p>' + f[1] + '</p></div>';
+    }).join('');
+
+    if (track === 'ignite') renderIgnitePath(r); else renderInfernoPath();
+
+    quizSection.hidden = true;
+    resultSections.forEach(function(s) { s.hidden = false; });
+    el('results-section').scrollIntoView({ behavior: 'smooth' });
+
+    fire('HealthCheckCompleted', { score: r.pct, track: track, weakest: r.weakest.join(',') });
+  }
+
+  function renderIgnitePath(r) {
+    var fe = r.byKey.website < BOLT_ON_THRESHOLD, map = r.byKey.marketing < BOLT_ON_THRESHOLD;
+    var path = PATHS[fe && map ? 'all' : fe ? 'core+fe' : map ? 'core+map' : 'core'];
+    var modules = [['Ignite', true], ['The Engine Room', true], ['The Front End', fe], ['The Map', map]];
+
+    el('path-title').innerHTML = 'Ignite <em class="hi">&amp; Build.</em>';
+    el('path-why').textContent = (profile.size === 'solo'
+        ? 'You\'re running the business on your own'
+        : 'You\'re running ' + SIZE_LABEL[profile.size] + ' where things still come back to you') +
+      ', with a clear scope and a single owner. That\'s exactly what Ignite & Build is designed for: map how your business should work, then build it module by module.';
+    el('path-body').innerHTML =
+      '<h3>Your suggested build: ' + path.name + '</h3>' +
+      '<p>Every Ember project starts with Ignite - a 90-minute deep dive that maps your client journey and designs your system. Your £750 is credited towards The Engine Room.</p>' +
+      '<div class="modules">' + modules.map(function(m) {
+        return '<span class="module' + (m[1] ? ' module--on' : '') + '">' + (m[1] ? '✓ ' : '+ ') + m[0] + '</span>';
+      }).join('') + '</div>' +
+      '<div class="path-price">' + path.price + '<small>Combined investment, based on your answers</small></div>';
+    setActions('Book a Free Discovery Call →', 'See Ignite & Build →', LINKS.ignite);
+    el('path-alt').innerHTML = 'Bigger or more complex operation than this suggests? <a href="' + LINKS.inferno + '" style="color:var(--orange); text-decoration:none; font-weight:600;">Inferno might be the better fit →</a>';
+  }
+
+  function renderInfernoPath() {
+    var signals = growthSignals(profile);
+    el('path-title').innerHTML = 'Ember <em class="hi">Inferno.</em>';
+    el('path-why').textContent = 'With ' + joinList([SIZE_LABEL[profile.size]].concat(signals)) +
+      ', you\'ve outgrown a one-off build. You need someone working inside your operation, not just on it.';
+    el('path-body').innerHTML =
+      '<h3>Start with an Inferno Audit.</h3>' +
+      '<p>I come to you, spend time with the key people, and map what\'s really going on: what\'s working, what\'s not, and what it\'s costing you.</p>' +
+      '<p>No obligation to go further - you\'ll walk away with a clear, honest picture either way. If you want it, I stay and build the fixes as your embedded systems partner.</p>';
+    setActions('Start a Conversation →', 'See Inferno →', LINKS.inferno);
+    el('path-alt').innerHTML = 'Smaller team, or a more contained project? <a href="' + LINKS.ignite + '" style="color:var(--orange); text-decoration:none; font-weight:600;">Ignite might be the better starting point →</a>';
+  }
+
+  function setActions(primary, secondary, href) {
+    el('path-cta').textContent = primary;
+    el('path-more').textContent = secondary;
+    el('path-more').href = href;
+  }
+
+  function joinList(items) {
+    return items.length < 2 ? items.join('') : items.slice(0, -1).join(', ') + ' and ' + items[items.length - 1];
+  }
+
+  /* ── CONTROLS ── */
+  el('start-btn').addEventListener('click', function() {
+    hero.hidden = true;
+    quizSection.hidden = false;
+    renderStep();
+    quizSection.scrollIntoView({ behavior: 'smooth' });
+    fire('HealthCheckStarted');
+  });
+
+  el('back-btn').addEventListener('click', function() {
+    if (step > 0) { step--; renderStep(); }
+  });
+
+  el('retake-btn').addEventListener('click', function() {
+    profile = {}; track = null; answers = []; step = 0;
+    resultSections.forEach(function(s) { s.hidden = true; });
+    hero.hidden = false;
+    hero.scrollIntoView({ behavior: 'smooth' });
+  });
+})();
+</script>
+</body>
+</html>
