@@ -321,24 +321,51 @@
     .consent { display: flex; gap: 12px; align-items: flex-start; margin-top: 20px; font-size: 0.85rem; line-height: 1.55; color: rgba(42,20,12,0.7); }
     .consent input { margin-top: 4px; accent-color: var(--orange); width: 18px; height: 18px; flex-shrink: 0; }
     .form-error { color: #a33a16; font-size: 0.88rem; font-weight: 600; margin-top: 16px; }
-    .capture-card .btn { margin-top: 28px; }
 
     /* ── PATH ── */
     .why { font-size: 1.05rem; line-height: 1.75; color: rgba(242,225,205,0.78); max-width: 760px; margin-top: 24px; }
-    .modules { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
-    .module {
-      font-size: 0.85rem; font-weight: 600; letter-spacing: 0.02em;
-      padding: 8px 16px; border-radius: 100px;
-      background: rgba(42,20,12,0.06); color: rgba(42,20,12,0.55);
-      border: 1.5px dashed rgba(42,20,12,0.2);
-    }
-    .module--on { background: var(--orange); color: var(--cream); border: 1.5px solid var(--orange); }
-    .path-price { font-family: var(--h); font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.04em; line-height: 1; color: var(--dark); margin-top: 28px; }
-    .path-price small { display: block; font-family: var(--b); font-size: 0.8rem; letter-spacing: 0.06em; color: rgba(42,20,12,0.55); margin-top: 8px; }
     .cta-card p + p { margin-top: 12px; }
     .cta-actions { display: flex; flex-direction: column; align-items: stretch; gap: 14px; }
     .cta-actions .btn { text-align: center; }
     .cta-actions .btn--ghost { background: transparent; border: 1.5px solid rgba(42,20,12,0.25); color: var(--dark) !important; }
+
+    /* ── PRICE LINES ── */
+    .price-lines { list-style: none; margin-top: 28px; border-top: 1px solid rgba(42,20,12,0.12); }
+    .price-lines li {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+      padding: 14px 0; border-bottom: 1px solid rgba(42,20,12,0.12);
+      font-size: 0.97rem; color: var(--card-text);
+    }
+    .price-lines li span:first-child small { display: block; font-size: 0.8rem; color: rgba(42,20,12,0.55); }
+    .price-lines li span:last-child { font-weight: 600; white-space: nowrap; }
+    .price-lines .price-total { border-bottom: none; font-family: var(--h); font-size: 1.6rem; letter-spacing: -0.03em; color: var(--dark); }
+    .price-lines .price-total span:last-child { font-weight: 700; }
+
+    /* ── NEXT STEPS ── */
+    .next-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; align-items: start; }
+    .next-cards--single { grid-template-columns: 1fr; max-width: 640px; }
+    .next-card {
+      background: #fff;
+      border: 1px solid rgba(42,20,12,0.1);
+      border-radius: 20px;
+      padding: 44px 40px;
+    }
+    .next-card h3 { color: var(--dark); font-size: clamp(1.4rem, 2.2vw, 1.8rem); }
+    .next-card p { color: rgba(42,20,12,0.7); font-size: 0.97rem; line-height: 1.75; margin-top: 14px; }
+    .next-card .btn { margin-top: 28px; }
+    .next-card:focus { outline: none; }
+    .next-card--dark { background: var(--dark); border-color: var(--dark); }
+    .next-card--dark h3 { color: var(--cream); }
+    .s--cream .next-card--dark p { color: rgba(242,225,205,0.75); }
+    .text-btn--dark { color: rgba(42,20,12,0.5); }
+    .text-btn--dark:hover { color: var(--dark); }
+    @media (max-width: 900px) {
+      .next-cards { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .next-card { padding: 32px 24px; }
+      .next-card .btn { width: 100%; text-align: center; }
+    }
 
     /* ── ADD-ON + ROUTE CARDS ── */
     .extra-head { margin-top: 72px; }
@@ -352,19 +379,11 @@
       padding: 40px 36px;
       display: flex; flex-direction: column;
     }
-    .option-card--fit { border: 1.5px solid var(--orange); }
     .option-card .fix-label { margin-bottom: 12px; }
     .option-card h3 { color: var(--cream); }
     .option-card p { color: rgba(242,225,205,0.75); font-size: 0.97rem; line-height: 1.75; margin-top: 14px; }
     .option-card .fit-note { color: var(--orange); font-size: 0.88rem; font-weight: 600; margin-top: 18px; }
     .option-price { font-family: var(--h); font-size: 2rem; letter-spacing: -0.04em; color: var(--cream); margin-top: auto; padding-top: 24px; }
-    .option-link { color: var(--orange); font-weight: 600; text-decoration: none; margin-top: auto; padding-top: 24px; }
-    .fit-badge {
-      align-self: flex-start;
-      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-      background: var(--orange); color: var(--cream);
-      padding: 5px 12px; border-radius: 100px; margin-bottom: 18px;
-    }
     @media (max-width: 900px) {
       .option-cards { grid-template-columns: 1fr; }
     }
@@ -448,15 +467,6 @@
 
 <nav class="nav">
   <div class="nav-logo">Ember <span>by Victoria Lewis</span></div>
-  <button class="nav-toggle" id="nav-toggle" aria-label="Open navigation"><span></span><span></span><span></span></button>
-  <div class="nav-links" id="nav-links">
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/TeNX4q3g8VlFNirhLOl1?notrack=true">Home</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/Ew48BYsl5Fryc1asNcwK?notrack=true">Work with Me</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/xSJEwDoTtk7bHBZCGd74">Ignite</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/q1PAkpQd08WxnTFUF8rt">Email Tech</a>
-    <a class="nav-link" href="https://sites.leadconnectorhq.com/preview/Om4rvJa59QheZ3t8PWK9">Inferno</a>
-    <a class="nav-link" href="https://app.gohighlevel.com/v2/preview/F1NUq7LP9rtPnKCI9ycr">About</a>
-  </div>
 </nav>
 
 <!-- 1. HERO -->
@@ -491,30 +501,6 @@
           <span></span>
         </div>
       </div>
-
-      <form class="capture-card" id="capture-view" hidden novalidate>
-        <span class="q-area">Your results are ready</span>
-        <h2 class="q-text" id="capture-title" tabindex="-1">Where should I send your results?</h2>
-        <p style="color:rgba(42,20,12,0.68); margin-top:16px;">You'll see them straight away, and I'll email you a copy so you can come back to it.</p>
-        <div class="field">
-          <label for="cap-name">First name</label>
-          <input type="text" id="cap-name" name="first_name" autocomplete="given-name" required>
-        </div>
-        <div class="field">
-          <label for="cap-email">Email</label>
-          <input type="email" id="cap-email" name="email" autocomplete="email" required>
-        </div>
-        <label class="consent">
-          <input type="checkbox" id="cap-consent">
-          <span>Send me Viki's weekly tips on systems, automations and AI workflows too. Unsubscribe any time.</span>
-        </label>
-        <p class="form-error" id="cap-error" hidden></p>
-        <button class="btn btn--dark" type="submit">Show My Results →</button>
-        <div class="quiz-foot">
-          <button class="text-btn" id="capture-back" type="button">← Back</button>
-          <span></span>
-        </div>
-      </form>
     </div>
   </div>
 </section>
@@ -565,7 +551,50 @@
     </div>
     <div id="path-extra"></div>
     <p id="path-alt" style="color:rgba(242,225,205,0.5); font-size:0.95rem; margin-top:40px;"></p>
-    <button class="text-btn" id="retake-btn" type="button" style="margin-top:24px;">↺ Retake the Health Check</button>
+  </div>
+</section>
+
+<!-- 6. NEXT STEPS - cream -->
+<section class="s s--cream" id="next-section" hidden>
+  <div class="w-wide">
+    <div class="bar"></div>
+    <span class="pre">What next?</span>
+    <h2>Two ways to <em class="hi">take this further.</em></h2>
+    <div class="next-cards" id="next-cards">
+      <div class="next-card next-card--dark">
+        <span class="fix-label">Ready to talk?</span>
+        <h3 id="next-call-title">Book a free call</h3>
+        <p>30 minutes to go through your results together, look at where the biggest friction is, and work out the right next step. No pressure, no pitch.</p>
+        <a class="btn" id="next-call-btn" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember">Book a Free Call →</a>
+      </div>
+
+      <form class="next-card" id="email-card" novalidate>
+        <span class="fix-label">Not ready yet?</span>
+        <h3>Email me my results</h3>
+        <p>I'll send your score, your two pressure points and what working together could look like, so you can come back to it when you're ready.</p>
+        <div class="field">
+          <label for="cap-name">First name</label>
+          <input type="text" id="cap-name" name="first_name" autocomplete="given-name" required>
+        </div>
+        <div class="field">
+          <label for="cap-email">Email</label>
+          <input type="email" id="cap-email" name="email" autocomplete="email" required>
+        </div>
+        <label class="consent">
+          <input type="checkbox" id="cap-consent">
+          <span>Send me Viki's weekly tips on systems, automations and AI workflows too. Unsubscribe any time.</span>
+        </label>
+        <p class="form-error" id="cap-error" hidden></p>
+        <button class="btn btn--dark" type="submit">Send My Results →</button>
+      </form>
+
+      <div class="next-card" id="email-thanks" hidden tabindex="-1">
+        <span class="fix-label">Done</span>
+        <h3>On its way.</h3>
+        <p>Your results will land in your inbox in the next few minutes. If they're not there, have a look in spam or promotions.</p>
+      </div>
+    </div>
+    <button class="text-btn text-btn--dark" id="retake-btn" type="button" style="margin-top:40px;">↺ Retake the Health Check</button>
   </div>
 </section>
 
@@ -575,29 +604,12 @@
   <p><a href="#">Privacy Policy</a><a href="#">Terms of Service</a></p>
 </footer>
 
-<script>
-(function() {
-  var toggle = document.getElementById('nav-toggle');
-  var links  = document.getElementById('nav-links');
-  if (!toggle || !links) return;
-  toggle.addEventListener('click', function(e) {
-    e.stopPropagation();
-    links.classList.toggle('nav-open');
-  });
-  links.querySelectorAll('a').forEach(function(a) {
-    a.addEventListener('click', function() { links.classList.remove('nav-open'); });
-  });
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('.nav')) links.classList.remove('nav-open');
-  });
-})();
-</script>
 
 <script>
 (function() {
   /* ── LEAD CAPTURE ──
      Paste a GHL inbound webhook URL here (Automation > Workflows > trigger "Inbound Webhook")
-     to ask for name + email before results. Leave empty to show results straight away. */
+     to offer "Email me my results" after the results. Leave empty to only offer a call. */
   var LEAD_WEBHOOK_URL = '';
 
   var LINKS = {
@@ -618,7 +630,8 @@
       o: [['time', 'Getting my time back'], ['build', 'Building things properly so I can grow'], ['scale', 'Scaling - more team, more spend, more complexity'], ['visibility', 'Seeing what\'s actually working'], ['direction', 'Honestly? Direction - I\'m not sure what I need yet']] }
   ];
 
-  // Solo -> Ignite & Build. 6+ -> Inferno. 2-5 -> Inferno only with at least two growth signals.
+  // Ignite & Build is for micro businesses: solo, or 2-5 without the signs of a bigger operation.
+  // 6+ -> Inferno. 2-5 -> Inferno only with at least two growth signals.
   function routeTrack(p) {
     if (p.size === 'solo') return 'ignite';
     if (p.size === 'mid' || p.size === 'large') return 'inferno';
@@ -753,7 +766,7 @@
 
   var el = function(id) { return document.getElementById(id); };
   var hero = el('hero'), quizSection = el('quiz-section');
-  var resultSections = ['results-section', 'fixes-section', 'path-section'].map(el);
+  var resultSections = ['results-section', 'fixes-section', 'path-section', 'next-section'].map(el);
 
   function totalSteps() { return INTAKE.length + 12; }
   function track_() { return TRACKS[track]; }
@@ -763,9 +776,6 @@
   }
 
   function renderStep() {
-    el('question-view').hidden = false;
-    el('capture-view').hidden = true;
-
     var isIntake = step < INTAKE.length;
     var item, area, options, selected;
     if (isIntake) {
@@ -823,8 +833,6 @@
     if (step < totalSteps() - 1) {
       step++;
       renderStep();
-    } else if (LEAD_WEBHOOK_URL) {
-      showCapture();
     } else {
       showResults();
     }
@@ -850,51 +858,58 @@
              band: t.bands.filter(function(b) { return pct >= b.min; })[0] };
   }
 
-  /* ── LEAD CAPTURE ── */
-  function showCapture() {
-    el('question-view').hidden = true;
-    el('capture-view').hidden = false;
-    el('progress-fill').style.width = '100%';
-    focusCard('capture-title');
-  }
+  /* ── LEAD CAPTURE ── offered after results; GHL builds the results email from these fields */
+  var lastResult = null, pathEmail = {};
 
-  el('capture-view').addEventListener('submit', function(e) {
+  function plain(html) { return html.replace(/<[^>]+>/g, ''); }
+
+  el('email-card').addEventListener('submit', function(e) {
     e.preventDefault();
     var name = el('cap-name').value.trim();
     var email = el('cap-email').value.trim();
     var err = el('cap-error');
     if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      err.textContent = 'Pop your first name and a valid email in and I\'ll show your results.';
+      err.textContent = 'Pop your first name and a valid email in and I\'ll send them over.';
       err.hidden = false;
       return;
     }
     err.hidden = true;
 
-    var r = score();
+    var t = track_(), r = lastResult;
     var data = new URLSearchParams({
       first_name: name,
       email: email,
       newsletter_opt_in: el('cap-consent').checked ? 'yes' : 'no',
       track: track === 'ignite' ? 'Ignite & Build' : 'Inferno',
-      recommended_path: { ignite: 'Ignite & Build', inferno: 'Inferno', audit: 'Audit first' }[pathFor()],
       score: r.pct,
-      band: r.band.title.replace(/<[^>]+>/g, ''),
-      weakest_areas: r.weakest.map(function(k) { return track_().areas[k].name; }).join(', '),
+      band_title: plain(r.band.title),
+      band_body: r.band.body,
+      path_title: pathEmail.title,
+      path_summary: pathEmail.summary,
+      bolt_ons: pathEmail.boltOns || '',
+      booking_link: LINKS.call,
       team_size: profile.size, revenue_streams: profile.streams, tech_owner: profile.tech, focus: profile.focus
+    });
+    r.weakest.forEach(function(k, i) {
+      var area = t.areas[k];
+      data.append('pressure_' + (i + 1) + '_area', area.name);
+      data.append('pressure_' + (i + 1) + '_title', area.fix[0]);
+      data.append('pressure_' + (i + 1) + '_body', area.fix[1]);
     });
     r.areas.forEach(function(a) { data.append('area_' + a.key, a.pct); });
     // Form-encoded + no-cors keeps this a "simple" request, so no CORS preflight is needed
     try { fetch(LEAD_WEBHOOK_URL, { method: 'POST', mode: 'no-cors', body: data }); } catch (x) {}
 
-    fire('CompleteRegistration', { content_name: 'Systems Health Check' }, true);
-    showResults();
+    fire('CompleteRegistration', { content_name: 'Systems Health Check', track: track }, true);
+    el('email-card').hidden = true;
+    el('email-thanks').hidden = false;
+    el('email-thanks').focus({ preventScroll: true });
   });
-
-  el('capture-back').addEventListener('click', function() { renderStep(); });
 
   /* ── RESULTS ── */
   function showResults() {
     var t = track_(), r = score();
+    lastResult = r;
 
     el('score-ring').style.setProperty('--pct', r.pct);
     el('score-num').textContent = r.pct;
@@ -914,31 +929,33 @@
       return '<div class="fix-card"><span class="fix-label">' + label + '</span><h3>' + f[0] + '</h3><p>' + f[1] + '</p></div>';
     }).join('');
 
-    var path = pathFor();
-    if (path === 'audit') renderAuditPath(); else if (path === 'ignite') renderIgnitePath(r); else renderInfernoPath();
+    if (track === 'ignite') renderIgnitePath(r); else renderInfernoPath();
+    renderNextSteps();
 
     quizSection.hidden = true;
     resultSections.forEach(function(s) { s.hidden = false; });
     el('results-section').scrollIntoView({ behavior: 'smooth' });
 
-    fire('HealthCheckCompleted', { score: r.pct, track: track, path: path, weakest: r.weakest.join(',') });
+    fire('HealthCheckCompleted', { score: r.pct, track: track, weakest: r.weakest.join(',') });
   }
-
-  function pathFor() { return profile.focus === 'direction' ? 'audit' : track; }
 
   function renderIgnitePath(r) {
     var fits = BOLT_ONS.filter(function(b) { return r.byKey[b.area] < BOLT_ON_THRESHOLD; });
+    var who = profile.size === 'solo' ? 'You\'re running the business on your own' : 'You\'re running ' + SIZE_LABEL[profile.size];
 
     el('path-title').innerHTML = 'Ignite <em class="hi">&amp; Build.</em>';
-    el('path-why').textContent = (profile.size === 'solo'
-        ? 'You\'re running the business on your own'
-        : 'You\'re running ' + SIZE_LABEL[profile.size] + ' where things still come back to you') +
-      ', with a clear scope and a single owner. That\'s exactly what Ignite & Build is designed for: map how your business should work, then build it.';
+    el('path-why').textContent = profile.focus === 'direction'
+      ? who + ' and looking for direction more than a specific fix. That\'s exactly what Ignite is: an audit of how your business really runs, and a clear blueprint for what to build.'
+      : who + ', and what you need is the business set up properly behind you, so it stops running on your time. That\'s exactly what Ignite & Build is for.';
     el('path-body').innerHTML =
-      '<h3>Your starting point: Ignite + The Engine Room</h3>' +
-      '<p>Ignite is a 90-minute deep dive that maps your client journey and designs your system. The Engine Room then builds your back end - CRM, pipelines, bookings, onboarding, contracts, invoicing and automations - all connected.</p>' +
-      '<div class="modules"><span class="module module--on">✓ Ignite</span><span class="module module--on">✓ The Engine Room</span></div>' +
-      '<div class="path-price">£2,250<small>Ignite £750, credited towards The Engine Room</small></div>';
+      '<h3>Start with Ignite, your business audit.</h3>' +
+      '<p>A 90-minute deep dive into how your business really runs. I map your client journey, find where things fall through the cracks, and design the system you actually need - so you know exactly what to build, and in what order.</p>' +
+      '<p>Then Build puts it in place. The Engine Room sets up your back end - CRM, pipelines, bookings, onboarding, contracts, invoicing and automations - all connected, so the business runs behind you.</p>' +
+      '<ul class="price-lines">' +
+        '<li><span>Ignite<small>Business audit &amp; blueprint</small></span><span>£750</span></li>' +
+        '<li><span>Build<small>The Engine Room</small></span><span>+ £1,500</span></li>' +
+        '<li class="price-total"><span>Total</span><span>£2,250</span></li>' +
+      '</ul>';
     setActions('Book a Free Discovery Call →', 'See Ignite & Build →', LINKS.ignite);
 
     el('path-extra').innerHTML = fits.length
@@ -951,58 +968,51 @@
         }).join('') + '</div>'
       : '<div class="extra-head"><p>Your website and marketing look solid, so the core build is all you need for now. The Front End and The Map are there as bolt-ons if that changes.</p></div>';
     el('path-alt').innerHTML = 'Bigger or more complex operation than this suggests? <a href="' + LINKS.inferno + '" style="color:var(--orange); text-decoration:none; font-weight:600;">Inferno might be the better fit →</a>';
+
+    pathEmail = {
+      title: 'Ignite & Build',
+      summary: 'Start with Ignite (£750): a 90-minute business audit that maps your client journey and designs the system you actually need. Then Build puts it in place - The Engine Room (+ £1,500) sets up your CRM, pipelines, bookings, onboarding, contracts, invoicing and automations, all connected. £2,250 in total.',
+      boltOns: fits.length
+        ? 'Based on your answers, ' + joinList(fits.map(function(b) { return b.name + ' (' + b.price + ')'; })) + ' would also fit.'
+        : ''
+    };
   }
 
   function renderInfernoPath() {
     var signals = growthSignals(profile);
     el('path-title').innerHTML = 'Ember <em class="hi">Inferno.</em>';
     el('path-why').textContent = 'With ' + joinList([SIZE_LABEL[profile.size]].concat(signals)) +
-      ', you\'ve outgrown a one-off build. You need someone working inside your operation, not just on it.';
+      (profile.focus === 'direction'
+        ? ', you need direction before anything gets built - and that starts with a proper look at how the whole operation runs.'
+        : ', you\'ve outgrown a one-off build. You need someone working inside your operation, not just on it.');
     el('path-body').innerHTML =
       '<h3>Start with an Inferno Audit.</h3>' +
-      '<p>I come to you, spend time with the key people, and map what\'s really going on: what\'s working, what\'s not, and what it\'s costing you.</p>' +
-      '<p>No obligation to go further - you\'ll walk away with a clear, honest picture either way. If you want it, I stay and build the fixes as your embedded systems partner.</p>';
+      '<p>A bigger business needs a bigger audit: more people, more time, more moving parts. I spend time inside your business with the people who run it day to day, and map how things really work - the processes that live in someone\'s head, the tools nobody\'s using to their fullest, the gaps nobody owns.</p>' +
+      '<p>You get a clear, honest picture of what\'s working, what\'s not and what it\'s costing you. No obligation to go further - if you want it, I stay as your embedded systems partner and put it right.</p>';
     setActions('Start a Conversation →', 'See Inferno →', LINKS.inferno);
+    // No route to Ignite here: larger businesses shouldn't land on small-business pricing
     el('path-extra').innerHTML = '';
-    el('path-alt').innerHTML = 'Smaller team, or a more contained project? <a href="' + LINKS.ignite + '" style="color:var(--orange); text-decoration:none; font-weight:600;">Ignite might be the better starting point →</a>';
+    el('path-alt').innerHTML = '';
+
+    pathEmail = {
+      title: 'Ember Inferno',
+      summary: 'Start with an Inferno Audit. A bigger business needs a bigger audit, so I spend time inside your business with the people who run it day to day and map how things really work - what\'s working, what\'s not, and what it\'s costing you. From there, if you want it, I stay on as your embedded systems partner and put it right.',
+      boltOns: ''
+    };
   }
 
-  function renderAuditPath() {
-    var routes = [
-      { key: 'ignite', label: 'Built for you', name: 'Ignite & Build', href: LINKS.ignite,
-        body: 'I map how your business should work, then build it for you - back end first, with website and marketing modules if you need them. A clear project with a clear finish line.' },
-      { key: 'inferno', label: 'Embedded', name: 'Inferno', href: LINKS.inferno,
-        body: 'I work inside your business as your systems partner - building, improving and owning the plumbing over time, alongside your team.' }
-    ];
-
-    el('path-title').innerHTML = 'Start with <em class="hi">an audit.</em>';
-    el('path-why').textContent = 'You\'re after direction more than a specific fix - and that\'s the right instinct. Building before you know what\'s actually wrong is how businesses end up with tools that don\'t fit.';
-    el('path-body').innerHTML =
-      '<h3>Get the clear picture first.</h3>' +
-      '<p>We look at how your business really runs: what\'s working, what\'s not, and what it\'s costing you. You walk away knowing exactly what needs fixing, and in what order.</p>' +
-      '<p>No obligation to go further. If you want help putting it right, you choose how.</p>';
-    setActions('Start a Conversation →', null);
-
-    el('path-extra').innerHTML =
-      '<div class="extra-head"><h3>Then choose how it gets fixed.</h3>' +
-      '<p>Once you know what needs doing, there are two ways I can help implement it.</p></div>' +
-      '<div class="option-cards">' + routes.map(function(rt) {
-        var fit = rt.key === track;
-        return '<div class="option-card' + (fit ? ' option-card--fit' : '') + '">' +
-          (fit ? '<span class="fit-badge">Likely fit for you</span>' : '') +
-          '<span class="fix-label">' + rt.label + '</span><h3>' + rt.name + '</h3><p>' + rt.body + '</p>' +
-          '<a class="option-link" href="' + rt.href + '">See ' + rt.name + ' →</a></div>';
-      }).join('') + '</div>';
-    el('path-alt').innerHTML = '';
+  function renderNextSteps() {
+    var inferno = track === 'inferno';
+    el('next-call-title').textContent = inferno ? 'Start a conversation' : 'Book a free call';
+    el('next-call-btn').textContent = inferno ? 'Start a Conversation →' : 'Book a Free Call →';
+    el('email-card').hidden = !LEAD_WEBHOOK_URL;
+    el('next-cards').classList.toggle('next-cards--single', !LEAD_WEBHOOK_URL);
   }
 
   function setActions(primary, secondary, href) {
     el('path-cta').textContent = primary;
-    el('path-more').hidden = !secondary;
-    if (secondary) {
-      el('path-more').textContent = secondary;
-      el('path-more').href = href;
-    }
+    el('path-more').textContent = secondary;
+    el('path-more').href = href;
   }
 
   function joinList(items) {
@@ -1024,6 +1034,8 @@
 
   el('retake-btn').addEventListener('click', function() {
     profile = {}; track = null; answers = []; step = 0;
+    el('email-card').reset();
+    el('email-thanks').hidden = true;
     resultSections.forEach(function(s) { s.hidden = true; });
     hero.hidden = false;
     hero.scrollIntoView({ behavior: 'smooth' });

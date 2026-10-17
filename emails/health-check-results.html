@@ -1,0 +1,153 @@
+<!--
+  SYSTEMS HEALTH CHECK - RESULTS EMAIL
+  Sent by the GHL workflow that receives the Health Check webhook.
+
+  GHL SETUP
+  1. Automation > Workflows > new workflow. Trigger: "Inbound Webhook". Copy its URL into
+     LEAD_WEBHOOK_URL in Ember-HealthCheck-GHL.html, then submit one test result from the
+     page so GHL learns the fields.
+  2. Action "Create/Update Contact": first name {{inboundWebhookRequest.first_name}},
+     email {{inboundWebhookRequest.email}}.
+  3. Action "Add Tag": health-check, plus an If/Else on {{inboundWebhookRequest.track}}
+     to tag hc-ignite or hc-inferno (and newsletter if newsletter_opt_in is "yes").
+  4. Action "Send Email": paste this file into the code editor.
+     Subject:  Your Systems Health Check: {{inboundWebhookRequest.score}}/100
+     Preview:  Your two pressure points, and where I'd start.
+
+  Every {{inboundWebhookRequest.*}} field is sent by the page. Prices only appear for
+  Ignite & Build results - they live in path_summary / bolt_ons, which are empty of
+  prices on the Inferno track.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Systems Health Check</title>
+  <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@700&family=Livvic:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0; padding:0; background:#f2e1cd;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f2e1cd;">
+  <tr>
+    <td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%; max-width:600px;">
+
+        <!-- HEADER -->
+        <tr>
+          <td style="background:#2a140c; border-radius:16px 16px 0 0; padding:28px 40px; font-family:'Chivo', Arial, sans-serif; font-size:15px; letter-spacing:2px; text-transform:uppercase; color:#f2e1cd;">
+            Ember <span style="color:#c75c33;">by Victoria Lewis</span>
+          </td>
+        </tr>
+
+        <!-- SCORE -->
+        <tr>
+          <td style="background:#2a140c; padding:8px 40px 44px; font-family:'Livvic', Arial, sans-serif; color:#f2e1cd;">
+            <p style="margin:0 0 20px; font-size:16px; line-height:1.7; color:#f2e1cd;">Hi {{inboundWebhookRequest.first_name}},</p>
+            <p style="margin:0 0 28px; font-size:16px; line-height:1.7; color:rgba(242,225,205,0.8);">Here are your Systems Health Check results, as promised.</p>
+            <p style="margin:0; font-family:'Chivo', Arial, sans-serif; font-size:72px; line-height:1; letter-spacing:-3px; color:#c75c33;">{{inboundWebhookRequest.score}}<span style="font-size:22px; letter-spacing:0; color:rgba(242,225,205,0.55);"> / 100</span></p>
+            <p style="margin:24px 0 0; font-family:'Chivo', Arial, sans-serif; font-size:26px; line-height:1.2; letter-spacing:-0.5px; color:#f2e1cd;">{{inboundWebhookRequest.band_title}}</p>
+            <p style="margin:14px 0 0; font-size:16px; line-height:1.7; color:rgba(242,225,205,0.8);">{{inboundWebhookRequest.band_body}}</p>
+          </td>
+        </tr>
+
+        <!-- PRESSURE POINTS -->
+        <tr>
+          <td style="background:#ffffff; padding:44px 40px 12px; font-family:'Livvic', Arial, sans-serif;">
+            <p style="margin:0 0 6px; font-size:11px; font-weight:600; letter-spacing:2.5px; text-transform:uppercase; color:#c75c33;">Where I'd start</p>
+            <p style="margin:0 0 28px; font-family:'Chivo', Arial, sans-serif; font-size:26px; line-height:1.2; letter-spacing:-0.5px; color:#2a140c;">Your two pressure points</p>
+
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+              <tr>
+                <td style="border-left:4px solid #c75c33; padding:4px 0 4px 20px;">
+                  <p style="margin:0 0 6px; font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#c75c33;">{{inboundWebhookRequest.pressure_1_area}}</p>
+                  <p style="margin:0 0 8px; font-family:'Chivo', Arial, sans-serif; font-size:18px; line-height:1.3; color:#2a140c;">{{inboundWebhookRequest.pressure_1_title}}</p>
+                  <p style="margin:0; font-size:15px; line-height:1.7; color:#3a2820;">{{inboundWebhookRequest.pressure_1_body}}</p>
+                </td>
+              </tr>
+            </table>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
+              <tr>
+                <td style="border-left:4px solid #c75c33; padding:4px 0 4px 20px;">
+                  <p style="margin:0 0 6px; font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#c75c33;">{{inboundWebhookRequest.pressure_2_area}}</p>
+                  <p style="margin:0 0 8px; font-family:'Chivo', Arial, sans-serif; font-size:18px; line-height:1.3; color:#2a140c;">{{inboundWebhookRequest.pressure_2_title}}</p>
+                  <p style="margin:0; font-size:15px; line-height:1.7; color:#3a2820;">{{inboundWebhookRequest.pressure_2_body}}</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- YOUR PATH -->
+        <tr>
+          <td style="background:#ffffff; padding:0 40px 44px; font-family:'Livvic', Arial, sans-serif;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f2e1cd; border-radius:12px;">
+              <tr>
+                <td style="padding:28px 28px;">
+                  <p style="margin:0 0 6px; font-size:11px; font-weight:600; letter-spacing:2.5px; text-transform:uppercase; color:#c75c33;">Your Ember path</p>
+                  <p style="margin:0 0 12px; font-family:'Chivo', Arial, sans-serif; font-size:22px; line-height:1.2; color:#2a140c;">{{inboundWebhookRequest.path_title}}</p>
+                  <p style="margin:0; font-size:15px; line-height:1.7; color:#3a2820;">{{inboundWebhookRequest.path_summary}}</p>
+                  <p style="margin:12px 0 0; font-size:15px; line-height:1.7; color:#3a2820;">{{inboundWebhookRequest.bolt_ons}}</p>
+                </td>
+              </tr>
+            </table>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px;">
+              <tr>
+                <td style="background:#c75c33; border-radius:8px;">
+                  <a href="{{inboundWebhookRequest.booking_link}}" style="display:inline-block; padding:16px 32px; font-family:'Livvic', Arial, sans-serif; font-size:15px; font-weight:600; color:#f2e1cd; text-decoration:none;">Book a free call to talk it through &rarr;</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- WORKING WITH ME -->
+        <tr>
+          <td style="background:#2a140c; padding:44px 40px; font-family:'Livvic', Arial, sans-serif;">
+            <p style="margin:0 0 6px; font-size:11px; font-weight:600; letter-spacing:2.5px; text-transform:uppercase; color:#c75c33;">Working with me</p>
+            <p style="margin:0 0 18px; font-family:'Chivo', Arial, sans-serif; font-size:26px; line-height:1.2; letter-spacing:-0.5px; color:#f2e1cd;">Built around your business, not someone else's.</p>
+            <p style="margin:0 0 16px; font-size:15px; line-height:1.75; color:rgba(242,225,205,0.8);">I spent 25 years inside large businesses and retail chains fixing processes and streamlining workflows, long before automation was a buzzword. Now I bring that to businesses that don't have a systems person of their own.</p>
+            <p style="margin:0 0 8px; font-size:15px; line-height:1.75; color:rgba(242,225,205,0.8);"><span style="color:#c75c33; font-weight:600;">&rarr;</span>&nbsp; <strong style="color:#f2e1cd;">Customer journey first, systems second.</strong> We map how your business should work before anything gets built.</p>
+            <p style="margin:0 0 8px; font-size:15px; line-height:1.75; color:rgba(242,225,205,0.8);"><span style="color:#c75c33; font-weight:600;">&rarr;</span>&nbsp; <strong style="color:#f2e1cd;">Nothing off the shelf.</strong> Your pipelines, automations and funnels reflect how you actually work, not a generic template.</p>
+            <p style="margin:0 0 28px; font-size:15px; line-height:1.75; color:rgba(242,225,205,0.8);"><span style="color:#c75c33; font-weight:600;">&rarr;</span>&nbsp; <strong style="color:#f2e1cd;">No report and run.</strong> I stay until the fixes land and you can run with them.</p>
+
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-left:4px solid #c75c33;">
+              <tr>
+                <td style="padding:4px 0 4px 20px;">
+                  <p style="margin:0 0 10px; font-family:'Chivo', Arial, sans-serif; font-size:18px; line-height:1.4; color:#f2e1cd;">"She stopped my Sunday night stress in its tracks. Victoria instantly offers solutions that work."</p>
+                  <p style="margin:0; font-size:13px; color:rgba(242,225,205,0.55);">Harrison Cantel, Founder, Cantel Studio</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- SIGN-OFF -->
+        <tr>
+          <td style="background:#ffffff; border-radius:0 0 16px 16px; padding:40px 40px 44px; font-family:'Livvic', Arial, sans-serif;">
+            <p style="margin:0 0 16px; font-size:16px; line-height:1.7; color:#3a2820;">If any of this sounds familiar, the easiest next step is a free 30-minute call. We'll go through your results together and work out what would make the biggest difference first. No pressure, no pitch.</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 28px;">
+              <tr>
+                <td style="background:#2a140c; border-radius:8px;">
+                  <a href="{{inboundWebhookRequest.booking_link}}" style="display:inline-block; padding:16px 32px; font-family:'Livvic', Arial, sans-serif; font-size:15px; font-weight:600; color:#f2e1cd; text-decoration:none;">Book your free call &rarr;</a>
+                </td>
+              </tr>
+            </table>
+            <p style="margin:0; font-size:16px; line-height:1.7; color:#3a2820;">Speak soon,<br><strong style="font-family:'Chivo', Arial, sans-serif; color:#2a140c;">Viki</strong></p>
+            <p style="margin:24px 0 0; font-size:14px; line-height:1.7; color:rgba(42,20,12,0.6);">P.S. Not ready for a call? Just hit reply and tell me the one thing in your business that takes up more of your time than it should. That's usually where we start.</p>
+          </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+          <td align="center" style="padding:24px 20px; font-family:'Livvic', Arial, sans-serif; font-size:12px; line-height:1.6; color:rgba(42,20,12,0.5);">
+            Ember by Victoria Lewis · Systems, automations &amp; AI workflows for growing businesses<br>
+            <a href="https://www.victorialewis.co.uk" style="color:rgba(42,20,12,0.5);">victorialewis.co.uk</a>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
