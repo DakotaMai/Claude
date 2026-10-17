@@ -340,6 +340,38 @@
     .cta-actions .btn { text-align: center; }
     .cta-actions .btn--ghost { background: transparent; border: 1.5px solid rgba(42,20,12,0.25); color: var(--dark) !important; }
 
+    /* ── ADD-ON + ROUTE CARDS ── */
+    .extra-head { margin-top: 72px; }
+    .extra-head h3 { color: var(--cream); font-size: clamp(1.4rem, 2.5vw, 2rem); }
+    .extra-head p { color: rgba(242,225,205,0.65); margin-top: 12px; max-width: 680px; }
+    .option-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
+    .option-card {
+      background: rgba(242,225,205,0.06);
+      border: 1px solid rgba(242,225,205,0.12);
+      border-radius: 20px;
+      padding: 40px 36px;
+      display: flex; flex-direction: column;
+    }
+    .option-card--fit { border: 1.5px solid var(--orange); }
+    .option-card .fix-label { margin-bottom: 12px; }
+    .option-card h3 { color: var(--cream); }
+    .option-card p { color: rgba(242,225,205,0.75); font-size: 0.97rem; line-height: 1.75; margin-top: 14px; }
+    .option-card .fit-note { color: var(--orange); font-size: 0.88rem; font-weight: 600; margin-top: 18px; }
+    .option-price { font-family: var(--h); font-size: 2rem; letter-spacing: -0.04em; color: var(--cream); margin-top: auto; padding-top: 24px; }
+    .option-link { color: var(--orange); font-weight: 600; text-decoration: none; margin-top: auto; padding-top: 24px; }
+    .fit-badge {
+      align-self: flex-start;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      background: var(--orange); color: var(--cream);
+      padding: 5px 12px; border-radius: 100px; margin-bottom: 18px;
+    }
+    @media (max-width: 900px) {
+      .option-cards { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .option-card { padding: 32px 24px; }
+    }
+
     /* ── FOOTER ── */
     .footer { background: var(--dark); border-top: 1px solid rgba(242,225,205,0.07); text-align: center; padding: 48px 64px; font-size: 0.8rem; color: rgba(242,225,205,0.32); }
     .footer-brand { font-family: var(--h); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(242,225,205,0.55); display: block; margin-bottom: 12px; }
@@ -531,6 +563,7 @@
         <a class="btn btn--ghost" id="path-more"></a>
       </div>
     </div>
+    <div id="path-extra"></div>
     <p id="path-alt" style="color:rgba(242,225,205,0.5); font-size:0.95rem; margin-top:40px;"></p>
     <button class="text-btn" id="retake-btn" type="button" style="margin-top:24px;">↺ Retake the Health Check</button>
   </div>
@@ -582,7 +615,7 @@
     { key: 'tech', q: 'Who looks after your systems and tech?',
       o: [['owner', 'Me'], ['freelancer', 'A VA or freelancer, as and when'], ['sidejob', 'Someone on the team, on top of their day job'], ['dedicated', 'A dedicated person or team']] },
     { key: 'focus', q: 'What matters most right now?',
-      o: [['time', 'Getting my time back'], ['build', 'Building things properly so I can grow'], ['scale', 'Scaling - more team, more spend, more complexity'], ['visibility', 'Seeing what\'s actually working']] }
+      o: [['time', 'Getting my time back'], ['build', 'Building things properly so I can grow'], ['scale', 'Scaling - more team, more spend, more complexity'], ['visibility', 'Seeing what\'s actually working'], ['direction', 'Honestly? Direction - I\'m not sure what I need yet']] }
   ];
 
   // Solo -> Ignite & Build. 6+ -> Inferno. 2-5 -> Inferno only with at least two growth signals.
@@ -704,14 +737,14 @@
     }
   };
 
-  /* ── IGNITE & BUILD PATHS ── as priced on the Ignite page */
-  var PATHS = {
-    'core':     { name: 'The Foundation', price: '£2,250' },
-    'core+fe':  { name: 'Core + Front End', price: '£3,250' },
-    'core+map': { name: 'Core + Marketing', price: '£3,250' },
-    'all':      { name: 'The Full System', price: '£4,250' }
-  };
-  var BOLT_ON_THRESHOLD = 67; // add a bolt-on when that area scores below this
+  /* ── IGNITE & BUILD BOLT-ONS ── as priced on the Ignite page; shown when their area scores low */
+  var BOLT_ONS = [
+    { area: 'website', label: 'Bolt-on 1', name: 'The Front End', price: '+ £1,000',
+      body: 'A complete website built from scratch around your brand - not a template with your colours dropped in - connected to your back end and ready to turn visitors into enquiries.' },
+    { area: 'marketing', label: 'Bolt-on 2', name: 'The Map', price: '+ £1,000',
+      body: 'Lead magnets, landing pages and automated email nurture sequences that walk the right people, step by step, towards working with you.' }
+  ];
+  var BOLT_ON_THRESHOLD = 67; // suggest a bolt-on when its area scores below this
 
   var SIZE_LABEL = { solo: 'just you', small: 'a team of 2 - 5', mid: 'a team of 6 - 20', large: 'a team of more than 20' };
 
@@ -843,6 +876,7 @@
       email: email,
       newsletter_opt_in: el('cap-consent').checked ? 'yes' : 'no',
       track: track === 'ignite' ? 'Ignite & Build' : 'Inferno',
+      recommended_path: { ignite: 'Ignite & Build', inferno: 'Inferno', audit: 'Audit first' }[pathFor()],
       score: r.pct,
       band: r.band.title.replace(/<[^>]+>/g, ''),
       weakest_areas: r.weakest.map(function(k) { return track_().areas[k].name; }).join(', '),
@@ -880,33 +914,42 @@
       return '<div class="fix-card"><span class="fix-label">' + label + '</span><h3>' + f[0] + '</h3><p>' + f[1] + '</p></div>';
     }).join('');
 
-    if (track === 'ignite') renderIgnitePath(r); else renderInfernoPath();
+    var path = pathFor();
+    if (path === 'audit') renderAuditPath(); else if (path === 'ignite') renderIgnitePath(r); else renderInfernoPath();
 
     quizSection.hidden = true;
     resultSections.forEach(function(s) { s.hidden = false; });
     el('results-section').scrollIntoView({ behavior: 'smooth' });
 
-    fire('HealthCheckCompleted', { score: r.pct, track: track, weakest: r.weakest.join(',') });
+    fire('HealthCheckCompleted', { score: r.pct, track: track, path: path, weakest: r.weakest.join(',') });
   }
 
+  function pathFor() { return profile.focus === 'direction' ? 'audit' : track; }
+
   function renderIgnitePath(r) {
-    var fe = r.byKey.website < BOLT_ON_THRESHOLD, map = r.byKey.marketing < BOLT_ON_THRESHOLD;
-    var path = PATHS[fe && map ? 'all' : fe ? 'core+fe' : map ? 'core+map' : 'core'];
-    var modules = [['Ignite', true], ['The Engine Room', true], ['The Front End', fe], ['The Map', map]];
+    var fits = BOLT_ONS.filter(function(b) { return r.byKey[b.area] < BOLT_ON_THRESHOLD; });
 
     el('path-title').innerHTML = 'Ignite <em class="hi">&amp; Build.</em>';
     el('path-why').textContent = (profile.size === 'solo'
         ? 'You\'re running the business on your own'
         : 'You\'re running ' + SIZE_LABEL[profile.size] + ' where things still come back to you') +
-      ', with a clear scope and a single owner. That\'s exactly what Ignite & Build is designed for: map how your business should work, then build it module by module.';
+      ', with a clear scope and a single owner. That\'s exactly what Ignite & Build is designed for: map how your business should work, then build it.';
     el('path-body').innerHTML =
-      '<h3>Your suggested build: ' + path.name + '</h3>' +
-      '<p>Every Ember project starts with Ignite - a 90-minute deep dive that maps your client journey and designs your system. Your £750 is credited towards The Engine Room.</p>' +
-      '<div class="modules">' + modules.map(function(m) {
-        return '<span class="module' + (m[1] ? ' module--on' : '') + '">' + (m[1] ? '✓ ' : '+ ') + m[0] + '</span>';
-      }).join('') + '</div>' +
-      '<div class="path-price">' + path.price + '<small>Combined investment, based on your answers</small></div>';
+      '<h3>Your starting point: Ignite + The Engine Room</h3>' +
+      '<p>Ignite is a 90-minute deep dive that maps your client journey and designs your system. The Engine Room then builds your back end - CRM, pipelines, bookings, onboarding, contracts, invoicing and automations - all connected.</p>' +
+      '<div class="modules"><span class="module module--on">✓ Ignite</span><span class="module module--on">✓ The Engine Room</span></div>' +
+      '<div class="path-price">£2,250<small>Ignite £750, credited towards The Engine Room</small></div>';
     setActions('Book a Free Discovery Call →', 'See Ignite & Build →', LINKS.ignite);
+
+    el('path-extra').innerHTML = fits.length
+      ? '<div class="extra-head"><h3>Modules that fit your needs.</h3>' +
+        '<p>Based on your answers, ' + (fits.length > 1 ? 'these bolt-ons' : 'this bolt-on') + ' would close the gaps. Add ' + (fits.length > 1 ? 'either or both' : 'it') + ' alongside your build, or later - whatever suits.</p></div>' +
+        '<div class="option-cards">' + fits.map(function(b) {
+          return '<div class="option-card"><span class="fix-label">' + b.label + '</span><h3>' + b.name + '</h3><p>' + b.body + '</p>' +
+            '<p class="fit-note">Your ' + TRACKS.ignite.areas[b.area].name.toLowerCase() + ' score: ' + r.byKey[b.area] + '%</p>' +
+            '<div class="option-price">' + b.price + '</div></div>';
+        }).join('') + '</div>'
+      : '<div class="extra-head"><p>Your website and marketing look solid, so the core build is all you need for now. The Front End and The Map are there as bolt-ons if that changes.</p></div>';
     el('path-alt').innerHTML = 'Bigger or more complex operation than this suggests? <a href="' + LINKS.inferno + '" style="color:var(--orange); text-decoration:none; font-weight:600;">Inferno might be the better fit →</a>';
   }
 
@@ -920,13 +963,46 @@
       '<p>I come to you, spend time with the key people, and map what\'s really going on: what\'s working, what\'s not, and what it\'s costing you.</p>' +
       '<p>No obligation to go further - you\'ll walk away with a clear, honest picture either way. If you want it, I stay and build the fixes as your embedded systems partner.</p>';
     setActions('Start a Conversation →', 'See Inferno →', LINKS.inferno);
+    el('path-extra').innerHTML = '';
     el('path-alt').innerHTML = 'Smaller team, or a more contained project? <a href="' + LINKS.ignite + '" style="color:var(--orange); text-decoration:none; font-weight:600;">Ignite might be the better starting point →</a>';
+  }
+
+  function renderAuditPath() {
+    var routes = [
+      { key: 'ignite', label: 'Built for you', name: 'Ignite & Build', href: LINKS.ignite,
+        body: 'I map how your business should work, then build it for you - back end first, with website and marketing modules if you need them. A clear project with a clear finish line.' },
+      { key: 'inferno', label: 'Embedded', name: 'Inferno', href: LINKS.inferno,
+        body: 'I work inside your business as your systems partner - building, improving and owning the plumbing over time, alongside your team.' }
+    ];
+
+    el('path-title').innerHTML = 'Start with <em class="hi">an audit.</em>';
+    el('path-why').textContent = 'You\'re after direction more than a specific fix - and that\'s the right instinct. Building before you know what\'s actually wrong is how businesses end up with tools that don\'t fit.';
+    el('path-body').innerHTML =
+      '<h3>Get the clear picture first.</h3>' +
+      '<p>We look at how your business really runs: what\'s working, what\'s not, and what it\'s costing you. You walk away knowing exactly what needs fixing, and in what order.</p>' +
+      '<p>No obligation to go further. If you want help putting it right, you choose how.</p>';
+    setActions('Start a Conversation →', null);
+
+    el('path-extra').innerHTML =
+      '<div class="extra-head"><h3>Then choose how it gets fixed.</h3>' +
+      '<p>Once you know what needs doing, there are two ways I can help implement it.</p></div>' +
+      '<div class="option-cards">' + routes.map(function(rt) {
+        var fit = rt.key === track;
+        return '<div class="option-card' + (fit ? ' option-card--fit' : '') + '">' +
+          (fit ? '<span class="fit-badge">Likely fit for you</span>' : '') +
+          '<span class="fix-label">' + rt.label + '</span><h3>' + rt.name + '</h3><p>' + rt.body + '</p>' +
+          '<a class="option-link" href="' + rt.href + '">See ' + rt.name + ' →</a></div>';
+      }).join('') + '</div>';
+    el('path-alt').innerHTML = '';
   }
 
   function setActions(primary, secondary, href) {
     el('path-cta').textContent = primary;
-    el('path-more').textContent = secondary;
-    el('path-more').href = href;
+    el('path-more').hidden = !secondary;
+    if (secondary) {
+      el('path-more').textContent = secondary;
+      el('path-more').href = href;
+    }
   }
 
   function joinList(items) {
