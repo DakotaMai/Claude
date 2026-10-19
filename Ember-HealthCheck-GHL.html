@@ -343,7 +343,7 @@
 
     /* ── NEXT STEPS ── */
     .next-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; align-items: start; }
-    .next-cards--single { grid-template-columns: 1fr; max-width: 640px; }
+    .test-note { font-size: 0.85rem !important; font-weight: 600; color: var(--orange) !important; }
     .next-card {
       background: #fff;
       border: 1px solid rgba(42,20,12,0.1);
@@ -592,6 +592,7 @@
         <span class="fix-label">Done</span>
         <h3>On its way.</h3>
         <p>Your results will land in your inbox in the next few minutes. If they're not there, have a look in spam or promotions.</p>
+        <p class="test-note" id="email-test-note" hidden>Test mode: nothing was sent. Add the GHL webhook URL to LEAD_WEBHOOK_URL in the page script to switch on results emails.</p>
       </div>
     </div>
     <button class="text-btn text-btn--dark" id="retake-btn" type="button" style="margin-top:40px;">↺ Retake the Health Check</button>
@@ -609,7 +610,8 @@
 (function() {
   /* ── LEAD CAPTURE ──
      Paste a GHL inbound webhook URL here (Automation > Workflows > trigger "Inbound Webhook")
-     to offer "Email me my results" after the results. Leave empty to only offer a call. */
+     to send "Email me my results" submissions to GHL. While it's empty the form runs in
+     test mode: it shows the thank-you message with a test-mode note and sends nothing. */
   var LEAD_WEBHOOK_URL = '';
 
   var LINKS = {
@@ -898,7 +900,10 @@
     });
     r.areas.forEach(function(a) { data.append('area_' + a.key, a.pct); });
     // Form-encoded + no-cors keeps this a "simple" request, so no CORS preflight is needed
-    try { fetch(LEAD_WEBHOOK_URL, { method: 'POST', mode: 'no-cors', body: data }); } catch (x) {}
+    if (LEAD_WEBHOOK_URL) {
+      try { fetch(LEAD_WEBHOOK_URL, { method: 'POST', mode: 'no-cors', body: data }); } catch (x) {}
+    }
+    el('email-test-note').hidden = !!LEAD_WEBHOOK_URL;
 
     fire('CompleteRegistration', { content_name: 'Systems Health Check', track: track }, true);
     el('email-card').hidden = true;
@@ -1005,8 +1010,8 @@
     var inferno = track === 'inferno';
     el('next-call-title').textContent = inferno ? 'Start a conversation' : 'Book a free call';
     el('next-call-btn').textContent = inferno ? 'Start a Conversation →' : 'Book a Free Call →';
-    el('email-card').hidden = !LEAD_WEBHOOK_URL;
-    el('next-cards').classList.toggle('next-cards--single', !LEAD_WEBHOOK_URL);
+    el('email-card').hidden = false;
+    el('email-thanks').hidden = true;
   }
 
   function setActions(primary, secondary, href) {
