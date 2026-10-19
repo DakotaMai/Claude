@@ -49,7 +49,7 @@ The LPA page opens the right tab automatically from the `#…` part of the link.
 - [ ] **Contact form and calendar**: on the Contact page, replace the two dashed placeholder boxes with your GHL form and calendar embed codes (search the file for `GHL FORM` and `GHL CALENDAR`).
 - [ ] **Review link**: on the Testimonials page, point the "Leave a review" button at your Google review link.
 - [ ] **Check the facts**: the intestacy checker uses the current £322,000 spouse allowance (deaths from 26 July 2023). The printed Intestacy Chart leaflet still says £250,000 and should be updated. The LPA page deliberately doesn't quote the OPG registration fee, so it can't go out of date.
-- [ ] **Logo**: embedded directly in each page, so it works immediately. `assets/kww-logo.png` is a full-size transparent version for GHL Media or the favicon.
+- [ ] **Logo & badges**: the official logo and the IPW, Trading Standards and STEP badges are embedded directly in each page, so they work immediately. The full-size originals are in `assets/` for GHL Media, the favicon and social profiles. The footer also keeps IPW's live verification badge, which loads from IPW's site.
 
 ## Editing later
 

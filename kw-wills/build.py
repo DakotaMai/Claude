@@ -16,7 +16,15 @@ SRC = ROOT / "src"
 # ── Site settings ───────────────────────────────────────────────────────────
 # Swap these for GHL media-library URLs once images are uploaded there.
 # The photo URLs point at the current site, so they stop working once it's switched off.
-LOGO_URL = "data:image/png;base64," + base64.b64encode((ROOT / "assets/kww-logo-web.png").read_bytes()).decode()
+def data_uri(name):
+    return "data:image/webp;base64," + base64.b64encode((ROOT / "assets" / name).read_bytes()).decode()
+
+
+# Official artwork, embedded so it works before anything is uploaded to GHL Media
+LOGO_URL = data_uri("web-logo.webp")
+IPW_BADGE = data_uri("web-ipw.webp")
+TSI_BADGE = data_uri("web-tsi.webp")
+STEP_BADGE = data_uri("web-step.webp")
 SEVVY_PHOTO = "https://www.kw-wills.co.uk/images/split/14_right.png"
 SEVVY_PHOTO_2 = "https://www.kw-wills.co.uk/images/split/18_left.png"
 
@@ -125,10 +133,10 @@ BLOCKS = {
     "all_reviews": "".join(quote_card(*t) for t in TESTIMONIALS[1:]),
     "badges": f'''<section class="s s--sm s--tint" aria-label="Qualifications and memberships">
   <div class="w badges">
-    <div class="badge"><span class="ico">{icon("award")}</span><span>STEP Advanced Certificate<small>in Will Preparation</small></span></div>
-    <div class="badge"><span class="ico">{icon("shieldcheck")}</span><span>Fellow of the IPW<small>CTSI-approved code of practice</small></span></div>
-    <div class="badge"><span class="ico">{icon("scale")}</span><span>STEP Affiliate<small>bound by the STEP Will Code</small></span></div>
-    <div class="badge"><span class="ico">{icon("lock")}</span><span>Fully insured<small>£2m professional indemnity</small></span></div>
+    <figure class="badge"><img src="{IPW_BADGE}" alt="Institute of Professional Willwriters member" width="180" height="65" loading="lazy"><figcaption>Fellow of the IPW</figcaption></figure>
+    <figure class="badge"><img src="{TSI_BADGE}" alt="Trading Standards Institute Approved Code" width="150" height="69" loading="lazy"><figcaption>CTSI-approved code of practice</figcaption></figure>
+    <figure class="badge"><img src="{STEP_BADGE}" alt="STEP Will Writing Code, England and Wales" width="72" height="71" loading="lazy"><figcaption>STEP Affiliate · Advanced Certificate</figcaption></figure>
+    <figure class="badge"><span class="ico">{icon("lock")}</span><figcaption>Fully insured · £2m indemnity</figcaption></figure>
   </div>
 </section>''',
     "cta": f'''<section class="s cta" aria-labelledby="cta-h">
@@ -177,7 +185,7 @@ def header(active):
   <span class="tb-right"><a href="tel:{PHONE_1_TEL}"><span class="tb-lbl">Stourbridge </span>{PHONE_1}</a><a href="tel:{PHONE_2_TEL}"><span class="tb-lbl">Worcester </span>{PHONE_2}</a></span>
 </div></div>
 <header class="hdr" id="kww-hdr"><div class="w">
-  <a class="logo" href="{LINKS["home"]}" aria-label="King Will's Wills home"><img src="{LOGO_URL}" alt="King Will's Wills, Estate Planning Specialists" width="283" height="52"></a>
+  <a class="logo" href="{LINKS["home"]}" aria-label="King Will's Wills home"><img src="{LOGO_URL}" alt="King Will's Wills, Estate Planning Specialists" width="262" height="52"></a>
   <nav aria-label="Main"><ul class="nav">
     <li><a href="{LINKS["about"]}"{cls("about")}>About Sevvy</a></li>
     <li class="has-dd{svc_active}"><button type="button" aria-expanded="false" aria-haspopup="true">Services {icon("chevron")}</button><ul class="dd">{svc}</ul></li>
@@ -212,7 +220,7 @@ def footer():
     svc = "".join(f'<li><a href="{LINKS[k]}">{t}</a></li>' for k, t, _ in SERVICES)
     return f'''<footer class="ftr"><div class="w">
   <div>
-    <a class="flogo" href="{LINKS["home"]}"><img src="{LOGO_URL}" alt="King Will's Wills" width="240" height="44"></a>
+    <a class="flogo" href="{LINKS["home"]}"><img src="{LOGO_URL}" alt="King Will's Wills" width="222" height="44"></a>
     <p>Friendly, professional estate planning from a qualified, insured and regulated Will writer. Founded by Sevvy Hasan in 2014.</p>
     <div class="social">
       <a href="https://www.facebook.com/KingWillsWills/" target="_blank" rel="noopener" aria-label="Facebook">{icon("facebook")}</a>
@@ -234,7 +242,10 @@ def footer():
     <li><a href="mailto:{EMAIL}">{EMAIL}</a></li>
     <li>{ADDRESS}</li>
   </ul>
-  <div class="ipw"><div style="position:relative;padding-bottom:36.8%;height:0;overflow:hidden"><iframe title="IPW / CTSI Approved Code badge" style="border:0;position:absolute;inset:0;width:100%;height:100%" src="https://cdn.yoshki.com/iframe/55068r.html" loading="lazy" scrolling="no"></iframe></div></div>
+  <div class="ftr-badges">
+    <div class="ipw"><div style="position:relative;padding-bottom:36.8%;height:0;overflow:hidden"><iframe title="IPW / CTSI Approved Code badge" style="border:0;position:absolute;inset:0;width:100%;height:100%" src="https://cdn.yoshki.com/iframe/55068r.html" loading="lazy" scrolling="no"></iframe></div></div>
+    <img src="{STEP_BADGE}" alt="STEP Will Writing Code, England and Wales" width="64" height="63" loading="lazy">
+  </div>
   </div>
 </div>
 <div class="legal"><span>© <span data-year>2026</span> King Will's Wills Ltd. A member of the Institute of Professional Willwriters. This firm is compliant with the IPW code of practice.</span><span><a href="{LINKS["privacy"]}">Privacy</a><a href="{LINKS["contact"]}">Contact</a></span></div>
