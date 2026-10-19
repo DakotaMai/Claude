@@ -899,6 +899,11 @@
       data.append('pressure_' + (i + 1) + '_body', area.fix[1]);
     });
     r.areas.forEach(function(a) { data.append('area_' + a.key, a.pct); });
+    // Which ad or link brought them here, e.g. ?utm_content=ignite
+    var params = new URLSearchParams(location.search);
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(function(k) {
+      data.append(k, params.get(k) || '');
+    });
     // Form-encoded + no-cors keeps this a "simple" request, so no CORS preflight is needed
     if (LEAD_WEBHOOK_URL) {
       try { fetch(LEAD_WEBHOOK_URL, { method: 'POST', mode: 'no-cors', body: data }); } catch (x) {}

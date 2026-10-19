@@ -33,6 +33,10 @@ the Ignite & Build emails.
 6. **Goal / exit:** add a Goal event "Appointment booked" on the Disco Call calendar, so anyone
    who books a call drops out of the sequence straight away.
 7. Optional: If/Else on `{{inboundWebhookRequest.newsletter_opt_in}}` is `yes` → tag `newsletter`.
+8. Optional: record which ad each lead came from. The page sends `utm_source`, `utm_medium`,
+   `utm_campaign`, `utm_content` and `utm_term` from the page link. Save
+   `{{inboundWebhookRequest.utm_content}}` to a contact custom field (e.g. "Lead source ad"),
+   or add a tag such as `ad-{{inboundWebhookRequest.utm_content}}`.
 
 Publish the workflow, then run a test with your own email for each track.
 
