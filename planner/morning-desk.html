@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Morning Desk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -86,7 +87,40 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .tab.pulse{animation:tabpulse .9s ease 2}
 @keyframes tabpulse{50%{background:var(--sun);color:var(--sun-ink);border-color:var(--sun)}}
 
-.desk{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px;align-items:start}
+.desk{display:flex;flex-direction:column;gap:22px}
+.pane-today{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.daycard.life2{border-top:4px solid var(--ok)}
+.todayhead{grid-column:1/-1;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 18px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 32px;align-items:center}
+.todayhead h2{font-family:var(--f-display);font-weight:700;font-size:24px;margin:0}
+@media (max-width:720px){.todayhead{grid-template-columns:minmax(0,1fr)}}
+.todayfoot{grid-column:1/-1;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 18px}
+.todayfoot .today-foot{border-top:0;padding-top:0}
+.pl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.pl li label{display:flex;gap:10px;align-items:flex-start;padding:4px 0;cursor:pointer;min-width:0}
+.pl li input{width:16px;height:16px;margin-top:2px;accent-color:var(--ok);flex:none}
+.pl li span{overflow-wrap:anywhere;min-width:0}
+.pl li.done span{text-decoration:line-through;color:var(--muted)}
+.dayside{display:flex;flex-direction:column;gap:12px;min-width:0}
+.daycard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.daycard.meet{border-top:4px solid var(--c4)}
+.daycard.train{border-top:4px solid var(--c3)}
+.dch{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.dch h2{font-family:var(--f-display);font-weight:700;font-size:20px;margin:0}
+.dch .eyebrow{margin-left:auto}
+.mt-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.mt{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;align-items:start;border:1px solid var(--line);border-left:4px solid var(--lane,var(--c0));border-radius:8px;padding:7px 9px}
+.mt .time{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap;padding-top:2px;font-variant-numeric:tabular-nums}
+.mt .mb{min-width:0;display:flex;flex-direction:column;gap:3px}
+.mt .mb b{font-weight:600;overflow-wrap:anywhere}
+.mt .acts{grid-column:2;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.mt.past{opacity:.7}
+.mt.now{border-color:var(--sun);border-left-color:var(--sun)}
+.allday{font-size:12.5px;background:var(--sunk);border-radius:8px;padding:6px 9px;overflow-wrap:anywhere}
+.daycard .none{font-size:13px;color:var(--muted)}
+@media (max-width:900px){.pane-today{grid-template-columns:minmax(0,1fr)}}
+.daycard{padding:12px;gap:8px}
+.dch h2{font-size:18px}
+.mt{padding:6px 8px}
 .pane{min-width:0}
 .filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px}
 .chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 11px;font-size:12.5px;font-weight:500}
@@ -205,6 +239,11 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .lrow input[type=text]{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 7px;min-width:0;font-size:13px}
 @media (max-width:720px){.lrow{grid-template-columns:minmax(0,1fr) 70px auto}.lrow .daypick{grid-column:1/-1;order:5}}
 .today-foot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
+.train-s{display:flex;flex-direction:column;gap:4px;min-width:0}
+.whoopq{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:8px;margin-top:2px}
+.train-s b{overflow-wrap:anywhere}
+.train details summary{cursor:pointer;font-size:12px;color:var(--muted)}
+.train .rx{font-size:12.5px;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:4px}
 
 .drawer{position:fixed;inset:0;background:color-mix(in srgb,var(--ink) 35%,transparent);display:flex;justify-content:flex-end;z-index:20}
 .drawer-in{width:min(600px,100%);height:100%;background:var(--surface);overflow:auto;padding:20px 18px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;border-left:1px solid var(--line)}
@@ -291,6 +330,12 @@ table.log tr.total td{font-weight:600;border-top:2px solid var(--ink)}
   </div>
 
   <main class="desk" id="desk" data-tab="all">
+    <section class="pane pane-today" aria-label="Today">
+      <div class="todayhead" id="todayhead"></div>
+      <div class="today" id="today"></div>
+      <div class="dayside"><div class="daycard meet" id="meetings" aria-label="Today's meetings"></div><div class="daycard train" id="training" aria-label="Today's training"></div><div class="daycard life2" id="personal" aria-label="Personal tasks today"></div></div>
+      <div class="todayfoot" id="todayfoot"></div>
+    </section>
     <section class="pane pane-all" aria-label="Everything on your plate">
       <div id="tray"></div>
       <div class="filters">
@@ -302,9 +347,6 @@ table.log tr.total td{font-weight:600;border-top:2px solid var(--ink)}
       </div>
       <div id="everything"></div>
     </section>
-    <aside class="pane pane-today" aria-label="Today's list">
-      <div class="today" id="today"></div>
-    </aside>
   </main>
 </div>
 <div id="drawerHost"></div>
@@ -675,15 +717,15 @@ function renderToday() {
   const planTasks = S.plan.ids.map(id => getTask(id)).filter(Boolean);
   const isLife = (t) => clientName(t.client) === "Personal";
   const tasks = planTasks.filter(t => !isLife(t));
-  const lifeTasks = planTasks.filter(isLife);
-  const habits = (c.habits || []).filter(h => h && h.name);
-  const lifeHTML = (habits.length || lifeTasks.length) ? habitBoxHTML(habits, lifeTasks) : "";
+  S.lifeToday = planTasks.filter(isLife);
   const total = tasks.reduce((n, t) => n + (Number(t.estMins) || 30), 0);
   const doneMins = tasks.filter(t => t.status === "done").reduce((n, t) => n + (Number(t.estMins) || 30), 0);
   const todays = S.entries.filter(e => e.date === todayKey);
   const logged = todays.reduce((n, e) => n + (Number(e.mins) || 0), 0);
   const meetings = todays.filter(e => e.kind === "meeting").reduce((n, e) => n + (Number(e.mins) || 0), 0);
-  const avail = (Number(c.hoursAvailable) || 6) * 60;
+  const dayMins = (Number(c.hoursAvailable) || 6) * 60;
+  const meetMins = plannedMeetingMins();
+  const avail = Math.max(0, dayMins - meetMins);
   const scale = Math.max(avail, total) || 1;
   const over = total > avail;
   let running = 0;
@@ -710,18 +752,19 @@ function renderToday() {
     if (left.length) carry = `<div class="notice">${left.length} unfinished from ${esc(new Date(S.prevPlan.date + "T12:00:00").toLocaleDateString(undefined, { weekday: "long" }))}. <button class="btn btn-sm" data-act="carry" type="button">Bring them over</button></div>`;
   }
   const chk = S.check;
-  host.innerHTML = `
+  $("todayhead").innerHTML = `
     <div><div class="eyebrow">${esc(new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" }))}</div><h2>Today</h2></div>
     <div class="cap">
-      <div class="cap-nums"><span><b>${fmtMins(total)}</b> planned · ${fmtMins(doneMins)} done</span><span>${fmtMins(avail)} available</span></div>
+      <div class="cap-nums"><span><b>${fmtMins(total)}</b> planned · ${fmtMins(doneMins)} done</span><span>${fmtMins(avail)} for tasks</span></div>
       <div class="bar${over ? " over" : ""}" role="img" aria-label="${fmtMins(total)} planned of ${fmtMins(avail)}"><span class="done" style="width:${(doneMins / scale) * 100}%"></span><span class="todo" style="width:${((total - doneMins) / scale) * 100}%"></span></div>
-      <div class="cap-nums"><span>Logged today: <b>${fmtMins(logged)}</b>${meetings ? ` · ${fmtMins(meetings)} in meetings` : ""}</span></div>
+      <div class="cap-nums"><span>Logged today: <b>${fmtMins(logged)}</b>${meetings ? ` · ${fmtMins(meetings)} in meetings` : ""}</span>${meetMins ? `<span>${fmtMins(dayMins)} day − ${fmtMins(meetMins)} meetings</span>` : ""}</div>
       ${over ? `<div class="ctx" style="color:var(--crit)">${fmtMins(total - avail)} over. Items after the yellow line won't fit.</div>` : ""}
-    </div>
+    </div>`;
+  host.innerHTML = `
     ${carry}
     ${rows ? `<ol class="plan">${rows}</ol>` : `<div class="empty-today">Pick tasks from your lanes with <b>+ Today</b>, tick several and add them together, or drag them here.<br>Aim for about ${fmtMins(avail)} of work.</div>`}
-    ${lifeHTML}
-    <form class="quick" id="quickForm"><input id="quickInput" placeholder="Add a new task to today" aria-label="New task for today" autocomplete="off"><select id="quickClient" aria-label="Client">${clientOptions("Unsorted")}</select><button class="btn" type="submit">Add</button></form>
+    <form class="quick" id="quickForm"><input id="quickInput" placeholder="Add a new task to today" aria-label="New task for today" autocomplete="off"><select id="quickClient" aria-label="Client">${clientOptions("Unsorted")}</select><button class="btn" type="submit">Add</button></form>`;
+  $("todayfoot").innerHTML = `
     <div class="today-foot">
       <button class="btn btn-sm" data-act="meeting" type="button">Log a meeting or call</button>
       <button class="btn btn-sm${checkDue() ? " btn-sun" : ""}" data-act="check" type="button" ${chk.status === "busy" ? "disabled" : ""}>${chk.status === "busy" ? esc(chk.msg || "Checking…") : checkDue() ? "Time to check your day" : "Check my day with Littlebird"}</button>
@@ -732,6 +775,7 @@ function renderToday() {
       <div class="ctx" style="flex-basis:100%">The day check looks at what Littlebird saw you work on, then suggests what to tick off and what time to log. Pick an earlier date to fill in a day you missed.</div>
     </div>`;
   $("tabToday").textContent = S.plan.ids.length ? `Today (${tasks.filter(t => t.status !== "done").length})` : "Today";
+  renderDaySide();
 }
 function renderSources() {
   const c = cfg();
@@ -743,7 +787,7 @@ function renderSources() {
   const any = Object.values(S.sweep).some(s => s.status !== "idle");
   $("sources").innerHTML = (any ?
     pill("Email", S.sweep.gmail, s => `${s.count} new threads${s.flagged ? ` + ${s.flagged} in your action labels` : ""} read`) +
-    pill("Slack", S.sweep.slack, s => `${s.count} searches read`) +
+    pill("Slack", S.sweep.slack, s => s.count ? `${s.count} message${s.count === 1 ? "" : "s"} read via Littlebird` : "nothing new via Littlebird") +
     pill("WhatsApp", S.sweep.whatsapp, s => s.count ? `${s.count} chat${s.count === 1 ? "" : "s"} read via Littlebird` : "nothing new via Littlebird") +
     pill("Littlebird", S.sweep.littlebird, s => s.count ? "context read" : "nothing new") +
     pill("Claude", S.sweep.ai, s => `${s.count} new task${s.count === 1 ? "" : "s"} to review`) : "") +
@@ -875,7 +919,7 @@ async function loadCalendar(date) {
   const end = ymd(new Date(new Date(date + "T12:00:00").getTime() + DAY));
   try {
     const r = await read("Google Calendar", "list_events", { startTime: `${date}T00:00:00`, endTime: `${end}T00:00:00`, orderBy: "startTime", pageSize: 50 }, { cache: { staleTime: 60000 } });
-    const events = ((r.payload && r.payload.events) || []).filter(ev => ev.start && ev.start.dateTime && ev.end && ev.end.dateTime && ev.status !== "cancelled" && !(ev.attendees || []).some(a => a.self && a.responseStatus === "declined")).map(ev => {
+    const events = ((r.payload && r.payload.events) || []).filter(ev => ev.start && ev.start.dateTime && ev.end && ev.end.dateTime && ev.status !== "cancelled" && !isTrainingEvent(ev) && !(ev.attendees || []).some(a => a.self && a.responseStatus === "declined")).map(ev => {
       const s = new Date(ev.start.dateTime), e = new Date(ev.end.dateTime);
       const text = [ev.summary, ...(ev.attendees || []).map(a => a.email)].join(" ");
       const client = guessClient(text);
@@ -885,6 +929,90 @@ async function loadCalendar(date) {
   } catch (e) { S.cal = { date, events: [], err: errText(e, "Google Calendar") }; }
   if ($("meetForm")) openMeeting(readMeetForm());
 }
+/* ---------- today's training (sessions Training Desk puts on the calendar) ---------- */
+const TRAINING_DESK_URL = "https://claude.ai/artifact/7G229hKvQfGXtZYfahK8Yy";
+const WHOOP_PROMPT = "Morning report for today. List only these, one per line, numbers only:\nDate\nRecovery %\nHRV (ms)\nResting HR (bpm)\nSleep: hours asleep (h:mm) and sleep performance %\nSkin temperature (°C)\nYesterday's day strain";
+const TD_MARK = "Planned by Training Desk";
+const TRAIN_TITLES = ["run", "lift", "hyrox", "ergs session", "ergs", "gym", "training"];
+function isTrainingEvent(ev) {
+  const d = String(ev.description || "");
+  if (d.includes(TD_MARK)) return true;
+  return TRAIN_TITLES.includes(String(ev.summary || "").trim().toLowerCase());
+}
+function plainText(html) {
+  const withBreaks = String(html || "").replace(/<br\s*\/?>/gi, "\n").replace(/<\/(p|div|li)>/gi, "\n");
+  try { return (new DOMParser().parseFromString(withBreaks, "text/html").body.textContent || "").trim(); } catch (_) { return withBreaks.replace(/<[^>]+>/g, "").trim(); }
+}
+// Calendar blocks that are not meetings: work focus blocks, placeholders, travel and free/transparent holds.
+const MEET_IGNORE = ["no calls", "louie", "focus block", "drive to"];
+const hm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+const isDeclined = (ev) => (ev.attendees || []).some(a => a.self && a.responseStatus === "declined");
+const isFreeEv = (ev) => ev.transparency === "transparent" || ev.availability === "AVAILABILITY_FREE";
+async function loadTraining() {
+  if (!mcp) return;
+  const date = todayKey;
+  const end = ymd(new Date(new Date(date + "T12:00:00").getTime() + DAY));
+  try {
+    const r = await read("Google Calendar", "list_events", { startTime: `${date}T00:00:00`, endTime: `${end}T00:00:00`, orderBy: "startTime", pageSize: 50 }, { cache: { staleTime: 60000 } });
+    const all = ((r.payload && r.payload.events) || []).filter(ev => ev.status !== "cancelled");
+    const timed = all.filter(ev => ev.start && ev.start.dateTime && ev.end && ev.end.dateTime);
+    const events = timed.filter(ev => isTrainingEvent(ev) && !/Free training slot/.test(String(ev.description || ""))).map(ev => {
+      const s = new Date(ev.start.dateTime), e = new Date(ev.end.dateTime);
+      const desc = plainText(ev.description).replace(/\s*Planned by Training Desk[\s\S]*$/, "").trim();
+      return { title: ev.summary || "Training", time: `${hm(s)}–${hm(e)}`, desc, planned: String(ev.description || "").includes(TD_MARK) };
+    });
+    S.train = { date, events };
+    const meetings = timed.filter(ev => !isTrainingEvent(ev) && !isDeclined(ev) && !isFreeEv(ev) && !MEET_IGNORE.some(k => String(ev.summary || "").toLowerCase().includes(k))).map(ev => {
+      const s = new Date(ev.start.dateTime), e = new Date(ev.end.dateTime);
+      const text = [ev.summary, ...(ev.attendees || []).map(a => a.email)].join(" ");
+      const client = guessClient(text);
+      const loc = String(ev.location || "");
+      return { id: ev.id, title: ev.summary || "(no title)", start: hm(s), time: `${hm(s)}–${hm(e)}`, startMs: s.getTime(), endMs: e.getTime(), mins: Math.max(5, Math.round((e - s) / 60000)), client, project: client ? guessProject(client, text) : "", place: /^https?:/i.test(loc) ? "" : loc, link: ev.conferenceUrl || ev.hangoutLink || (/^https?:/i.test(loc) ? loc : "") };
+    });
+    const allDay = all.filter(ev => ev.start && ev.start.date && !ev.start.dateTime && !isFreeEv(ev)).map(ev => ev.summary || "Busy");
+    S.day = { date, meetings, allDay };
+  } catch (e) { const err = errText(e, "Google Calendar"); S.train = { date, events: [], err }; S.day = { date, meetings: [], allDay: [], err }; }
+  renderToday();
+}
+function plannedMeetingMins() { return S.day && S.day.date === todayKey ? S.day.meetings.reduce((n, m) => n + m.mins, 0) : 0; }
+function renderDaySide() {
+  const mh = $("meetings"), th = $("training"); if (!mh || !th) return;
+  const d = S.day && S.day.date === todayKey ? S.day : null;
+  const loggedIds = new Set(S.entries.map(e => e.calEventId).filter(Boolean));
+  const now = Date.now();
+  let m = `<div class="dch"><h2>Meetings</h2>${d && d.meetings.length ? `<span class="eyebrow">${d.meetings.length} · ${fmtMins(plannedMeetingMins())}</span>` : ""}</div>`;
+  if (!mcp) m += `<div class="none">Calendar isn't available in this view.</div>`;
+  else if (!d) m += `<div class="none">Reading your calendar…</div>`;
+  else if (d.err) m += `<div class="ctx" style="color:var(--crit)">${esc(d.err)}</div>`;
+  else {
+    m += d.allDay.map(t => `<div class="allday">All day: <b>${esc(t)}</b></div>`).join("");
+    m += d.meetings.length ? `<ul class="mt-list">${d.meetings.map(x => {
+      const logged = loggedIds.has(x.id), past = now >= x.endMs, live = now >= x.startMs && now < x.endMs;
+      const acts = logged ? `<span class="tag ok">Logged</span>`
+        : now >= x.startMs ? `<button class="btn btn-sm" data-act="mlog" data-id="${esc(x.id)}" type="button">${x.client ? "Log " + fmtMins(x.mins) : "Log…"}</button><button class="btn btn-sm btn-ghost" data-act="medit" data-id="${esc(x.id)}" type="button">Edit</button>`
+        : x.link ? `<a class="ext" href="${esc(x.link)}" target="_blank" rel="noopener">Join link ↗</a>` : "";
+      return `<li class="mt${past ? " past" : ""}${live ? " now" : ""}" style="--lane:${colorFor(x.client)}"><span class="time">${esc(x.start)}</span><div class="mb"><b>${esc(x.title)}</b><span class="ctx">${esc(fmtMins(x.mins))}${x.client ? " · " + esc(x.client) : " · client not set"}${x.place ? " · " + esc(x.place) : ""}</span></div>${acts ? `<div class="acts">${acts}</div>` : ""}</li>`;
+    }).join("")}</ul>` : `<div class="none">No meetings today. All ${fmtMins((Number(cfg().hoursAvailable) || 6) * 60)} is yours for tasks.</div>`;
+  }
+  mh.innerHTML = m;
+  const tr = S.train && S.train.date === todayKey ? S.train : null;
+  let h = `<div class="dch"><h2>Training</h2><a class="ext" href="${TRAINING_DESK_URL}" target="_blank" rel="noopener" style="margin-left:auto">Training Desk ↗</a></div>`;
+  if (!mcp) h += `<div class="none">Calendar isn't available in this view.</div>`;
+  else if (!tr) h += `<div class="none">Reading your calendar…</div>`;
+  else if (tr.err) h += `<div class="ctx" style="color:var(--crit)">${esc(tr.err)}</div>`;
+  else if (!tr.events.length) h += `<div class="none">No training planned today.</div>`;
+  else h += tr.events.map(ev => `<div class="train-s"><div><b>${esc(ev.title)}</b> <span class="tag">${esc(ev.time)}</span></div>${ev.desc ? `<details open><summary>Session details</summary><div class="rx">${esc(ev.desc)}</div></details>` : ev.planned ? "" : `<span class="ctx">Not planned in Training Desk yet.</span>`}</div>`).join("");
+  h += `<div class="whoopq"><span class="ctx">Whoop morning report</span><button class="chip" data-act="copyWhoop" type="button">Copy prompt</button><a class="ext" href="${TRAINING_DESK_URL}" target="_blank" rel="noopener">Paste it in Training Desk ↗</a></div>`;
+  th.innerHTML = h;
+  const ph = $("personal"); if (!ph) return;
+  const life = S.lifeToday || [];
+  const lifeOpen = life.filter(t => t.status !== "done").length;
+  ph.innerHTML = `<div class="dch"><h2>Personal</h2>${life.length ? `<span class="eyebrow">${lifeOpen} to do</span>` : ""}</div>` + (life.length
+    ? `<ul class="pl">${life.map(t => `<li class="${t.status === "done" ? "done" : ""}"><label><input type="checkbox" id="pl-${esc(t.id)}" data-act="toggle" data-id="${esc(t.id)}" ${t.status === "done" ? "checked" : ""}><span>${esc(t.title)}</span></label></li>`).join("")}</ul>`
+    : `<div class="none">Nothing personal planned. Add one below your tasks with the client set to Personal.</div>`);
+}
+function meetingById(id) { return S.day && S.day.meetings.find(x => x.id === id); }
+
 function readMeetForm() {
   return { title: $("m-title").value, client: $("m-client").value, project: $("m-proj").value, date: $("m-date").value || todayKey, start: $("m-start").value, mins: Number($("m-dur").value) || 30, note: $("m-note").value, calEventId: $("meetForm").dataset.cal || null };
 }
@@ -978,16 +1106,13 @@ async function fetchGmailLabels() {
   }
   return out;
 }
+// The Slack workspace can't be connected to Claude directly, so Slack is read through Littlebird's screen captures
+// (same approach as WhatsApp and the scheduled Morning Sweep routine). Best-effort: only what was on screen.
 async function fetchSlack(since) {
-  const after = ymd(new Date(since.getTime() - DAY));
-  const base = { limit: 20, include_context: false, sort: "timestamp", max_context_length: 500, natural_language_query: "requests, questions or tasks for me" };
-  const res = await Promise.allSettled([
-    read("Slack", "slack_search_public_and_private", Object.assign({}, base, { filters: `is:dm after:${after}` }), { cache: false }),
-    read("Slack", "slack_search_public_and_private", Object.assign({}, base, { filters: `after:${after}`, only_my_channels: true }), { cache: false })
-  ]);
-  const ok = res.filter(x => x.status === "fulfilled").map(x => asText(x.value.payload).slice(0, 14000));
-  if (!ok.length) throw res[0].reason;
-  return ok;
+  const txt = await fetchLittlebird(ymd(new Date(since.getTime() - DAY)),
+    ["Slack messages in The Mighty Goats channel that mention @Victoria Lewis", "Slack messages addressed to Viki or Victoria asking her for something"],
+    ["@Victoria Lewis can you", "question for Viki", "Viki please", "waiting on Victoria"], 16000, "Slack", "now");
+  return [txt];
 }
 async function fetchLittlebird(start, queries, messages, max, app, end) {
   const input = { search_queries: queries, search_queries_messages: messages, date_range: { start, end: end || (start === todayKey ? "now" : start) } };
@@ -1026,7 +1151,7 @@ async function runSweep() {
     ["someone asking for something to be done", "client waiting on a reply or deliverable"], 22000, null, "now"), fetchGmailLabels(), fetchWhatsApp(ymd(since))]);
   const flagged = fl.status === "fulfilled" ? fl.value : [];
   S.sweep.gmail = g.status === "fulfilled" ? { status: "ok", count: g.value.length, flagged: flagged.length } : { status: "err", msg: errText(g.reason, "Gmail") };
-  S.sweep.slack = s.status === "fulfilled" ? { status: "ok", count: s.value.length } : { status: "err", msg: errText(s.reason, "Slack") };
+  S.sweep.slack = s.status === "fulfilled" ? { status: "ok", count: (s.value[0].match(/\|\|\s*slack\s*\|\|/gi) || []).length } : { status: "err", msg: errText(s.reason, "Littlebird (Slack)") };
   S.sweep.littlebird = l.status === "fulfilled" ? { status: "ok", count: l.value.length > 200 ? 1 : 0 } : { status: "err", msg: errText(l.reason, "Littlebird") };
   S.sweep.whatsapp = w.status === "fulfilled" ? { status: "ok", count: /\|\|\s*whatsapp/i.test(w.value) ? (w.value.match(/\|\|\s*whatsapp\s*\|\|/gi) || []).length : 0 } : { status: "err", msg: errText(w.reason, "Littlebird (WhatsApp)") };
   renderSources();
@@ -1035,7 +1160,7 @@ async function runSweep() {
   S.sweep.ai = { status: "busy", msg: "Turning messages into tasks…" }; renderSources();
   const who = (S.me && S.me.name) || "the user";
   const existing = [...allTasks().values()].map(t => t.title).slice(0, 300);
-  const prompt = `You are helping ${who}, a freelance marketing-systems consultant, build her morning to-do list. Below are her recent emails, Slack messages, WhatsApp chats and Littlebird context (screen captures and meeting notes). Extract every concrete action SHE needs to take.
+  const prompt = `You are helping ${who}, a freelance marketing-systems consultant, build her morning to-do list. Below are her recent emails, Slack and WhatsApp messages (both captured by Littlebird) and other Littlebird context (screen captures and meeting notes). Extract every concrete action SHE needs to take.
 
 Rules:
 - Only real actions for ${who}: replies owed, deliverables, fixes, approvals, follow-ups she promised, calls to book. Skip newsletters, marketing, receipts, automated notifications, FYIs, and things other people will do.
@@ -1069,7 +1194,7 @@ ${flagged.length ? JSON.stringify(flagged) : "(none)"}
 EMAILS:
 ${g.status === "fulfilled" ? JSON.stringify(g.value) : "(unavailable)"}
 
-SLACK:
+SLACK (The Mighty Goats and other channels, captured by Littlebird; only make tasks for messages that @-mention or are addressed to ${who}, not general channel chatter):
 ${s.status === "fulfilled" ? s.value.join("\n\n---\n\n") : "(unavailable)"}
 
 WHATSAPP (captured by Littlebird; "[user]" is her):
@@ -1228,14 +1353,10 @@ function openSettings(groupsOverride, habitOverride) {
     <div class="grow grow-h"><span>Name</span><span>Type</span><span class="gbill">Billing</span><span class="gmatch">Other names</span><span>h/mo</span><span></span></div>
     <div id="growList" style="display:flex;flex-direction:column;gap:6px">${groups.map(row).join("")}</div>
     <button class="btn btn-sm" data-act="grow-add" type="button" style="align-self:flex-start">Add client</button>
-    <h3>Habits</h3>
-    <div class="field"><span class="hint">The things outside work you want to do more often. Tick them off in Today whenever they happen, with no set times. The dots show your week. Personal tasks you add to Today show in the same box.</span></div>
-    <div id="habitList" style="display:flex;flex-direction:column;gap:6px">${(habitOverride || c.habits || []).map(habitRowHTML).join("")}</div>
-    <button class="btn btn-sm" data-act="habit-add" type="button" style="align-self:flex-start">Add habit</button>
     <h3>Work</h3>
     <div class="field"><label for="s-people">People you pass work to</label><input id="s-people" value="${esc((c.people || []).join(", "))}"><span class="hint">Comma-separated first names.</span></div>
     <div class="field"><label for="s-notes">Notes for Claude</label><textarea id="s-notes" placeholder="e.g. Calls with Jess are Leighton work">${esc(c.notes || "")}</textarea><span class="hint">The morning sweep and day check read these when deciding which client something belongs to.</span></div>
-    <div class="field"><label for="s-hours">Hours of focused work per day</label><input id="s-hours" type="number" min="1" max="14" step="0.5" value="${esc(c.hoursAvailable)}"></div>
+    <div class="field"><label for="s-hours">Working hours per day</label><input id="s-hours" type="number" min="1" max="14" step="0.5" value="${esc(c.hoursAvailable)}"><span class="hint">Today's meetings come out of this, and what's left is your time for tasks.</span></div>
     <div class="field"><label for="s-gmail">Which emails to sweep</label><input id="s-gmail" value="${esc(c.gmailQuery)}"><span class="hint">Gmail search for new mail since the last sweep. The date is added for you.${(c.actionLabels || []).length ? ` Everything in ${(c.actionLabels || []).map(l => esc(l.name)).join(" and ")} is also checked every time, however old.` : ""}</span></div>
     <h3>Backup</h3>
     <div class="row"><button class="btn btn-sm" data-act="exporttasks" type="button">Export tasks (CSV)</button><button class="btn btn-sm" data-act="export" data-month="${thisMonth}" type="button">Export ${esc(monthName)} time (CSV)</button></div>
@@ -1258,7 +1379,7 @@ function collectSettings() {
     hoursAvailable: Math.min(14, Math.max(1, Number($("s-hours").value) || 6)),
     gmailQuery: ($("s-gmail").value || "").trim() || DEFAULTS.gmailQuery,
     notes: ($("s-notes").value || "").trim(),
-    habits: readHabitRows().filter(x => x.name)
+    habits: $("habitList") ? readHabitRows().filter(x => x.name) : (cfg().habits || [])
   };
 }
 
@@ -1270,6 +1391,7 @@ document.addEventListener("click", async (ev) => {
   if (act === "drawerbg" && ev.target !== el) return;
   switch (act) {
     case "add": addMany([id]); break;
+    case "copyWhoop": { try { await navigator.clipboard.writeText(WHOOP_PROMPT); toast("Copied. Paste it into Whoop Coach."); } catch(e){ toast("Couldn't copy. Open Training Desk to copy it there."); } break; }
     case "addsel": addMany([...S.sel]); break;
     case "donesel": { const ids = [...S.sel]; ids.forEach(x => setDone(x, true)); S.sel.clear(); renderAll(); toast(`Marked ${ids.length} done.`); break; }
     case "clearsel": S.sel.clear(); renderAll(); break;
@@ -1301,6 +1423,13 @@ document.addEventListener("click", async (ev) => {
     case "check": runCheck(); break;
     case "applyreview": applyReview(); break;
     case "meeting": openMeeting(); break;
+    case "mlog": {
+      const x = meetingById(id); if (!x) break;
+      if (!x.client) { openMeeting({ title: x.title, date: todayKey, start: x.start, mins: x.mins, calEventId: x.id }); break; }
+      await logTime({ title: x.title, client: x.client, project: x.project || null, kind: "meeting", date: todayKey, start: new Date(x.startMs).toISOString(), mins: x.mins, source: "calendar", calEventId: x.id });
+      renderAll(); toast(`Logged ${fmtMins(x.mins)} meeting for ${x.client}.`); break;
+    }
+    case "medit": { const x = meetingById(id); if (x) openMeeting({ title: x.title, client: x.client || "Unsorted", project: x.project || "", date: todayKey, start: x.start, mins: x.mins, calEventId: x.id }); break; }
     case "calpick": { const e = S.cal && S.cal.events[i]; if (!e) break; const cur = readMeetForm(); openMeeting({ title: e.title, client: e.client || cur.client, project: e.project || "", date: S.cal.date, start: e.start, mins: e.mins, calEventId: e.id }); break; }
     case "timelog": openTimeLog(); break;
     case "logmonth": openTimeLog(el.dataset.month); break;
@@ -1522,6 +1651,7 @@ function checkNewDay() {
   S.plan = { ids: [], lifeDone: [] }; S.planRaw = null; S.prevPlan = yesterday.ids.length ? yesterday : S.prevPlan;
   S.sel.clear(); S.check = { status: "idle" };
   if (canSave()) { if (newMonth) subscribeMonth(); subscribeDay(); }
+  S.train = null; S.day = null; loadTraining();
   renderAll();
   toast("Good morning. Today's list is fresh. Yesterday's finished tasks are in Completed.");
 }
@@ -1572,6 +1702,9 @@ renderAll();
     subscribeDay();
   }
   renderAll();
+  loadTraining();
 })();
 })();
 </script>
+
+</body></html>
