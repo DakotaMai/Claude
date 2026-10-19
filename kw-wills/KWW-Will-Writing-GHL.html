@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Will Writing Service | Home Visits & Fixed Fees | King Will's Wills</title>
+<meta name="description" content="Professional, personal Will writing from a qualified Will writer. Executors, guardians, beneficiaries and complex Wills explained in plain English. Home visits, evenings and weekends.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* King Will's Wills — shared styles. Everything is scoped under .kww so it
+   can't clash with GHL's own builder styles. */
+.kww, .kww *, .kww *::before, .kww *::after { box-sizing: border-box; }
+.kww {
+  --sky:      #2CB2E7;   /* brand blue (logo / buttons on old site) */
+  --sky-d:    #1F8FC0;   /* deeper brand blue for hovers */
+  --sky-ink:  #136C96;   /* brand blue dark enough for text on white */
+  --navy:     #23264F;   /* brand navy (leaflet headings, logo text) */
+  --navy-2:   #2F3466;
+  --pale:     #E6F3FC;   /* leaflet background tint */
+  --pale-2:   #F4FAFE;
+  --ink:      #2A2D44;
+  --muted:    #5B6079;
+  --line:     #D5E6F2;
+  --white:    #FFFFFF;
+  --gold:     #F2B53A;   /* star ratings only */
+  --h: 'Lora', Georgia, 'Times New Roman', serif;
+  --b: 'Source Sans 3', 'Segoe UI', Arial, sans-serif;
+  --r: 14px;
+  --shadow: 0 10px 30px rgba(35,38,79,.08);
+  --shadow-lg: 0 18px 48px rgba(35,38,79,.14);
+
+  font-family: var(--b);
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+.kww h1, .kww h2, .kww h3, .kww h4, .kww p, .kww ul, .kww ol, .kww figure, .kww blockquote { margin: 0; padding: 0; }
+.kww img { max-width: 100%; display: block; }
+.kww a { color: var(--sky-ink); }
+.kww a:hover { color: var(--navy); }
+.kww :focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; border-radius: 4px; }
+
+/* ── Sections (full-bleed out of the GHL container) ── */
+.kww .s { width: 100vw; margin-left: calc(50% - 50vw); padding: 96px 24px; background: var(--white); position: relative; }
+.kww .s--pale { background: var(--pale-2); }
+.kww .s--tint { background: var(--pale); }
+.kww .s--navy { background: var(--navy); color: #DCE3F5; }
+.kww .s--sm { padding-top: 64px; padding-bottom: 64px; }
+.kww .s--flush-top { padding-top: 0; }
+.kww .w { max-width: 1180px; margin: 0 auto; }
+.kww .w-mid { max-width: 880px; margin: 0 auto; }
+.kww .w-narrow { max-width: 720px; margin: 0 auto; }
+.kww .center { text-align: center; }
+.kww .center .lead { margin-left: auto; margin-right: auto; }
+
+/* ── Type ── */
+.kww h1, .kww h2, .kww h3, .kww h4 { font-family: var(--h); color: var(--navy); font-weight: 600; line-height: 1.18; letter-spacing: -.01em; }
+.kww h1 { font-size: clamp(2.2rem, 4.6vw, 3.5rem); }
+.kww h2 { font-size: clamp(1.75rem, 3.4vw, 2.6rem); }
+.kww h3 { font-size: clamp(1.2rem, 1.9vw, 1.45rem); }
+.kww h4 { font-size: 1.1rem; }
+.kww h1 em, .kww h2 em { font-style: italic; color: var(--sky-d); }
+.kww p + p, .kww p + ul, .kww ul + p { margin-top: 1rem; }
+.kww .lead { font-size: clamp(1.08rem, 1.6vw, 1.25rem); color: var(--muted); max-width: 680px; margin-top: 18px; }
+.kww .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: var(--sky-ink); margin-bottom: 14px; }
+.kww .eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--sky); border-radius: 2px; }
+.kww .center .eyebrow::after { content: ""; width: 28px; height: 2px; background: var(--sky); border-radius: 2px; }
+.kww .s--navy h1, .kww .s--navy h2, .kww .s--navy h3 { color: #fff; }
+.kww .s--navy .lead { color: #C3CCE6; }
+.kww .s--navy .eyebrow { color: var(--sky); }
+.kww .s--navy a { color: #9FDDF6; }
+.kww .muted { color: var(--muted); }
+.kww .small { font-size: .9rem; }
+
+/* ── Lists ── */
+.kww .ticks { list-style: none; display: grid; gap: 10px; margin-top: 18px; }
+.kww .ticks li { position: relative; padding-left: 34px; }
+.kww .ticks li::before { content: ""; position: absolute; left: 0; top: .28em; width: 22px; height: 22px; border-radius: 50%; background: var(--pale) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231F8FC0' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/14px no-repeat; }
+.kww .s--tint .ticks li::before, .kww .card .ticks li::before { background-color: #fff; }
+.kww .ticks--2 { grid-template-columns: repeat(2, minmax(0,1fr)); column-gap: 28px; }
+.kww .bullets { padding-left: 1.2em; margin-top: 12px; display: grid; gap: 6px; }
+.kww .bullets li::marker { color: var(--sky); }
+
+/* ── Buttons ── */
+.kww .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-family: var(--b); font-weight: 700; font-size: 1rem; line-height: 1.2; padding: 15px 26px; border-radius: 999px; text-decoration: none; border: 2px solid transparent; cursor: pointer; transition: transform .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease; }
+.kww .btn:hover { transform: translateY(-1px); }
+.kww .btn svg { width: 18px; height: 18px; flex: none; }
+.kww .btn--primary { background: var(--sky); color: var(--navy); box-shadow: 0 6px 18px rgba(44,178,231,.35); }
+.kww .btn--primary:hover { background: #4CC0EE; color: var(--navy); }
+.kww .btn--navy { background: var(--navy); color: #fff; }
+.kww .btn--navy:hover { background: var(--navy-2); color: #fff; }
+.kww .btn--ghost { background: transparent; color: var(--navy); border-color: var(--navy); }
+.kww .btn--ghost:hover { background: var(--navy); color: #fff; }
+.kww .btn--light { background: #fff; color: var(--navy); }
+.kww .btn--light:hover { background: var(--pale); color: var(--navy); }
+.kww .btn--ghost-light { background: transparent; color: #fff; border-color: rgba(255,255,255,.55); }
+.kww .btn--ghost-light:hover { background: rgba(255,255,255,.1); color: #fff; }
+.kww .btn-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+.kww .center .btn-row { justify-content: center; }
+.kww .textlink { font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.kww .textlink::after { content: "→"; transition: transform .15s; }
+.kww .textlink:hover::after { transform: translateX(3px); }
+
+/* ── Header ── */
+.kww .topbar { width: 100vw; margin-left: calc(50% - 50vw); background: var(--navy); color: #DCE3F5; font-size: .88rem; }
+.kww .topbar .w { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 8px 24px; }
+.kww .topbar a { color: #fff; text-decoration: none; font-weight: 600; }
+.kww .topbar a:hover { color: var(--sky); }
+.kww .topbar .tb-right { display: flex; gap: 22px; white-space: nowrap; }
+.kww .hdr { position: sticky; top: 0; z-index: 900; width: 100vw; margin-left: calc(50% - 50vw); background: rgba(255,255,255,.97); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); transition: box-shadow .2s; }
+.kww .hdr.is-scrolled { box-shadow: 0 6px 24px rgba(35,38,79,.08); }
+.kww .hdr .w { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 12px 24px; }
+.kww .logo img { height: 52px; width: auto; }
+.kww .nav { display: flex; align-items: center; gap: 4px; list-style: none; }
+.kww .nav > li { position: relative; }
+.kww .nav a, .kww .nav button { font-family: var(--b); font-size: .98rem; font-weight: 600; color: var(--navy); text-decoration: none; padding: 10px 12px; border-radius: 8px; background: none; border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.kww .nav a:hover, .kww .nav button:hover, .kww .nav .is-active > a, .kww .nav a.is-active { color: var(--sky-ink); background: var(--pale-2); }
+.kww .nav button svg { width: 14px; height: 14px; transition: transform .2s; }
+.kww .dd { position: absolute; top: calc(100% + 6px); left: -8px; min-width: 300px; background: #fff; border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow-lg); padding: 10px; list-style: none; opacity: 0; visibility: hidden; transform: translateY(6px); transition: all .18s ease; }
+.kww .has-dd:hover .dd, .kww .has-dd.open .dd, .kww .has-dd:focus-within .dd { opacity: 1; visibility: visible; transform: none; }
+.kww .has-dd.open button svg { transform: rotate(180deg); }
+.kww .dd a { display: block; padding: 10px 12px; }
+.kww .dd a span { display: block; font-weight: 400; font-size: .85rem; color: var(--muted); }
+.kww .hdr-cta { display: flex; align-items: center; gap: 10px; }
+.kww .hdr-cta .btn { padding: 11px 20px; font-size: .95rem; }
+.kww .burger { display: none; width: 46px; height: 46px; border-radius: 10px; border: 1px solid var(--line); background: #fff; cursor: pointer; align-items: center; justify-content: center; }
+.kww .burger svg { width: 22px; height: 22px; color: var(--navy); }
+.kww .drawer { display: none; }
+
+/* ── Hero ── */
+.kww .hero { background: linear-gradient(160deg, var(--pale) 0%, #fff 62%); overflow: hidden; padding-top: 72px; padding-bottom: 88px; }
+.kww .hero::after { content: ""; position: absolute; right: -120px; top: -60px; width: 520px; height: 520px; background: radial-gradient(circle, rgba(44,178,231,.16), transparent 65%); pointer-events: none; }
+.kww .hero .w { display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; position: relative; z-index: 1; }
+.kww .hero-badges { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 28px; font-size: .92rem; color: var(--muted); font-weight: 600; }
+.kww .hero-badges span { display: inline-flex; align-items: center; gap: 8px; }
+.kww .hero-badges svg { width: 18px; height: 18px; color: var(--sky-d); }
+.kww .page-hero { background: linear-gradient(160deg, var(--pale) 0%, #fff 70%); padding-top: 64px; padding-bottom: 64px; }
+.kww .crumbs { font-size: .88rem; color: var(--muted); margin-bottom: 16px; }
+.kww .crumbs a { color: var(--muted); text-decoration: none; }
+.kww .crumbs a:hover { color: var(--sky-ink); }
+
+/* ── Person / photo frame ── */
+.kww .photo { position: relative; border-radius: 22px; overflow: hidden; background: linear-gradient(150deg, var(--sky) 0%, var(--navy) 100%); aspect-ratio: 4/5; box-shadow: var(--shadow-lg); }
+.kww .photo img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1; }
+.kww .photo .mono { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--h); font-size: 6rem; color: rgba(255,255,255,.85); }
+.kww .photo-card { position: absolute; left: -22px; bottom: 28px; z-index: 2; background: #fff; border-radius: 14px; padding: 14px 18px; box-shadow: var(--shadow-lg); max-width: 270px; }
+.kww .photo-card strong { display: block; font-family: var(--h); color: var(--navy); font-size: 1.1rem; }
+.kww .photo-card span { font-size: .88rem; color: var(--muted); }
+.kww .photo-wrap { position: relative; }
+.kww .photo-quote { position: absolute; right: -18px; top: 28px; z-index: 2; background: var(--navy); color: #fff; border-radius: 14px; padding: 14px 18px; max-width: 230px; font-size: .92rem; line-height: 1.45; box-shadow: var(--shadow-lg); }
+.kww .photo-quote .stars { color: var(--gold); letter-spacing: 2px; display: block; margin-bottom: 4px; }
+
+/* ── Grids & cards ── */
+.kww .grid { display: grid; gap: 24px; }
+.kww .g2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.kww .g3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.kww .g4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+.kww .split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.kww .split--wide { grid-template-columns: 1.15fr .85fr; }
+.kww .mt-s { margin-top: 24px; } .kww .mt { margin-top: 44px; } .kww .mt-l { margin-top: 64px; }
+.kww .card { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 30px; box-shadow: var(--shadow); }
+.kww .card h3 { margin-bottom: 10px; }
+.kww .card p { color: var(--muted); }
+.kww a.card { display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: transform .2s, box-shadow .2s, border-color .2s; }
+.kww a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--sky); }
+.kww a.card .textlink { margin-top: auto; padding-top: 18px; }
+.kww .ico { width: 54px; height: 54px; border-radius: 14px; background: var(--pale); color: var(--sky-d); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; flex: none; }
+.kww .ico svg { width: 28px; height: 28px; }
+.kww .s--tint .ico, .kww .s--pale .card .ico { background: var(--pale); }
+.kww .feature { display: flex; gap: 16px; align-items: flex-start; }
+.kww .feature .ico { margin-bottom: 0; width: 46px; height: 46px; }
+.kww .feature .ico svg { width: 22px; height: 22px; }
+.kww .feature h3 { font-size: 1.12rem; margin-bottom: 4px; }
+.kww .feature p { color: var(--muted); font-size: .98rem; }
+.kww .s--navy .feature p { color: #C3CCE6; }
+.kww .s--navy .feature .ico { background: rgba(44,178,231,.15); color: var(--sky); }
+
+/* ── Stats strip ── */
+.kww .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.kww .stat { text-align: center; padding: 8px; }
+.kww .stat b { display: block; font-family: var(--h); font-size: clamp(1.9rem, 3.2vw, 2.6rem); color: var(--sky); font-weight: 600; line-height: 1.1; }
+.kww .stat span { color: #C3CCE6; font-size: .95rem; }
+
+/* ── Steps ── */
+.kww .steps { counter-reset: st; display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 22px; position: relative; }
+.kww .step { position: relative; background: #fff; border-radius: var(--r); padding: 28px 24px; border: 1px solid var(--line); }
+.kww .step::before { counter-increment: st; content: counter(st); display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: var(--navy); color: #fff; font-family: var(--h); font-size: 1.2rem; margin-bottom: 16px; }
+.kww .step h3 { font-size: 1.15rem; margin-bottom: 6px; }
+.kww .step p { font-size: .97rem; color: var(--muted); }
+
+/* ── Testimonials ── */
+.kww .quote { background: #fff; border-radius: var(--r); padding: 30px; border: 1px solid var(--line); box-shadow: var(--shadow); display: flex; flex-direction: column; }
+.kww .quote .stars { color: var(--gold); letter-spacing: 3px; font-size: 1.05rem; }
+.kww .quote blockquote { font-family: var(--h); font-size: 1.08rem; line-height: 1.6; color: var(--navy); margin: 12px 0 20px; font-style: italic; }
+.kww .quote .who { margin-top: auto; display: flex; align-items: center; gap: 12px; }
+.kww .quote .av { width: 44px; height: 44px; border-radius: 50%; background: var(--pale); color: var(--sky-ink); font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none; }
+.kww .quote .who b { display: block; color: var(--navy); }
+.kww .quote .who span { font-size: .88rem; color: var(--muted); }
+.kww .quote--big { padding: 44px; }
+.kww .quote--big blockquote { font-size: clamp(1.2rem, 2.1vw, 1.5rem); }
+
+/* ── Callouts ── */
+.kww .callout { border-left: 4px solid var(--sky); background: var(--pale-2); border-radius: 0 var(--r) var(--r) 0; padding: 22px 26px; margin-top: 26px; }
+.kww .callout p { color: var(--ink); }
+.kww .callout strong { color: var(--navy); }
+.kww .callout--warn { border-left-color: #E8A23A; background: #FFF8EC; }
+.kww .bigfact { font-family: var(--h); font-size: clamp(1.3rem, 2.4vw, 1.75rem); color: var(--navy); line-height: 1.4; }
+.kww .bigfact b { color: var(--sky-d); }
+
+/* ── Accordions (FAQ) ── */
+.kww .faq { display: grid; gap: 12px; }
+.kww .faq details { background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.kww .faq details[open] { border-color: var(--sky); box-shadow: var(--shadow); }
+.kww .faq summary { list-style: none; cursor: pointer; padding: 20px 56px 20px 22px; font-weight: 700; color: var(--navy); position: relative; font-size: 1.04rem; }
+.kww .faq summary::-webkit-details-marker { display: none; }
+.kww .faq summary::after { content: "+"; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; border-radius: 50%; background: var(--pale); color: var(--sky-ink); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 600; transition: transform .2s; }
+.kww .faq details[open] summary::after { content: "–"; }
+.kww .faq .a { padding: 0 22px 22px; color: var(--muted); }
+.kww .faq .a p + p { margin-top: .7rem; }
+
+/* ── Tabs ── */
+.kww .tabs { display: flex; flex-wrap: wrap; gap: 8px; border-bottom: 2px solid var(--line); margin-bottom: 34px; }
+.kww .tab { font-family: var(--b); font-weight: 700; font-size: 1rem; background: none; border: 0; padding: 14px 18px; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+.kww .tab[aria-selected="true"] { color: var(--navy); border-bottom-color: var(--sky); }
+.kww .tab:hover { color: var(--navy); }
+.kww .panel[hidden] { display: none; }
+
+/* ── Comparison table ── */
+.kww .tbl-wrap { overflow-x: auto; border-radius: var(--r); border: 1px solid var(--line); background: #fff; box-shadow: var(--shadow); -webkit-overflow-scrolling: touch; }
+.kww table.cmp { width: 100%; border-collapse: collapse; min-width: 860px; font-size: .92rem; }
+.kww .cmp th, .kww .cmp td { padding: 13px 10px; text-align: center; border-bottom: 1px solid var(--line); }
+.kww .cmp thead th { background: var(--pale-2); color: var(--navy); font-weight: 700; font-size: .85rem; vertical-align: bottom; }
+.kww .cmp thead th.us { background: var(--navy); color: #fff; font-family: var(--h); font-size: 1rem; border-radius: 0; }
+.kww .cmp tbody th { text-align: left; font-weight: 600; color: var(--ink); padding-left: 18px; position: sticky; left: 0; background: #fff; min-width: 210px; }
+.kww .cmp td.us { background: rgba(44,178,231,.08); }
+.kww .cmp .y { color: var(--sky-d); font-weight: 800; font-size: 1.2rem; }
+.kww .cmp .n { color: #B5BBCB; font-size: 1.1rem; }
+.kww .cmp .m { color: #8C93A8; font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.kww .cmp tr:last-child th, .kww .cmp tr:last-child td { border-bottom: 0; }
+
+/* ── Interactive tools ── */
+.kww .tool { background: #fff; border-radius: 20px; border: 1px solid var(--line); box-shadow: var(--shadow-lg); padding: 36px; }
+.kww .tool-q { font-family: var(--h); font-size: 1.35rem; color: var(--navy); margin-bottom: 18px; }
+.kww .opts { display: flex; flex-wrap: wrap; gap: 12px; }
+.kww .opt { font-family: var(--b); font-size: 1rem; font-weight: 700; padding: 13px 26px; border-radius: 999px; border: 2px solid var(--navy); color: var(--navy); background: #fff; cursor: pointer; transition: all .15s; }
+.kww .opt:hover { background: var(--navy); color: #fff; }
+.kww .progress { height: 6px; background: var(--pale); border-radius: 6px; overflow: hidden; margin-bottom: 26px; }
+.kww .progress i { display: block; height: 100%; width: 0; background: var(--sky); transition: width .3s; }
+.kww .trail { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.kww .trail span { font-size: .82rem; background: var(--pale-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; color: var(--muted); }
+.kww .result { border-radius: 16px; background: var(--pale-2); border: 1px solid var(--line); padding: 26px; }
+.kww .result h3 { margin-bottom: 8px; }
+.kww .linkbtn { background: none; border: 0; color: var(--sky-ink); font-weight: 700; cursor: pointer; font-family: var(--b); font-size: .95rem; padding: 0; margin-top: 18px; text-decoration: underline; }
+.kww .chk { display: grid; gap: 10px; }
+.kww .chk label { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; background: #fff; transition: border-color .15s, background .15s; }
+.kww .chk label:hover { border-color: var(--sky); }
+.kww .chk input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--sky-d); flex: none; }
+.kww .chk label.on { border-color: var(--sky); background: var(--pale-2); }
+.kww .rec { display: grid; gap: 14px; margin-top: 22px; }
+.kww .rec a { display: block; text-decoration: none; padding: 18px 20px; border-radius: 12px; background: #fff; border: 1px solid var(--line); color: var(--ink); }
+.kww .rec a:hover { border-color: var(--sky); }
+.kww .rec a b { color: var(--navy); font-family: var(--h); font-size: 1.1rem; display: block; margin-bottom: 2px; }
+.kww .rec a span { color: var(--muted); font-size: .95rem; }
+
+/* ── CTA band ── */
+.kww .cta { background: linear-gradient(135deg, var(--navy) 0%, #1B3D6E 100%); color: #DCE3F5; overflow: hidden; }
+.kww .cta::before { content: ""; position: absolute; left: -140px; bottom: -200px; width: 520px; height: 520px; background: radial-gradient(circle, rgba(44,178,231,.25), transparent 65%); }
+.kww .cta .w { display: grid; grid-template-columns: auto 1fr auto; gap: 40px; align-items: center; position: relative; }
+.kww .cta h2 { color: #fff; }
+.kww .cta p { color: #C3CCE6; margin-top: 10px; }
+.kww .cta .avatar { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 4px solid rgba(255,255,255,.2); background: linear-gradient(150deg, var(--sky), var(--navy-2)); position: relative; flex: none; }
+.kww .cta .avatar img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1; }
+.kww .cta .avatar .mono { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--h); font-size: 2.6rem; color: #fff; }
+.kww .cta .btn-row { margin-top: 0; flex-direction: column; }
+.kww .cta-phones { font-size: .92rem; color: #C3CCE6; margin-top: 12px; }
+.kww .cta-phones a { color: #fff; font-weight: 700; text-decoration: none; }
+
+/* ── Badges strip ── */
+.kww .badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 34px; align-items: center; }
+.kww .badge { display: flex; align-items: center; gap: 12px; color: var(--navy); font-weight: 700; font-size: .95rem; }
+.kww .badge small { display: block; font-weight: 500; color: var(--muted); font-size: .8rem; }
+.kww .badge .ico { width: 44px; height: 44px; margin: 0; border-radius: 50%; }
+.kww .badge .ico svg { width: 22px; height: 22px; }
+
+/* ── Embed placeholders (GHL forms / calendars) ── */
+.kww .embed { border: 2px dashed var(--sky); border-radius: var(--r); background: var(--pale-2); padding: 28px; text-align: center; color: var(--muted); }
+.kww .embed b { color: var(--navy); display: block; margin-bottom: 6px; }
+
+/* ── Footer ── */
+.kww .ftr { width: 100vw; margin-left: calc(50% - 50vw); background: #1A1C3B; color: #AEB6D2; padding: 72px 24px 28px; font-size: .95rem; }
+.kww .ftr .w { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 40px; }
+.kww .ftr h4 { color: #fff; font-family: var(--b); font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 16px; }
+.kww .ftr ul { list-style: none; display: grid; gap: 8px; }
+.kww .ftr a { color: #DCE3F5; text-decoration: none; }
+.kww .ftr a:hover { color: var(--sky); }
+.kww .ftr .flogo { background: #fff; display: inline-block; padding: 12px 16px; border-radius: 12px; margin-bottom: 18px; }
+.kww .ftr .flogo img { height: 44px; width: auto; }
+.kww .ftr .social { display: flex; gap: 10px; margin-top: 18px; }
+.kww .ftr .social a { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; }
+.kww .ftr .social a:hover { background: var(--sky); color: var(--navy); }
+.kww .ftr .social svg { width: 18px; height: 18px; }
+.kww .ftr .ipw { margin-top: 18px; max-width: 240px; }
+.kww .ftr .legal { max-width: 1180px; margin: 48px auto 0; border-top: 1px solid rgba(255,255,255,.1); padding-top: 22px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: .84rem; color: #8189A8; }
+.kww .ftr .legal a { color: #AEB6D2; margin-left: 16px; }
+
+/* ── Mobile action bar ── */
+.kww .mbar { display: none; }
+
+/* ── Reveal on scroll ── */
+.kww .rv { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+.kww .rv.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .kww .rv { opacity: 1; transform: none; transition: none; } .kww * { scroll-behavior: auto !important; } }
+
+/* ── Print (appointment checklist etc.) ── */
+@media print {
+  .kww .topbar, .kww .hdr, .kww .ftr, .kww .mbar, .kww .cta, .kww .no-print { display: none !important; }
+  .kww .s { padding: 20px 0; width: auto; margin: 0; }
+  .kww .rv { opacity: 1; transform: none; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 1080px) {
+  .kww .nav, .kww .hdr-cta .btn--ghost { display: none; }
+  .kww .burger { display: inline-flex; }
+  .kww .drawer { display: block; position: fixed; inset: 0; z-index: 1000; pointer-events: none; }
+  .kww .drawer .scrim { position: absolute; inset: 0; background: rgba(26,28,59,.5); opacity: 0; transition: opacity .2s; }
+  .kww .drawer .sheet { position: absolute; right: 0; top: 0; bottom: 0; width: min(380px, 88vw); background: #fff; transform: translateX(100%); transition: transform .25s ease; overflow-y: auto; padding: 22px; display: flex; flex-direction: column; gap: 6px; }
+  .kww .drawer.open { pointer-events: auto; }
+  .kww .drawer.open .scrim { opacity: 1; }
+  .kww .drawer.open .sheet { transform: none; }
+  .kww .drawer .close { align-self: flex-end; width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 1.4rem; color: var(--navy); }
+  .kww .drawer a { display: block; padding: 12px 10px; font-weight: 700; color: var(--navy); text-decoration: none; border-radius: 8px; font-size: 1.05rem; }
+  .kww .drawer a:hover, .kww .drawer a.is-active { background: var(--pale-2); color: var(--sky-ink); }
+  .kww .drawer .grp { font-size: .75rem; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); font-weight: 700; padding: 14px 10px 4px; }
+  .kww .drawer .sub { padding-left: 22px; font-weight: 600; font-size: 1rem; }
+  .kww .drawer .btn { margin-top: 14px; }
+  .kww .ftr .w { grid-template-columns: 1fr 1fr; }
+  .kww .steps { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .kww .g4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .kww .cta .w { grid-template-columns: auto 1fr; }
+  .kww .cta .btn-row { grid-column: 1 / -1; flex-direction: row; }
+}
+@media (max-width: 860px) {
+  .kww { font-size: 17px; }
+  .kww .s { padding: 68px 20px; }
+  .kww .s--sm { padding: 48px 20px; }
+  .kww .hero { padding-top: 40px; padding-bottom: 60px; }
+  .kww .hero .w, .kww .split, .kww .split--wide { grid-template-columns: 1fr; gap: 40px; }
+  .kww .g2, .kww .g3 { grid-template-columns: 1fr; }
+  .kww .stats { grid-template-columns: repeat(2, 1fr); }
+  .kww .ticks--2 { grid-template-columns: 1fr; }
+  .kww .photo { aspect-ratio: 1/1; max-width: 460px; }
+  .kww .photo-card { left: 12px; bottom: 12px; }
+  .kww .photo-quote { right: 12px; top: 12px; }
+  .kww .topbar .tb-left { display: none; }
+  .kww .topbar .w { justify-content: center; }
+  .kww .tool { padding: 24px; }
+  .kww .cta .w { grid-template-columns: 1fr; text-align: center; }
+  .kww .cta .avatar { margin: 0 auto; }
+  .kww .cta .btn-row { justify-content: center; flex-direction: column; }
+  .kww .mbar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 950; background: #fff; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); box-shadow: 0 -6px 20px rgba(35,38,79,.1); }
+  .kww .mbar .btn { padding: 13px 10px; font-size: .95rem; }
+  .kww .ftr { padding-bottom: 100px; }
+}
+@media (max-width: 560px) {
+  .kww .steps, .kww .g4 { grid-template-columns: 1fr; }
+  .kww .ftr .w { grid-template-columns: 1fr; }
+  .kww .logo img { height: 42px; }
+  .kww .hdr-cta .btn--primary { display: none; }
+  .kww .topbar .tb-right { gap: 18px; font-size: .85rem; }
+  .kww .topbar .tb-lbl { display: none; }
+  .kww .btn-row .btn { width: 100%; }
+}
+
+</style>
+</head>
+<body style="margin:0">
+<div class="kww">
+<a href="#main" style="position:absolute;left:-9999px" onfocus="this.style.left='8px'" onblur="this.style.left='-9999px'">Skip to content</a>
+<div class="topbar"><div class="w">
+  <span class="tb-left">Friendly, qualified Will writing across England &amp; Wales · Home visits, Zoom, evenings &amp; weekends</span>
+  <span class="tb-right"><a href="tel:+441384883883"><span class="tb-lbl">Stourbridge </span>01384 883 883</a><a href="tel:+441905671371"><span class="tb-lbl">Worcester </span>01905 671 371</a></span>
+</div></div>
+<header class="hdr" id="kww-hdr"><div class="w">
+  <a class="logo" href="/" aria-label="King Will's Wills home"><img src="data:image/png;base64,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" alt="King Will's Wills, Estate Planning Specialists" width="283" height="52"></a>
+  <nav aria-label="Main"><ul class="nav">
+    <li><a href="/about">About Sevvy</a></li>
+    <li class="has-dd is-active"><button type="button" aria-expanded="false" aria-haspopup="true">Services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><ul class="dd"><li><a href="/will-writing" class="is-active" aria-current="page">Will Writing<span>Make sure your wishes are carried out</span></a></li><li><a href="/trusts">Trusts<span>Protect your home and your family's inheritance</span></a></li><li><a href="/lasting-powers-of-attorney">Lasting Powers of Attorney<span>Health & welfare, property & finance, business</span></a></li><li><a href="/storage-and-after-care">Storage & Aftercare<span>Safe storage and free advice for life</span></a></li><li><a href="/estate-administration-and-probate">Estate Administration & Probate<span>Support for executors when the time comes</span></a></li></ul></li>
+    <li class="has-dd"><button type="button" aria-expanded="false" aria-haspopup="true">Guides <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><ul class="dd"><li><a href="/your-appointment">Your Appointment<span>What to expect and how to prepare</span></a></li><li><a href="/intestacy">No Will? Who Inherits<span>Interactive intestacy checker</span></a></li></ul></li>
+    <li><a href="/testimonials">Reviews</a></li>
+    <li><a href="/blog">Blog</a></li>
+    <li><a href="/contact">Contact</a></li>
+  </ul></nav>
+  <div class="hdr-cta">
+    <a class="btn btn--primary" href="/contact">Book a free chat</a>
+    <button class="burger" type="button" aria-label="Open menu" aria-controls="kww-drawer" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  </div>
+</div></header>
+<div class="drawer" id="kww-drawer" aria-hidden="true">
+  <div class="scrim" data-close></div>
+  <div class="sheet" role="dialog" aria-label="Menu">
+    <button class="close" type="button" aria-label="Close menu" data-close>×</button>
+    <a href="/">Home</a>
+    <a href="/about">About Sevvy</a>
+    <span class="grp">Services</span><a class="sub" href="/will-writing" class="is-active" aria-current="page">Will Writing</a><a class="sub" href="/trusts">Trusts</a><a class="sub" href="/lasting-powers-of-attorney">Lasting Powers of Attorney</a><a class="sub" href="/storage-and-after-care">Storage & Aftercare</a><a class="sub" href="/estate-administration-and-probate">Estate Administration & Probate</a>
+    <span class="grp">Guides</span><a class="sub" href="/your-appointment">Your Appointment</a><a class="sub" href="/intestacy">No Will? Who Inherits</a>
+    <a href="/testimonials">Reviews</a>
+    <a href="/blog">Blog</a>
+    <a href="/contact">Contact</a>
+    <a class="btn btn--primary" href="/contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Book a free chat</a>
+    <a class="btn btn--ghost" href="tel:+441384883883"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg> 01384 883 883</a>
+  </div>
+</div>
+<main id="main">
+<section class="s page-hero" aria-labelledby="h1">
+  <div class="w split split--wide">
+    <div>
+      <p class="crumbs"><a href="/">Home</a> / Services / Will Writing</p>
+      <span class="eyebrow">Will Writing</span>
+      <h1 id="h1">Your wishes, written down properly, <em>so they're carried out.</em></h1>
+      <p class="lead">A Will decides who sorts things out, who looks after your children and who inherits what. Without one, the law decides for you. Sevvy will make sure every detail is right, and explain it all in plain English.</p>
+      <div class="btn-row">
+        <a class="btn btn--primary" href="/contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Book a free consultation</a>
+        <a class="btn btn--ghost" href="/intestacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M12 8v4M12 12 5 16M12 12l7 4"/></svg> Who inherits without a Will?</a>
+      </div>
+    </div>
+    <div class="card rv">
+      <p class="bigfact">Over <b>60%</b> of people don't have a Will, and around <b>1 in 5</b> Wills are out of date, invalid or not fit for purpose.</p>
+      <p class="mt-s">If you die without a valid Will you die “intestate”, and a pecking order laid down in law decides who inherits. <strong>There is no provision for unmarried partners or stepchildren.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section class="s" aria-labelledby="key-h">
+  <div class="w">
+    <div class="center"><span class="eyebrow">What goes into your Will</span><h2 id="key-h">The key decisions, explained</h2>
+      <p class="lead">At your appointment we'll talk through each of these together. Here's a head start.</p></div>
+    <div class="grid g3 mt">
+      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span><h3>Executors</h3><p>The people you trust to carry out your wishes. Usually a spouse or partner, adult children, family or close friends. It's wise to name more than one, plus reserves. A professional executor can be appointed if your affairs are complex.</p></div>
+      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"/></svg></span><h3>Guardians</h3><p>Who will raise your children if they lose both parents before 18? Without a named guardian, the local authority decides, and that could even mean foster care. You can choose people who share your values.</p></div>
+      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M12 8v4M12 12 5 16M12 12l7 4"/></svg></span><h3>Beneficiaries</h3><p>Who inherits: specific gifts (“legacies”) of money, property or treasured items, and the “residue”, which is everything left once debts and costs are paid. You can also choose an older age to inherit, such as 21 or 25.</p></div>
+      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span><h3>Funeral wishes</h3><p>Burial or cremation, organ donation and any requests for the ceremony. They aren't legally binding, but they guide your loved ones. Tell your family too, as Wills are often read after the funeral.</p></div>
+      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><h3>Exclusions</h3><p>If you want to leave someone out, it's important to say so, usually with a calm, handwritten letter kept with your Will explaining why. That helps reduce the risk of a dispute later.</p></div>
+      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span><h3>Complex Wills</h3><p>Inheritance tax planning, blended families, business interests, land and property abroad. We cover them all, and fully, during your appointment.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="s s--tint" aria-labelledby="more-h">
+  <div class="w split">
+    <div>
+      <span class="eyebrow">Is a Will enough?</span>
+      <h2 id="more-h">For most modern families, a Will alone isn't enough</h2>
+      <p class="mt-s">A Will simply records who gets what you have when you die. The trouble is that what you have now, you may not have then. Tens of thousands of homes are sold every year to pay for care fees, and inheritances can be lost to divorce, debt or remarriage.</p>
+      <p>That's why many people add a <a href="/trusts">Trust</a> to their Will. And because a Will only helps after you die, <a href="/lasting-powers-of-attorney">Lasting Powers of Attorney</a> protect you if you lose the ability to manage your own affairs while you're still alive.</p>
+      <div class="btn-row"><a class="btn btn--navy" href="/trusts">Find out about Trusts</a></div>
+    </div>
+    <div class="card rv">
+      <h3>Consider a Trust if you…</h3>
+      <ul class="ticks">
+        <li>Own your home, especially jointly</li>
+        <li>Have stepchildren or children from a previous relationship</li>
+        <li>Are in a second marriage or civil partnership</li>
+        <li>Have a vulnerable family member, through disability or money problems</li>
+        <li>Intend to leave a family member out of your Will</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="s" aria-labelledby="rev-h">
+  <div class="w split">
+    <div>
+      <span class="eyebrow">Keeping it up to date</span>
+      <h2 id="rev-h">When should you review your Will?</h2>
+      <p class="mt-s">Official advice is to review your Will every few years, and straight away after big life events, whether they affect you or the people named in it.</p>
+      <ul class="ticks ticks--2">
+        <li>Births and deaths</li>
+        <li>Marriage or civil partnership</li>
+        <li>Separation or divorce</li>
+        <li>Moving in together</li>
+        <li>Moving home</li>
+        <li>Buying or selling property</li>
+        <li>Receiving an inheritance or windfall</li>
+        <li>Starting or closing a business</li>
+      </ul>
+    </div>
+    <div class="callout rv">
+      <p><strong>Already a client?</strong> With our <a href="/storage-and-after-care">Storage &amp; Aftercare</a> service you get a free annual review and discounted updates: 50% off if the changes can be done by post or email, or 25% off if a consultation is needed.</p>
+    </div>
+  </div>
+</section>
+
+<section class="s s--pale" aria-labelledby="sign-h">
+  <div class="w-mid">
+    <div class="center"><span class="eyebrow">Getting it right</span><h2 id="sign-h">Signing your Will properly</h2></div>
+    <div class="faq mt">
+      <details open><summary>Who can witness my Will?</summary><div class="a"><p>You need two independent adult witnesses, present together with you, and all three of you must see each other sign. A witness cannot be a beneficiary, or the spouse or partner of one. Neighbours, friends and work colleagues are common choices. They sign on the last page, so they won't see what your Will says.</p></div></details>
+      <details><summary>Do you supervise the signing?</summary><div class="a"><p>Yes, free of charge. At the second appointment Sevvy brings your finished documents, explains them in full, answers your questions and supervises signing and witnessing so your Will is valid. It only takes the witnesses the last five to ten minutes.</p></div></details>
+      <details><summary>What happens to the original?</summary><div class="a"><p>Only the original Will is valid. If it's lost, damaged or looks tampered with, you effectively don't have a Will. Our <a href="/storage-and-after-care">Storage &amp; Aftercare</a> service keeps it safe, insured and registered with the National Will Register.</p></div></details>
+    </div>
+  </div>
+</section>
+
+<section class="s s--pale" aria-labelledby="t-h">
+  <div class="w">
+    <div class="center"><span class="eyebrow">Kind words</span><h2 id="t-h">What our clients say about Sevvy</h2></div>
+    <div class="grid g3 mt"><figure class="quote rv "><span class="stars" aria-label="5 stars">★★★★★</span><blockquote>“Throughout the process we felt in good hands and there is no one else who could have dealt with our queries, circumstances and Wills in any better way than Sevvy did. Thank you for a fantastic service!”</blockquote><figcaption class="who"><span class="av">L</span><span><b>Laura M</b><span>Stourbridge</span></span></figcaption></figure><figure class="quote rv "><span class="stars" aria-label="5 stars">★★★★★</span><blockquote>“Sevvy helped my parents with their Wills and dealing with a trust. He took the time to come out to my parents' house, explaining everything with great care and attention and ensured they fully understood all the implications.”</blockquote><figcaption class="who"><span class="av">J</span><span><b>Jamie P</b><span>Kidderminster</span></span></figcaption></figure><figure class="quote rv "><span class="stars" aria-label="5 stars">★★★★★</span><blockquote>“Recently my father passed away, and I realised that we needed to quickly gain power of attorney over my mother's finances and healthcare. Sevvy really helped us deal with a potentially difficult situation. I would recommend him to anyone.”</blockquote><figcaption class="who"><span class="av">A</span><span><b>Andy D</b><span>Malvern</span></span></figcaption></figure></div>
+    <div class="center mt"><a class="textlink" href="/testimonials">Read more client stories</a></div>
+  </div>
+</section>
+<section class="s cta" aria-labelledby="cta-h">
+  <div class="w">
+    <div class="avatar"><span class="mono" aria-hidden="true">SH</span><img src="https://www.kw-wills.co.uk/images/split/14_right.png" alt="Sevvy Hasan" loading="lazy" onerror="this.remove()"></div>
+    <div>
+      <h2 id="cta-h">Let's have a friendly chat</h2>
+      <p>No obligation, no jargon, no pressure. Sevvy will listen, explain your options in plain English and give you a fixed price up front, at home, by Zoom, or in the evening or at weekends.</p>
+      <p class="cta-phones">Stourbridge <a href="tel:+441384883883">01384 883 883</a> &nbsp;·&nbsp; Worcester <a href="tel:+441905671371">01905 671 371</a></p>
+    </div>
+    <div class="btn-row">
+      <a class="btn btn--primary" href="/contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Book a free consultation</a>
+      <a class="btn btn--ghost-light" href="tel:+441384883883"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg> Call 01384 883 883</a>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="ftr"><div class="w">
+  <div>
+    <a class="flogo" href="/"><img src="data:image/png;base64,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" alt="King Will's Wills" width="240" height="44"></a>
+    <p>Friendly, professional estate planning from a qualified, insured and regulated Will writer. Founded by Sevvy Hasan in 2014.</p>
+    <div class="social">
+      <a href="https://www.facebook.com/KingWillsWills/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+      <a href="https://twitter.com/KingWillsWills" target="_blank" rel="noopener" aria-label="X (Twitter)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l16 16M20 4 4 20"/></svg></a>
+      <a href="https://www.linkedin.com/in/sevvy-hasan-step-affiliate-mipw-ab04099/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+    </div>
+  </div>
+  <div><h4>Services</h4><ul><li><a href="/will-writing">Will Writing</a></li><li><a href="/trusts">Trusts</a></li><li><a href="/lasting-powers-of-attorney">Lasting Powers of Attorney</a></li><li><a href="/storage-and-after-care">Storage & Aftercare</a></li><li><a href="/estate-administration-and-probate">Estate Administration & Probate</a></li></ul></div>
+  <div><h4>Helpful guides</h4><ul>
+    <li><a href="/your-appointment">Your appointment</a></li>
+    <li><a href="/intestacy">Who inherits without a Will?</a></li>
+    <li><a href="/about">About Sevvy</a></li>
+    <li><a href="/testimonials">Client reviews</a></li>
+    <li><a href="/blog">Blog</a></li>
+  </ul></div>
+  <div><h4>Get in touch</h4><ul>
+    <li>Stourbridge <a href="tel:+441384883883"><b>01384 883 883</b></a></li>
+    <li>Worcester <a href="tel:+441905671371"><b>01905 671 371</b></a></li>
+    <li><a href="mailto:enquiries@kw-wills.co.uk">enquiries@kw-wills.co.uk</a></li>
+    <li>136A King William Street, Stourbridge, DY8 4ES</li>
+  </ul>
+  <div class="ipw"><div style="position:relative;padding-bottom:36.8%;height:0;overflow:hidden"><iframe title="IPW / CTSI Approved Code badge" style="border:0;position:absolute;inset:0;width:100%;height:100%" src="https://cdn.yoshki.com/iframe/55068r.html" loading="lazy" scrolling="no"></iframe></div></div>
+  </div>
+</div>
+<div class="legal"><span>© <span data-year>2026</span> King Will's Wills Ltd. A member of the Institute of Professional Willwriters. This firm is compliant with the IPW code of practice.</span><span><a href="/privacy">Privacy</a><a href="/contact">Contact</a></span></div>
+</footer>
+<div class="mbar"><a class="btn btn--navy" href="tel:+441384883883"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg> Call us</a><a class="btn btn--primary" href="/contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Book a chat</a></div>
+</div>
+<script>
+(function () {
+  var root = document.querySelector('.kww');
+  if (!root) return;
+
+  // Header shadow once the page scrolls
+  var hdr = document.getElementById('kww-hdr');
+  var onScroll = function () { hdr && hdr.classList.toggle('is-scrolled', window.scrollY > 10); };
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // Desktop dropdowns: click/keyboard support (hover is handled in CSS)
+  root.querySelectorAll('.has-dd > button').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var li = btn.parentElement, open = !li.classList.contains('open');
+      root.querySelectorAll('.has-dd.open').forEach(function (o) { o.classList.remove('open'); o.firstElementChild.setAttribute('aria-expanded', 'false'); });
+      li.classList.toggle('open', open); btn.setAttribute('aria-expanded', String(open));
+    });
+  });
+  document.addEventListener('click', function () {
+    root.querySelectorAll('.has-dd.open').forEach(function (o) { o.classList.remove('open'); o.firstElementChild.setAttribute('aria-expanded', 'false'); });
+  });
+
+  // Mobile drawer
+  var drawer = document.getElementById('kww-drawer'), burger = root.querySelector('.burger');
+  var setDrawer = function (open) {
+    if (!drawer) return;
+    drawer.classList.toggle('open', open);
+    drawer.setAttribute('aria-hidden', String(!open));
+    burger && burger.setAttribute('aria-expanded', String(open));
+    document.documentElement.style.overflow = open ? 'hidden' : '';
+  };
+  burger && burger.addEventListener('click', function () { setDrawer(true); });
+  drawer && drawer.querySelectorAll('[data-close]').forEach(function (b) { b.addEventListener('click', function () { setDrawer(false); }); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setDrawer(false); });
+
+  // Tabs
+  root.querySelectorAll('[role="tablist"]').forEach(function (list) {
+    var tabs = list.querySelectorAll('[role="tab"]');
+    var select = function (tab, focus) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+      });
+      if (focus) tab.focus();
+    };
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { select(t); history.replaceState(null, '', '#' + t.dataset.hash); });
+      t.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') select(tabs[(i + 1) % tabs.length], true);
+        if (e.key === 'ArrowLeft') select(tabs[(i - 1 + tabs.length) % tabs.length], true);
+      });
+    });
+    // Old URLs like /health-and-welfare-lasting-powers-of-attorney redirect to #health
+    var h = location.hash.slice(1);
+    tabs.forEach(function (t) { if (t.dataset.hash === h) select(t); });
+  });
+
+  // Reveal on scroll
+  var rv = root.querySelectorAll('.rv');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -40px 0px' });
+    rv.forEach(function (el) { io.observe(el); });
+  } else rv.forEach(function (el) { el.classList.add('in'); });
+
+  root.querySelectorAll('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
+})();
+
+</script>
+</body>
+</html>
