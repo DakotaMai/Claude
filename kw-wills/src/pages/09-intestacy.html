@@ -8,7 +8,7 @@ description: Answer a few quick questions to see who would inherit your estate u
     <p class="crumbs"><a href="{{link:home}}">Home</a> / Guides / Who inherits without a Will?</p>
     <span class="eyebrow">Intestacy checker</span>
     <h1 id="h1">If you died without a Will, <em>who would inherit?</em></h1>
-    <p class="lead">Without a valid Will, a “pecking order” set by law decides who gets what, and you get no say. Answer a few quick questions to find out what would happen to your estate. It takes 30 seconds, and nothing you enter is stored or sent anywhere.</p>
+    <p class="lead">Without a Will, a “pecking order” set out in law decides who inherits what, and in what proportions. Answer a few quick questions to see where your estate would go. Nothing you enter is stored or sent anywhere.</p>
   </div>
 </section>
 
@@ -25,19 +25,7 @@ description: Answer a few quick questions to see who would inherit your estate u
   </div>
 </section>
 
-<section class="s s--tint" aria-labelledby="know-h">
-  <div class="w">
-    <div class="center"><span class="eyebrow">Good to know</span><h2 id="know-h">Things the rules don't tell you</h2></div>
-    <div class="grid g3 mt">
-      <div class="card rv"><span class="ico">{{icon:heart}}</span><h3>Unmarried partners get nothing</h3><p>However long you've lived together, there's no automatic right to inherit. The same applies to stepchildren, unless legally adopted.</p></div>
-      <div class="card rv"><span class="ico">{{icon:home}}</span><h3>Jointly owned assets</h3><p>Anything owned as “joint tenants”, such as a home or bank account, passes straight to the surviving joint owner, outside the rules.</p></div>
-      <div class="card rv"><span class="ico">{{icon:users}}</span><h3>No executors</h3><p>With no Will there are no named executors, so a family member has to apply to administer the estate. That can be slower, costlier and more stressful.</p></div>
-      <div class="card rv"><span class="ico">{{icon:clock}}</span><h3>Children inherit at 18</h3><p>Including adopted children. If a child has died, their own children usually step into their place.</p></div>
-      <div class="card rv"><span class="ico">{{icon:scale}}</span><h3>The law keeps changing</h3><p>The rules changed in 2009, 2014, 2020 and 2023. Even if they match your wishes today, they might not tomorrow.</p></div>
-      <div class="card rv"><span class="ico">{{icon:shield}}</span><h3>No protection</h3><p>No Trusts, no guardians for your children and no protection against care fees, divorce or debt. A Will puts you back in control.</p></div>
-    </div>
-  </div>
-</section>
+{{faq:intestacy|Questions about dying without a Will}}
 
 {{> cta}}
 
@@ -49,15 +37,15 @@ description: Answer a few quick questions to see who would inherit your estate u
   var LEGACY = '£322,000';
   var R = function (title, body, warn) { return { title: title, body: body, warn: warn }; };
   var Q = {
-    married: { q: 'Are you married or in a civil partnership?', note: 'If you\'re separated but not divorced, answer “yes”. Your spouse may still inherit.', a: [['Yes', 'kids_m'], ['No', 'kids']] },
-    kids_m: { q: 'Do you have any children?', note: 'Include adopted children, and grandchildren whose parent has died. Stepchildren don\'t count.', a: [['Yes', 'value'], ['No', R('Your spouse or civil partner inherits everything', 'Everything you own in your sole name passes to your spouse or civil partner. Nobody else, such as your parents or siblings, would inherit anything.', 'If your spouse then dies without a Will, everything passes to <em>their</em> family, not yours.')]] },
-    value: { q: 'Is everything in your sole name worth more than ' + LEGACY + '?', note: 'Don\'t count anything owned jointly. That passes to the other joint owner automatically.', a: [['Yes', R('Your estate is split between your spouse and your children', 'Your spouse or civil partner receives your personal possessions, the first ' + LEGACY + ' (plus interest), and <strong>half of everything above that</strong>. Your children share the other half equally, at 18.', 'Your spouse may not have enough to stay in the family home, and your children could inherit large sums outright at just 18.')], ['No', R('Your spouse or civil partner inherits everything', 'Because your sole-name estate is under ' + LEGACY + ', it all passes to your spouse or civil partner, and your children receive nothing directly from you.', 'If your spouse remarries, or needs care, your children\'s eventual inheritance is not protected.')]] },
-    kids: { q: 'Do you have any children?', note: 'Include adopted children, and grandchildren whose parent has died. Stepchildren don\'t count.', a: [['Yes', R('Your children share everything equally', 'Your children inherit your whole estate in equal shares, at age 18. If a child has died, their children take their share.', 'An unmarried partner would receive <strong>nothing</strong>. Children under 18 would have their share held until they come of age, and with no Will, no guardian has been chosen for them.')], ['No', 'parents']] },
+    married: { q: 'Are you married or in a civil partnership?', a: [['Yes', 'kids_m'], ['No', 'kids']] },
+    kids_m: { q: 'Do you have any children?', note: 'Children include biological and adopted children. Stepchildren don\'t count.', a: [['Yes', 'value'], ['No', R('Your spouse or civil partner inherits everything', 'Everything you own in your sole name passes to your spouse or civil partner. Nobody else, such as your parents or siblings, would inherit anything.', 'The law could change at any time, and with no Will there are no executors, which could cause complications for your family.')]] },
+    value: { q: 'Is everything in your sole name worth more than ' + LEGACY + '?', note: 'Don\'t count anything owned jointly. That passes to the other joint owner automatically.', a: [['Yes', R('Your estate is split between your spouse and your children', 'For anything in your sole name, your spouse or civil partner gets your personal possessions, the first ' + LEGACY + ', and <strong>half of the remainder</strong>, with interest from the date of death. They also have the first right to purchase the family home. Your children share the other half equally, at 18.', 'Your children would inherit their share outright at just 18. The law could also change at any time.')], ['No', R('Your spouse or civil partner inherits everything', 'Because your sole-name estate is under ' + LEGACY + ', it all passes to your spouse or civil partner, and your children receive nothing directly from you.', 'The law could change at any time, and with no Will there are no executors, which could cause complications for your family.')]] },
+    kids: { q: 'Do you have any children?', note: 'Children include biological and adopted children. Stepchildren don\'t count.', a: [['Yes', R('Your children share everything equally', 'Your children inherit your whole estate in equal shares, at age 18.', 'An unmarried partner or stepchildren would receive <strong>nothing</strong>. And with no Will, you haven\'t chosen guardians for any children under 18.')], ['No', 'parents']] },
     parents: { q: 'Are either of your parents still alive?', a: [['Yes', R('Your parents inherit everything', 'Your estate passes to your surviving parent, or is split equally if both are alive.', 'An unmarried partner or stepchildren would receive <strong>nothing</strong>.')], ['No', 'siblings']] },
-    siblings: { q: 'Do you have any brothers or sisters (same two parents)?', note: 'Include those who have died but left children of their own.', a: [['Yes', R('Your brothers and sisters share everything equally', 'Your full siblings inherit in equal shares. If a sibling has died, their children (your nieces and nephews) take their share.', 'Half-siblings and an unmarried partner would receive <strong>nothing</strong>.')], ['No', 'half']] },
-    half: { q: 'Do you have any half-brothers or half-sisters?', a: [['Yes', R('Your half-siblings share everything equally', 'Your half-brothers and half-sisters inherit in equal shares, with their children taking the share of any who have died.')], ['No', 'gp']] },
+    siblings: { q: 'Do you have any brothers or sisters?', note: 'Include any who have died but left children of their own.', a: [['Yes', R('Your brothers and sisters share everything equally', 'Your brothers and sisters inherit in equal shares. If one has died, their share is split equally between their own children.', 'Half-siblings and an unmarried partner would receive <strong>nothing</strong>.')], ['No', 'half']] },
+    half: { q: 'Do you have any half-brothers or half-sisters?', a: [['Yes', R('Your half-siblings share everything equally', 'Your half-brothers and half-sisters inherit in equal shares. If one has died, their share is split equally between their own children.')], ['No', 'gp']] },
     gp: { q: 'Are any of your grandparents still alive?', a: [['Yes', R('Your grandparents share everything equally', 'Your surviving grandparents inherit your estate in equal shares.')], ['No', 'aunts']] },
-    aunts: { q: 'Do you have any aunts or uncles (full blood)?', note: 'Include those who have died but left children, your cousins.', a: [['Yes', R('Your aunts and uncles share everything equally', 'Your aunts and uncles inherit in equal shares, with your cousins taking the share of any who have died.')], ['No', 'haunts']] },
+    aunts: { q: 'Do you have any aunts or uncles?', note: 'Include any who have died but left children of their own.', a: [['Yes', R('Your aunts and uncles share everything equally', 'Your aunts and uncles inherit in equal shares. If one has died, their share is split equally between their own children.')], ['No', 'haunts']] },
     haunts: { q: 'Do you have any half-aunts or half-uncles?', a: [['Yes', R('Your half-aunts and half-uncles share everything', 'They inherit in equal shares, with their children taking the share of any who have died.')], ['No', R('Everything goes to the Crown', 'With no relatives entitled under the rules, your entire estate passes to the Crown, or to the Duchy of Lancaster or Duchy of Cornwall.', 'Friends, partners, godchildren and charities you care about would receive <strong>nothing</strong>.')]] }
   };
   var steps = [];   // questions already answered: {q: key, label: text}
@@ -69,7 +57,7 @@ description: Answer a few quick questions to see who would inherit your estate u
       stage.innerHTML = '<div class="result"><span class="eyebrow">The result</span><h3 tabindex="-1">' + node.title + '</h3><p>' + node.body + '</p>' +
         (node.warn ? '<div class="callout callout--warn"><p><strong>Why this matters:</strong> ' + node.warn + '</p></div>' : '') +
         '<p class="mt-s">A Will lets <strong>you</strong> decide, and lets you add guardians, Trusts and protection the rules never give.</p>' +
-        '<div class="btn-row" style="margin-top:20px"><a class="btn btn--primary" href="{{link:contact}}">Book a free chat with Sevvy</a><a class="btn btn--ghost" href="tel:{{PHONE_1_TEL}}">Call {{PHONE_1}}</a></div></div>';
+        '<div class="btn-row" style="margin-top:20px"><a class="btn btn--primary" href="{{link:contact}}">Book a no-obligation consultation</a><a class="btn btn--ghost" href="tel:{{PHONE_1_TEL}}">Call {{PHONE_1}}</a></div></div>';
       stage.querySelector('h3').focus();
       return;
     }

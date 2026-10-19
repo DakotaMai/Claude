@@ -1,6 +1,8 @@
 # King Will's Wills: new GHL website
 
-Eleven ready-to-paste pages, rebuilt from the old kw-wills.co.uk site and the service leaflets. Brand colours (sky blue `#2CB2E7`, navy `#23264F`) and logo are unchanged.
+Twelve ready-to-paste pages, rebuilt from the old kw-wills.co.uk site and the service leaflets. Brand colours: Blue `#37B3E7`, Grey `#C9C7D5`, Green `#5EECAF`, with a deep version of the logo grey for headings. Official logo and accreditation badges included.
+
+Everything on the site comes from the leaflets, the brochure or the old website. Detail lives in FAQ sections (written once in `src/faqs.py`, shown on each service page and all together on the FAQs page) to keep pages light.
 
 ## Pages
 
@@ -17,6 +19,7 @@ Eleven ready-to-paste pages, rebuilt from the old kw-wills.co.uk site and the se
 | `KWW-Intestacy-Checker-GHL.html` | `/intestacy` | **New**: interactive "who inherits without a Will?" tool |
 | `KWW-Testimonials-GHL.html` | `/testimonials` | Testimonials |
 | `KWW-Contact-GHL.html` | `/contact` | Contact |
+| `KWW-FAQs-GHL.html` | `/faqs` | **New**: every FAQ, with search and topic filters |
 
 The blog, privacy and copyright pages stay as GHL's own pages (`/blog`, `/privacy`). Funeral Planning has been removed.
 
@@ -48,7 +51,7 @@ The LPA page opens the right tab automatically from the `#…` part of the link.
 - [ ] **Photos of Sevvy**: the pages currently borrow two photos from the old site (`/images/split/14_right.png` and `18_left.png`). Upload good photos of Sevvy to GHL Media, then change `SEVVY_PHOTO` / `SEVVY_PHOTO_2` at the top of `build.py` and re-run it. If a photo ever fails to load, a branded "SH" monogram shows instead, so nothing looks broken.
 - [ ] **Contact form and calendar**: on the Contact page, replace the two dashed placeholder boxes with your GHL form and calendar embed codes (search the file for `GHL FORM` and `GHL CALENDAR`).
 - [ ] **Review link**: on the Testimonials page, point the "Leave a review" button at your Google review link.
-- [ ] **Check the facts**: the intestacy checker uses the current £322,000 spouse allowance (deaths from 26 July 2023). The printed Intestacy Chart leaflet still says £250,000 and should be updated. The LPA page deliberately doesn't quote the OPG registration fee, so it can't go out of date.
+- [ ] **Check the facts**: the intestacy checker uses the current £322,000 spouse allowance (deaths from 26 July 2023). The printed Intestacy Chart leaflet still says £250,000 and should be updated. The LPA FAQ asks people to check the current OPG registration fee, because the leaflet's £82 is out of date.
 - [ ] **Logo & badges**: the official logo and the IPW, Trading Standards and STEP badges are embedded directly in each page, so they work immediately. The full-size originals are in `assets/` for GHL Media, the favicon and social profiles. The footer also keeps IPW's live verification badge, which loads from IPW's site.
 
 ## Editing later
@@ -59,4 +62,4 @@ The pages are generated from `src/` by `build.py`. The shared header, footer, ph
 python3 build.py
 ```
 
-The script rebuilds all eleven pages. Page content lives in `src/pages/`.
+The script rebuilds all twelve pages. Page content lives in `src/pages/`.

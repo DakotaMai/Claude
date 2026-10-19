@@ -11,23 +11,28 @@
    can't clash with GHL's own builder styles. */
 .kww, .kww *, .kww *::before, .kww *::after { box-sizing: border-box; }
 .kww {
-  --sky:      #2CB2E7;   /* brand blue (logo / buttons on old site) */
-  --sky-d:    #1F8FC0;   /* deeper brand blue for hovers */
-  --sky-ink:  #136C96;   /* brand blue dark enough for text on white */
-  --navy:     #23264F;   /* brand navy (leaflet headings, logo text) */
-  --navy-2:   #2F3466;
-  --pale:     #E6F3FC;   /* leaflet background tint */
-  --pale-2:   #F4FAFE;
-  --ink:      #2A2D44;
-  --muted:    #5B6079;
-  --line:     #D5E6F2;
+  /* Brand palette */
+  --sky:      #37B3E7;   /* brand blue */
+  --grey:     #C9C7D5;   /* brand grey */
+  --green:    #5EECAF;   /* brand complementary green */
+  /* Working shades derived from the palette and the logo's #646464 grey */
+  --sky-d:    #1F9AD0;   /* blue hover */
+  --sky-ink:  #136E98;   /* blue dark enough for text on white */
+  --green-d:  #23B07A;   /* green for icons/ticks on white */
+  --green-t:  #E7FBF3;   /* green tint */
+  --dark:     #34343F;   /* deep logo grey: headings and dark sections */
+  --dark-2:   #464655;
+  --pale:     #EAF6FC;   /* blue tint */
+  --pale-2:   #F5F4F9;   /* grey tint */
+  --ink:      #34343F;
+  --muted:    #5E5E6B;
+  --line:     #DCDAE5;
   --white:    #FFFFFF;
-  --gold:     #F2B53A;   /* star ratings only */
   --h: 'Lora', Georgia, 'Times New Roman', serif;
   --b: 'Source Sans 3', 'Segoe UI', Arial, sans-serif;
   --r: 14px;
-  --shadow: 0 10px 30px rgba(35,38,79,.08);
-  --shadow-lg: 0 18px 48px rgba(35,38,79,.14);
+  --shadow: 0 10px 30px rgba(52,52,63,.08);
+  --shadow-lg: 0 18px 48px rgba(52,52,63,.14);
 
   font-family: var(--b);
   font-size: 18px;
@@ -40,14 +45,14 @@
 .kww h1, .kww h2, .kww h3, .kww h4, .kww p, .kww ul, .kww ol, .kww figure, .kww blockquote { margin: 0; padding: 0; }
 .kww img { max-width: 100%; display: block; }
 .kww a { color: var(--sky-ink); }
-.kww a:hover { color: var(--navy); }
+.kww a:hover { color: var(--dark); }
 .kww :focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; border-radius: 4px; }
 
 /* ── Sections (full-bleed out of the GHL container) ── */
 .kww .s { width: 100vw; margin-left: calc(50% - 50vw); padding: 96px 24px; background: var(--white); position: relative; }
 .kww .s--pale { background: var(--pale-2); }
 .kww .s--tint { background: var(--pale); }
-.kww .s--navy { background: var(--navy); color: #DCE3F5; }
+.kww .s--dark { background: var(--dark); color: #E4E3EC; }
 .kww .s--sm { padding-top: 64px; padding-bottom: 64px; }
 .kww .s--flush-top { padding-top: 0; }
 .kww .w { max-width: 1180px; margin: 0 auto; }
@@ -57,28 +62,28 @@
 .kww .center .lead { margin-left: auto; margin-right: auto; }
 
 /* ── Type ── */
-.kww h1, .kww h2, .kww h3, .kww h4 { font-family: var(--h); color: var(--navy); font-weight: 600; line-height: 1.18; letter-spacing: -.01em; }
+.kww h1, .kww h2, .kww h3, .kww h4 { font-family: var(--h); color: var(--dark); font-weight: 600; line-height: 1.18; letter-spacing: -.01em; }
 .kww h1 { font-size: clamp(2.2rem, 4.6vw, 3.5rem); }
 .kww h2 { font-size: clamp(1.75rem, 3.4vw, 2.6rem); }
 .kww h3 { font-size: clamp(1.2rem, 1.9vw, 1.45rem); }
 .kww h4 { font-size: 1.1rem; }
-.kww h1 em, .kww h2 em { font-style: italic; color: var(--sky-d); }
+.kww h1 em, .kww h2 em { font-style: italic; color: var(--sky-ink); }
 .kww p + p, .kww p + ul, .kww ul + p { margin-top: 1rem; }
 .kww .lead { font-size: clamp(1.08rem, 1.6vw, 1.25rem); color: var(--muted); max-width: 680px; margin-top: 18px; }
 .kww .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: var(--sky-ink); margin-bottom: 14px; }
-.kww .eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--sky); border-radius: 2px; }
-.kww .center .eyebrow::after { content: ""; width: 28px; height: 2px; background: var(--sky); border-radius: 2px; }
-.kww .s--navy h1, .kww .s--navy h2, .kww .s--navy h3 { color: #fff; }
-.kww .s--navy .lead { color: #C3CCE6; }
-.kww .s--navy .eyebrow { color: var(--sky); }
-.kww .s--navy a { color: #9FDDF6; }
+.kww .eyebrow::before { content: ""; width: 28px; height: 3px; background: var(--green); border-radius: 2px; }
+.kww .center .eyebrow::after { content: ""; width: 28px; height: 3px; background: var(--green); border-radius: 2px; }
+.kww .s--dark h1, .kww .s--dark h2, .kww .s--dark h3 { color: #fff; }
+.kww .s--dark .lead { color: #D0CFDB; }
+.kww .s--dark .eyebrow { color: var(--green); }
+.kww .s--dark a { color: #8FD6F3; }
 .kww .muted { color: var(--muted); }
 .kww .small { font-size: .9rem; }
 
 /* ── Lists ── */
 .kww .ticks { list-style: none; display: grid; gap: 10px; margin-top: 18px; }
 .kww .ticks li { position: relative; padding-left: 34px; }
-.kww .ticks li::before { content: ""; position: absolute; left: 0; top: .28em; width: 22px; height: 22px; border-radius: 50%; background: var(--pale) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231F8FC0' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/14px no-repeat; }
+.kww .ticks li::before { content: ""; position: absolute; left: 0; top: .28em; width: 22px; height: 22px; border-radius: 50%; background: var(--green-t) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2323B07A' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/14px no-repeat; }
 .kww .s--tint .ticks li::before, .kww .card .ticks li::before { background-color: #fff; }
 .kww .ticks--2 { grid-template-columns: repeat(2, minmax(0,1fr)); column-gap: 28px; }
 .kww .bullets { padding-left: 1.2em; margin-top: 12px; display: grid; gap: 6px; }
@@ -88,14 +93,16 @@
 .kww .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-family: var(--b); font-weight: 700; font-size: 1rem; line-height: 1.2; padding: 15px 26px; border-radius: 999px; text-decoration: none; border: 2px solid transparent; cursor: pointer; transition: transform .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease; }
 .kww .btn:hover { transform: translateY(-1px); }
 .kww .btn svg { width: 18px; height: 18px; flex: none; }
-.kww .btn--primary { background: var(--sky); color: var(--navy); box-shadow: 0 6px 18px rgba(44,178,231,.35); }
-.kww .btn--primary:hover { background: #4CC0EE; color: var(--navy); }
-.kww .btn--navy { background: var(--navy); color: #fff; }
-.kww .btn--navy:hover { background: var(--navy-2); color: #fff; }
-.kww .btn--ghost { background: transparent; color: var(--navy); border-color: var(--navy); }
-.kww .btn--ghost:hover { background: var(--navy); color: #fff; }
-.kww .btn--light { background: #fff; color: var(--navy); }
-.kww .btn--light:hover { background: var(--pale); color: var(--navy); }
+.kww .btn--primary { background: var(--sky); color: var(--dark); box-shadow: 0 6px 18px rgba(55,179,231,.35); }
+.kww .btn--primary:hover { background: #5BC2EC; color: var(--dark); }
+.kww .btn--green { background: var(--green); color: var(--dark); }
+.kww .btn--green:hover { background: #7DF0BF; color: var(--dark); }
+.kww .btn--dark { background: var(--dark); color: #fff; }
+.kww .btn--dark:hover { background: var(--dark-2); color: #fff; }
+.kww .btn--ghost { background: transparent; color: var(--dark); border-color: var(--dark); }
+.kww .btn--ghost:hover { background: var(--dark); color: #fff; }
+.kww .btn--light { background: #fff; color: var(--dark); }
+.kww .btn--light:hover { background: var(--pale); color: var(--dark); }
 .kww .btn--ghost-light { background: transparent; color: #fff; border-color: rgba(255,255,255,.55); }
 .kww .btn--ghost-light:hover { background: rgba(255,255,255,.1); color: #fff; }
 .kww .btn-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
@@ -105,18 +112,18 @@
 .kww .textlink:hover::after { transform: translateX(3px); }
 
 /* ── Header ── */
-.kww .topbar { width: 100vw; margin-left: calc(50% - 50vw); background: var(--navy); color: #DCE3F5; font-size: .88rem; }
+.kww .topbar { width: 100vw; margin-left: calc(50% - 50vw); background: var(--dark); color: #E4E3EC; font-size: .88rem; }
 .kww .topbar .w { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 8px 24px; }
 .kww .topbar a { color: #fff; text-decoration: none; font-weight: 600; }
 .kww .topbar a:hover { color: var(--sky); }
 .kww .topbar .tb-right { display: flex; gap: 22px; white-space: nowrap; }
 .kww .hdr { position: sticky; top: 0; z-index: 900; width: 100vw; margin-left: calc(50% - 50vw); background: rgba(255,255,255,.97); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); transition: box-shadow .2s; }
-.kww .hdr.is-scrolled { box-shadow: 0 6px 24px rgba(35,38,79,.08); }
+.kww .hdr.is-scrolled { box-shadow: 0 6px 24px rgba(52,52,63,.08); }
 .kww .hdr .w { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 12px 24px; }
 .kww .logo img { height: 52px; width: auto; }
 .kww .nav { display: flex; align-items: center; gap: 4px; list-style: none; }
 .kww .nav > li { position: relative; }
-.kww .nav a, .kww .nav button { font-family: var(--b); font-size: .98rem; font-weight: 600; color: var(--navy); text-decoration: none; padding: 10px 12px; border-radius: 8px; background: none; border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.kww .nav a, .kww .nav button { font-family: var(--b); font-size: .98rem; font-weight: 600; color: var(--dark); text-decoration: none; padding: 10px 12px; border-radius: 8px; background: none; border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 .kww .nav a:hover, .kww .nav button:hover, .kww .nav .is-active > a, .kww .nav a.is-active { color: var(--sky-ink); background: var(--pale-2); }
 .kww .nav button svg { width: 14px; height: 14px; transition: transform .2s; }
 .kww .dd { position: absolute; top: calc(100% + 6px); left: -8px; min-width: 300px; background: #fff; border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow-lg); padding: 10px; list-style: none; opacity: 0; visibility: hidden; transform: translateY(6px); transition: all .18s ease; }
@@ -127,12 +134,12 @@
 .kww .hdr-cta { display: flex; align-items: center; gap: 10px; }
 .kww .hdr-cta .btn { padding: 11px 20px; font-size: .95rem; }
 .kww .burger { display: none; width: 46px; height: 46px; border-radius: 10px; border: 1px solid var(--line); background: #fff; cursor: pointer; align-items: center; justify-content: center; }
-.kww .burger svg { width: 22px; height: 22px; color: var(--navy); }
+.kww .burger svg { width: 22px; height: 22px; color: var(--dark); }
 .kww .drawer { display: none; }
 
 /* ── Hero ── */
 .kww .hero { background: linear-gradient(160deg, var(--pale) 0%, #fff 62%); overflow: hidden; padding-top: 72px; padding-bottom: 88px; }
-.kww .hero::after { content: ""; position: absolute; right: -120px; top: -60px; width: 520px; height: 520px; background: radial-gradient(circle, rgba(44,178,231,.16), transparent 65%); pointer-events: none; }
+.kww .hero::after { content: ""; position: absolute; right: -120px; top: -60px; width: 520px; height: 520px; background: radial-gradient(circle, rgba(94,236,175,.16), transparent 65%); pointer-events: none; }
 .kww .hero .w { display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; position: relative; z-index: 1; }
 .kww .hero-badges { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 28px; font-size: .92rem; color: var(--muted); font-weight: 600; }
 .kww .hero-badges span { display: inline-flex; align-items: center; gap: 8px; }
@@ -142,16 +149,21 @@
 .kww .crumbs a { color: var(--muted); text-decoration: none; }
 .kww .crumbs a:hover { color: var(--sky-ink); }
 
+.kww .hero-panel { display: grid; gap: 16px; }
+.kww .hp-title { font-size: 1.25rem; margin-bottom: 4px; }
+.kww .hp-quote { margin: 0; background: var(--dark); color: #fff; border-radius: var(--r); padding: 20px 24px; box-shadow: var(--shadow-lg); }
+.kww .hp-quote blockquote { font-family: var(--h); font-style: italic; font-size: 1.15rem; line-height: 1.45; }
+.kww .hp-quote figcaption { color: #8FD6F3; font-size: .9rem; margin-top: 6px; font-weight: 600; }
+
 /* ── Person / photo frame ── */
-.kww .photo { position: relative; border-radius: 22px; overflow: hidden; background: linear-gradient(150deg, var(--sky) 0%, var(--navy) 100%); aspect-ratio: 4/5; box-shadow: var(--shadow-lg); }
+.kww .photo { position: relative; border-radius: 22px; overflow: hidden; background: linear-gradient(150deg, var(--sky) 0%, var(--dark) 100%); aspect-ratio: 4/5; box-shadow: var(--shadow-lg); }
 .kww .photo img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1; }
 .kww .photo .mono { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--h); font-size: 6rem; color: rgba(255,255,255,.85); }
 .kww .photo-card { position: absolute; left: -22px; bottom: 28px; z-index: 2; background: #fff; border-radius: 14px; padding: 14px 18px; box-shadow: var(--shadow-lg); max-width: 270px; }
-.kww .photo-card strong { display: block; font-family: var(--h); color: var(--navy); font-size: 1.1rem; }
+.kww .photo-card strong { display: block; font-family: var(--h); color: var(--dark); font-size: 1.1rem; }
 .kww .photo-card span { font-size: .88rem; color: var(--muted); }
 .kww .photo-wrap { position: relative; }
-.kww .photo-quote { position: absolute; right: -18px; top: 28px; z-index: 2; background: var(--navy); color: #fff; border-radius: 14px; padding: 14px 18px; max-width: 230px; font-size: .92rem; line-height: 1.45; box-shadow: var(--shadow-lg); }
-.kww .photo-quote .stars { color: var(--gold); letter-spacing: 2px; display: block; margin-bottom: 4px; }
+.kww .photo-quote { position: absolute; right: -18px; top: 28px; z-index: 2; background: var(--dark); color: #fff; border-radius: 14px; padding: 14px 18px; max-width: 230px; font-size: .92rem; line-height: 1.45; box-shadow: var(--shadow-lg); }
 
 /* ── Grids & cards ── */
 .kww .grid { display: grid; gap: 24px; }
@@ -167,7 +179,7 @@
 .kww a.card { display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: transform .2s, box-shadow .2s, border-color .2s; }
 .kww a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--sky); }
 .kww a.card .textlink { margin-top: auto; padding-top: 18px; }
-.kww .ico { width: 54px; height: 54px; border-radius: 14px; background: var(--pale); color: var(--sky-d); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; flex: none; }
+.kww .ico { width: 54px; height: 54px; border-radius: 14px; background: var(--pale); color: var(--sky-ink); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; flex: none; }
 .kww .ico svg { width: 28px; height: 28px; }
 .kww .s--tint .ico, .kww .s--pale .card .ico { background: var(--pale); }
 .kww .feature { display: flex; gap: 16px; align-items: flex-start; }
@@ -175,29 +187,34 @@
 .kww .feature .ico svg { width: 22px; height: 22px; }
 .kww .feature h3 { font-size: 1.12rem; margin-bottom: 4px; }
 .kww .feature p { color: var(--muted); font-size: .98rem; }
-.kww .s--navy .feature p { color: #C3CCE6; }
-.kww .s--navy .feature .ico { background: rgba(44,178,231,.15); color: var(--sky); }
+.kww .s--dark .feature p { color: #D0CFDB; }
+.kww .s--dark .feature .ico { background: rgba(55,179,231,.15); color: var(--sky); }
+
+.kww a.mini { display: flex; gap: 14px; align-items: center; padding: 16px 18px; border-radius: var(--r); border: 1px solid var(--line); background: var(--pale-2); text-decoration: none; color: var(--muted); font-size: .92rem; transition: border-color .15s, background .15s; }
+.kww a.mini:hover { border-color: var(--sky); background: #fff; }
+.kww a.mini svg { width: 26px; height: 26px; color: var(--green-d); flex: none; }
+.kww a.mini b { display: block; color: var(--dark); font-size: 1rem; }
 
 /* ── Stats strip ── */
 .kww .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 .kww .stat { text-align: center; padding: 8px; }
-.kww .stat b { display: block; font-family: var(--h); font-size: clamp(1.9rem, 3.2vw, 2.6rem); color: var(--sky); font-weight: 600; line-height: 1.1; }
-.kww .stat span { color: #C3CCE6; font-size: .95rem; }
+.kww .stat b { display: block; font-family: var(--h); font-size: clamp(1.9rem, 3.2vw, 2.6rem); color: var(--green); font-weight: 600; line-height: 1.1; }
+.kww .stat span { color: #D0CFDB; font-size: .95rem; }
 
 /* ── Steps ── */
 .kww .steps { counter-reset: st; display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 22px; position: relative; }
 .kww .step { position: relative; background: #fff; border-radius: var(--r); padding: 28px 24px; border: 1px solid var(--line); }
-.kww .step::before { counter-increment: st; content: counter(st); display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: var(--navy); color: #fff; font-family: var(--h); font-size: 1.2rem; margin-bottom: 16px; }
+.kww .step::before { counter-increment: st; content: counter(st); display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: var(--sky); color: var(--dark); font-weight: 700; font-family: var(--h); font-size: 1.2rem; margin-bottom: 16px; }
 .kww .step h3 { font-size: 1.15rem; margin-bottom: 6px; }
 .kww .step p { font-size: .97rem; color: var(--muted); }
 
 /* ── Testimonials ── */
 .kww .quote { background: #fff; border-radius: var(--r); padding: 30px; border: 1px solid var(--line); box-shadow: var(--shadow); display: flex; flex-direction: column; }
-.kww .quote .stars { color: var(--gold); letter-spacing: 3px; font-size: 1.05rem; }
-.kww .quote blockquote { font-family: var(--h); font-size: 1.08rem; line-height: 1.6; color: var(--navy); margin: 12px 0 20px; font-style: italic; }
+.kww .quote .qmark { font-family: var(--h); font-size: 3.2rem; line-height: .6; color: var(--sky); height: 26px; display: block; }
+.kww .quote blockquote { font-family: var(--h); font-size: 1.08rem; line-height: 1.6; color: var(--dark); margin: 12px 0 20px; font-style: italic; }
 .kww .quote .who { margin-top: auto; display: flex; align-items: center; gap: 12px; }
 .kww .quote .av { width: 44px; height: 44px; border-radius: 50%; background: var(--pale); color: var(--sky-ink); font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none; }
-.kww .quote .who b { display: block; color: var(--navy); }
+.kww .quote .who b { display: block; color: var(--dark); }
 .kww .quote .who span { font-size: .88rem; color: var(--muted); }
 .kww .quote--big { padding: 44px; }
 .kww .quote--big blockquote { font-size: clamp(1.2rem, 2.1vw, 1.5rem); }
@@ -205,37 +222,50 @@
 /* ── Callouts ── */
 .kww .callout { border-left: 4px solid var(--sky); background: var(--pale-2); border-radius: 0 var(--r) var(--r) 0; padding: 22px 26px; margin-top: 26px; }
 .kww .callout p { color: var(--ink); }
-.kww .callout strong { color: var(--navy); }
+.kww .callout strong { color: var(--dark); }
 .kww .callout--warn { border-left-color: #E8A23A; background: #FFF8EC; }
-.kww .bigfact { font-family: var(--h); font-size: clamp(1.3rem, 2.4vw, 1.75rem); color: var(--navy); line-height: 1.4; }
+.kww .bigfact { font-family: var(--h); font-size: clamp(1.3rem, 2.4vw, 1.75rem); color: var(--dark); line-height: 1.4; }
 .kww .bigfact b { color: var(--sky-d); }
 
 /* ── Accordions (FAQ) ── */
 .kww .faq { display: grid; gap: 12px; }
 .kww .faq details { background: #fff; border: 1px solid var(--line); border-radius: 12px; }
 .kww .faq details[open] { border-color: var(--sky); box-shadow: var(--shadow); }
-.kww .faq summary { list-style: none; cursor: pointer; padding: 20px 56px 20px 22px; font-weight: 700; color: var(--navy); position: relative; font-size: 1.04rem; }
+.kww .faq summary { list-style: none; cursor: pointer; padding: 20px 56px 20px 22px; font-weight: 700; color: var(--dark); position: relative; font-size: 1.04rem; }
 .kww .faq summary::-webkit-details-marker { display: none; }
 .kww .faq summary::after { content: "+"; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; border-radius: 50%; background: var(--pale); color: var(--sky-ink); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 600; transition: transform .2s; }
 .kww .faq details[open] summary::after { content: "–"; }
 .kww .faq .a { padding: 0 22px 22px; color: var(--muted); }
 .kww .faq .a p + p { margin-top: .7rem; }
 
+.kww .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.kww .faq-tools { position: sticky; top: 77px; z-index: 5; background: #fff; padding: 14px 0 16px; border-bottom: 1px solid var(--line); margin-bottom: 26px; }
+.kww .search { display: flex; align-items: center; gap: 10px; border: 2px solid var(--line); border-radius: 999px; padding: 10px 18px; background: #fff; }
+.kww .search:focus-within { border-color: var(--sky); }
+.kww .search svg { width: 20px; height: 20px; color: var(--muted); flex: none; }
+.kww .search input { border: 0; outline: 0; font: inherit; width: 100%; background: transparent; color: var(--ink); }
+.kww .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.kww .chip { font: 600 .9rem var(--b); padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
+.kww .chip[aria-pressed="true"] { background: var(--dark); border-color: var(--dark); color: #fff; }
+.kww .faq-group { margin-bottom: 36px; }
+.kww .faq-group h2 { font-size: 1.5rem; margin-bottom: 14px; }
+.kww .faq-group[hidden], .kww .faq details[hidden] { display: none; }
+
 /* ── Tabs ── */
 .kww .tabs { display: flex; flex-wrap: wrap; gap: 8px; border-bottom: 2px solid var(--line); margin-bottom: 34px; }
 .kww .tab { font-family: var(--b); font-weight: 700; font-size: 1rem; background: none; border: 0; padding: 14px 18px; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; }
-.kww .tab[aria-selected="true"] { color: var(--navy); border-bottom-color: var(--sky); }
-.kww .tab:hover { color: var(--navy); }
+.kww .tab[aria-selected="true"] { color: var(--dark); border-bottom-color: var(--sky); }
+.kww .tab:hover { color: var(--dark); }
 .kww .panel[hidden] { display: none; }
 
 /* ── Comparison table ── */
 .kww .tbl-wrap { overflow-x: auto; border-radius: var(--r); border: 1px solid var(--line); background: #fff; box-shadow: var(--shadow); -webkit-overflow-scrolling: touch; }
 .kww table.cmp { width: 100%; border-collapse: collapse; min-width: 860px; font-size: .92rem; }
 .kww .cmp th, .kww .cmp td { padding: 13px 10px; text-align: center; border-bottom: 1px solid var(--line); }
-.kww .cmp thead th { background: var(--pale-2); color: var(--navy); font-weight: 700; font-size: .85rem; vertical-align: bottom; }
-.kww .cmp thead th.us { background: var(--navy); color: #fff; font-family: var(--h); font-size: 1rem; border-radius: 0; }
+.kww .cmp thead th { background: var(--pale-2); color: var(--dark); font-weight: 700; font-size: .85rem; vertical-align: bottom; }
+.kww .cmp thead th.us { background: var(--dark); color: #fff; font-family: var(--h); font-size: 1rem; border-radius: 0; }
 .kww .cmp tbody th { text-align: left; font-weight: 600; color: var(--ink); padding-left: 18px; position: sticky; left: 0; background: #fff; min-width: 210px; }
-.kww .cmp td.us { background: rgba(44,178,231,.08); }
+.kww .cmp td.us { background: rgba(55,179,231,.08); }
 .kww .cmp .y { color: var(--sky-d); font-weight: 800; font-size: 1.2rem; }
 .kww .cmp .n { color: #B5BBCB; font-size: 1.1rem; }
 .kww .cmp .m { color: #8C93A8; font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
@@ -243,10 +273,10 @@
 
 /* ── Interactive tools ── */
 .kww .tool { background: #fff; border-radius: 20px; border: 1px solid var(--line); box-shadow: var(--shadow-lg); padding: 36px; }
-.kww .tool-q { font-family: var(--h); font-size: 1.35rem; color: var(--navy); margin-bottom: 18px; }
+.kww .tool-q { font-family: var(--h); font-size: 1.35rem; color: var(--dark); margin-bottom: 18px; }
 .kww .opts { display: flex; flex-wrap: wrap; gap: 12px; }
-.kww .opt { font-family: var(--b); font-size: 1rem; font-weight: 700; padding: 13px 26px; border-radius: 999px; border: 2px solid var(--navy); color: var(--navy); background: #fff; cursor: pointer; transition: all .15s; }
-.kww .opt:hover { background: var(--navy); color: #fff; }
+.kww .opt { font-family: var(--b); font-size: 1rem; font-weight: 700; padding: 13px 26px; border-radius: 999px; border: 2px solid var(--dark); color: var(--dark); background: #fff; cursor: pointer; transition: all .15s; }
+.kww .opt:hover { background: var(--dark); color: #fff; }
 .kww .progress { height: 6px; background: var(--pale); border-radius: 6px; overflow: hidden; margin-bottom: 26px; }
 .kww .progress i { display: block; height: 100%; width: 0; background: var(--sky); transition: width .3s; }
 .kww .trail { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
@@ -262,52 +292,52 @@
 .kww .rec { display: grid; gap: 14px; margin-top: 22px; }
 .kww .rec a { display: block; text-decoration: none; padding: 18px 20px; border-radius: 12px; background: #fff; border: 1px solid var(--line); color: var(--ink); }
 .kww .rec a:hover { border-color: var(--sky); }
-.kww .rec a b { color: var(--navy); font-family: var(--h); font-size: 1.1rem; display: block; margin-bottom: 2px; }
+.kww .rec a b { color: var(--dark); font-family: var(--h); font-size: 1.1rem; display: block; margin-bottom: 2px; }
 .kww .rec a span { color: var(--muted); font-size: .95rem; }
 
 /* ── CTA band ── */
-.kww .cta { background: linear-gradient(135deg, var(--navy) 0%, #1B3D6E 100%); color: #DCE3F5; overflow: hidden; }
-.kww .cta::before { content: ""; position: absolute; left: -140px; bottom: -200px; width: 520px; height: 520px; background: radial-gradient(circle, rgba(44,178,231,.25), transparent 65%); }
+.kww .cta { background: linear-gradient(135deg, var(--dark) 0%, #2C4656 100%); color: #E4E3EC; overflow: hidden; }
+.kww .cta::before { content: ""; position: absolute; left: -140px; bottom: -200px; width: 520px; height: 520px; background: radial-gradient(circle, rgba(94,236,175,.18), transparent 65%); }
 .kww .cta .w { display: grid; grid-template-columns: auto 1fr auto; gap: 40px; align-items: center; position: relative; }
 .kww .cta h2 { color: #fff; }
-.kww .cta p { color: #C3CCE6; margin-top: 10px; }
-.kww .cta .avatar { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 4px solid rgba(255,255,255,.2); background: linear-gradient(150deg, var(--sky), var(--navy-2)); position: relative; flex: none; }
+.kww .cta p { color: #D0CFDB; margin-top: 10px; }
+.kww .cta .avatar { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 4px solid rgba(255,255,255,.2); background: linear-gradient(150deg, var(--sky), var(--dark-2)); position: relative; flex: none; }
 .kww .cta .avatar img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1; }
 .kww .cta .avatar .mono { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--h); font-size: 2.6rem; color: #fff; }
 .kww .cta .btn-row { margin-top: 0; flex-direction: column; }
-.kww .cta-phones { font-size: .92rem; color: #C3CCE6; margin-top: 12px; }
+.kww .cta-phones { font-size: .92rem; color: #D0CFDB; margin-top: 12px; }
 .kww .cta-phones a { color: #fff; font-weight: 700; text-decoration: none; }
 
 /* ── Badges strip ── */
 .kww .badges { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; align-items: stretch; }
 .kww .badge { margin: 0; background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 18px 14px 14px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 10px; text-align: center; }
 .kww .badge img { height: 64px; width: auto; max-width: 100%; object-fit: contain; }
-.kww .badge figcaption { font-size: .82rem; font-weight: 700; color: var(--navy); line-height: 1.3; }
+.kww .badge figcaption { font-size: .82rem; font-weight: 700; color: var(--dark); line-height: 1.3; }
 .kww .badge .ico { width: 64px; height: 64px; margin: 0; border-radius: 50%; }
 .kww .badge .ico svg { width: 30px; height: 30px; }
 
 /* ── Embed placeholders (GHL forms / calendars) ── */
 .kww .embed { border: 2px dashed var(--sky); border-radius: var(--r); background: var(--pale-2); padding: 28px; text-align: center; color: var(--muted); }
-.kww .embed b { color: var(--navy); display: block; margin-bottom: 6px; }
+.kww .embed b { color: var(--dark); display: block; margin-bottom: 6px; }
 
 /* ── Footer ── */
-.kww .ftr { width: 100vw; margin-left: calc(50% - 50vw); background: #1A1C3B; color: #AEB6D2; padding: 72px 24px 28px; font-size: .95rem; }
+.kww .ftr { width: 100vw; margin-left: calc(50% - 50vw); background: #2A2A33; color: #C9C7D5; padding: 72px 24px 28px; font-size: .95rem; }
 .kww .ftr .w { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 40px; }
 .kww .ftr h4 { color: #fff; font-family: var(--b); font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 16px; }
 .kww .ftr ul { list-style: none; display: grid; gap: 8px; }
-.kww .ftr a { color: #DCE3F5; text-decoration: none; }
+.kww .ftr a { color: #E4E3EC; text-decoration: none; }
 .kww .ftr a:hover { color: var(--sky); }
 .kww .ftr .flogo { background: #fff; display: inline-block; padding: 12px 16px; border-radius: 12px; margin-bottom: 18px; }
 .kww .ftr .flogo img { height: 44px; width: auto; }
 .kww .ftr .social { display: flex; gap: 10px; margin-top: 18px; }
 .kww .ftr .social a { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; }
-.kww .ftr .social a:hover { background: var(--sky); color: var(--navy); }
+.kww .ftr .social a:hover { background: var(--sky); color: var(--dark); }
 .kww .ftr .social svg { width: 18px; height: 18px; }
 .kww .ftr-badges { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
 .kww .ftr .ipw { flex: 1; max-width: 200px; }
 .kww .ftr-badges img { background: #fff; border-radius: 50%; padding: 3px; flex: none; }
-.kww .ftr .legal { max-width: 1180px; margin: 48px auto 0; border-top: 1px solid rgba(255,255,255,.1); padding-top: 22px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: .84rem; color: #8189A8; }
-.kww .ftr .legal a { color: #AEB6D2; margin-left: 16px; }
+.kww .ftr .legal { max-width: 1180px; margin: 48px auto 0; border-top: 1px solid rgba(255,255,255,.1); padding-top: 22px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: .84rem; color: #9E9DAD; }
+.kww .ftr .legal a { color: #C9C7D5; margin-left: 16px; }
 
 /* ── Mobile action bar ── */
 .kww .mbar { display: none; }
@@ -329,13 +359,13 @@
   .kww .nav, .kww .hdr-cta .btn--ghost { display: none; }
   .kww .burger { display: inline-flex; }
   .kww .drawer { display: block; position: fixed; inset: 0; z-index: 1000; pointer-events: none; }
-  .kww .drawer .scrim { position: absolute; inset: 0; background: rgba(26,28,59,.5); opacity: 0; transition: opacity .2s; }
+  .kww .drawer .scrim { position: absolute; inset: 0; background: rgba(52,52,63,.5); opacity: 0; transition: opacity .2s; }
   .kww .drawer .sheet { position: absolute; right: 0; top: 0; bottom: 0; width: min(380px, 88vw); background: #fff; transform: translateX(100%); transition: transform .25s ease; overflow-y: auto; padding: 22px; display: flex; flex-direction: column; gap: 6px; }
   .kww .drawer.open { pointer-events: auto; }
   .kww .drawer.open .scrim { opacity: 1; }
   .kww .drawer.open .sheet { transform: none; }
-  .kww .drawer .close { align-self: flex-end; width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 1.4rem; color: var(--navy); }
-  .kww .drawer a { display: block; padding: 12px 10px; font-weight: 700; color: var(--navy); text-decoration: none; border-radius: 8px; font-size: 1.05rem; }
+  .kww .drawer .close { align-self: flex-end; width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 1.4rem; color: var(--dark); }
+  .kww .drawer a { display: block; padding: 12px 10px; font-weight: 700; color: var(--dark); text-decoration: none; border-radius: 8px; font-size: 1.05rem; }
   .kww .drawer a:hover, .kww .drawer a.is-active { background: var(--pale-2); color: var(--sky-ink); }
   .kww .drawer .grp { font-size: .75rem; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); font-weight: 700; padding: 14px 10px 4px; }
   .kww .drawer .sub { padding-left: 22px; font-weight: 600; font-size: 1rem; }
@@ -364,7 +394,7 @@
   .kww .cta .w { grid-template-columns: 1fr; text-align: center; }
   .kww .cta .avatar { margin: 0 auto; }
   .kww .cta .btn-row { justify-content: center; flex-direction: column; }
-  .kww .mbar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 950; background: #fff; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); box-shadow: 0 -6px 20px rgba(35,38,79,.1); }
+  .kww .mbar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 950; background: #fff; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); box-shadow: 0 -6px 20px rgba(52,52,63,.1); }
   .kww .mbar .btn { padding: 13px 10px; font-size: .95rem; }
   .kww .ftr { padding-bottom: 100px; }
 }
@@ -384,8 +414,8 @@
 <div class="kww">
 <a href="#main" style="position:absolute;left:-9999px" onfocus="this.style.left='8px'" onblur="this.style.left='-9999px'">Skip to content</a>
 <div class="topbar"><div class="w">
-  <span class="tb-left">Friendly, qualified Will writing across England &amp; Wales · Home visits, Zoom, evenings &amp; weekends</span>
-  <span class="tb-right"><a href="tel:+441384883883"><span class="tb-lbl">Stourbridge </span>01384 883 883</a><a href="tel:+441905671371"><span class="tb-lbl">Worcester </span>01905 671 371</a></span>
+  <span class="tb-left">Covering the whole of England &amp; Wales · Home visits, online, evenings &amp; weekends</span>
+  <span class="tb-right"><a href="tel:+441384883883">01384 883 883</a><a href="tel:+441905671371">01905 671 371</a></span>
 </div></div>
 <header class="hdr" id="kww-hdr"><div class="w">
   <a class="logo" href="/" aria-label="King Will's Wills home"><img src="data:image/webp;base64,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" alt="King Will's Wills, Estate Planning Specialists" width="262" height="52"></a>
@@ -394,11 +424,11 @@
     <li class="has-dd is-active"><button type="button" aria-expanded="false" aria-haspopup="true">Services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><ul class="dd"><li><a href="/will-writing">Will Writing<span>Make sure your wishes are carried out</span></a></li><li><a href="/trusts" class="is-active" aria-current="page">Trusts<span>Protect your home and your family's inheritance</span></a></li><li><a href="/lasting-powers-of-attorney">Lasting Powers of Attorney<span>Health & welfare, property & finance, business</span></a></li><li><a href="/storage-and-after-care">Storage & Aftercare<span>Safe storage and free advice for life</span></a></li><li><a href="/estate-administration-and-probate">Estate Administration & Probate<span>Support for executors when the time comes</span></a></li></ul></li>
     <li class="has-dd"><button type="button" aria-expanded="false" aria-haspopup="true">Guides <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><ul class="dd"><li><a href="/your-appointment">Your Appointment<span>What to expect and how to prepare</span></a></li><li><a href="/intestacy">No Will? Who Inherits<span>Interactive intestacy checker</span></a></li></ul></li>
     <li><a href="/testimonials">Reviews</a></li>
-    <li><a href="/blog">Blog</a></li>
+    <li><a href="/faqs">FAQs</a></li>
     <li><a href="/contact">Contact</a></li>
   </ul></nav>
   <div class="hdr-cta">
-    <a class="btn btn--primary" href="/contact">Book a free chat</a>
+    <a class="btn btn--primary" href="/contact">Book a consultation</a>
     <button class="burger" type="button" aria-label="Open menu" aria-controls="kww-drawer" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
   </div>
 </div></header>
@@ -411,9 +441,10 @@
     <span class="grp">Services</span><a class="sub" href="/will-writing">Will Writing</a><a class="sub" href="/trusts" class="is-active" aria-current="page">Trusts</a><a class="sub" href="/lasting-powers-of-attorney">Lasting Powers of Attorney</a><a class="sub" href="/storage-and-after-care">Storage & Aftercare</a><a class="sub" href="/estate-administration-and-probate">Estate Administration & Probate</a>
     <span class="grp">Guides</span><a class="sub" href="/your-appointment">Your Appointment</a><a class="sub" href="/intestacy">No Will? Who Inherits</a>
     <a href="/testimonials">Reviews</a>
+    <a href="/faqs">FAQs</a>
     <a href="/blog">Blog</a>
     <a href="/contact">Contact</a>
-    <a class="btn btn--primary" href="/contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Book a free chat</a>
+    <a class="btn btn--primary" href="/contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Book a consultation</a>
     <a class="btn btn--ghost" href="tel:+441384883883"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg> 01384 883 883</a>
   </div>
 </div>
@@ -424,31 +455,30 @@
       <p class="crumbs"><a href="/">Home</a> / Services / Trusts</p>
       <span class="eyebrow">Trusts</span>
       <h1 id="h1">Put a fence around what matters, <em>so it reaches the right people.</em></h1>
-      <p class="lead">Trusts are one of the most misunderstood areas of law, dating back almost 1,000 years. Sevvy will explain them simply and recommend only what genuinely protects you and your family.</p>
+      <p class="lead">A complex, often misunderstood area of law, explained simply. We'll recommend the best way to protect your assets and your loved ones.</p>
       <div class="btn-row">
         <a class="btn btn--primary" href="#finder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Which Trust might suit me?</a>
-        <a class="btn btn--ghost" href="/contact">Talk it through with Sevvy</a>
+        <a class="btn btn--ghost" href="/contact">Book a consultation</a>
       </div>
     </div>
     <div class="card rv">
-      <h3>Two simple ways to think about a Trust</h3>
-      <div class="feature mt-s"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><div><h3>A legal fence</h3><p>If you wanted to keep people off your land, you'd build a fence. A Trust is a legal fence around your home, savings or a child's inheritance that says “hands off”.</p></div></div>
-      <div class="feature mt-s"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span><div><h3>A delayed gift</h3><p>A gift handed over later, when the time is right. For example, when a child comes of age, or once a partner no longer needs to live in the home.</p></div></div>
+      <h3>A Trust is…</h3>
+      <div class="feature mt-s"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><div><h3>A legal fence</h3><p>Around your home, savings or a child's inheritance, saying “hands off”.</p></div></div>
+      <div class="feature mt-s"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span><div><h3>A delayed gift</h3><p>Given later, when the circumstances are right.</p></div></div>
     </div>
   </div>
 </section>
 
 <section class="s" aria-labelledby="why-h">
   <div class="w">
-    <div class="center"><span class="eyebrow">Why people use Trusts</span><h2 id="why-h">What a Trust can protect against</h2>
-      <p class="lead">Once a gift has been made in a Will, it belongs to the person who receives it, with all the risks that come with that. A Trust keeps control.</p></div>
+    <div class="center"><span class="eyebrow">What a Trust protects against</span><h2 id="why-h">Keep your assets out of the wrong hands</h2></div>
     <div class="grid g3 mt">
-      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></span><h3>Care fees</h3><p>Stop your share of the family home being sold to pay for someone else's care.</p></div>
-      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"/></svg></span><h3>Remarriage &amp; blended families</h3><p>Make sure children from a previous relationship aren't “sideways disinherited” if a new spouse or partner outlives you.</p></div>
-      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a4 4 0 0 0 6 0zM19 7l-3 7a4 4 0 0 0 6 0z"/></svg></span><h3>Divorce &amp; debt</h3><p>Protect a beneficiary's inheritance if they happen to be divorcing or in debt when you die.</p></div>
-      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span><h3>Vulnerable beneficiaries</h3><p>Avoid a large lump sum going to someone with an addiction or money problem, or stopping means-tested benefits.</p></div>
-      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span><h3>Probate delays &amp; challenges</h3><p>Reduce the cost, delay and red tape of probate, and the risk of your Will being contested.</p></div>
-      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 7c0-5.3-8-5.3-8 0v10M6 13h8M6 21h12"/></svg></span><h3>Inheritance Tax</h3><p>Help future generations avoid inheriting an Inheritance Tax problem they didn't have before.</p></div>
+      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></span><h3>Care fees</h3><p>Your share of the home sold for someone else's care.</p></div>
+      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"/></svg></span><h3>Remarriage</h3><p>Children from a previous relationship being left out.</p></div>
+      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a4 4 0 0 0 6 0zM19 7l-3 7a4 4 0 0 0 6 0z"/></svg></span><h3>Divorce &amp; debt</h3><p>A beneficiary losing their inheritance to an ex or creditors.</p></div>
+      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span><h3>Vulnerable beneficiaries</h3><p>A lump sum to someone with an addiction, or losing benefits.</p></div>
+      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span><h3>Probate &amp; challenges</h3><p>Delays, red tape, and your Will being contested.</p></div>
+      <div class="card rv"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 7c0-5.3-8-5.3-8 0v10M6 13h8M6 21h12"/></svg></span><h3>Inheritance Tax</h3><p>Future generations having to pay it.</p></div>
     </div>
   </div>
 </section>
@@ -458,25 +488,20 @@
     <div class="center"><span class="eyebrow">Types of Trust</span><h2 id="types-h">The Trusts we use most often</h2></div>
     <div class="mt">
       <div class="tabs" role="tablist" aria-label="Types of Trust">
-        <button class="tab" role="tab" id="t-ppt" aria-controls="p-ppt" aria-selected="true" data-hash="ppt">Protective Property Trust</button>
-        <button class="tab" role="tab" id="t-fpt" aria-controls="p-fpt" aria-selected="false" tabindex="-1" data-hash="fpt">Family Protection Trust</button>
+        <button class="tab" role="tab" id="t-ppt" aria-controls="p-ppt" aria-selected="true" data-hash="ppt">Protective Property</button>
+        <button class="tab" role="tab" id="t-fpt" aria-controls="p-fpt" aria-selected="false" tabindex="-1" data-hash="fpt">Family Protection</button>
         <button class="tab" role="tab" id="t-li" aria-controls="p-li" aria-selected="false" tabindex="-1" data-hash="life-interest">Life Interest / Right to Occupy</button>
-        <button class="tab" role="tab" id="t-dt" aria-controls="p-dt" aria-selected="false" tabindex="-1" data-hash="discretionary">Discretionary Trust</button>
+        <button class="tab" role="tab" id="t-dt" aria-controls="p-dt" aria-selected="false" tabindex="-1" data-hash="discretionary">Discretionary</button>
       </div>
 
       <div class="panel" role="tabpanel" id="p-ppt" aria-labelledby="t-ppt">
         <div class="split">
           <div>
             <h3>Protective Property Trust (PPT)</h3>
-            <p class="mt-s"><strong>Standard advice for any couple who own their home together</strong>, and very cost-effective.</p>
-            <p>Most couples own their home as “joint tenants”, so when one dies the survivor automatically owns all of it, whatever the Will says. That whole home is then exposed to care fees, debt, remarriage (“sideways disinheritance”) or a stepparent changing their Will.</p>
-            <p>Instead, the home is owned as “tenants in common”, with each person owning a share. In their Will, each person leaves their share into Trust. The survivor can stay in the home for life, but the share in Trust is guaranteed to reach your chosen beneficiaries.</p>
+            <p class="mt-s">Standard advice for couples who own their home together, and very cost-effective.</p>
+            <p>You own the home as “tenants in common”, each with a share. Your share goes into Trust in your Will: the survivor can live there for life, and your share is guaranteed to reach your chosen beneficiaries.</p>
           </div>
-          <div class="card">
-            <h4>What it protects</h4>
-            <ul class="ticks"><li>If the survivor needs care, only their own share can be assessed</li><li>A new spouse can only inherit the survivor's share</li><li>Beneficiaries' divorce or debts can't touch it until they inherit</li><li>Options to allow downsizing or to release funds if needed</li></ul>
-            <div class="callout"><p><strong>Worth knowing:</strong> It only takes effect on first death, only protects the property, and needs two or more owners. For fuller protection, look at a Family Protection Trust.</p></div>
-          </div>
+          <div class="card"><h4>Protects against</h4><ul class="ticks"><li>The whole home going on care fees</li><li>“Sideways disinheritance” if the survivor remarries</li><li>A beneficiary's divorce or debts</li></ul></div>
         </div>
       </div>
 
@@ -484,30 +509,21 @@
         <div class="split">
           <div>
             <h3>Family Protection Trust (FPT)</h3>
-            <p class="mt-s">A Trust in a Will can't do anything until someone dies. An FPT is a <strong>separate document set up now</strong>, so the protection starts straight away. It works for sole owners too, and can hold investments as well as property (with separate financial advice).</p>
-            <p>You (the “Settlor”) place an asset with trusted people (the “Trustees”) to look after for the people who'll eventually benefit (the “Beneficiaries”). You can be a Trustee and a Beneficiary yourself.</p>
-            <p>When you set up an FPT, a Protective Property Trust is also included in your Will as standard.</p>
+            <p class="mt-s">A separate document set up <strong>now</strong>, not only after death. Works for sole owners, and can hold investments too (with separate financial advice).</p>
+            <p>It protects the next generation. It isn't a way to avoid care fees.</p>
           </div>
-          <div class="card">
-            <h4>Five main things it can help with</h4>
-            <ul class="ticks"><li><strong>Probate:</strong> no probate on a mortgage-free home held in Trust, so beneficiaries get it quickly</li><li><strong>Challenges:</strong> can't be contested once it's been in place for six years</li><li><strong>Divorce:</strong> courts can't take account of what's locked in Trust</li><li><strong>Debt:</strong> an inheritance held in Trust can't be taken by creditors</li><li><strong>Inheritance Tax:</strong> funds can pass down generations without being added to a beneficiary's estate</li></ul>
-            <div class="callout callout--warn"><p><strong>Important:</strong> An FPT is for protecting the next generation. It isn't a way to avoid care fees. Assets moved deliberately to avoid care fees or creditors (“deliberate deprivation”) can be clawed back, so timing and genuine reasons matter, and it's never a guarantee.</p></div>
-          </div>
+          <div class="card"><h4>Can help with</h4><ul class="ticks"><li>No probate on a mortgage-free home</li><li>Can't be challenged after six years</li><li>Protection from a beneficiary's divorce or debt</li><li>Inheritance Tax for future generations</li></ul></div>
         </div>
       </div>
 
       <div class="panel" role="tabpanel" id="p-li" aria-labelledby="t-li" hidden>
         <div class="split">
           <div>
-            <h3>Life Interest &amp; Right to Occupy Trusts</h3>
-            <p class="mt-s">Ideal for <strong>second marriages, new partners and blended families</strong>. Instead of leaving the home outright, you let someone live there, rent-free and as if it were their own, while it's guaranteed to pass to your chosen people afterwards.</p>
-            <p><strong>Example:</strong> a homeowner with children has a new partner move in. Leave the house to the children and the partner could be made homeless and challenge the Will. Leave it to the partner and it could end up with <em>their</em> family instead of your children. A Life Interest solves both problems.</p>
-            <p>A <strong>Life Interest</strong> lasts for life. A <strong>Right to Occupy</strong> ends on events you choose, such as remarriage, moving in with someone new, going into long-term care, or not maintaining the property.</p>
+            <h3>Life Interest &amp; Right to Occupy</h3>
+            <p class="mt-s">Let someone live in your home, rent-free, while guaranteeing it passes to your chosen people afterwards. Ideal for second marriages and blended families.</p>
+            <p>A Life Interest lasts for life; a Right to Occupy ends on events you choose.</p>
           </div>
-          <div class="card">
-            <h4>Things to consider</h4>
-            <ul class="ticks"><li>The home's value may count towards the occupant's estate for Inheritance Tax</li><li>If the occupant is much younger, your beneficiaries may wait many years</li><li>Can also be used for cash and investments, with the income going to the beneficiary</li><li>Trustees can be given money to pay bills, and the right to inspect the property</li></ul>
-          </div>
+          <div class="card"><h4>Good for</h4><ul class="ticks"><li>A new partner living in your home</li><li>Children from a previous relationship</li><li>Adult children still living at home</li><li>Cash and investments too</li></ul></div>
         </div>
       </div>
 
@@ -515,15 +531,10 @@
         <div class="split">
           <div>
             <h3>Discretionary Trust</h3>
-            <p class="mt-s">Control “from beyond the grave”. Instead of fixed shares, everything goes into one “pot” and your Trustees decide who receives what, and when, guided by a confidential <strong>Letter of Wishes</strong> from you.</p>
-            <p>Because no one is entitled to a set amount, a beneficiary's potential share can't be counted against them. That protects them from divorce, a partner who's after their money, creditors, or losing means-tested benefits (the savings cap is currently £16,000).</p>
-            <p>It's also private. A Will becomes a public record, but your Letter of Wishes doesn't.</p>
+            <p class="mt-s">Everything goes into one “pot”. Your Trustees decide who gets what, and when, guided by your confidential Letter of Wishes.</p>
+            <p>Because no one is entitled to a set amount, their share can't be counted against them.</p>
           </div>
-          <div class="card">
-            <h4>Particularly useful when a beneficiary…</h4>
-            <ul class="ticks"><li>Is going through a divorce or difficult relationship</li><li>Has debts or financial difficulties</li><li>Isn't good with money: gambling, addiction or a learning difficulty</li><li>Has a disability and relies on means-tested benefits</li><li>Might marry young and inherit before you'd want them to</li></ul>
-            <div class="callout"><p>Some countries, particularly in Europe, don't recognise Trusts. If a beneficiary lives abroad, other options may be needed.</p></div>
-          </div>
+          <div class="card"><h4>Good for a beneficiary who…</h4><ul class="ticks"><li>Is divorcing, or in debt</li><li>Isn't good with money</li><li>Has an addiction or learning difficulty</li><li>Relies on means-tested benefits (savings cap currently £16,000)</li></ul></div>
         </div>
       </div>
     </div>
@@ -533,14 +544,14 @@
 <section class="s" id="finder" aria-labelledby="f-h">
   <div class="w-mid">
     <div class="center"><span class="eyebrow">Quick guide</span><h2 id="f-h">Which Trust might suit you?</h2>
-      <p class="lead">Tick anything that applies. This is general guidance only, and Sevvy will tailor advice to your circumstances at your free consultation.</p></div>
+      <p class="lead">Tick anything that applies. General guidance only. We'll tailor advice at your consultation.</p></div>
     <div class="tool mt" id="kww-finder">
       <div class="chk">
         <label><input type="checkbox" value="joint"> We own our home jointly as a couple</label>
         <label><input type="checkbox" value="sole"> I own my home in my sole name</label>
         <label><input type="checkbox" value="blended"> I have stepchildren, or children from a previous relationship</label>
-        <label><input type="checkbox" value="partner"> Someone else lives with me (or would need to stay in the home)</label>
-        <label><input type="checkbox" value="vulnerable"> A beneficiary is vulnerable, in debt, divorcing, or receives benefits</label>
+        <label><input type="checkbox" value="partner"> Someone else lives with me, or would need to stay in the home</label>
+        <label><input type="checkbox" value="vulnerable"> A beneficiary is vulnerable, in debt, divorcing or on benefits</label>
         <label><input type="checkbox" value="now"> I want protection to start now, not only after I die</label>
         <label><input type="checkbox" value="iht"> I'm concerned about Inheritance Tax or probate for my family</label>
       </div>
@@ -549,10 +560,18 @@
   </div>
 </section>
 
-<section class="s s--pale" aria-label="Client story">
+<section class="s s--pale" id="faqs" aria-labelledby="faq-trusts">
+  <div class="w-mid">
+    <div class="center"><span class="eyebrow">FAQs</span><h2 id="faq-trusts">Questions about Trusts</h2></div>
+    <div class="mt"><div class="faq"><details><summary>What is a Trust?</summary><div class="a"><p>Trusts are an incredibly complex and misunderstood area of law, dating back almost 1,000 years to the time of the crusades. Imagine you own land and want to keep certain people out: you'd build a fence. A Trust is a legal way of putting a fence around something (“ring-fencing”). That might be a property, a child's inheritance until they come of age, or any other asset, and only people you have specifically named will have access to it.</p><p>A Trust can also be thought of as a gift that is delayed and given at a future point or points in time, when the circumstances are right.</p></div></details><details><summary>Who are the Settlor, Trustees and Beneficiaries?</summary><div class="a"><p>The <strong>Settlor</strong> gives an asset to trusted people, the <strong>Trustees</strong>, to look after for the eventual recipients, the <strong>Beneficiaries</strong>. Trustees are legally responsible for the assets, manage them according to the Settlor's wishes and are accountable to the Beneficiaries. There usually needs to be a minimum of two Trustees and two Beneficiaries, with exceptions, and a Settlor can also be a Trustee and Beneficiary.</p></div></details><details><summary>Why is jointly owning our home a risk?</summary><div class="a"><p>Most couples own their home as “joint tenants”, meaning each owns 100%. Jointly owned assets supersede the Will, so when one dies the survivor owns the whole home, which can then be lost to care fees, “sideways disinheritance” (if the survivor remarries and dies first), financial difficulties, or a stepparent changing their Will to exclude stepchildren.</p></div></details><details><summary>Why not leave my share of the home to my children directly?</summary><div class="a"><p>Leaving your share to the survivor puts the whole home back in their name. Leaving it to other individuals is risky too: they could secure a loan against it, force a sale, lose it in a divorce or debt, pass it on in their own Will, or face capital gains tax if they already own a property. That's why the share goes into a Trust.</p></div></details><details><summary>What are the shortcomings of a Protective Property Trust?</summary><div class="a"><p>Because it's written into a Will, it only takes effect after someone has died, so there's no protection during the owners' lifetimes. It needs two or more owners, only protects the property, and part of the property is always at risk. If all owners go into care, the whole house can still be taken. Despite this, it's standard advice for couples who own their home together and very cost-effective. For a more comprehensive solution, consider a Family Protection Trust.</p></div></details><details><summary>What can a Family Protection Trust help with?</summary><div class="a"><p>Because an FPT is a separate document from your Will, it's set up immediately, rather than only after death. Five main situations it can help with:</p><ul class="bullets"><li><strong>Probate:</strong> with no mortgage, there's no probate on a home held in Trust, so beneficiaries quickly take possession with minimal administration and fees</li><li><strong>Challenges:</strong> certain closely related people can contest a Will, but an FPT can't be challenged once it's been in place for six years</li><li><strong>Divorce:</strong> the courts can't take account of funds locked away in a Trust</li><li><strong>Debt:</strong> an inheritance held in Trust can't be taken to pay off a beneficiary's debts</li><li><strong>Inheritance Tax:</strong> above a certain value, IHT is paid at 40%. Funds held in Trust don't become part of a beneficiary's estate until withdrawn, and the Trust can be passed down the generations</li></ul></div></details><details><summary>Can a Family Protection Trust protect against care fees?</summary><div class="a"><p>An FPT isn't for protecting against care fees; it's for protecting the next generation or the beneficiaries of a Will. If a local authority believes an asset was put into Trust to avoid care fees (“deliberate deprivation”), it can be reversed, with no time limit. But if the Trust was set up when you were young enough and healthy enough, with no imminent prospect of care, it would be unreasonable to assume that was the reason. The same applies to a business owner protecting their home.</p><p>When set up for genuine reasons, an FPT places an increasingly large obstacle in the way of a house falling into the wrong hands, though it's not a guarantee.</p></div></details><details><summary>When would a Right to Occupy end?</summary><div class="a"><p>When you choose. For example, if the occupant marries or enters a civil partnership, begins cohabiting (which can be hard to prove!), refuses to pay the regular outgoings or maintain the property, abandons the home, goes into long-term care or dies. It can also end after a set time, or when someone comes of age. A Life Interest, by contrast, is for life.</p></div></details><details><summary>Our home is in one partner's name. What should we do?</summary><div class="a"><p>It's a judgment call based on your circumstances. If the owner dies first and leaves the house to the survivor, it could be lost to care fees, financial difficulty or a new relationship. A Life Interest or Right to Occupy solves that, but if the non-owner dies first, the owner is open to the same risks. A potential solution is to place the house into both names and use a Protective Property Trust or a Family Protection Trust. An FPT can also be used where the property stays in one name.</p></div></details><details><summary>What is a Letter of Wishes?</summary><div class="a"><p>When someone dies, their Will becomes a public record that anyone can see, including anyone with an interest in a beneficiary's financial problems. With a Discretionary Trust, a confidential Letter of Wishes is given to your Trustees, usually the same people as your Executors, setting out how you'd like the “pot” managed and distributed. It's drafted so they can use their own discretion over when, and how much, to give each beneficiary.</p></div></details><details><summary>Do Trusts work if a beneficiary lives abroad?</summary><div class="a"><p>Some countries, particularly in Europe, don't recognise Trusts. If a beneficiary lives in such a country, the Trust may not work as intended and alternative solutions may be needed.</p></div></details></div></div>
+    <p class="center mt-s"><a class="textlink" href="/faqs">See all FAQs</a></p>
+  </div>
+</section>
+
+<section class="s" aria-label="Client story">
   <div class="w-narrow">
-    <figure class="quote quote--big rv"><span class="stars" aria-label="5 stars">★★★★★</span>
-      <blockquote>“Sevvy helped my parents with their Wills and dealing with a trust. He took the time to come out to my parents' house, explaining everything with great care and attention, and ensured they fully understood all the implications of what they were doing.”</blockquote>
+    <figure class="quote quote--big rv"><span class="qmark" aria-hidden="true">“</span>
+      <blockquote>Sevvy helped my parents with their Wills and dealing with a trust, he took the time to come out to my parents' house, explaining everything with great care and attention and ensured they fully understood all the implications of what they were doing.</blockquote>
       <figcaption class="who"><span class="av">J</span><span><b>Jamie P</b><span>Kidderminster</span></span></figcaption></figure>
   </div>
 </section>
@@ -562,11 +581,11 @@
     <div class="avatar"><span class="mono" aria-hidden="true">SH</span><img src="https://www.kw-wills.co.uk/images/split/14_right.png" alt="Sevvy Hasan" loading="lazy" onerror="this.remove()"></div>
     <div>
       <h2 id="cta-h">Let's have a friendly chat</h2>
-      <p>No obligation, no jargon, no pressure. Sevvy will listen, explain your options in plain English and give you a fixed price up front, at home, by Zoom, or in the evening or at weekends.</p>
-      <p class="cta-phones">Stourbridge <a href="tel:+441384883883">01384 883 883</a> &nbsp;·&nbsp; Worcester <a href="tel:+441905671371">01905 671 371</a></p>
+      <p>A friendly, no-obligation consultation in the comfort of your own home, at work or online, including evenings and weekends. Everything explained in plain English, with fixed fees quoted up front.</p>
+      <p class="cta-phones"><a href="tel:+441384883883">01384 883 883</a> &nbsp;·&nbsp; <a href="tel:+441905671371">01905 671 371</a> &nbsp;·&nbsp; <a href="mailto:enquiries@kw-wills.co.uk">enquiries@kw-wills.co.uk</a></p>
     </div>
     <div class="btn-row">
-      <a class="btn btn--primary" href="/contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Book a free consultation</a>
+      <a class="btn btn--primary" href="/contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Book a no-obligation consultation</a>
       <a class="btn btn--ghost-light" href="tel:+441384883883"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg> Call 01384 883 883</a>
     </div>
   </div>
@@ -577,12 +596,12 @@
   var box = document.getElementById('kww-finder'); if (!box) return;
   var out = box.querySelector('.rec');
   var T = {
-    ppt: ['Protective Property Trust', 'Standard advice for couples who own their home together: protects your share from care fees, remarriage and debt.', 'ppt'],
-    fpt: ['Family Protection Trust', 'Protection that starts now, works for sole owners, and can help with probate, challenges and Inheritance Tax.', 'fpt'],
-    li: ['Life Interest / Right to Occupy Trust', 'Lets someone stay in your home while guaranteeing it passes to your children afterwards.', 'life-interest'],
-    dt: ['Discretionary Trust', 'Keeps a vulnerable beneficiary\'s inheritance safe from divorce, debt and benefit caps.', 'discretionary']
+    ppt: ['Protective Property Trust', 'Standard advice for couples who own their home together.', 'ppt'],
+    fpt: ['Family Protection Trust', 'Protection that starts now, and works for sole owners.', 'fpt'],
+    li: ['Life Interest / Right to Occupy', 'Lets someone stay in your home while it passes to your chosen people.', 'life-interest'],
+    dt: ['Discretionary Trust', 'Keeps a vulnerable beneficiary\'s inheritance safe.', 'discretionary']
   };
-  var map = { joint: ['ppt'], sole: ['fpt', 'li'], blended: ['li', 'ppt'], partner: ['li'], vulnerable: ['dt'], now: ['fpt'], iht: ['fpt', 'dt'] };
+  var map = { joint: ['ppt'], sole: ['fpt', 'li'], blended: ['li', 'ppt'], partner: ['li'], vulnerable: ['dt'], now: ['fpt'], iht: ['fpt'] };
   function update() {
     var picked = [], seen = {};
     box.querySelectorAll('input').forEach(function (c) {
@@ -590,9 +609,9 @@
       if (c.checked) map[c.value].forEach(function (k) { if (!seen[k]) { seen[k] = 1; picked.push(k); } });
     });
     if (!picked.length) { out.innerHTML = ''; return; }
-    out.innerHTML = '<p class="muted">Worth discussing with Sevvy:</p>' + picked.map(function (k) {
+    out.innerHTML = '<p class="muted">Worth discussing with us:</p>' + picked.map(function (k) {
       return '<a href="#' + T[k][2] + '" data-tab="' + T[k][2] + '"><b>' + T[k][0] + '</b><span>' + T[k][1] + '</span></a>';
-    }).join('') + '<a href="/contact" class="btn btn--primary" style="display:inline-flex;border:0;margin-top:6px">Book a free consultation</a>';
+    }).join('') + '<a href="/contact" class="btn btn--primary" style="display:inline-flex;border:0;margin-top:6px">Book a consultation</a>';
   }
   box.addEventListener('change', update);
   out.addEventListener('click', function (e) {
@@ -605,10 +624,11 @@
 </script>
 
 </main>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is a Trust?", "acceptedAnswer": {"@type": "Answer", "text": "Trusts are an incredibly complex and misunderstood area of law, dating back almost 1,000 years to the time of the crusades. Imagine you own land and want to keep certain people out: you'd build a fence. A Trust is a legal way of putting a fence around something (“ring-fencing”). That might be a property, a child's inheritance until they come of age, or any other asset, and only people you have specifically named will have access to it. A Trust can also be thought of as a gift that is delayed and given at a future point or points in time, when the circumstances are right."}}, {"@type": "Question", "name": "Who are the Settlor, Trustees and Beneficiaries?", "acceptedAnswer": {"@type": "Answer", "text": "The Settlor gives an asset to trusted people, the Trustees , to look after for the eventual recipients, the Beneficiaries . Trustees are legally responsible for the assets, manage them according to the Settlor's wishes and are accountable to the Beneficiaries. There usually needs to be a minimum of two Trustees and two Beneficiaries, with exceptions, and a Settlor can also be a Trustee and Beneficiary."}}, {"@type": "Question", "name": "Why is jointly owning our home a risk?", "acceptedAnswer": {"@type": "Answer", "text": "Most couples own their home as “joint tenants”, meaning each owns 100%. Jointly owned assets supersede the Will, so when one dies the survivor owns the whole home, which can then be lost to care fees, “sideways disinheritance” (if the survivor remarries and dies first), financial difficulties, or a stepparent changing their Will to exclude stepchildren."}}, {"@type": "Question", "name": "Why not leave my share of the home to my children directly?", "acceptedAnswer": {"@type": "Answer", "text": "Leaving your share to the survivor puts the whole home back in their name. Leaving it to other individuals is risky too: they could secure a loan against it, force a sale, lose it in a divorce or debt, pass it on in their own Will, or face capital gains tax if they already own a property. That's why the share goes into a Trust."}}, {"@type": "Question", "name": "What are the shortcomings of a Protective Property Trust?", "acceptedAnswer": {"@type": "Answer", "text": "Because it's written into a Will, it only takes effect after someone has died, so there's no protection during the owners' lifetimes. It needs two or more owners, only protects the property, and part of the property is always at risk. If all owners go into care, the whole house can still be taken. Despite this, it's standard advice for couples who own their home together and very cost-effective. For a more comprehensive solution, consider a Family Protection Trust."}}, {"@type": "Question", "name": "What can a Family Protection Trust help with?", "acceptedAnswer": {"@type": "Answer", "text": "Because an FPT is a separate document from your Will, it's set up immediately, rather than only after death. Five main situations it can help with:  Probate: with no mortgage, there's no probate on a home held in Trust, so beneficiaries quickly take possession with minimal administration and fees  Challenges: certain closely related people can contest a Will, but an FPT can't be challenged once it's been in place for six years  Divorce: the courts can't take account of funds locked away in a Trust  Debt: an inheritance held in Trust can't be taken to pay off a beneficiary's debts  Inheritance Tax: above a certain value, IHT is paid at 40%. Funds held in Trust don't become part of a beneficiary's estate until withdrawn, and the Trust can be passed down the generations"}}, {"@type": "Question", "name": "Can a Family Protection Trust protect against care fees?", "acceptedAnswer": {"@type": "Answer", "text": "An FPT isn't for protecting against care fees; it's for protecting the next generation or the beneficiaries of a Will. If a local authority believes an asset was put into Trust to avoid care fees (“deliberate deprivation”), it can be reversed, with no time limit. But if the Trust was set up when you were young enough and healthy enough, with no imminent prospect of care, it would be unreasonable to assume that was the reason. The same applies to a business owner protecting their home. When set up for genuine reasons, an FPT places an increasingly large obstacle in the way of a house falling into the wrong hands, though it's not a guarantee."}}, {"@type": "Question", "name": "When would a Right to Occupy end?", "acceptedAnswer": {"@type": "Answer", "text": "When you choose. For example, if the occupant marries or enters a civil partnership, begins cohabiting (which can be hard to prove!), refuses to pay the regular outgoings or maintain the property, abandons the home, goes into long-term care or dies. It can also end after a set time, or when someone comes of age. A Life Interest, by contrast, is for life."}}, {"@type": "Question", "name": "Our home is in one partner's name. What should we do?", "acceptedAnswer": {"@type": "Answer", "text": "It's a judgment call based on your circumstances. If the owner dies first and leaves the house to the survivor, it could be lost to care fees, financial difficulty or a new relationship. A Life Interest or Right to Occupy solves that, but if the non-owner dies first, the owner is open to the same risks. A potential solution is to place the house into both names and use a Protective Property Trust or a Family Protection Trust. An FPT can also be used where the property stays in one name."}}, {"@type": "Question", "name": "What is a Letter of Wishes?", "acceptedAnswer": {"@type": "Answer", "text": "When someone dies, their Will becomes a public record that anyone can see, including anyone with an interest in a beneficiary's financial problems. With a Discretionary Trust, a confidential Letter of Wishes is given to your Trustees, usually the same people as your Executors, setting out how you'd like the “pot” managed and distributed. It's drafted so they can use their own discretion over when, and how much, to give each beneficiary."}}, {"@type": "Question", "name": "Do Trusts work if a beneficiary lives abroad?", "acceptedAnswer": {"@type": "Answer", "text": "Some countries, particularly in Europe, don't recognise Trusts. If a beneficiary lives in such a country, the Trust may not work as intended and alternative solutions may be needed."}}]}</script>
 <footer class="ftr"><div class="w">
   <div>
     <a class="flogo" href="/"><img src="data:image/webp;base64,UklGRj4uAABXRUJQVlA4IDIuAAAwnwCdASqAAn8APj0ai0QiIaEVCTY0IAPEpu8ot3/HgWZf8A5/9kFa6PSfo/yx77yhPU/yk/sv7gfMXTf5V+Ef6X7gP8B2VdY+Wj4p+Vf5L/A/vb/hveB/hfYX+ff9r7gP6U/8L+0f5r9m/hy/UD3B/0f/gf7T+Lf6P4Afzf+c/8b/E/v/8p39t/Zv3Ifst/wP6X8AH9A/wP/G/P/5q/8x///cG/Yf/4e4J/Pf81/5vZh/2P/y/0nwV/tb/8/91/xfkW/nf9z/9/5///T6AP//6gHUj9Qf6J+UngP/bf7l+0/9t9S/xL5v+2fk7+R/QF87/ufMz+O/W77z/av28/u/7qfHn+w/rPjD6uvyy+AX8T/k/+G/tP7Wf4n96uPFt36Avup9d/z397/dT+4+ll/bei32B/wnuA/yz+lf57++fjt7ZHgw/gv+V+ufwCfzH+z/9j+7+6//N/+X/Jfkh7Zfzv/If+X/P/635Df5n/af+H/gvbH///u3/cn//+6z+1v//RW0tXpp54FQIkz/8JQis/+3HpVjPB3Oekv9NiQkWLQOnr6U7F48nc56S/02D4j90/+3ZUmvXH89Q2dNy5nZIUy5mwJ7Ff2j1zjZcmHEtp0+MydkyYoHv/gC/nptUhgFlbTNB2S+5RLU/G0Ff0Rx/dzE21B034GDx81QFDw7dClH4/NQ6RlHNzfR15W/2Gzc90a4EoF1wz/8vxWHJlJ1hdeyQgP7r9fwOFBNI4CWlRw+cRqRQs/Qt0jut9zl/WO5vAl0DNTmaLWog89i0JH2a+8kz53DYiGjBBNRryWLXRjlvVFnYjXW+7R1ywZvSEwdQefMuOodyb+htgqvFWWElAOVyW1/L2enasJTVKLjRFtupAQIkX6I3HAwaVxBxnVFHs4Fcadd5DalTA3Ga7pzSI8y5OXF6iPVWjasguqo9d9AKD9b3euXjw82uwCl1EJE3Q60o6MszgNTCiZ9lc/g6R76nMLIfCe7+rkd7XpLbBCXYcT31PU8rwJc0m0IZS56XRYA7EsvGxOj+KW23XDuFMMPeLEy7Hoso3wfevnUcjXDAFKWHtjdTWFd+ZGOTx3+gC9GGpydRdOUseNdDv/X+ybCiEf57F4WcLwXiAvKnKG9gwFVGu+B6V1lXsueAiS87s47Hu5exQX5HiCPjkbbva3FrB2JO/Ee1vSNx33/rohgtRbfnWJRarEysrsVAmOEWvnd/M9ONOQ744UzqUA4ORKzgnojHNjx+y8FBykwYeD+CkBPKn8+Yrm9fZpabqLnDe4OA8I7I7RKn8/fF2RThbLwdw9RA6HLYjOjEcyO8v0bZZblfLnHhVdb758kHL1Qf/QEzseLq4j6gjZzZyuHSesoRi4IXlnscTFr1I3YncDZ/EceIgbglxj/c5+t39S6ZwXlndP7y+qIGzGTRMs7C3tSud9CjiOF7/J14AeH1CZ4BjXnAjzqq8CGfEuGY/PnxugDUcb+YBxlkK7dQuLmfdBBej9a607hVIvYmZzfhZQBmVX9GYxw2T8YdHxNM1gBIvjXQdeIbCAFqdo58eeETvn8LuNWlBOWusnzwRSPF9Lud1SgCmqQz3cCbKxa3UN4S6yARS823PpMe4Rvgv8GOQHRYvvIp7BSU9OSnlQPrGbupashM7U6ffxeKA1T01Nen3RR2UuoOTbaRShK8Gf02JCRYtA6e0/48IRMShIsWsQAAP7/eNlDQZVKYINaAAbPxyBNBKBh8yjSVSQ+vObvcVBfCOzSc4h5+JW8h6lKsf0wUp7QTpXNbL4SIZ9lYwmKZeVgt/EBONtdTG2brvISThkUK5uP8Ya/EL1PvAfkV+xdo+LPhzHi8L0EPIFRuEuIxUyBtLepVSci1ZX1NTF4lbecjMWwwJdiNBT5jXSh/rAyZ5zdoNOKJv+y0bIm0bnC0eeP4JMmGgUslv+6TXQ5809/Jg7L4za0vDSTs84SjyjH+7OXZT1nIKlcADgm/fwfGX1fBzWpfk+coZMgDhUEtfgEzHd6FwmRmVIVOpN9vP4agxPAKQz+w+ATCl68gqVG3ea+UnAVZpnXlNOjZUpbT/A89Euj0UxUKJb8PNh6MlqdqqXJ++l9oBjIX29kJRH+1FIA+Svx67B6JUhTXylRFXaR4VVL4HUaV0FawQL8O5KTTWN1HPn01iD5TYMwDFVLB6UMJpOvQiLuGOSYFcE2JnWsXmMbcqgb6fw3r2syUAt0COETjY9dN1utFPxmAMgmMGMN7xmbuKqzrf0uXWTIe666lxFnE6igO0WVLY4N2KzrmzQ4HB/li+4nM5eJKeNIWfzx1aBeum6eRpfy7iSmBrXj4luY2TctA8avA4oJnfGcxO/2ADMLom2fhikD0JQOFpIIvoMplp3h4ENbCKo9p2juRRSMP7eEItSLgqAPhhYq6zGqQPuNTf+7kAxUdl0kcwWkz9Q3iwgrufWZo7CDSiF91uiMJUFPNvUIlOZdPrz/7pXqIOpaqHUpHSILZBlkti2oPq9vHBR29MwqmhjfNFhPzELIUmxNWdoxf5CU79lIWanQS1xwN2Z26pS9slfhVpff8qf/7IJfrbZ7LdPWH4E3dvuYb/q73+LrNmPlXb72bFauZmbVfd6w9DxMF2iSOHgLf+eulptSwFQWH6YA1Ui1ZdfA5nN+0217wZ0tQ6s25S2922JgLXHxnr9NUuUa1Nlc19J1fzl4UOkDV8bDO7K868wR57drSXJPeEVJUnj0o1VzX4H1m8/lXCSH1iQ2wLyzbm6OrGN5/EDzSeCYJrj4JXe4O7YEgw03YLk5WuGp6h+9UHyh2WVB/Xx0Qo4twnu7/0YIiuGkweyCm+dFK9gkBjx/3KPSWyJdfBJ9LVO+tE++vYwxMO7BC31ACW2KzBrw1UVHy/VTDaNkWbJRP2vPaIh+Jcb03zP1p2NC/aCN4GJ/bAacXefccwWD62CF4cFPhDe5Q1MboPOi7fCkgk2UT5G0idL4SghgfDtGrn8uN3HDBGwJY3M0FajSmmQ7IxX/zjcR2nS6EMWjbo6bBVbM5Pdny69w4rexXR47JxXLLgfh2nvUz6SonmqXOoBeKYik1+n3jYmiAoi0nzMkVGIW6AN2v1ZIHMAixj5mu2yMF0h4semSFiCeYagFoFWPmbaifdqTFN1dGyJw1jhvVblQ4/xp5azQY1KAma5+OFell+I385j0CqmivZyRbSaELPr09qbksmqYGYuXYkaQZxKoJ9MaOkkBAqlDsalaLtExMGquRBErtzEh83LCAwDEm0jc0WRvFR7jDDUKpAkdBDJXbgSC8LUAPLyuCcn9uNEb3mnueJyRx0KCfIs9SBJ47/7jfLtvaEe7i3Uzx8t/yKBTlabjmhy9wbC0D28RlDjdNwGt0NlZpqHHK/64eNqkSunMn61LFTFnrrZXtiDJYnXpNTLGBXv+JgYi6jwj2VjwFwxrLfvHwnHIJsQwHGOW1O5MC7Kc7OxKjMr/Hf94V/JJSXfoeam4Qcs8YD7p85My8AAn7QMZLuTPljsecpjfsOQ5i0yFFUG8U7+FkLV+PbYdmo6rOwlTr3wf2iOrRJRotHxfGaTJjq1hAKRCoz/b5GA0gpFxif582pRxaD8bIHDWf0QHvkC31Z5Wap/1CIcb1G7hn9P+0o58OnL/yUoXkIAbe+G3PfC2yYc7WymQVYINuYxSP/iYet8piH4lBGbuvYCW3No2BRZI6IsOJxt89/8PSaX6j8Ga3lWHK2hKcar87ywZzq3mqkEp7mbW3B1UpfCkiVvX4UmZv5OUwJ9HdkiZrUpLbTm1DEqkS88tZdBGQOQayEbnphm2bpsxBLdxs4667cIRKywU4VS/6VKknrUtnsYCEQY3hIK1cCQ/q7HK+8k7MRFa0gwUxpvv1TuM2tmhZf+pHHv4FiBbwFnJMnDBavxI5Zca6ZOvKAuYAbhrtMkH+IMlz3tOFTpDJEfZXFZoZdxzRHSkc7IC/nktUGUCOFJiAGHGs+Fis/IUZ/KXiIyG8+zUHKFF9BE+skdiKxobQa9ZzGesAJpgnXq7c6/KSBbR5Q0Xmwnz0YNGPnmtMiyQt9q+qUw4O8WIP526LDVnD5P+Sx/Q12E8D/cFgSTxLCTBPz3LeCkEkv2ZWbApbNjXfnxmPJSDtWDSf//nC7xj87FYlTJtv3K9t7/E+qiUr+s1yLJUQe5BVAK3gv4br8k2WrIl3eHhsFL+CoMJnjz2d1af3L7YnckFDJR8nhkK9NvmbGkdC3N7cfDCdnaD955bbgUgxByVZfAmENf9mNBqd6eQ4tVQfgWfVAOzh+78JRGfFyu2lSAZ1GMufkFuB5TNlE0SrR4LgLhrwqkI5ONvrr2ghXi6MCKDrary5zA3BL32TSsMlHoAzlh1Ls3W+Jg2XJUdVjVHzN8gnzcL95TgrGRcn+Er/AH43kNTE4omVfnDGNgRsxIhIvw5ytYM0GoBoR9GIAHEEj2YLCZdy2LARN+zfG27heT6PaVj7BtKIF2aZ4I/Y+TxUPB3OuV8Fd+2RO96vHhAuoOZM/7bhig4NpG6Dt/3QTaMgWJPk6GemknI1csj7r+p1nq9n3qUCNDev3T7iAjTP5Z4M839hclfmHUB1tc8HU0Yagkys/KV06qkeSmpZsj5oAL/FejTIH/Bi20S+MUYiCoKg+Lb5hnxm2rwCz+ymPzSwU9bgTnTRJOBqTnNAM9TJ7PLN/2DzbcaZkJpURRS4DEluinAefhxjJ7EgUgv0IznN1WP5/oddjTZ5vZHvg/TBv+PlE5FGY11YJVrXRtDWgPRHDxDUCEFU/xlBeYtvxPeixJmBQmgiqiHWoJJfnE765BbkkuPGvVHU6CziootzNQMBP+FWBRdfGMkXHSeFwKbRQCTQab0vgR6Thw8rOsFHigVzgwJRObxyJ+UKpBX5UqJmPoYrh96vbIP1DsuaBvfm6rS589wmvdtmY59EG8a//8s3nbmNn9W3O3w1eAZJY+d7mHzIksptNGQviH+d7ah5qRRtYgSu+BRZBAR74PHJg3kfhqPQ8PCeBfkIbqqkTTKjXDzaL010jQq6k5fn5YOtzMCPFiHegsGtoPXHYUArGH9VKrYi8mQv8zd7A63ByWrpLF5JQgEliojakLFc6qOhGYP6lhi3uhxuSnZ/+VXxOvz6Dkvkg5+aJnhI8AOZDk+fUm7C9+Gww3MxRBbAdpw78H4L8fkohp9dv8X4blmDlzb/4/gRDZYS9aqOI3TvOayQe9QGMkXtM+W0BD4VRpRvmmFrowxf0EYD46wFjUmkcPQt/yhbU3e+jtgsn9cDnP610fe6LkZOl/mCD0o8vsmQ2tnaNEbaZIKHNKs6l5z2fSat1Ag58wxYJtc8O9FG22bW2NUViEBnXRY2PxpJNyOGwD8QuFYZMuCBt4CyLYt9b78kwdu+T2LmMR/tb9d1rNKkL8+osHbh3hd7/zFTfeALvDS/Fl76KaW8gl+gRfSL/cgYmGn1LWBNN8mRd7FvRoKdxhcdx7MUXseDnom06hOhjlNm7jdPjRktyvagOHKrnzsxbvncKq3WGYWFs/vJ1bRnTW4jwGRNxV1084ZFv1O53P9jxbag/HatukfbyKUtw26hE0ncdEW74yJhk/BNpMzDD1dXKO9d5PgKX3d4EEutfMB0HpUR1ry3+1EO+PsSzMXcOdvXxk6/ZB7LeTUlPC5W9bt7AunLJYu7hxocityvjlcYNgO9RSJnH76o3QnwRq3R8q9m151BfFoAuG+DDfTbx4ME/fxyiabJXvVi0MiOdxKC7mQef39UDZwQm6SZ3twlv5M5z7RWnRVnOag9uk7J/3I7Ujkbwzt/R6eVKQ0AVrbVqKtxOyhCkoRTLQnZA1a/vhGDIwKckpv3PCociTJNy3wYabMzkQJoZIKgwN+mkJoTU0Y2O8zHrZ0l156aV4Lsoaaxl78RlP/ENBRFFXvWQwJb//ZCWrp3ncA+gmFG6r9EnO3w4+Dam6l861jvJI8GKbfsTClAtA5/3p2d1SgCX1vlRKtTCfkz7JfsC0g+YRJiYOYgW6xOpKdRSS/7VSy7ciWOQRxomyGhi29SJn0erDa4ug2IHmXfjYm293fK9jczc9+BDmSc4BXq6kU4xPHtwmkxEbq3F61JTQMUxvRUAB5iNx7kVSwF3TCGWI54HVYsgnnUN7k/V75Tew9HHpOxlUDqK0soKk8XTmQpwTXNeIQWD1hQaZV5GYlLGe8miFNoBCvxbJvxLV2SbEEamNWuFZUGXDJY1dsVB4R7lEQG/Ed1c8Ftd5LfCEPmO6iHqTH+xve27ppBT67b5Kca2c+xld/TBOkADxmtiwns617ridplrNUyGrkDLprwj/goCniVx2MudliNhXfK7UK/HRNjChyUkBhBdpGBvr9lZn4kNWjNA9RcHjNNNfV5RcIs00S5eIMIk8WWpdahEs8dO0v3gEBa0iQT//XTxnq7oVx5dXcemvQXr5z+Ag8oVgwAE8WHXtidutqvMcnKQ1PMl6z5+hUYrHJRs0tMf6xTQRdhkq4MMzAO/DvEAkp/xDtR1r1T61GHcksDrdtgfOsYR1LTxAnkbncHzTdrhn2glPo2kQ+ccctmYOGuh4FJiYOhL3S5rQlzVEbYOprYvSlumFnvjH23CbI8qgIfSuJgGXppIkAlRw4pe1Sg6Lzm8m6T+wNYZw9qXbCnRVYPI8gyQpwU0P4kSBeQS6DOL7oaknGpai4AOkV+Shl57fL45+cgE1ln4aMB3vpAi530GnSe1Iz8jcCwSo5AO0Jwq5cRJq39myYx3I6VIwHjiSe/oXpmo20FAgpPFnZjXOb0hg6CzR7jxBY3jFQlk23EQTAY3ZvhJVxglSYEqoO1HCHJtyYmxRxVuRLC7l5ZmPy3efv9d/A0L2u4z8T4G03Oi8vkE5MX4c2n8rGMC0Qy5br1y4/w7bd+Z0PbHFpp+YeeyzLyh5WfPesR7Rc2AdDcsJ3FHaBBQAtSY8WXVVtQcsDgjpTo2ZOH2cC21EUjzLwI3+A2C5RE6Bn8egNsYVK8wVQGV/tha1bErsGaWzphJSbZak4lMp8Ul14jXnHUyB8fbNYjoXvXPrzZfPJvG9FeCxmvk4m8Ji+LtQ0DV0YmcSIyV2E42vYPVUYU27eeKfqoWcki2U+JNOebRO5nt0+npYSTkml8SLD8wZUvuAofSI4KH/8Nft0VTpjUcMyuMomlU17ODONIs9enNbcOqitRgMHjzEWV/6GJvd+8yUHpa5YXaHlJiys0x+1jg0j3StCiZeFLRaXjKYvB5AwxUtQ2tjs2tLLRDtK27ps9XCgAWIUWUV5NcX7iCdQmWK1A2ltGnvLzhX1uPIokZwBIfrMaolkiz77YUQgv7eyX6QdHljdJAP62nOvnUP7A8xdx6D3+JAIVI5IgInyKhP+NM/1iTNvbYZ+KzZ8U145SzIPxCW8XW7r29f5VKExR+ysMmrUxDCJDXqC4oWD/WIAkKUGFrvPwLIxfA82dSWNIZRn08Bc6/kMnmhG2cV+HHdw7svMaSo4C2jobHrfnV1F+KT/7djKWITISBPfsAsj6kHdOatMyya4N8ZYm8lFRiYeTUbK0wRnOmHq0jiob8TXFfNTSC6Ov29p50tEgmcvYldojuMnxSLvhWTkg/T6nXDEcbNC1cwYAtCywfFmJAKA0uNg3cbQ2QhA5RubOh5OF0E9X1amcRMpRBD6VkD5S+H1M+C1BwMo8+eXAsCR3uZa7rxx98UmSlMYy4OXS9u7wkMWrmGHuNLQxGh2avOitjKNXNC79qSUoEygEVf7vY4JXXMVpTsZEpgTe+P8C10YjQ6Y00CV3burCV74+9y5cGDOTvqR5uNdXwW3fgXQS0ax6MCtNj94hLIG42Qd40qRxt1833UEOp52uL2eCtq76nSVci+wSdq/5H4CW+umE6oUsCU//P8numdrgifiY9/gp5c/2swBSMSSN7dfuvIJIyrejLJ00SAnzbZhF5p2h1Ex2Nem0oPKscJ8TN2xZZqAvLcItmnvCI3l6c0hfD4p+Tf4fBZpt4/ToxnDM0aWtVCFPyVy0/gBdpEuuotHJ7jHNEgrStLccagXBYnzoXylUYNF4HdlRc6wVfCMK3jVptF5baNMKo2xnMmFm4pruI/h8Zh2LSByIZmh8q6hU5ASD/lduXmxZRCu3v5z/OXv+WhmyJh9Dbw/l7gXtE8w7+uJbss7avt94nU6wB/52CA5NaOzk1ipurlTu5k6unrP/F1wYjgoZXAs5fBfbGKDGPrf3N/6aOpCQO1OvB6cVcAFvpmiYNKzAUPrR0we+D8Ilt+aBOfOrSTM3srDsKx9C+6t8HsFjTBocfyX0gjPQVM9jwTfizHa+fOHlI77cmb8bmDowmdD5Zi45vMgR07yh2YFOysxtR38jfu6a983zxlvprm7+ihh4Ky7crwzCr06aFU58fguf6RzujAfMONVF2V+uHjQTyxA94wm5H/R8xTZ0lBuzR/nsqbeEKXf6Hue6Sn2LfXOq7gt5X6m63itUY7DHn+mI4wuq/37bqXq8QLO6MT4GaPD3vloPG9px182Co4fGRR+mNuMIv75s8yyqMhSOiGo1+S3M0K9n9rDpOMnYnVjek6c131IoVmaysj/0xei/Ctp51jcQARa/8nAa/Ja46vTJ79xPpQF5Gkfr59IerEExxW2/DdLT1K/10WA2JNMuhy799ekHPhYlPURx9+qqFn476U6I7tE//JH87CRPP5IipPi7gCvxlnazqYQqLhG76YNjSOwSydmtnsmaCEEFtnSOvt5EI6fFKxcIrXVoR6vfkJtkDkHDiWUp9vOdnBgSsSgVeuqB8sijyPk4W2MMt0uQkARNa95ALtO77n5KoPgvT3LVnwzIx8oxKFWFs7eSsQeiab+acZhidqey/zeYvg/26MAr5QlnBgE60BtQyx8UOuflMKDybpsPOPrOKcJV8WVRb8hkQCfxtv665ENlx/WRPq2ADQcqasalWOtXEPvP19r4MosNZeyw2csIoQsvprmqg2Xsw2nNVyPJfXDg7sP5yMjv2iMAOAyHF7RIBPYj29kmZTBpQqdP0gKm2Fwve4+qgOagfo+DY8v/mnGZqMsBBZX5UWy/1IrpHDKFnnukjGRcUxgXpBN3lu4XNDM9BiM/JG0p8PA0sQIe6rMt7vb+C27Ca1lUrirUiYkPcKIz3pPxaNGMQBmMr1ZDf/wtZxeyuAVsrR3emqIclI25G61G8D7rHeH7KLvtB6WAwPO/jwAcQhG8s3UIVede3U4eNgcowSQKruSBAd5UOkiOpCqesRl4664SEZB5q50TdOOQJBSecOEpe4A/m8bOb9rn4qoSHnSY5KsfbroYDVm34FISoq8A+WMkPzJMqd8PMzR12QkZHD0P3EdOUVdseTp5mPo9qZvXEPPQBcoOvLIAglrToLF3TuKesgcB+7pyF6R+2nYUmWqs96TOpLEsAotspv9QLU0QSb1y0RIjIlvHKaTC4j+tf7sfpYANBrvGYoXIO/O9dDr1KyIP1zi1CV57IdJ169/3IuszDEbiplpHB4nm/mKNGZ4FrB+XJ4y8Lytlm/VpQWiInn4kzX8VkfAdXUkx5x93WiHJU+lTMWpOPJWWCzpDom0RLfmdoRzIwpCS92lag8MRG6MPXJZl2vnmeYhDcYy1+Czm6d7I8mx5tKJ+7wOUTscJuBLRvCZbE9zLiTyBHZlTygoopGI399nrt1wstM6y0mQGdszdTaL7O519FWl9PENPh4Fr6GkrEwCr8VMVHgtgU9lHVSzD8idlAxgvWzUHxLXUPVahKQRsWkNUBmggqBWpzv0lg+P1bOgSxbwa1dv5EtvDDH8StfHjWrgiqq4KBqyOmqZbcYrzAQGdzhp1Z/cxucKFoR1CXLVOwax3RSwraOh+SKID8nLdFRf8pDZUp0hrG+oLxOXZsAz9a55OTyBrKR9ofrvZRTsckFpuH6HJsiPX6cFYvtnRMYGcYcUpX3neJ4bhGbdjL5C04y8zj06TsxMhvbmZKVS3uNrI0TYdJwZQ72zlu+pOoMa1Dsy5ervf3XC2qIVZBHC17w2dUREf/e404alNsQX++E9JikD9kfqS5Bjr+LZbChteClNrJuaa+MSzTdn1k3V98xNRXjpn7tzWPq/xJYOobg1PxI/hlz/HlIpehdoCcbVgodfGsXfj9Gb5hZSiMxs7RqulT3HJ8S1mgufIvH4trlMvz7rGuuHiYPA7csVs6E7Ybswi7jsFNDkCz95x/BZP/9xEp7JHFesFCKyDOC+fYW6vHuF9056zNchLkF0Q/PtTTbVtvSUEHB04dEeP4yTst1tk0u4wplUu+v3wya3kHAueGJWpZjdjog0poCZCm1Pyd/yVfQQM3mr49xadwBsUDLgU+BOiYVYXDzy9oN38icXXVsqBXhDn2oQxlV6BbQhwtpW4erRcL/gKPHovf7sNRobBEZs0YjdEF+ZziTAougyXznoddxL6rkflF0nXFHuM0d17A+mQL6ZbsnTvc7IwZyzXeKUwCZVJeo/pRlvp7SbtOJM/SBZl+d9mkGMWTiAv02xvOrqaGkl0Jthb3zljPr+TjuSew6WKUeis0QJOolu5WeKSosf8d390fQgVLRyWJcEQtVIOUcdmzqY3Mz9z25DOdeagSBrSXC3/YIj30wkkpTmtEArIQJgUXC3VwfOK489vctWFvF6NMGtl+Sy/VO0zK4xKdJiiktxR1UJhpcnrp4jeuh4xcbLbgY2FnzIqlnSis9x9V4VpWDC6+225Dd5NQz6WwEkQI6UaOTidN0hE1PvZuMmjV/HjpcdP223c0CgTienq7e/37vfcPAwAU3j6cjIJ6meMSwndol8U2oJoxd1SqauqS0NRIrwYusRAS/hC2Z0QQaL+5tOMdIltNia4Al9NvY1D1kLjuT1PNf7u8Cn4vgINmfkxdCYhO8tAhBXZRy/bVuthEXDmdD2z2ykvPhakBXyFTeC7RiboqgQQ/BJh8czzmVMbYG7PpnFQdBWvBXiVTPcP6G2bbt8ecfQ5/37SXVYs4+VoUlLisMvf5WXd+dzJKjIbdOVQom+XX0lmldnTdsk5BC+TlrQFa1buJjezaljdm1Leq+53RdHHujX3O1naD9vDXjJwLoT5K6CwZpvApNIBqOjhZBmmAse/VYAItXURdaBpoJtom3oboNWrHdQB8bSCCjUY0woFrsvnwJz1DmdRluZ0ln7sqfuB8eHt0Z83VeKvuZgCJVAafYSg88tRiNSmpwtDSu0mQjXsggyaVlN8l7QsqHhWg1QUoeRnXH/I2nX4tH+dssqpqI0GN5KN40lLgfx6i48Ycm7gjAEErV+zILFSKhXelP8tv+sKQaRrS2lNQnqu2BzJ6HiJCYZT+frzhbksiVBYGNg5s+YWmLK5xQqtVKSSqHa06fXYi5FQXiUZoyG5+cUNW/i+fvAcbLA1HyoBTo0AJe1cufXANr3kWAEufSHzLCdICw3QatWSqiUzkc4PdDqjUzQxb7h5tAXABrAtnr1sYwdA2s2aJiL4wXZK7Vy9UZ+jiyvyl4Q63yiKnAcNzPgNJCt6agsg0cELDvBFGYnWUyac1KUSsAlwO3OkCM2Vf/9xR8Q7P+FhTO/kgL7+ZpnS2n2npBaBmo9S2bdSndZ+eKBY0D3pueoEuagrnjl4kvkucQS3VKXuLJQOBuPRReggg162a69DPq0Na/TDPjTTPpjVDjgyYoJZok4JYMQV+u+gGqL/DhBTlMMNT26EUbDDelkkGC7mYfe86qrkYPduX/ws+A8T+P1U2yoDf5dIdOGBzfbUmDEJIY9eaqP45wm4Ls+5g6cSNQgPJCF5/x6ipc2lqXdPdWMTMhp6bnwAHD0LwOqTFbXpkAfG0g2Zh57Lzs+JBslTnwGAe4M07nMhyrR8MWbZh2yjptPrWzyZ4x8gqqCHHUOlpdaWLONl2CtZ5/rhfeezt3Q94KJHRC3oXsSnIeEwhSui+MAVVSmRLk3+aJ9nhzCS2+e8JWgaKpYx1Pku85tqkksiYkNQ0GLKoL7gYEzmSf4Itjv2dSd/cTUuHCclJTJznCDBQCgRl7oDwn9A2KIi24SJI5PuX6aFB+0/mssDYqMPnSm9mZjrAzicll+aMFB3OW92BaSzd/F70g4YKQLOEkGoVxleVkeGAzZynGAWWHpjVGYiwS17pkk2tOqAdyqYEo0PpcOCfmvEHB+eEsfXEagdRL1Yk4iAvJoIe0S9yqcCT1jwJgz4sz/RcIxJp5R3Vt/txz+xet3cwLNgzhWp7rcUY6zVb/1Jm9U59HQGd76bSjmMzW7fy2+mMJJE2VuLP7uxc/5wVyxmXfGSGfVxKDYV7s+/nGnysNy+SxrYycAWyhH2R4ojd/IRR4aV1YrxluFkRyuPKX0+rgh8Ak+o3CyaW6ZmK+NXnpfjPjIrzyHk5El+yxRo0sVIx8U7PjCk2xqvC9DK9Hgb53bppIurYk37QpBYtTt7uQ618AF/PGdN850S3YJab2Kt0TnHzS/oWijsySGQbdLBSE/dIzoBcSaQnvbmTkEkmFCxDC+spqbWtv2koFPq7ySPhapik+EGb1sacrkKAJ76Nfjbeq8Z2IpVti1tHYLoAQqJ0YLBlPYxnf0sC2YpZCZlPk4/2rtNYxwxs2Hs/wRmyHAbsRkrx7gsl/fKzpMIG6Kw0t+MUVAg6iWrUoanNK267LeazY2CUkpiHCFIB68ro6KqUNIbTE5IP6kAzgNHnYx20k9uKe/anQjwS2nhR4Aq0j5Yu104lODvbX5J1FHCNaRgCmqWBGZE6XGzWtte0YQJfNNVi8e1S3PZw4uP5U3EubM2Npzrp5hQAMmlKebZvcZjVrjb7CwhLUvmlkokgQ7+qmzoBb/yQ/7sjbydBwF2+TW93UbOPOFeU/TS2siHvF+lxbNUcyHzqU/rbaTgYT6zMIqKd84Vy+qERs1fD/f3sAQ02Kylw2w/sXPauWuf7XR3YU2/WcbMUneuDHhAOexdAlI/2I/hcw3EmXpx6WP/uH0AO5Udm9PIyCqtupeBggqFV9CRQYUkfReCjX8legilPPE9P1mAatlFwxSu0GtzBJEzWsKnH/KrEDNjPvaDY6kAt1tVqgwSTqD0pbzbs0/+crIwsGOzXt57lF+CjaOqC1eiWQGQOQAwtoQI4iF1AH9Cu50b7XxX3u+GSVIPtjHHth39QOGtRDu24RFDxX2v69pf1DelNul/NHDB0yZslElQY7FqoQOakVO03RAvUm7ls+WoWkoLoEKjXN37en1eqFuKUmZKBITGTPi+9GEd/et6gB7sYId4/oX4siVwXYmRi8bEbdyLkhT7FjnYv3B+0b34eDTidVj4tPYRZ1m8PEzy7bzp8/7G695d8xKS8ccFQFCuv/dXE7W89YY5PyGvyBLeYcEghHcNoO1snChpOZ/PoMzy1CX5cpRhBQmCl2Jdh9fLGAA9IL4rBu8n9DeuYcljPtmCwYVwFCXfialNI7wNysH3Ew18m08CA0WdegDCoZHHBYDg8ejI/3DIcuHNhSGphuMJbnXKTdAfazpeuH1q6MRdXqHkWiegA3F5eGe98mTNFdA9QXTbCDzwm99yPIQt2ufjp/JVRW63G3PFIJV8eSHLVl125DcP5Wq34eNHnsqKgB0sZLW+5KWRovxVM6WdNmWV4x7vrAhaw5PeuJ4rIRUYJEmdBGO83TjVRPn+/h65lyNsS8efdwJ2U1qUtBB6dpzaa/eVCDoMTVHqXSCxFiYC8gN5jS90AQQ10gxqsENCx968+gmUUaRdJ+rq+P9y5PgqgOuSKJEdkSxPTbYEtElECb9/PDhVGogCeLi0O2KLFVTveHMUVy4ZmLqI3G3dlFHbgXs3ZGmNnJogiHOC8wIfzMXIX2/qTOdl/yQCgSU6EqMqv6FrG0NkMdSlB0f092oxecMcp/Sl8pLCvfBbH0yKrJ+FA0OryxQBHJeSPf0tK/pwLV4PC45LHIPU9Mk3xYviVXZqaGT3hvGctU3OGXs/2356p/0Kj1c+y4+Y7xk0N7jryqQ3q6U+0rIQE/IdTuB6L9FtD64X7Mub+xFHzoaVOKtbFiMWN93Xaa8ZVRnbYf1NHsVRDyZ7pNIr1AaQC44p4RHLrE+G0sb6FoyEh22mJDuMUI6E7brUi5qvT1Evn9zzlsMhNPedPEaAUhsIagxCyhW16CqYJTnzBc9pBZuz0F5DsAdeGT5m/WDdjB4le2wdSjmLeNmF5ccpMgJFTHUJiJztItcf1Y1edGGmGutuptNQZgwpkz9U3P6Q4IiuDNDcOYjG07M5kLGOkaBIWWKFND2Ual66p81rS08Ka5EeFZE6e4cDwR8GEp4KobhZrcxu3rBSFxdSd2FEGLSj/YeH3e4i1Fh5Lpacr3LAA1s/jAaCNEWk9HHMHzsmxXYFBzjHVo02+wqooi4r2otIxrC3sElyycn/10dUYlgUPWCIqavPzXaa2dxdmD1L1bjth69Rf+1xp6dp3kQGHK9yxp3kVJpLSGircQFatC64enO30t1GoktrzpCRNtCdeWLyy4aRgkGqyPQNe1Z1rmtJHefslGSoateBZH75lw4tBAnNjGpG+mZMtYgfp67xJiQhF3t7Li+0pug1aaZGCLMAQZHV2n9ZKrvd16pV3qcMsF2jpcJkLINcPpjLCsoFnTL1lsah4GPbPJe+UoeJMVkNeK2F7xiwJ/j1OrmS1g4CHEGB7IPsDp4QTSTenVvlUEtTzRREdPmVDzzkkA9GHyy+Feie8uuFqYkLbHnthBM9iIlH74ux8dMMDjKNSOsBWdNucbxq9W1TZzGUCc9OIVysJbvlMM44BmRQgSaO0Lzzt38wIGA9KQdKzLavCdc7jEWIQFMpQ1xG/pfd14qc25EWM8L0tdjDMe1CmoClXZ8na+HbUgteaENw6qrf+ueMXyzcozYo/g0/beY9khTtCFooiydUDYNtzOGhmLkhr+bRkt+u2SHRG//lP538p8ykcMVaULvyVQjJgYcQ/hYUnAzDAm/rQJnU4+D8n0Jz9yp1bj18acbXYGU+OrmlLm/adXDaqmQE39lLLaJC8u1qksCvWqfx3r9uw0ifw2qlTsKn+LEef/+NwuzdNyOPOcxqzjWU9vMZC9XL5cDgjIgddW5Wpx4IM8Rr+e638GacRT/ULhrFO4/QFw0tkg5aZCSOw5ZI+xyEnhWXHWgmL6upgOLV2b2D4jRC1Ogy0rmGRUi59634sOY48bm2nl9hDzrCV4SOXAQemn0RSW5uCwKaYXD1Lysfe4yW0dT8InMxOxj0616DogtZ8CnO/pNvlhBHYd0GJe8INHRHZd7YFWZWfp+BUJ/AL8uWpu2eKZ31nMcV2OajZGWOYjPkymt2j/9BpQqIwFcBKuiJUG3T1JPnnO7AV8CO3QNth7C+tXSe704vjCtJib9UTSGrq+WbUyqTBgmkEvnp1wfb6XRkq03ScKbYjZ4o+7upIh1L54PD8l4yFqzWAakLIqyG7hmRLRGc/Y4HniEEfpE6bGM6bZ+mgS0u7wqwIL5KSlS1KRbvPwYgDL3up4NE3PIFyPs6soHDNptGQ7u9Y82kY633iYcsc4Om8WEf4mbFj2nY1M7VTW1zQSDvZfzfcOxO+iO/bmooqcNNNSIdURPsGOxM85QVynUUnZx9hqX2z0u9dWMidBSZV+HPfMKrZX75+6qMeYQ3n1m6Nm5OxafHcDuDBQjPm+nDCQbjP1Onv01mDB64isvx2z37oDnyJMDruwB1S6hawHVdsQ3BE9zZrFmfd69sZL1HDY6KagAAAAAAAAAAAAAAAAAAAA=" alt="King Will's Wills" width="222" height="44"></a>
-    <p>Friendly, professional estate planning from a qualified, insured and regulated Will writer. Founded by Sevvy Hasan in 2014.</p>
+    <p>Friendly, professional, straightforward estate planning advice, explained in plain English. Founded by Sevvy Hasan in 2014.</p>
     <div class="social">
       <a href="https://www.facebook.com/KingWillsWills/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
       <a href="https://twitter.com/KingWillsWills" target="_blank" rel="noopener" aria-label="X (Twitter)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l16 16M20 4 4 20"/></svg></a>
@@ -619,13 +639,14 @@
   <div><h4>Helpful guides</h4><ul>
     <li><a href="/your-appointment">Your appointment</a></li>
     <li><a href="/intestacy">Who inherits without a Will?</a></li>
+    <li><a href="/faqs">FAQs</a></li>
     <li><a href="/about">About Sevvy</a></li>
     <li><a href="/testimonials">Client reviews</a></li>
     <li><a href="/blog">Blog</a></li>
   </ul></div>
   <div><h4>Get in touch</h4><ul>
-    <li>Stourbridge <a href="tel:+441384883883"><b>01384 883 883</b></a></li>
-    <li>Worcester <a href="tel:+441905671371"><b>01905 671 371</b></a></li>
+    <li><a href="tel:+441384883883"><b>01384 883 883</b></a></li>
+    <li><a href="tel:+441905671371"><b>01905 671 371</b></a></li>
     <li><a href="mailto:enquiries@kw-wills.co.uk">enquiries@kw-wills.co.uk</a></li>
     <li>136A King William Street, Stourbridge, DY8 4ES</li>
   </ul>
@@ -637,7 +658,7 @@
 </div>
 <div class="legal"><span>© <span data-year>2026</span> King Will's Wills Ltd. A member of the Institute of Professional Willwriters. This firm is compliant with the IPW code of practice.</span><span><a href="/privacy">Privacy</a><a href="/contact">Contact</a></span></div>
 </footer>
-<div class="mbar"><a class="btn btn--navy" href="tel:+441384883883"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg> Call us</a><a class="btn btn--primary" href="/contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Book a chat</a></div>
+<div class="mbar"><a class="btn btn--dark" href="tel:+441384883883"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg> Call us</a><a class="btn btn--primary" href="/contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Book a chat</a></div>
 </div>
 <script>
 (function () {

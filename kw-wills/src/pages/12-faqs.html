@@ -1,0 +1,54 @@
+out: FAQs
+active: faqs
+title: Frequently Asked Questions | Wills, Trusts & LPAs | King Will's Wills
+description: Answers to common questions about Wills, Trusts, Lasting Powers of Attorney, storage, probate, fees and what to expect at your appointment.
+---
+<section class="s page-hero" aria-labelledby="h1">
+  <div class="w-mid center">
+    <p class="crumbs"><a href="{{link:home}}">Home</a> / FAQs</p>
+    <span class="eyebrow">Frequently asked questions</span>
+    <h1 id="h1">Your questions, <em>answered in plain English.</em></h1>
+    <p class="lead">Search, or choose a topic. Can't find what you need? <a href="{{link:contact}}">Just ask us.</a></p>
+  </div>
+</section>
+
+<section class="s s--flush-top" aria-label="All FAQs">
+  <div class="w-mid" id="kww-faqs">
+    {{> faq_all}}
+  </div>
+</section>
+
+{{> cta}}
+
+<script>
+(function () {
+  var root = document.getElementById('kww-faqs'); if (!root) return;
+  var input = root.querySelector('[data-faq-search]'), chips = root.querySelectorAll('.chip');
+  var groups = root.querySelectorAll('.faq-group'), empty = root.querySelector('[data-faq-empty]');
+  var cat = 'all';
+  function apply() {
+    var q = input.value.trim().toLowerCase(), any = false;
+    groups.forEach(function (g) {
+      var shown = 0, catOk = cat === 'all' || g.dataset.cat === cat;
+      g.querySelectorAll('details').forEach(function (d) {
+        var hit = catOk && (!q || d.textContent.toLowerCase().indexOf(q) > -1);
+        d.hidden = !hit; if (hit) shown++;
+        if (q && hit) d.open = true;
+      });
+      g.hidden = shown === 0; if (shown) any = true;
+    });
+    empty.hidden = any;
+  }
+  input.addEventListener('input', apply);
+  chips.forEach(function (c) {
+    c.addEventListener('click', function () {
+      cat = c.dataset.cat;
+      chips.forEach(function (x) { x.setAttribute('aria-pressed', String(x === c)); });
+      apply();
+    });
+  });
+  // Deep link: /faqs#trusts opens that topic
+  var h = location.hash.slice(1);
+  chips.forEach(function (c) { if (c.dataset.cat === h) c.click(); });
+})();
+</script>

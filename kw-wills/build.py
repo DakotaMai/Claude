@@ -7,11 +7,16 @@ styles and scripts live in src/ and in this file, so edit them once here and
 re-run:  python3 build.py
 """
 import base64
+import html as htmllib
+import json
 import pathlib
 import re
+import sys
 
 ROOT = pathlib.Path(__file__).parent
 SRC = ROOT / "src"
+sys.path.insert(0, str(SRC))
+from faqs import CATEGORIES, FAQS  # noqa: E402
 
 # ── Site settings ───────────────────────────────────────────────────────────
 # Swap these for GHL media-library URLs once images are uploaded there.
@@ -28,8 +33,8 @@ STEP_BADGE = data_uri("web-step.webp")
 SEVVY_PHOTO = "https://www.kw-wills.co.uk/images/split/14_right.png"
 SEVVY_PHOTO_2 = "https://www.kw-wills.co.uk/images/split/18_left.png"
 
-PHONE_1, PHONE_1_TEL = "01384 883 883", "+441384883883"   # Stourbridge
-PHONE_2, PHONE_2_TEL = "01905 671 371", "+441905671371"   # Worcester
+PHONE_1, PHONE_1_TEL = "01384 883 883", "+441384883883"
+PHONE_2, PHONE_2_TEL = "01905 671 371", "+441905671371"
 EMAIL = "enquiries@kw-wills.co.uk"
 OFFICE_EMAIL = "office@kw-wills.co.uk"
 ADDRESS = "136A King William Street, Stourbridge, DY8 4ES"
@@ -48,6 +53,7 @@ LINKS = {
     "testimonials": "/testimonials",
     "blog": "/blog",
     "contact": "/contact",
+    "faqs": "/faqs",
     "privacy": "/privacy",
 }
 
@@ -100,19 +106,20 @@ def photo(src, alt, mono="SH"):
 
 
 # ── Reusable blocks, used in pages as {{> name}} ────────────────────────────
+# Verbatim from the brochure and the old testimonials page
 TESTIMONIALS = [
-    ("Throughout the process we felt in good hands and there is no one else who could have dealt with our queries, circumstances and Wills in any better way than Sevvy did. Thank you for a fantastic service!", "Laura M", "Stourbridge"),
-    ("Sevvy helped my parents with their Wills and dealing with a trust. He took the time to come out to my parents' house, explaining everything with great care and attention and ensured they fully understood all the implications.", "Jamie P", "Kidderminster"),
-    ("Recently my father passed away, and I realised that we needed to quickly gain power of attorney over my mother's finances and healthcare. Sevvy really helped us deal with a potentially difficult situation. I would recommend him to anyone.", "Andy D", "Malvern"),
+    ("Throughout the process we felt in good hands and there is no one else who could have dealt with our queries, circumstances and Wills in any better way than Sevvy did. Thank you for a fantastic service! I would have absolutely no doubt recommending Sevvy or using him for any changes to our Wills in the future.", "Laura M", "Stourbridge"),
+    ("Sevvy helped my parents with their Wills and dealing with a trust, he took the time to come out to my parents' house, explaining everything with great care and attention and ensured they fully understood all the implications of what they were doing.", "Jamie P", "Kidderminster"),
+    ("Recently my father passed away, and I realised that we needed to quickly gain power of attorney over my mother's finances and healthcare. This is not a position we wanted to find ourselves in, but Sevvy really helped us deal with a potentially difficult situation. I would recommend him to anyone.", "Andy D", "Malvern"),
     ("I feel a sense of relief now, knowing that we have a Will in place and that Sevvy was able to take into account all of our wishes.", "Rachel D", "Droitwich"),
-    ("We'd been planning on putting a Will together since our first son was born but it was one of those things we didn't get around to. Meeting Sevvy made us realise how important it was.", "Tracey M", "Worcester"),
-    ("I would like to say how happy I am with the service you provided for me and my wife Tania in helping us sort out both our Wills. In just two very short meetings you made it very easy for us to understand all the pitfalls and implications of leaving things untouched with our current Will set-up. Thank you for explaining things in plain English.", "Leon Coppola", "Director, First Image Ltd"),
+    ("We'd been planning on putting a Will together since our first son was born but it was one of those things that we didn't get around to. Meeting Sevvy and having a brief conversation made us realise we really should put something in place and how important it was.", "Tracey M", "Worcester"),
+    ("I would like to say how happy I am with the service you provided for me and my wife Tania in helping us sort out both our wills, in just two very short meetings you made it very easy for us to understand all the pitfalls and implications of leaving things untouched with our current will set up. Thank you for explaining things in plain English.", "Leon Coppola", "Director at First Image Ltd"),
 ]
 
 
 def quote_card(text, name, town, cls=""):
-    return (f'<figure class="quote rv {cls}"><span class="stars" aria-label="5 stars">★★★★★</span>'
-            f'<blockquote>“{text}”</blockquote><figcaption class="who"><span class="av">{name[0]}</span>'
+    return (f'<figure class="quote rv {cls}"><span class="qmark" aria-hidden="true">“</span>'
+            f'<blockquote>{text}</blockquote><figcaption class="who"><span class="av">{name[0]}</span>'
             f'<span><b>{name}</b><span>{town}</span></span></figcaption></figure>')
 
 
@@ -144,11 +151,11 @@ BLOCKS = {
     <div class="avatar">{photo(SEVVY_PHOTO, "Sevvy Hasan")}</div>
     <div>
       <h2 id="cta-h">Let's have a friendly chat</h2>
-      <p>No obligation, no jargon, no pressure. Sevvy will listen, explain your options in plain English and give you a fixed price up front, at home, by Zoom, or in the evening or at weekends.</p>
-      <p class="cta-phones">Stourbridge <a href="tel:{PHONE_1_TEL}">{PHONE_1}</a> &nbsp;·&nbsp; Worcester <a href="tel:{PHONE_2_TEL}">{PHONE_2}</a></p>
+      <p>A friendly, no-obligation consultation in the comfort of your own home, at work or online, including evenings and weekends. Everything explained in plain English, with fixed fees quoted up front.</p>
+      <p class="cta-phones"><a href="tel:{PHONE_1_TEL}">{PHONE_1}</a> &nbsp;·&nbsp; <a href="tel:{PHONE_2_TEL}">{PHONE_2}</a> &nbsp;·&nbsp; <a href="mailto:{EMAIL}">{EMAIL}</a></p>
     </div>
     <div class="btn-row">
-      <a class="btn btn--primary" href="{LINKS["contact"]}">{icon("calendar")} Book a free consultation</a>
+      <a class="btn btn--primary" href="{LINKS["contact"]}">{icon("calendar")} Book a no-obligation consultation</a>
       <a class="btn btn--ghost-light" href="tel:{PHONE_1_TEL}">{icon("phone")} Call {PHONE_1}</a>
     </div>
   </div>
@@ -181,8 +188,8 @@ def header(active):
     d_svc = "".join(f'<a class="sub" href="{LINKS[k]}"{cls(k)}>{t}</a>' for k, t, _ in SERVICES)
     d_gd = "".join(f'<a class="sub" href="{LINKS[k]}"{cls(k)}>{t}</a>' for k, t, _ in GUIDES)
     return f'''<div class="topbar"><div class="w">
-  <span class="tb-left">Friendly, qualified Will writing across England &amp; Wales · Home visits, Zoom, evenings &amp; weekends</span>
-  <span class="tb-right"><a href="tel:{PHONE_1_TEL}"><span class="tb-lbl">Stourbridge </span>{PHONE_1}</a><a href="tel:{PHONE_2_TEL}"><span class="tb-lbl">Worcester </span>{PHONE_2}</a></span>
+  <span class="tb-left">Covering the whole of England &amp; Wales · Home visits, online, evenings &amp; weekends</span>
+  <span class="tb-right"><a href="tel:{PHONE_1_TEL}">{PHONE_1}</a><a href="tel:{PHONE_2_TEL}">{PHONE_2}</a></span>
 </div></div>
 <header class="hdr" id="kww-hdr"><div class="w">
   <a class="logo" href="{LINKS["home"]}" aria-label="King Will's Wills home"><img src="{LOGO_URL}" alt="King Will's Wills, Estate Planning Specialists" width="262" height="52"></a>
@@ -191,11 +198,11 @@ def header(active):
     <li class="has-dd{svc_active}"><button type="button" aria-expanded="false" aria-haspopup="true">Services {icon("chevron")}</button><ul class="dd">{svc}</ul></li>
     <li class="has-dd{gd_active}"><button type="button" aria-expanded="false" aria-haspopup="true">Guides {icon("chevron")}</button><ul class="dd">{gd}</ul></li>
     <li><a href="{LINKS["testimonials"]}"{cls("testimonials")}>Reviews</a></li>
-    <li><a href="{LINKS["blog"]}"{cls("blog")}>Blog</a></li>
+    <li><a href="{LINKS["faqs"]}"{cls("faqs")}>FAQs</a></li>
     <li><a href="{LINKS["contact"]}"{cls("contact")}>Contact</a></li>
   </ul></nav>
   <div class="hdr-cta">
-    <a class="btn btn--primary" href="{LINKS["contact"]}">Book a free chat</a>
+    <a class="btn btn--primary" href="{LINKS["contact"]}">Book a consultation</a>
     <button class="burger" type="button" aria-label="Open menu" aria-controls="kww-drawer" aria-expanded="false">{icon("menu")}</button>
   </div>
 </div></header>
@@ -208,9 +215,10 @@ def header(active):
     <span class="grp">Services</span>{d_svc}
     <span class="grp">Guides</span>{d_gd}
     <a href="{LINKS["testimonials"]}"{cls("testimonials")}>Reviews</a>
+    <a href="{LINKS["faqs"]}"{cls("faqs")}>FAQs</a>
     <a href="{LINKS["blog"]}"{cls("blog")}>Blog</a>
     <a href="{LINKS["contact"]}"{cls("contact")}>Contact</a>
-    <a class="btn btn--primary" href="{LINKS["contact"]}">{icon("calendar")} Book a free chat</a>
+    <a class="btn btn--primary" href="{LINKS["contact"]}">{icon("calendar")} Book a consultation</a>
     <a class="btn btn--ghost" href="tel:{PHONE_1_TEL}">{icon("phone")} {PHONE_1}</a>
   </div>
 </div>'''
@@ -221,7 +229,7 @@ def footer():
     return f'''<footer class="ftr"><div class="w">
   <div>
     <a class="flogo" href="{LINKS["home"]}"><img src="{LOGO_URL}" alt="King Will's Wills" width="222" height="44"></a>
-    <p>Friendly, professional estate planning from a qualified, insured and regulated Will writer. Founded by Sevvy Hasan in 2014.</p>
+    <p>Friendly, professional, straightforward estate planning advice, explained in plain English. Founded by Sevvy Hasan in 2014.</p>
     <div class="social">
       <a href="https://www.facebook.com/KingWillsWills/" target="_blank" rel="noopener" aria-label="Facebook">{icon("facebook")}</a>
       <a href="https://twitter.com/KingWillsWills" target="_blank" rel="noopener" aria-label="X (Twitter)">{icon("x")}</a>
@@ -232,13 +240,14 @@ def footer():
   <div><h4>Helpful guides</h4><ul>
     <li><a href="{LINKS["appointment"]}">Your appointment</a></li>
     <li><a href="{LINKS["intestacy"]}">Who inherits without a Will?</a></li>
+    <li><a href="{LINKS["faqs"]}">FAQs</a></li>
     <li><a href="{LINKS["about"]}">About Sevvy</a></li>
     <li><a href="{LINKS["testimonials"]}">Client reviews</a></li>
     <li><a href="{LINKS["blog"]}">Blog</a></li>
   </ul></div>
   <div><h4>Get in touch</h4><ul>
-    <li>Stourbridge <a href="tel:{PHONE_1_TEL}"><b>{PHONE_1}</b></a></li>
-    <li>Worcester <a href="tel:{PHONE_2_TEL}"><b>{PHONE_2}</b></a></li>
+    <li><a href="tel:{PHONE_1_TEL}"><b>{PHONE_1}</b></a></li>
+    <li><a href="tel:{PHONE_2_TEL}"><b>{PHONE_2}</b></a></li>
     <li><a href="mailto:{EMAIL}">{EMAIL}</a></li>
     <li>{ADDRESS}</li>
   </ul>
@@ -250,7 +259,53 @@ def footer():
 </div>
 <div class="legal"><span>© <span data-year>2026</span> King Will's Wills Ltd. A member of the Institute of Professional Willwriters. This firm is compliant with the IPW code of practice.</span><span><a href="{LINKS["privacy"]}">Privacy</a><a href="{LINKS["contact"]}">Contact</a></span></div>
 </footer>
-<div class="mbar"><a class="btn btn--navy" href="tel:{PHONE_1_TEL}">{icon("phone")} Call us</a><a class="btn btn--primary" href="{LINKS["contact"]}">{icon("calendar")} Book a chat</a></div>'''
+<div class="mbar"><a class="btn btn--dark" href="tel:{PHONE_1_TEL}">{icon("phone")} Call us</a><a class="btn btn--primary" href="{LINKS["contact"]}">{icon("calendar")} Book a chat</a></div>'''
+
+
+# ── FAQs ────────────────────────────────────────────────────────────────────
+USED_FAQS = []   # questions rendered on the current page, for the FAQPage structured data
+
+
+def faq_list(cat, open_first=False):
+    items = []
+    for i, (q, a) in enumerate(FAQS[cat]):
+        USED_FAQS.append((q, a))
+        attr = " open" if open_first and i == 0 else ""
+        items.append(f'<details{attr}><summary>{q}</summary><div class="a">{a}</div></details>')
+    return '<div class="faq">' + "".join(items) + "</div>"
+
+
+def faq_section(cat, title, cls="s--pale"):
+    return f'''<section class="s {cls}" id="faqs" aria-labelledby="faq-{cat}">
+  <div class="w-mid">
+    <div class="center"><span class="eyebrow">FAQs</span><h2 id="faq-{cat}">{title}</h2></div>
+    <div class="mt">{faq_list(cat)}</div>
+    <p class="center mt-s"><a class="textlink" href="{LINKS["faqs"]}">See all FAQs</a></p>
+  </div>
+</section>'''
+
+
+def faq_all():
+    chips = '<button class="chip" type="button" data-cat="all" aria-pressed="true">All</button>' + "".join(
+        f'<button class="chip" type="button" data-cat="{k}" aria-pressed="false">{t}</button>' for k, t in CATEGORIES)
+    groups = "".join(
+        f'<div class="faq-group" data-cat="{k}"><h2>{t}</h2>{faq_list(k)}</div>' for k, t in CATEGORIES)
+    return f'''<div class="faq-tools">
+  <label class="search"><span class="sr">Search the FAQs</span>{icon("chat")}<input type="search" placeholder="Search the FAQs, e.g. witnesses, care fees, cost" data-faq-search></label>
+  <div class="chips" role="group" aria-label="Filter by topic">{chips}</div>
+</div>
+<p class="muted small" data-faq-empty hidden>No questions match. Try another word, or <a href="{LINKS["contact"]}">ask us directly</a>.</p>
+{groups}'''
+
+
+def faq_jsonld():
+    if not USED_FAQS:
+        return ""
+    strip = lambda h: htmllib.unescape(re.sub(r"<[^>]+>", " ", h)).replace("  ", " ").strip()
+    data = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": render_tokens(strip(a))}}
+        for q, a in USED_FAQS]}
+    return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False) + "</script>"
 
 
 # ── Assembly ────────────────────────────────────────────────────────────────
@@ -259,7 +314,14 @@ FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="
 
 
 def render(text):
+    text = re.sub(r"\{\{>\s*faq_all\s*\}\}", lambda m: faq_all(), text)
     text = re.sub(r"\{\{>\s*(\w+)\s*\}\}", lambda m: BLOCKS[m.group(1)], text)
+    text = re.sub(r"\{\{faq:(\w+)\|([^}]+)\}\}", lambda m: faq_section(m.group(1), m.group(2)), text)
+    text = re.sub(r"\{\{faqlist:(\w+)\}\}", lambda m: faq_list(m.group(1)), text)
+    return render_tokens(text)
+
+
+def render_tokens(text):
     text = re.sub(r"\{\{icon:(\w+)\}\}", lambda m: icon(m.group(1)), text)
     text = re.sub(r"\{\{link:(\w+)\}\}", lambda m: LINKS[m.group(1)], text)
     text = re.sub(r"\{\{photo:(\w+)\}\}", lambda m: photo(globals()[m.group(1)], "Sevvy Hasan, founder of King Will's Wills"), text)
@@ -278,6 +340,7 @@ def build():
     for page in sorted((SRC / "pages").glob("*.html")):
         raw = page.read_text()
         meta, body = raw.split("\n---\n", 1)
+        USED_FAQS.clear()
         m = dict(line.split(":", 1) for line in meta.strip().splitlines())
         m = {k.strip(): v.strip() for k, v in m.items()}
         html = f'''<!DOCTYPE html>
@@ -299,6 +362,7 @@ def build():
 <main id="main">
 {render(body)}
 </main>
+{faq_jsonld()}
 {head_ftr}
 </div>
 <script>
