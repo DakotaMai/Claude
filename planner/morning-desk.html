@@ -60,7 +60,7 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .timerbar .what span{opacity:.7;font-size:12.5px}
 .rec{width:10px;height:10px;border-radius:50%;background:var(--sun);animation:pulse 1.2s infinite alternate;flex:none}
 
-.hours{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:14px}
+.hours{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:14px;align-items:start}
 .meter{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
 .meter-h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .meter-h b{font-weight:600;font-size:13px;overflow-wrap:anywhere;min-width:0}
@@ -70,7 +70,14 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .mbar span{display:block;height:100%;background:var(--lane,var(--ink))}
 .mbar.over span{background:var(--crit)}
 .meter .sub{font-size:11.5px;color:var(--muted);overflow-wrap:anywhere}
-.bud{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:7px;margin-top:2px}
+.budwrap{border-top:1px solid var(--line);padding-top:6px;margin-top:2px}
+.budwrap summary{cursor:pointer;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;list-style:none}
+.budwrap summary::-webkit-details-marker{display:none}
+.budwrap summary::before{content:"▸";font-size:10px;transition:transform .15s}
+.budwrap[open] summary::before{transform:rotate(90deg)}
+.budwrap summary:hover{color:var(--ink)}
+.budwrap summary .tag{margin-left:auto}
+.bud{display:flex;flex-direction:column;gap:6px;padding-top:8px}
 .bud-r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;font-size:11.5px;min-width:0}
 .bud-r b{font-weight:500;overflow-wrap:anywhere;min-width:0}
 .bud-r .num{color:var(--muted);white-space:nowrap}
@@ -600,6 +607,9 @@ function knownEntries(extra) {
 function budgetUsed(b, entries, ym) {
   return entries.filter(e => inBudget(b, e) && (!ym || String(e.date).slice(0, 7) <= ym)).reduce((n, e) => n + (Number(e.mins) || 0), 0);
 }
+// Whether a client's "By client" dropdown is open: remembered per viewer in this browser only.
+function budOpen(name) { try { return localStorage.getItem("md-bud-" + name) === "1"; } catch (_) { return false; } }
+document.addEventListener("toggle", (e) => { const d = e.target; if (d && d.classList && d.classList.contains("budwrap")) { try { localStorage.setItem("md-bud-" + d.dataset.bud, d.open ? "1" : "0"); } catch (_) {} } }, true);
 function budgetRowHTML(b, used) {
   const cap = Number(b.hours) * 60, over = used > cap;
   const per = budgetPeriod(b);
@@ -764,15 +774,17 @@ function renderHours() {
     const hourly = g.billing === "hourly", cap = hourly ? 0 : (Number(g.hours) || 0) * 60;
     const pct = cap ? Math.min(100, (m / cap) * 100) : 0;
     let sub;
-    if (hourly) { const top = Object.entries(o.projects).filter(([p]) => p).sort((a, b) => b[1].total - a[1].total).slice(0, 3).map(([p, v]) => `${esc(p)} ${fmtHours(v.total)}`).join(" · "); sub = `Billed hourly${top ? " · " + top : ""}`; }
+    if (hourly && budgetsFor(g.name).length) sub = "Billed hourly";
+    else if (hourly) { const top = Object.entries(o.projects).filter(([p]) => p).sort((a, b) => b[1].total - a[1].total).slice(0, 3).map(([p, v]) => `${esc(p)} ${fmtHours(v.total)}`).join(" · "); sub = `Billed hourly${top ? " · " + top : ""}`; }
     else sub = cap ? (m > cap ? `${fmtHours(m - cap)} over the retainer` : `${fmtHours(cap - m)} left in ${monthName}`) : `Set monthly hours in Settings`;
     if (o.meet) sub += ` · ${fmtHours(o.meet)} meetings`;
     const buds = budgetsFor(g.name).filter(b => !b.to || b.to >= thisMonth), all = buds.length ? knownEntries() : [];
-    const budHTML = buds.length ? `<div class="bud">${buds.map(b => budgetRowHTML(b, budgetUsed(b, all))).join("")}</div>` : "";
     const repBtn = hourly || buds.length ? `<div class="row"><button class="btn btn-sm" data-act="report" data-client="${esc(g.name)}" data-month="${thisMonth}" type="button">${esc(monthName)} report</button></div>` : "";
+    const overN = buds.filter(b => budgetUsed(b, all) > Number(b.hours) * 60).length;
+    const budHTML = buds.length ? `<details class="budwrap" data-bud="${esc(g.name)}"${budOpen(g.name) ? " open" : ""}><summary>By client · ${buds.length} budget${buds.length === 1 ? "" : "s"}${overN ? `<span class="tag crit">${overN} over</span>` : ""}</summary><div class="bud">${buds.map(b => budgetRowHTML(b, budgetUsed(b, all))).join("")}${repBtn}</div></details>` : "";
     return `<div class="meter" style="--lane:${laneColor(g.color)}"><div class="meter-h"><b>${esc(g.name)}</b><span class="num"><strong>${fmtHours(m)}</strong>${cap ? ` / ${fmtHours(cap)}` : ""}</span></div>
       <div class="mbar${cap && m > cap ? " over" : ""}"><span style="width:${cap ? pct : (m ? 100 : 0)}%;${cap ? "" : "opacity:.4"}"></span></div>
-      <div class="sub">${sub}</div>${budHTML}${repBtn}</div>`;
+      <div class="sub">${sub}</div>${budHTML || repBtn}</div>`;
   }).join("");
   const retNames = new Set(retainers.map(g => g.name));
   const other = Object.keys(t).filter(n => !retNames.has(n));
