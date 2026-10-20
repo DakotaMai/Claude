@@ -569,7 +569,9 @@ function budgetFor(client, project) {
   return budgetsFor(client).find(b => [b.project, ...(b.aka || [])].some(n => pkey(n) === k)) || null;
 }
 const canonProject = (client, project) => { const b = budgetFor(client, project); return b ? b.project : (project || ""); };
-const inBudget = (b, e) => clientName(e.client) === clientName(b.client) && budgetFor(b.client, e.project) === b && (!b.from || String(e.date).slice(0, 7) >= b.from) && (!b.to || String(e.date).slice(0, 7) <= b.to);
+const budgetNames = (b) => [b.project, ...(b.aka || [])].map(pkey).filter(Boolean);
+// Matches by name rather than by budget, so one sub-client can have a budget per period (e.g. 6h in Oct, 6h in Nov).
+const inBudget = (b, e) => clientName(e.client) === clientName(b.client) && budgetNames(b).includes(pkey(e.project)) && (!b.from || String(e.date).slice(0, 7) >= b.from) && (!b.to || String(e.date).slice(0, 7) <= b.to);
 const shortMonth = (ym) => new Date(ym + "-15T12:00:00").toLocaleDateString(undefined, { month: "short" });
 function budgetPeriod(b) {
   if (b.from && b.to) return b.from === b.to ? shortMonth(b.from) : `${shortMonth(b.from)}–${shortMonth(b.to)}`;
@@ -765,7 +767,7 @@ function renderHours() {
     if (hourly) { const top = Object.entries(o.projects).filter(([p]) => p).sort((a, b) => b[1].total - a[1].total).slice(0, 3).map(([p, v]) => `${esc(p)} ${fmtHours(v.total)}`).join(" · "); sub = `Billed hourly${top ? " · " + top : ""}`; }
     else sub = cap ? (m > cap ? `${fmtHours(m - cap)} over the retainer` : `${fmtHours(cap - m)} left in ${monthName}`) : `Set monthly hours in Settings`;
     if (o.meet) sub += ` · ${fmtHours(o.meet)} meetings`;
-    const buds = budgetsFor(g.name), all = buds.length ? knownEntries() : [];
+    const buds = budgetsFor(g.name).filter(b => !b.to || b.to >= thisMonth), all = buds.length ? knownEntries() : [];
     const budHTML = buds.length ? `<div class="bud">${buds.map(b => budgetRowHTML(b, budgetUsed(b, all))).join("")}</div>` : "";
     const repBtn = hourly || buds.length ? `<div class="row"><button class="btn btn-sm" data-act="report" data-client="${esc(g.name)}" data-month="${thisMonth}" type="button">${esc(monthName)} report</button></div>` : "";
     return `<div class="meter" style="--lane:${laneColor(g.color)}"><div class="meter-h"><b>${esc(g.name)}</b><span class="num"><strong>${fmtHours(m)}</strong>${cap ? ` / ${fmtHours(cap)}` : ""}</span></div>
@@ -1155,7 +1157,7 @@ async function openReport(client, ym) {
   const day = (d) => new Date(d + "T12:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" });
   const timeText = (e) => Number(e.mins) > 0 ? fmtMins(e.mins) : "no charge";
   const lines = names.map(n => {
-    const list = groups.get(n), b = n === "General" ? null : budgetFor(client, n);
+    const list = groups.get(n), b = n === "General" ? null : (buds.find(x => x.project === n) || budgetFor(client, n));
     const used = b ? budgetUsed(b, all, ym) : 0, cap = b ? Number(b.hours) * 60 : 0;
     return { n, list, mins: sumOf(list), b, used, cap };
   });
