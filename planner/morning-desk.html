@@ -70,6 +70,14 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .mbar span{display:block;height:100%;background:var(--lane,var(--ink))}
 .mbar.over span{background:var(--crit)}
 .meter .sub{font-size:11.5px;color:var(--muted);overflow-wrap:anywhere}
+.bud{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:7px;margin-top:2px}
+.bud-r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;font-size:11.5px;min-width:0}
+.bud-r b{font-weight:500;overflow-wrap:anywhere;min-width:0}
+.bud-r .num{color:var(--muted);white-space:nowrap}
+.bud-r .num strong{color:var(--ink);font-weight:500}
+.bud-r .mbar{grid-column:1/-1;height:4px}
+.bud-r .bsub{grid-column:1/-1;color:var(--muted)}
+.bud-r .bsub.over{color:var(--crit)}
 
 .sources{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
 .src-pill{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 6px;font-size:12.5px;max-width:100%}
@@ -262,6 +270,13 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .grow{display:grid;grid-template-columns:minmax(0,1.1fr) 100px 96px minmax(0,1.2fr) 60px auto;gap:6px;align-items:center}
 .grow input,.grow select{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 7px;min-width:0;font-size:13px}
+.brow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) 64px 118px 118px auto;gap:6px;align-items:center}
+.brow input,.brow select{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 7px;min-width:0;font-size:13px}
+.brow-h{font-size:11px;font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.rep-proj{display:flex;flex-direction:column;gap:2px}
+.rep-proj h4{margin:8px 0 2px;font-size:13.5px;display:flex;justify-content:space-between;gap:8px}
+.rep-proj h4 span{font-family:var(--f-mono);font-weight:500;font-variant-numeric:tabular-nums}
+.reptext{width:100%;min-height:160px;border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:8px;font-family:var(--f-mono);font-size:12px}
 .grow-h{font-size:11px;font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .entries{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:12.5px}
@@ -300,6 +315,11 @@ table.log tr.total td{font-weight:600;border-top:2px solid var(--ink)}
   .grow .gbill{grid-column:1 / 2;order:5}
   .grow .gmatch{grid-column:2 / -1;order:6}
   .grow-h .gmatch,.grow-h .gbill{display:none}
+  .brow{grid-template-columns:minmax(0,1fr) 64px auto}
+  .brow .bproj{grid-column:1/-1;order:-1}
+  .brow .bfrom,.brow .bto{order:5}
+  .brow .bto{grid-column:2/-1}
+  .brow-h{display:none}
   .two,.three{grid-template-columns:1fr}
 }
 </style>
@@ -534,9 +554,58 @@ function clientOptions(selected) {
 }
 function projectsFor(client) {
   const c = clientName(client);
-  return [...new Set([...[...allTasks().values()].filter(t => clientName(t.client) === c && t.project).map(t => t.project), ...S.entries.filter(e => clientName(e.client) === c && e.project).map(e => e.project)])].sort();
+  return [...new Set([...budgetsFor(c).map(b => b.project), ...[...allTasks().values()].filter(t => clientName(t.client) === c && t.project).map(t => canonProject(c, t.project)), ...S.entries.filter(e => clientName(e.client) === c && e.project).map(e => canonProject(c, e.project))])].sort();
 }
 const projectList = (client) => `<datalist id="projList">${projectsFor(client).map(p => `<option value="${esc(p)}">`).join("")}</datalist>`;
+
+/* ---------- project budgets (hours a client has paid for, e.g. each Authentic sub-client) ---------- */
+// A budget is { id, client, project, aka: [other names], hours, from: "YYYY-MM" | "", to: "YYYY-MM" | "" }.
+// Hours used = every entry for that client whose project matches the name or an other name, inside the months set.
+const pkey = (s) => norm(s).replace(/ /g, "");
+const budgetsAll = () => (cfg().budgets || []).filter(b => b && b.project && Number(b.hours) > 0);
+const budgetsFor = (client) => budgetsAll().filter(b => clientName(b.client) === clientName(client));
+function budgetFor(client, project) {
+  const k = pkey(project); if (!k) return null;
+  return budgetsFor(client).find(b => [b.project, ...(b.aka || [])].some(n => pkey(n) === k)) || null;
+}
+const canonProject = (client, project) => { const b = budgetFor(client, project); return b ? b.project : (project || ""); };
+const inBudget = (b, e) => clientName(e.client) === clientName(b.client) && budgetFor(b.client, e.project) === b && (!b.from || String(e.date).slice(0, 7) >= b.from) && (!b.to || String(e.date).slice(0, 7) <= b.to);
+const shortMonth = (ym) => new Date(ym + "-15T12:00:00").toLocaleDateString(undefined, { month: "short" });
+function budgetPeriod(b) {
+  if (b.from && b.to) return b.from === b.to ? shortMonth(b.from) : `${shortMonth(b.from)}–${shortMonth(b.to)}`;
+  if (b.from) return `from ${shortMonth(b.from)}`;
+  if (b.to) return `to ${shortMonth(b.to)}`;
+  return "";
+}
+// Entries from before this month, loaded once a month so budgets can count earlier work. Null until loaded.
+S.pastEntries = null;
+async function loadPastEntries() {
+  if (!canSave()) return;
+  const before = monthStart;
+  try {
+    const q = await db.collection(P.entries()).where("date", "<", before).get();
+    if (before !== monthStart) return;
+    S.pastEntries = q.docs.map(d => Object.assign({ id: d.id }, d.data()));
+  } catch (e) { S.pastEntries = S.pastEntries || []; fail("load earlier time for budgets")(e); }
+  renderHours();
+}
+function knownEntries(extra) {
+  const m = new Map();
+  [...(S.pastEntries || []), ...(extra || []), ...S.entries].forEach(e => m.set(e.id, e));
+  return [...m.values()];
+}
+// Minutes used on a budget up to the end of month ym (default: everything logged so far).
+function budgetUsed(b, entries, ym) {
+  return entries.filter(e => inBudget(b, e) && (!ym || String(e.date).slice(0, 7) <= ym)).reduce((n, e) => n + (Number(e.mins) || 0), 0);
+}
+function budgetRowHTML(b, used) {
+  const cap = Number(b.hours) * 60, over = used > cap;
+  const per = budgetPeriod(b);
+  const sub = S.pastEntries === null && canSave() ? "Counting earlier months…" : over ? `${fmtMins(used - cap)} over` : `${fmtMins(cap - used)} left`;
+  return `<div class="bud-r"><b>${esc(b.project)}</b><span class="num"><strong>${fmtHours(used)}</strong> / ${fmtHours(cap)}</span>
+    <div class="mbar${over ? " over" : ""}"><span style="width:${Math.min(100, (used / cap) * 100)}%"></span></div>
+    <span class="bsub${over ? " over" : ""}">${esc(sub)}${per ? " · " + esc(per) : ""}</span></div>`;
+}
 
 function dueInfo(due) {
   if (!due) return null;
@@ -676,7 +745,7 @@ function renderNotices() {
 function tally(entries) {
   const out = {};
   entries.forEach(e => {
-    const c = clientName(e.client), p = e.project || "", k = e.kind === "meeting" ? "meet" : "work", m = Number(e.mins) || 0;
+    const c = clientName(e.client), p = canonProject(c, e.project), k = e.kind === "meeting" ? "meet" : "work", m = Number(e.mins) || 0;
     const o = out[c] = out[c] || { work: 0, meet: 0, total: 0, projects: {} };
     o[k] += m; o.total += m;
     const pp = o.projects[p] = o.projects[p] || { work: 0, meet: 0, total: 0 };
@@ -696,9 +765,12 @@ function renderHours() {
     if (hourly) { const top = Object.entries(o.projects).filter(([p]) => p).sort((a, b) => b[1].total - a[1].total).slice(0, 3).map(([p, v]) => `${esc(p)} ${fmtHours(v.total)}`).join(" · "); sub = `Billed hourly${top ? " · " + top : ""}`; }
     else sub = cap ? (m > cap ? `${fmtHours(m - cap)} over the retainer` : `${fmtHours(cap - m)} left in ${monthName}`) : `Set monthly hours in Settings`;
     if (o.meet) sub += ` · ${fmtHours(o.meet)} meetings`;
+    const buds = budgetsFor(g.name), all = buds.length ? knownEntries() : [];
+    const budHTML = buds.length ? `<div class="bud">${buds.map(b => budgetRowHTML(b, budgetUsed(b, all))).join("")}</div>` : "";
+    const repBtn = hourly || buds.length ? `<div class="row"><button class="btn btn-sm" data-act="report" data-client="${esc(g.name)}" data-month="${thisMonth}" type="button">${esc(monthName)} report</button></div>` : "";
     return `<div class="meter" style="--lane:${laneColor(g.color)}"><div class="meter-h"><b>${esc(g.name)}</b><span class="num"><strong>${fmtHours(m)}</strong>${cap ? ` / ${fmtHours(cap)}` : ""}</span></div>
       <div class="mbar${cap && m > cap ? " over" : ""}"><span style="width:${cap ? pct : (m ? 100 : 0)}%;${cap ? "" : "opacity:.4"}"></span></div>
-      <div class="sub">${sub}</div></div>`;
+      <div class="sub">${sub}</div>${budHTML}${repBtn}</div>`;
   }).join("");
   const retNames = new Set(retainers.map(g => g.name));
   const other = Object.keys(t).filter(n => !retNames.has(n));
@@ -881,6 +953,8 @@ function guessClient(text) {
 }
 function guessProject(client, text) {
   const n = " " + norm(text) + " ";
+  const b = budgetsFor(client).find(x => [x.project, ...(x.aka || [])].some(w => norm(w) && n.includes(" " + norm(w) + " ")));
+  if (b) return b.project;
   return projectsFor(client).find(p => n.includes(" " + norm(p) + " ")) || "";
 }
 function openMeeting(pre) {
@@ -1045,6 +1119,7 @@ async function openTimeLog(ym) {
   $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><div class="drawer-in" role="dialog" aria-label="Time log">
     <div class="row" style="justify-content:space-between"><h2>Time log</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>
     <div class="row"><button class="btn btn-sm" data-act="logmonth" data-month="${prevMonth(ym)}" type="button" aria-label="Previous month">←</button><b style="font-family:var(--f-display);font-size:17px">${esc(monthLabel(ym))}</b>${ym < thisMonth ? `<button class="btn btn-sm" data-act="logmonth" data-month="${nextMonth(ym)}" type="button" aria-label="Next month">→</button>` : ""}<button class="btn btn-sm" data-act="export" data-month="${ym}" type="button" style="margin-left:auto">Export CSV</button></div>
+    ${(() => { const rc = order.filter(n => { const d = defFor(n); return (d && d.billing === "hourly") || budgetsFor(n).length; }); return rc.length ? `<div class="row">${rc.map(n => `<button class="btn btn-sm" data-act="report" data-client="${esc(n)}" data-month="${ym}" type="button">Client report: ${esc(n)}</button>`).join("")}</div>` : ""; })()}
     ${order.length ? `<div class="tablewrap"><table class="log"><thead><tr><th>Client</th><th>Work</th><th>Meetings</th><th>Total</th><th>Retainer</th></tr></thead><tbody>${rows}<tr class="total"><td>Total</td><td>${fmtHours(sum.work)}</td><td>${fmtHours(sum.meet)}</td><td>${fmtHours(sum.total)}</td><td></td></tr></tbody></table></div>` : `<div class="empty-today">No time logged in ${esc(monthLabel(ym))} yet.</div>`}
     ${recent.length ? `<h3>Latest entries</h3><ul class="entries">${recent.map(e => `<li><span>${esc(new Date(e.date + "T12:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" }))} · ${esc(clientName(e.client))}${e.project ? " · " + esc(e.project) : ""} · ${esc(e.title)}${e.kind === "meeting" ? ' <span class="tag">meeting</span>' : ""}</span><span class="num">${fmtMins(e.mins)}</span></li>`).join("")}</ul>` : ""}
   </div></div>`;
@@ -1057,6 +1132,59 @@ async function exportCSV(ym) {
   const csv = rows.map(r => r.map(v => { const s = String(v ?? ""); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; }).join(",")).join("\n");
   if (!downloads) { toast("Saving files isn't available in this view."); return; }
   try { await downloads.save({ filename: `time-${ym}.csv`, data: csv }); toast("Saved."); }
+  catch (e) { if (!(e && e.code === "declined")) toast(`Couldn't save the file: ${(e && e.message) || "unknown error"}`); }
+}
+
+/* ---------- client report (monthly hours by sub-client, against what each has paid for) ---------- */
+async function openReport(client, ym) {
+  client = clientName(client); ym = ym || thisMonth;
+  const head = `<div class="row" style="justify-content:space-between"><h2>${esc(client)} report</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>`;
+  $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><div class="drawer-in" role="dialog" aria-label="Client report">${head}<div class="ctx">Loading ${esc(monthLabel(ym))}…</div></div></div>`;
+  let month;
+  try { month = await entriesFor(ym); } catch (e) { month = []; toast(`Couldn't load ${monthLabel(ym)}: ${e.message || e.code}`); }
+  if (S.pastEntries === null && canSave()) await loadPastEntries();
+  const mine = month.filter(e => clientName(e.client) === client).sort((a, b) => String(a.date + (a.start || "")).localeCompare(String(b.date + (b.start || ""))));
+  const all = knownEntries(month);
+  const buds = budgetsFor(client).filter(b => (!b.from || b.from <= ym) && (!b.to || b.to >= ym));
+  const groups = new Map();
+  buds.forEach(b => groups.set(b.project, []));
+  mine.forEach(e => { const p = canonProject(client, e.project) || "General"; if (!groups.has(p)) groups.set(p, []); groups.get(p).push(e); });
+  const names = [...groups.keys()].sort((a, b) => (a === "General") - (b === "General") || a.localeCompare(b));
+  const sumOf = (list) => list.reduce((n, e) => n + (Number(e.mins) || 0), 0);
+  const total = sumOf(mine);
+  const day = (d) => new Date(d + "T12:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" });
+  const timeText = (e) => Number(e.mins) > 0 ? fmtMins(e.mins) : "no charge";
+  const lines = names.map(n => {
+    const list = groups.get(n), b = n === "General" ? null : budgetFor(client, n);
+    const used = b ? budgetUsed(b, all, ym) : 0, cap = b ? Number(b.hours) * 60 : 0;
+    return { n, list, mins: sumOf(list), b, used, cap };
+  });
+  const rows = lines.map(l => `<tr class="sub"><td>${esc(l.n)}</td><td>${fmtMins(l.mins)}</td><td>${l.b ? fmtMins(l.cap) : ""}</td><td>${l.b ? fmtMins(l.used) : ""}</td><td>${l.b ? `<span class="${l.used > l.cap ? "tag crit" : ""}">${l.used > l.cap ? fmtMins(l.used - l.cap) + " over" : fmtMins(l.cap - l.used)}</span>` : ""}</td></tr>`).join("");
+  const detail = lines.filter(l => l.list.length).map(l => `<div class="rep-proj"><h4>${esc(l.n)}<span>${fmtMins(l.mins)}</span></h4><ul class="entries">${l.list.map(e => `<li><span>${esc(day(e.date))} · ${esc(e.title)}${e.kind === "meeting" ? ' <span class="tag">meeting</span>' : ""}</span><span class="num">${esc(timeText(e))}</span></li>`).join("")}</ul></div>`).join("");
+  const text = [`${client}: hours for ${monthLabel(ym)}`, "",
+    ...lines.map(l => `${l.n}: ${fmtMins(l.mins)}${l.b ? ` (${fmtMins(l.used)} of ${fmtMins(l.cap)} used${budgetPeriod(l.b) ? " " + budgetPeriod(l.b) : ""}, ${l.used > l.cap ? fmtMins(l.used - l.cap) + " over" : fmtMins(l.cap - l.used) + " left"})` : ""}`),
+    `Total: ${fmtMins(total)}`, "",
+    ...lines.filter(l => l.list.length).flatMap(l => [l.n, ...l.list.map(e => `  ${day(e.date)}  ${e.title}  ${timeText(e)}`), ""])].join("\n").trim();
+  S.report = { client, ym, text, lines, mine };
+  $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><div class="drawer-in" role="dialog" aria-label="Client report">
+    ${head}
+    <div class="row"><button class="btn btn-sm" data-act="repmonth" data-client="${esc(client)}" data-month="${prevMonth(ym)}" type="button" aria-label="Previous month">←</button><b style="font-family:var(--f-display);font-size:17px">${esc(monthLabel(ym))}</b>${ym < thisMonth ? `<button class="btn btn-sm" data-act="repmonth" data-client="${esc(client)}" data-month="${nextMonth(ym)}" type="button" aria-label="Next month">→</button>` : ""}</div>
+    <div class="tablewrap"><table class="log"><thead><tr><th>Sub-client</th><th>This month</th><th>Paid for</th><th>Used to date</th><th>Left</th></tr></thead><tbody>${rows || `<tr><td colspan="5">No time logged for ${esc(client)} in ${esc(monthLabel(ym))}.</td></tr>`}<tr class="total"><td>Total</td><td>${fmtMins(total)}</td><td></td><td></td><td></td></tr></tbody></table></div>
+    <span class="ctx">Paid-for hours and dates are set under Project budgets in Settings. Entries with no hours, like events you attended without charging, still show so ${esc(client.replace(/\s*\(.*\)$/, ""))} can see them.</span>
+    <div class="row"><button class="btn btn-sm btn-ink" data-act="repcopy" type="button">Copy for an email</button><button class="btn btn-sm" data-act="repcsv" type="button">Save CSV</button><button class="btn btn-sm btn-ghost" data-act="settings" type="button">Edit budgets</button></div>
+    ${detail}
+    <details><summary class="ctx">Show as text</summary><textarea class="reptext" readonly aria-label="Report text">${esc(text)}</textarea></details>
+  </div></div>`;
+}
+async function reportCSV() {
+  const r = S.report; if (!r) return;
+  if (!downloads) { toast("Saving files isn't available in this view."); return; }
+  const rows = [["Sub-client", "This month (hours)", "Paid for (hours)", "Used to date (hours)", "Left (hours)"],
+    ...r.lines.map(l => [l.n, (l.mins / 60).toFixed(2), l.b ? (l.cap / 60).toFixed(2) : "", l.b ? (l.used / 60).toFixed(2) : "", l.b ? ((l.cap - l.used) / 60).toFixed(2) : ""]),
+    [], ["Date", "Sub-client", "Type", "Task or meeting", "Hours", "Note"],
+    ...r.mine.map(e => [e.date, canonProject(r.client, e.project) || "General", e.kind === "meeting" ? "Meeting" : "Work", e.title, ((Number(e.mins) || 0) / 60).toFixed(2), e.note || ""])];
+  const csv = rows.map(x => x.map(v => { const s = String(v ?? ""); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; }).join(",")).join("\n");
+  try { await downloads.save({ filename: `${pkey(r.client) || "client"}-hours-${r.ym}.csv`, data: csv }); toast("Saved."); }
   catch (e) { if (!(e && e.code === "declined")) toast(`Couldn't save the file: ${(e && e.message) || "unknown error"}`); }
 }
 
@@ -1336,7 +1464,25 @@ function readHabitRows() {
     return { id: r.dataset.hid || ("h" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5)), name: ($("hb-n-" + i).value || "").trim(), target: Number($("hb-t-" + i).value) || 7 };
   });
 }
-function openSettings(groupsOverride, habitOverride) {
+function budgetRowHTML2(b, i, names) {
+  const sel = clientName(b.client || names[0] || "");
+  return `<div class="brow" data-brow="${i}" data-bid="${esc(b.id || "")}">
+      <select id="b-client-${i}" aria-label="Client">${names.map(n => `<option value="${esc(n)}"${n === sel ? " selected" : ""}>${esc(n)}</option>`).join("")}</select>
+      <input class="bproj" id="b-proj-${i}" value="${esc([b.project, ...(b.aka || [])].filter(Boolean).join(", "))}" placeholder="Sub-client, other names" aria-label="Sub-client or project, then other names">
+      <input id="b-hours-${i}" type="number" min="0" step="0.5" value="${esc(b.hours || "")}" placeholder="hours" aria-label="Hours paid for">
+      <input class="bfrom" id="b-from-${i}" type="month" value="${esc(b.from || "")}" placeholder="From YYYY-MM" aria-label="From month (optional)">
+      <input class="bto" id="b-to-${i}" type="month" value="${esc(b.to || "")}" placeholder="To YYYY-MM" aria-label="To month (optional)">
+      <button class="btn btn-sm btn-ghost" data-act="bud-del" data-i="${i}" type="button" aria-label="Remove budget">×</button>
+    </div>`;
+}
+function readBudgetRows() {
+  return [...document.querySelectorAll("#budList .brow")].map(r => {
+    const i = r.dataset.brow, names = ($("b-proj-" + i).value || "").split(",").map(x => x.trim()).filter(Boolean);
+    const ym = (v) => /^\d{4}-\d{2}$/.test((v || "").trim()) ? v.trim() : "";
+    return { id: r.dataset.bid || ("b" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5)), client: $("b-client-" + i).value, project: names[0] || "", aka: names.slice(1), hours: Number($("b-hours-" + i).value) || 0, from: ym($("b-from-" + i).value), to: ym($("b-to-" + i).value) };
+  });
+}
+function openSettings(groupsOverride, habitOverride, budgetsOverride) {
   const c = cfg();
   const groups = groupsOverride || ((c.groups || []).length ? c.groups : [{ name: "", kind: "retainer", match: [] }]);
   const row = (g, i) => `<div class="grow" data-row="${i}">
@@ -1353,6 +1499,11 @@ function openSettings(groupsOverride, habitOverride) {
     <div class="grow grow-h"><span>Name</span><span>Type</span><span class="gbill">Billing</span><span class="gmatch">Other names</span><span>h/mo</span><span></span></div>
     <div id="growList" style="display:flex;flex-direction:column;gap:6px">${groups.map(row).join("")}</div>
     <button class="btn btn-sm" data-act="grow-add" type="button" style="align-self:flex-start">Add client</button>
+    <h3>Project budgets</h3>
+    <div class="field"><span class="hint">Hours a client has paid for on a project or sub-client, such as each of Authentic's clients. Time logged with that sub-client counts against it, and the meter shows what's left. Leave the months blank to count all time, or set them for a budget that covers a period (e.g. Oct to Dec). In the name box, put the sub-client first, then any other names you log it under, separated by commas.</span></div>
+    <div class="brow brow-h"><span>Client</span><span>Sub-client, other names</span><span>Hours</span><span>From</span><span>To</span><span></span></div>
+    <div id="budList" style="display:flex;flex-direction:column;gap:6px">${(() => { const names = (c.groups || []).map(g => g.name).filter(Boolean); const list = budgetsOverride || c.budgets || []; return list.map((b, i) => budgetRowHTML2(b, i, names)).join(""); })()}</div>
+    <button class="btn btn-sm" data-act="bud-add" type="button" style="align-self:flex-start">Add budget</button>
     <h3>Work</h3>
     <div class="field"><label for="s-people">People you pass work to</label><input id="s-people" value="${esc((c.people || []).join(", "))}"><span class="hint">Comma-separated first names.</span></div>
     <div class="field"><label for="s-notes">Notes for Claude</label><textarea id="s-notes" placeholder="e.g. Calls with Jess are Leighton work">${esc(c.notes || "")}</textarea><span class="hint">The morning sweep and day check read these when deciding which client something belongs to.</span></div>
@@ -1379,6 +1530,7 @@ function collectSettings() {
     hoursAvailable: Math.min(14, Math.max(1, Number($("s-hours").value) || 6)),
     gmailQuery: ($("s-gmail").value || "").trim() || DEFAULTS.gmailQuery,
     notes: ($("s-notes").value || "").trim(),
+    budgets: $("budList") ? readBudgetRows().filter(b => b.project && b.hours > 0) : (cfg().budgets || []),
     habits: $("habitList") ? readHabitRows().filter(x => x.name) : (cfg().habits || [])
   };
 }
@@ -1432,6 +1584,9 @@ document.addEventListener("click", async (ev) => {
     case "medit": { const x = meetingById(id); if (x) openMeeting({ title: x.title, client: x.client || "Unsorted", project: x.project || "", date: todayKey, start: x.start, mins: x.mins, calEventId: x.id }); break; }
     case "calpick": { const e = S.cal && S.cal.events[i]; if (!e) break; const cur = readMeetForm(); openMeeting({ title: e.title, client: e.client || cur.client, project: e.project || "", date: S.cal.date, start: e.start, mins: e.mins, calEventId: e.id }); break; }
     case "timelog": openTimeLog(); break;
+    case "report": case "repmonth": openReport(el.dataset.client, el.dataset.month); break;
+    case "repcopy": { const t = S.report && S.report.text; if (!t) break; try { await navigator.clipboard.writeText(t); toast("Copied. Paste it into your email."); } catch (e) { const d = document.querySelector(".drawer details"); if (d) { d.open = true; const ta = d.querySelector("textarea"); ta.focus(); ta.select(); } toast("Couldn't copy automatically. The text is selected below."); } break; }
+    case "repcsv": reportCSV(); break;
     case "logmonth": openTimeLog(el.dataset.month); break;
     case "export": exportCSV(el.dataset.month); break;
     case "exporttasks": exportTasks(); break;
@@ -1452,8 +1607,10 @@ document.addEventListener("click", async (ev) => {
       await logTime({ taskId: fid, title: t.title, client: t.client, project: t.project || null, mins, date: $("f-mdate").value || todayKey, source: "manual" });
       openTask(fid); renderAll(); toast(`Logged ${fmtMins(mins)}.`); break;
     }
-    case "grow-add": { const rows = readGroupRows(); rows.push({ name: "", kind: "retainer", match: [] }); openSettings(rows, readHabitRows()); break; }
-    case "grow-del": { const rows = readGroupRows(); rows.splice(i, 1); openSettings(rows, readHabitRows()); break; }
+    case "grow-add": { const rows = readGroupRows(); rows.push({ name: "", kind: "retainer", match: [] }); openSettings(rows, readHabitRows(), readBudgetRows()); break; }
+    case "grow-del": { const rows = readGroupRows(); rows.splice(i, 1); openSettings(rows, readHabitRows(), readBudgetRows()); break; }
+    case "bud-add": { const b = readBudgetRows(); const hourly = (cfg().groups || []).find(g => g.billing === "hourly"); b.push({ client: hourly ? hourly.name : "", project: "", aka: [], hours: "", from: "", to: "" }); openSettings(readGroupRows(), readHabitRows(), b); break; }
+    case "bud-del": { const b = readBudgetRows(); b.splice(i, 1); openSettings(readGroupRows(), readHabitRows(), b); break; }
     case "habit-add": { const l = readHabitRows(); l.push({ name: "", target: 5 }); openSettings(readGroupRows(), l); break; }
     case "habit-del": { const l = readHabitRows(); l.splice(i, 1); openSettings(readGroupRows(), l); break; }
     case "save-settings": { const patch = collectSettings(); closeDrawer(); await saveSettings(patch); renderAll(); toast("Settings saved."); break; }
@@ -1624,6 +1781,7 @@ function subscribeMonth() {
   if (unsub.done) unsub.done(); if (unsub.entries) unsub.entries();
   const tasks = db.collection(P.tasks());
   unsub.done = tasks.where("doneDate", ">=", monthStart).onSnapshot(snap => { S.sets.done = snap.docs.map(d => Object.assign({ id: d.id }, d.data())).filter(t => t.status === "done"); S.loaded.done = true; renderAll(); }, fail("load your finished tasks"));
+  S.pastEntries = null; loadPastEntries();
   unsub.entries = db.collection(P.entries()).where("date", ">=", monthStart).onSnapshot(snap => { S.entries = snap.docs.map(d => Object.assign({ id: d.id }, d.data())); renderAll(); }, fail("load your time log"));
 }
 function subscribeDay() {
