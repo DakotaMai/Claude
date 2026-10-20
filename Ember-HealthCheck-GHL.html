@@ -879,7 +879,7 @@
     err.hidden = true;
 
     var t = track_(), r = lastResult;
-    var data = new URLSearchParams({
+    var data = {
       first_name: name,
       email: email,
       newsletter_opt_in: el('cap-consent').checked ? 'yes' : 'no',
@@ -892,22 +892,29 @@
       bolt_ons: pathEmail.boltOns || '',
       booking_link: LINKS.call,
       team_size: profile.size, revenue_streams: profile.streams, tech_owner: profile.tech, focus: profile.focus
-    });
+    };
     r.weakest.forEach(function(k, i) {
       var area = t.areas[k];
-      data.append('pressure_' + (i + 1) + '_area', area.name);
-      data.append('pressure_' + (i + 1) + '_title', area.fix[0]);
-      data.append('pressure_' + (i + 1) + '_body', area.fix[1]);
+      data['pressure_' + (i + 1) + '_area'] = area.name;
+      data['pressure_' + (i + 1) + '_title'] = area.fix[0];
+      data['pressure_' + (i + 1) + '_body'] = area.fix[1];
     });
-    r.areas.forEach(function(a) { data.append('area_' + a.key, a.pct); });
+    r.areas.forEach(function(a) { data['area_' + a.key] = a.pct; });
     // Which ad or link brought them here, e.g. ?utm_content=ignite
     var params = new URLSearchParams(location.search);
     ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(function(k) {
-      data.append(k, params.get(k) || '');
+      data[k] = params.get(k) || '';
     });
-    // Form-encoded + no-cors keeps this a "simple" request, so no CORS preflight is needed
+    // GHL inbound webhooks read JSON and allow cross-site requests
     if (LEAD_WEBHOOK_URL) {
-      try { fetch(LEAD_WEBHOOK_URL, { method: 'POST', mode: 'no-cors', body: data }); } catch (x) {}
+      try {
+        fetch(LEAD_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+          keepalive: true
+        }).catch(function() {});
+      } catch (x) {}
     }
     el('email-test-note').hidden = !!LEAD_WEBHOOK_URL;
 
