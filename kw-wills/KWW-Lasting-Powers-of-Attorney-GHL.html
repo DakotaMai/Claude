@@ -155,6 +155,30 @@
 .kww .hp-quote blockquote { font-family: var(--h); font-style: italic; font-size: 1.15rem; line-height: 1.45; }
 .kww .hp-quote figcaption { color: #8FD6F3; font-size: .9rem; margin-top: 6px; font-weight: 600; }
 
+/* ── Centred home hero ── */
+.kww .hero--center { padding-top: 96px; padding-bottom: 96px; }
+.kww .hero--center h1 { font-size: clamp(2.4rem, 5.6vw, 4.2rem); }
+.kww .hero--center .lead { font-size: clamp(1.1rem, 1.8vw, 1.35rem); }
+.kww .hero-points { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 36px; }
+.kww .hero-points li { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; font-size: .92rem; font-weight: 600; color: var(--ink); }
+.kww .hero-points svg { width: 18px; height: 18px; color: var(--green-d); }
+.kww .hero-quote { margin: 30px auto 0; }
+.kww .hero-quote blockquote { font-family: var(--h); font-style: italic; font-size: 1.15rem; color: var(--dark); }
+.kww .hero-quote figcaption { font-size: .9rem; color: var(--muted); margin-top: 4px; }
+
+/* ── Image slots (stock / photoshoot) ── */
+.kww .imgslot { position: relative; border-radius: 22px; overflow: hidden; aspect-ratio: 4/3; background: linear-gradient(135deg, var(--pale) 0%, var(--green-t) 100%); box-shadow: var(--shadow-lg); }
+.kww .hero .imgslot { aspect-ratio: 1/1; }
+.kww .imgslot img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1; }
+.kww .imgslot .ph { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--sky-ink); padding: 20px; }
+.kww .imgslot .ph svg { width: 64px; height: 64px; opacity: .45; }
+.kww .imgslot .ph small { position: absolute; top: 14px; left: 14px; max-width: 55%; text-align: left !important; font-size: .78rem; background: rgba(255,255,255,.85); padding: 5px 12px; border-radius: 999px; color: var(--muted); max-width: 85%; text-align: center; }
+.kww .photo-note { position: absolute; left: -24px; bottom: -28px; z-index: 2; background: #fff; border-radius: 16px; padding: 20px 22px; box-shadow: var(--shadow-lg); max-width: 360px; }
+.kww .photo-note .ticks { gap: 6px; margin-top: 10px; font-size: .95rem; }
+.kww .photo-note .bigfact { font-size: 1.15rem; }
+.kww .photo-quote small { display: block; color: #8FD6F3; margin-top: 4px; }
+.kww .page-hero { padding-bottom: 96px; }
+
 /* ── Person / photo frame ── */
 .kww .photo { position: relative; border-radius: 22px; overflow: hidden; background: linear-gradient(150deg, var(--sky) 0%, var(--dark) 100%); aspect-ratio: 4/5; box-shadow: var(--shadow-lg); }
 .kww .photo img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1; }
@@ -388,6 +412,10 @@
   .kww .photo { aspect-ratio: 1/1; max-width: 460px; }
   .kww .photo-card { left: 12px; bottom: 12px; }
   .kww .photo-quote { right: 12px; top: 12px; }
+  .kww .photo-note { position: relative; left: 0; bottom: 0; margin: -56px 12px 0; max-width: none; }
+  .kww .page-hero { padding-bottom: 60px; }
+  .kww .hero--center { padding-top: 56px; padding-bottom: 64px; }
+  .kww .hero-points li { font-size: .85rem; padding: 6px 12px; }
   .kww .topbar .tb-left { display: none; }
   .kww .topbar .w { justify-content: center; }
   .kww .tool { padding: 24px; }
@@ -461,9 +489,12 @@
         <a class="btn btn--ghost" href="#types">The three types</a>
       </div>
     </div>
-    <div class="card rv">
+    <div class="photo-wrap rv">
+      <div class="imgslot"><span class="ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16"/><path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.8-2.8l-4.2 3.9"/><path d="m2 15 6 6"/></svg><small>Photo: Older parent with adult son or daughter, holding hands</small></span></div>
+      <div class="photo-note">
       <p class="bigfact">If your name isn't on the bill, <b>the company won't talk to you.</b></p>
       <p class="mt-s small">Without an LPA, your family must apply to the Court of Protection: expensive, lengthy and onerous.</p>
+      </div>
     </div>
   </div>
 </section>

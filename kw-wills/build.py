@@ -33,6 +33,17 @@ STEP_BADGE = data_uri("web-step.webp")
 SEVVY_PHOTO = "https://www.kw-wills.co.uk/images/split/14_right.png"
 SEVVY_PHOTO_2 = "https://www.kw-wills.co.uk/images/split/18_left.png"
 
+# Image slots: paste a GHL Media URL into the first value to show a photo.
+# Until then a branded placeholder shows. The description doubles as the photoshoot shot list.
+SHOW_IMAGE_LABELS = True   # set to False before going live, so empty slots show no caption
+IMAGES = {
+    "wills":   ("", "will", "Couple at a kitchen table with Sevvy, going through documents"),
+    "trusts":  ("", "home", "The family home: front door, keys, or family outside"),
+    "lpa":     ("", "hand", "Older parent with adult son or daughter, holding hands"),
+    "storage": ("", "lock", "Documents being placed safely in a file or envelope"),
+    "estate":  ("", "users", "Adult child comforting a parent, gentle and supportive"),
+}
+
 PHONE_1, PHONE_1_TEL = "01384 883 883", "+441384883883"
 PHONE_2, PHONE_2_TEL = "01905 671 371", "+441905671371"
 EMAIL = "enquiries@kw-wills.co.uk"
@@ -103,6 +114,13 @@ def photo(src, alt, mono="SH"):
     """Photo with a branded monogram behind it, so a missing image never looks broken."""
     return (f'<span class="mono" aria-hidden="true">{mono}</span>'
             f'<img src="{src}" alt="{alt}" loading="lazy" onerror="this.remove()">')
+
+
+def img_slot(key):
+    url, ico, desc = IMAGES[key]
+    label = f"<small>Photo: {desc}</small>" if SHOW_IMAGE_LABELS and not url else ""
+    img = f'<img src="{url}" alt="{desc}" loading="lazy" onerror="this.remove()">' if url else ""
+    return f'<div class="imgslot"><span class="ph" aria-hidden="true">{icon(ico)}{label}</span>{img}</div>'
 
 
 # ── Reusable blocks, used in pages as {{> name}} ────────────────────────────
@@ -323,6 +341,7 @@ def render(text):
 
 def render_tokens(text):
     text = re.sub(r"\{\{icon:(\w+)\}\}", lambda m: icon(m.group(1)), text)
+    text = re.sub(r"\{\{img:(\w+)\}\}", lambda m: img_slot(m.group(1)), text)
     text = re.sub(r"\{\{link:(\w+)\}\}", lambda m: LINKS[m.group(1)], text)
     text = re.sub(r"\{\{photo:(\w+)\}\}", lambda m: photo(globals()[m.group(1)], "Sevvy Hasan, founder of King Will's Wills"), text)
     for k in ("PHONE_1", "PHONE_1_TEL", "PHONE_2", "PHONE_2_TEL", "EMAIL", "OFFICE_EMAIL", "ADDRESS"):

@@ -49,6 +49,7 @@ The LPA page opens the right tab automatically from the `#…` part of the link.
 ## Before going live
 
 - [ ] **Photos of Sevvy**: the pages currently borrow two photos from the old site (`/images/split/14_right.png` and `18_left.png`). Upload good photos of Sevvy to GHL Media, then change `SEVVY_PHOTO` / `SEVVY_PHOTO_2` at the top of `build.py` and re-run it. If a photo ever fails to load, a branded "SH" monogram shows instead, so nothing looks broken.
+- [ ] **Service page photos**: Wills, Trusts, LPAs, Storage and Estate Administration each have one photo slot at the top. Until a photo is added it shows a branded placeholder with a caption describing the shot (this doubles as the photoshoot shot list). Upload stock or photoshoot images to GHL Media, paste each URL into `IMAGES` at the top of `build.py`, set `SHOW_IMAGE_LABELS = False`, and re-run `python3 build.py`. The homepage deliberately has no hero image.
 - [ ] **Contact form and calendar**: on the Contact page, replace the two dashed placeholder boxes with your GHL form and calendar embed codes (search the file for `GHL FORM` and `GHL CALENDAR`).
 - [ ] **Review link**: on the Testimonials page, point the "Leave a review" button at your Google review link.
 - [ ] **Check the facts**: the intestacy checker uses the current £322,000 spouse allowance (deaths from 26 July 2023). The printed Intestacy Chart leaflet still says £250,000 and should be updated. The LPA FAQ asks people to check the current OPG registration fee, because the leaflet's £82 is out of date.
