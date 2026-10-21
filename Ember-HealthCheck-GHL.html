@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Systems Health Check - Ember by Victoria Lewis</title>
+  <title>Systems Health Check | Ember by Victoria Lewis</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@700&family=Livvic:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -329,18 +329,6 @@
     .cta-actions .btn { text-align: center; }
     .cta-actions .btn--ghost { background: transparent; border: 1.5px solid rgba(42,20,12,0.25); color: var(--dark) !important; }
 
-    /* ── PRICE LINES ── */
-    .price-lines { list-style: none; margin-top: 28px; border-top: 1px solid rgba(42,20,12,0.12); }
-    .price-lines li {
-      display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
-      padding: 14px 0; border-bottom: 1px solid rgba(42,20,12,0.12);
-      font-size: 0.97rem; color: var(--card-text);
-    }
-    .price-lines li span:first-child small { display: block; font-size: 0.8rem; color: rgba(42,20,12,0.55); }
-    .price-lines li span:last-child { font-weight: 600; white-space: nowrap; }
-    .price-lines .price-total { border-bottom: none; font-family: var(--h); font-size: 1.6rem; letter-spacing: -0.03em; color: var(--dark); }
-    .price-lines .price-total span:last-child { font-weight: 700; }
-
     /* ── NEXT STEPS ── */
     .next-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; align-items: start; }
     .test-note { font-size: 0.85rem !important; font-weight: 600; color: var(--orange) !important; }
@@ -366,6 +354,21 @@
       .next-card { padding: 32px 24px; }
       .next-card .btn { width: 100%; text-align: center; }
     }
+
+    /* ── IGNITE STEPS + PACKAGES ── */
+    .steps-row { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; counter-reset: st; }
+    .steps-row li { counter-increment: st; font-size: 0.85rem; font-weight: 600; color: var(--dark); background: rgba(42,20,12,0.06); border: 1.5px solid rgba(42,20,12,0.14); border-radius: 100px; padding: 7px 14px; }
+    .steps-row li::before { content: counter(st) ". "; color: var(--orange); }
+    .steps-row li.is-done { background: var(--orange); border-color: var(--orange); color: var(--cream); }
+    .steps-row li.is-done::before { content: "✓ "; color: var(--cream); }
+    .option-cards--single { grid-template-columns: minmax(0, 640px); }
+    .option-card .option-price { margin-top: 10px; padding-top: 0; order: 0; }
+    .option-price small { font-family: var(--b); font-size: 0.9rem; letter-spacing: 0; color: rgba(242,225,205,0.6); }
+    .for-you { font-style: italic; }
+    .includes { list-style: none; margin-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+    .includes li { position: relative; padding-left: 26px; font-size: 0.95rem; color: rgba(242,225,205,0.85); }
+    .includes li::before { content: "✓"; position: absolute; left: 0; color: var(--orange); font-weight: 700; }
+    .extra-note { color: rgba(242,225,205,0.7); font-size: 0.97rem; margin-top: 24px; max-width: 680px; }
 
     /* ── ADD-ON + ROUTE CARDS ── */
     .extra-head { margin-top: 72px; }
@@ -565,7 +568,7 @@
       <div class="next-card next-card--dark">
         <span class="fix-label">Ready to talk?</span>
         <h3 id="next-call-title">Book a free call</h3>
-        <p>30 minutes to go through your results together, look at where the biggest friction is, and work out the right next step. No pressure, no pitch.</p>
+        <p>30 minutes to go through your results together, find where the biggest friction is and work out the right next step for you. It\'s a relaxed chat, not a sales pitch.</p>
         <a class="btn" id="next-call-btn" href="https://api.leadconnectorhq.com/widget/bookings/disco-call-ember">Book a Free Call →</a>
       </div>
 
@@ -617,24 +620,24 @@
 
   var LINKS = {
     call:    'https://api.leadconnectorhq.com/widget/bookings/disco-call-ember',
-    ignite:  'https://app.gohighlevel.com/v2/preview/xSJEwDoTtk7bHBZCGd74',
+    ignite:  'https://victorialewis.co.uk/ignite',
     inferno: 'https://sites.leadconnectorhq.com/preview/Om4rvJa59QheZ3t8PWK9'
   };
 
   /* ── INTAKE ── decides the track; values are what the routing reads */
   var INTAKE = [
     { key: 'size', q: 'How many people work in your business, including you?',
-      o: [['solo', 'Just me'], ['small', '2 - 5'], ['mid', '6 - 20'], ['large', 'More than 20']] },
+      o: [['solo', 'Just me'], ['small', '2 to 5'], ['mid', '6 to 20'], ['large', 'More than 20']] },
     { key: 'streams', q: 'How many revenue streams does the business have?',
       o: [['one', 'One main offer'], ['few', 'Two or three related offers'], ['many', 'Several distinct revenue lines']] },
     { key: 'tech', q: 'Who looks after your systems and tech?',
       o: [['owner', 'Me'], ['freelancer', 'A VA or freelancer, as and when'], ['sidejob', 'Someone on the team, on top of their day job'], ['dedicated', 'A dedicated person or team']] },
     { key: 'focus', q: 'What matters most right now?',
-      o: [['time', 'Getting my time back'], ['build', 'Building things properly so I can grow'], ['scale', 'Scaling - more team, more spend, more complexity'], ['visibility', 'Seeing what\'s actually working'], ['direction', 'Honestly? Direction - I\'m not sure what I need yet']] }
+      o: [['time', 'Getting my time back'], ['build', 'Building things properly so I can grow'], ['launch', 'Starting or relaunching, and doing it properly'], ['scale', 'Scaling, with more team, more spend and more complexity'], ['visibility', 'Seeing what\'s actually working'], ['direction', 'Honestly? Direction. I\'m not sure what I need yet']] }
   ];
 
-  // Ignite & Build is for micro businesses: solo, or 2-5 without the signs of a bigger operation.
-  // 6+ -> Inferno. 2-5 -> Inferno only with at least two growth signals.
+  // Ignite is for small businesses, coaches and consultants: solo, or 2 to 5 without the signs of a bigger operation.
+  // 6+ -> Inferno. 2 to 5 -> Inferno only with at least two growth signals.
   function routeTrack(p) {
     if (p.size === 'solo') return 'ignite';
     if (p.size === 'mid' || p.size === 'large') return 'inferno';
@@ -652,22 +655,22 @@
   var TRACKS = {
     ignite: {
       areas: {
-        journey:   { name: 'Client journey', module: 'Ignite',
-          fix: ['There\'s no map behind it yet.', 'You can probably feel where things wobble, but there\'s no clear picture of how a client should move from first enquiry to signed. Ignite starts here: mapping every touchpoint so you know exactly what to build, and in what order.'] },
-        backend:   { name: 'CRM & pipeline', module: 'The Engine Room',
-          fix: ['Leads live in too many places.', 'Inbox, DMs, notes app, memory. When there\'s no single place tracking every lead and client, things fall through the cracks. The Engine Room builds a CRM and pipeline around how you actually sell.'] },
-        admin:     { name: 'Onboarding & admin', module: 'The Engine Room',
-          fix: ['Every yes creates a pile of admin.', 'Contracts, invoices, welcome emails, setup - all by hand, every time. These are the most predictable steps in your business, which makes them the easiest to automate properly in The Engine Room.'] },
-        website:   { name: 'Website', module: 'The Front End',
-          fix: ['Your website isn\'t pulling its weight.', 'Either it doesn\'t feel like you, or it isn\'t connected to anything behind it. The Front End builds a site from scratch around your brand, wired into your back end so every enquiry lands where it should.'] },
-        marketing: { name: 'Marketing & nurture', module: 'The Map',
-          fix: ['People who aren\'t ready yet just disappear.', 'Without a way to capture and nurture them, you\'re relying on people being ready to buy the moment they find you. The Map builds the lead magnets, landing pages and email sequences that keep the right people moving towards a yes.'] },
-        owner:     { name: 'Owner dependency', module: 'The Engine Room',
-          fix: ['It all runs through you.', 'Every question, decision and process comes back to you, so the business can\'t move without you. The Engine Room\'s automations take the repeatable work off your plate for good.'] }
+        journey:   { name: 'Client journey', module: 'Every Blueprint',
+          fix: ['There\'s no map behind it yet.', 'You can probably feel where things wobble, but there\'s no clear picture of how a client should move from first enquiry to signed. Every Ignite package starts with a Blueprint that maps this out, so you know exactly what to build and in what order.'] },
+        backend:   { name: 'CRM & pipeline', module: 'The Back Office',
+          fix: ['Leads live in too many places.', 'Inbox, DMs, notes app, memory. When there\'s no single place tracking every lead and client, things fall through the cracks. The Back Office gives you a CRM and sales pipeline built around how you actually sell.'] },
+        admin:     { name: 'Onboarding & admin', module: 'The Back Office',
+          fix: ['Every yes creates a pile of admin.', 'Contracts, invoices, welcome emails and setup, all by hand, every time. These are the most predictable steps in your business, which makes them the easiest to automate. The Back Office takes care of them.'] },
+        website:   { name: 'Website', module: 'The Shopfront',
+          fix: ['Your website isn\'t pulling its weight.', 'Either it doesn\'t feel like you, or it isn\'t connected to anything behind it. The Shopfront is a bespoke website designed around your brand, with enquiry and booking forms that land straight in your CRM.'] },
+        marketing: { name: 'Enquiries & lead generation', module: 'The Signpost',
+          fix: ['New enquiries are left to chance.', 'Right now you\'re relying on referrals and people being ready to buy the moment they find you. The Signpost gives you an interactive lead magnet, a landing page and an email funnel that turns sign-ups into enquiries.'] },
+        owner:     { name: 'Owner dependency', module: 'The Back Office',
+          fix: ['It all runs through you.', 'Every question, decision and follow-up comes back to you, so the business can\'t move without you. The Back Office sets up automations and automatic follow-up that take the repeatable work off your plate.'] }
       },
       questions: [
         { area: 'journey', q: 'Could you sketch your client journey, from first enquiry to signed client, right now?',
-          o: ['Yes - it\'s mapped and my systems follow it', 'Roughly - it\'s in my head', 'Sort of - it changes with every client', 'Not really'] },
+          o: ['Yes, it\'s mapped and my systems follow it', 'Roughly, it\'s in my head', 'Sort of, it changes with every client', 'Not really'] },
         { area: 'journey', q: 'Do you know where potential clients drop off before they buy?',
           o: ['Yes, and I\'ve fixed most of it', 'I have a hunch', 'Not sure', 'I don\'t track it at all'] },
         { area: 'backend', q: 'Where do you keep track of leads and clients?',
@@ -677,15 +680,15 @@
         { area: 'admin', q: 'When someone says yes, what happens next?',
           o: ['Contract, invoice and welcome go out automatically', 'A few bits are automated', 'I do it all by hand', 'It depends on the day'] },
         { area: 'admin', q: 'How long does onboarding a new client take you?',
-          o: ['Minutes - it mostly runs itself', 'An hour or two', 'Half a day or more', 'I\'d rather not think about it'] },
+          o: ['Minutes, it mostly runs itself', 'An hour or two', 'Half a day or more', 'I\'d rather not think about it'] },
         { area: 'website', q: 'How do you feel about sending someone to your website?',
-          o: ['Proud - it sounds like me and it converts', 'It\'s fine', 'I\'d rather they didn\'t look too closely', 'I don\'t really have one'] },
+          o: ['Proud, it sounds like me and it brings in work', 'It\'s fine', 'I\'d rather they didn\'t look too closely', 'I don\'t really have one'] },
         { area: 'website', q: 'When someone fills in a form on your website, where does it go?',
           o: ['Straight into my CRM, with a follow-up triggered', 'Into my inbox', 'Honestly, I\'m not sure', 'There isn\'t a form'] },
+        { area: 'marketing', q: 'Where do your new enquiries come from?',
+          o: ['A steady flow from a lead magnet or funnel I\'ve set up', 'Mostly referrals, with a few from my marketing', 'Word of mouth, and it\'s hard to predict', 'There aren\'t many coming in'] },
         { area: 'marketing', q: 'If someone isn\'t ready to buy yet, how do you stay in touch?',
-          o: ['A lead magnet and nurture sequence do it for me', 'They join my newsletter', 'I follow up when I remember', 'I don\'t - they just drift off'] },
-        { area: 'marketing', q: 'When someone joins your email list, what do they get?',
-          o: ['A welcome sequence that leads towards my offers', 'A single welcome email', 'Whatever I send next, whenever that is', 'I don\'t really have a list'] },
+          o: ['An email funnel does it for me', 'They join my newsletter', 'I follow up when I remember', 'I don\'t, they just drift off'] },
         { area: 'owner', q: 'If you took two weeks off, what would happen?',
           o: ['Things would tick along fine', 'A few things would wait for me', 'Most things would stop', 'I can\'t take two weeks off'] },
         { area: 'owner', q: 'How much of your week goes on admin you\'ve done a hundred times before?',
@@ -697,7 +700,7 @@
         { min: 45, title: 'It works. <em class="hi">Because you do.</em>',
           body: 'Your business runs, but mostly because you\'re holding it together. Every new client adds a little more weight, and there\'s only so much one person can carry.' },
         { min: 0, title: 'You are the system. <em class="hi">That\'s the problem.</em>',
-          body: 'Right now it all lives in your head and your inbox. That\'s not a criticism - it\'s how most businesses start. But it\'s also why stepping away feels impossible.' }
+          body: 'Right now it all lives in your head and your inbox. That\'s not a criticism, it\'s how most businesses start. But it\'s also why stepping away feels impossible.' }
       ]
     },
 
@@ -718,51 +721,71 @@
       },
       questions: [
         { area: 'visibility', q: 'If I asked which channel brought in last month\'s best client, could you tell me?',
-          o: ['Yes - it\'s in a report I can pull in a couple of clicks', 'Roughly, after some digging', 'Someone would have a good guess', 'Honestly, no idea'] },
+          o: ['Yes, it\'s in a report I can pull in a couple of clicks', 'Roughly, after some digging', 'Someone would have a good guess', 'Honestly, no idea'] },
         { area: 'visibility', q: 'How confident are you that your marketing spend is tracked all the way through to actual sales?',
-          o: ['Very - I can see return per campaign', 'We track leads, but not what they turn into', 'We see clicks and not much after that', 'We\'re not really tracking it'] },
+          o: ['Very, I can see return per campaign', 'We track leads, but not what they turn into', 'We see clicks and not much after that', 'We\'re not really tracking it'] },
         { area: 'data', q: 'Do your CRM, website and ad accounts share data automatically?',
           o: ['Yes, it all syncs and the numbers match', 'Mostly, with a few gaps we work around', 'Some bits connect, a lot is exported and imported', 'They\'re separate islands'] },
         { area: 'data', q: 'When a new lead comes in, how many times are their details typed in by hand?',
-          o: ['None - it all flows automatically', 'Once', 'Two or three times, across different tools', 'We\'re not sure where they all end up'] },
+          o: ['None, it all flows automatically', 'Once', 'Two or three times, across different tools', 'We\'re not sure where they all end up'] },
         { area: 'leads', q: 'How much of your sales team\'s time goes on leads that were never going to buy?',
           o: ['Very little', 'Some, but it\'s manageable', 'A noticeable chunk of every week', 'Most of it, if we\'re honest'] },
         { area: 'leads', q: 'Do new enquiries get qualified before they reach a person?',
-          o: ['Yes - forms and routing sort them first', 'There\'s a basic form, but everyone gets a call', 'Someone sifts them by hand', 'Everything goes straight to the team'] },
+          o: ['Yes, forms and routing sort them first', 'There\'s a basic form, but everyone gets a call', 'Someone sifts them by hand', 'Everything goes straight to the team'] },
         { area: 'process', q: 'If your most experienced team member was off for two weeks, what would happen?',
-          o: ['Business as usual - it\'s all documented and built in', 'A few hiccups, nothing major', 'Things would stall until they\'re back', 'Honestly? Chaos'] },
+          o: ['Business as usual, it\'s all documented and built in', 'A few hiccups, nothing major', 'Things would stall until they\'re back', 'Honestly? Chaos'] },
         { area: 'process', q: 'Where do your key processes live?',
           o: ['Built into our systems, with documentation to match', 'Written down, though not always followed', 'In a few spreadsheets and old docs', 'In people\'s heads'] },
         { area: 'admin', q: 'After a deal closes, how much of onboarding happens automatically?',
-          o: ['Nearly all of it - contracts, invoices, welcome, setup', 'About half', 'A few emails go out, the rest is manual', 'All manual'] },
+          o: ['Nearly all of it: contracts, invoices, welcome and setup', 'About half', 'A few emails go out, the rest is manual', 'All manual'] },
         { area: 'admin', q: 'Follow-ups on quotes and proposals are...',
           o: ['Automated, with a nudge to the team if needed', 'Tracked in the CRM, sent by hand', 'Done when someone remembers', 'Often missed'] },
         { area: 'capacity', q: 'Does anyone on your team have time set aside to improve your systems?',
-          o: ['Yes - it\'s someone\'s actual job', 'Occasionally, when it gets bad enough', 'Rarely - we\'re too busy delivering', 'Never'] },
+          o: ['Yes, it\'s someone\'s actual job', 'Occasionally, when it gets bad enough', 'Rarely, we\'re too busy delivering', 'Never'] },
         { area: 'capacity', q: 'When something breaks in your tech, who fixes it?',
           o: ['A named person or partner who owns it', 'Whoever knows most about that tool', 'Usually me, the owner', 'It often just stays broken'] }
       ],
       bands: [
         { min: 75, title: 'Well built. <em class="hi">Worth protecting.</em>',
-          body: 'Your foundations are solid. The gains from here are in the detail - tightening the weaker areas below before growth puts pressure on them.' },
+          body: 'Your foundations are solid. The gains from here are in the detail, tightening the weaker areas below before growth puts pressure on them.' },
         { min: 45, title: 'Holding together. <em class="hi">Leaking underneath.</em>',
           body: 'Things work, mostly because your people make them work. That costs you time and money every week, and it gets more expensive as you grow.' },
         { min: 0, title: 'Running on effort. <em class="hi">Not on systems.</em>',
-          body: 'Your business is being held together by hard work, not infrastructure. That\'s not a criticism - it\'s what happens when growth outpaces the plumbing. But it isn\'t sustainable.' }
+          body: 'Your business is being held together by hard work, not infrastructure. That\'s not a criticism, it\'s what happens when growth outpaces the plumbing. But it isn\'t sustainable.' }
       ]
     }
   };
 
-  /* ── IGNITE & BUILD BOLT-ONS ── as priced on the Ignite page; shown when their area scores low */
-  var BOLT_ONS = [
-    { area: 'website', label: 'Bolt-on 1', name: 'The Front End', price: '+ £1,000',
-      body: 'A complete website built from scratch around your brand - not a template with your colours dropped in - connected to your back end and ready to turn visitors into enquiries.' },
-    { area: 'marketing', label: 'Bolt-on 2', name: 'The Map', price: '+ £1,000',
-      body: 'Lead magnets, landing pages and automated email nurture sequences that walk the right people, step by step, towards working with you.' }
-  ];
-  var BOLT_ON_THRESHOLD = 67; // suggest a bolt-on when its area scores below this
+  /* ── IGNITE PACKAGES ── fixed prices, each starts with a Blueprint sized to the build */
+  var PACKAGES = {
+    backOffice: { name: 'The Back Office', price: '£1,750', areas: ['backend', 'admin', 'owner'],
+      forYou: 'I\'m juggling spreadsheets, inboxes and sticky notes.',
+      includes: ['CRM and sales pipeline', 'Automations that save you time', 'Invoicing and payments', 'Automatic follow-up', 'Set up on the platform that suits you'] },
+    signpost:   { name: 'The Signpost', price: '£750', areas: ['marketing'],
+      forYou: 'I want more enquiries and don\'t know where they\'ll come from.',
+      includes: ['An interactive lead magnet', 'A landing page to send people to', 'An email funnel that turns sign-ups into enquiries', 'Connected to your CRM so no lead slips through', 'Built and tested before it goes live'] },
+    shopfront:  { name: 'The Shopfront', price: '£1,750', areas: ['website'],
+      forYou: 'My website doesn\'t reflect what I do or bring in work.',
+      includes: ['A bespoke website designed around your brand', 'Home, about, services and contact pages', 'Enquiry and booking forms connected to your CRM', 'Looks great on mobile', 'Built to turn visitors into enquiries'] },
+    openForBusiness: { name: 'Open for Business', price: '£3,750', note: 'All three together, saving £500',
+      forYou: 'I\'m starting or relaunching and want it done properly.',
+      includes: ['The Back Office', 'The Signpost', 'The Shopfront', 'All three designed to work together from the start'] }
+  };
+  var PACKAGE_THRESHOLD = 67; // recommend a package when its areas average below this
 
-  var SIZE_LABEL = { solo: 'just you', small: 'a team of 2 - 5', mid: 'a team of 6 - 20', large: 'a team of more than 20' };
+  // Weak areas pick the packages. All three weak, or starting/relaunching, means Open for Business.
+  // If nothing is weak, recommend the package covering the lowest-scoring areas.
+  function recommendPackages(byKey) {
+    var scored = ['backOffice', 'signpost', 'shopfront'].map(function(k) {
+      var a = PACKAGES[k].areas;
+      return { key: k, pct: a.reduce(function(sum, x) { return sum + byKey[x]; }, 0) / a.length };
+    }).sort(function(a, b) { return a.pct - b.pct; });
+    var weak = scored.filter(function(p) { return p.pct < PACKAGE_THRESHOLD; }).map(function(p) { return p.key; });
+    if (profile.focus === 'launch' || weak.length === 3) return ['openForBusiness'];
+    return weak.length ? weak : [scored[0].key];
+  }
+
+  var SIZE_LABEL = { solo: 'just you', small: 'a team of 2 to 5', mid: 'a team of 6 to 20', large: 'a team of more than 20' };
 
   /* ── STATE ── */
   var profile = {}, track = null, answers = [], step = 0;
@@ -883,7 +906,8 @@
       first_name: name,
       email: email,
       newsletter_opt_in: el('cap-consent').checked ? 'yes' : 'no',
-      track: track === 'ignite' ? 'Ignite & Build' : 'Inferno',
+      track: track === 'ignite' ? 'Ignite' : 'Inferno',
+      recommended_packages: pathEmail.packages || '',
       score: r.pct,
       band_title: plain(r.band.title),
       band_body: r.band.body,
@@ -958,41 +982,45 @@
   }
 
   function renderIgnitePath(r) {
-    var fits = BOLT_ONS.filter(function(b) { return r.byKey[b.area] < BOLT_ON_THRESHOLD; });
+    var recs = recommendPackages(r.byKey).map(function(k) { return PACKAGES[k]; });
     var who = profile.size === 'solo' ? 'You\'re running the business on your own' : 'You\'re running ' + SIZE_LABEL[profile.size];
+    var names = joinList(recs.map(function(p) { return p.name; }));
 
-    el('path-title').innerHTML = 'Ignite <em class="hi">&amp; Build.</em>';
+    el('path-title').innerHTML = 'Ember <em class="hi">Ignite.</em>';
     el('path-why').textContent = profile.focus === 'direction'
-      ? who + ' and looking for direction more than a specific fix. That\'s exactly what Ignite is: an audit of how your business really runs, and a clear blueprint for what to build.'
-      : who + ', and what you need is the business set up properly behind you, so it stops running on your time. That\'s exactly what Ignite & Build is for.';
+      ? who + ' and looking for direction more than a specific fix. Ignite is built for small businesses, coaches and consultants, and every package starts with a Blueprint that maps out exactly what you need.'
+      : who + ', and what you need is the right setup behind you so the business stops running on your time. That\'s exactly what Ignite is for.';
     el('path-body').innerHTML =
-      '<h3>Start with Ignite, your business audit.</h3>' +
-      '<p>A 90-minute deep dive into how your business really runs. I map your client journey, find where things fall through the cracks, and design the system you actually need - so you know exactly what to build, and in what order.</p>' +
-      '<p>Then Build puts it in place. The Engine Room sets up your back end - CRM, pipelines, bookings, onboarding, contracts, invoicing and automations - all connected, so the business runs behind you.</p>' +
-      '<ul class="price-lines">' +
-        '<li><span>Ignite<small>Business audit &amp; blueprint</small></span><span>£750</span></li>' +
-        '<li><span>Build<small>The Engine Room</small></span><span>+ £1,500</span></li>' +
-        '<li class="price-total"><span>Total</span><span>£2,250</span></li>' +
-      '</ul>';
-    setActions('Book a Free Discovery Call →', 'See Ignite & Build →', LINKS.ignite);
+      '<h3>Recommended for you: ' + names + '</h3>' +
+      '<p>Every package starts with a Blueprint, so what gets built is designed around you and your business rather than a generic setup. It\'s included in the price and sized to the build, and covers a map of your customer journey, a clear picture of your current tools, a build plan and 14 days of follow-up support.</p>' +
+      '<ol class="steps-row"><li class="is-done">Health Check</li><li>Blueprint</li><li>Build</li><li>Handover</li></ol>';
+    setActions('Book a Free Call →', 'See Ignite →', LINKS.ignite);
 
-    el('path-extra').innerHTML = fits.length
-      ? '<div class="extra-head"><h3>Modules that fit your needs.</h3>' +
-        '<p>Based on your answers, ' + (fits.length > 1 ? 'these bolt-ons' : 'this bolt-on') + ' would close the gaps. Add ' + (fits.length > 1 ? 'either or both' : 'it') + ' alongside your build, or later - whatever suits.</p></div>' +
-        '<div class="option-cards">' + fits.map(function(b) {
-          return '<div class="option-card"><span class="fix-label">' + b.label + '</span><h3>' + b.name + '</h3><p>' + b.body + '</p>' +
-            '<p class="fit-note">Your ' + TRACKS.ignite.areas[b.area].name.toLowerCase() + ' score: ' + r.byKey[b.area] + '%</p>' +
-            '<div class="option-price">' + b.price + '</div></div>';
-        }).join('') + '</div>'
-      : '<div class="extra-head"><p>Your website and marketing look solid, so the core build is all you need for now. The Front End and The Map are there as bolt-ons if that changes.</p></div>';
+    var cards = recs.map(function(p) {
+      return '<div class="option-card"><span class="fix-label">' + (recs.length > 1 ? 'Recommended' : 'Your package') + '</span>' +
+        '<h3>' + p.name + '</h3>' +
+        '<div class="option-price">' + p.price + ' <small>+ VAT</small></div>' +
+        (p.note ? '<p class="fit-note">' + p.note + '</p>' : '') +
+        '<p class="for-you">"' + p.forYou + '"</p>' +
+        '<ul class="includes">' + p.includes.map(function(i) { return '<li>' + i + '</li>'; }).join('') + '</ul></div>';
+    }).join('');
+    var allThree = recs.length === 2
+      ? '<p class="extra-note">Need all three? Open for Business brings The Back Office, The Signpost and The Shopfront together for £3,750 + VAT, saving £500.</p>'
+      : '';
+    el('path-extra').innerHTML =
+      '<div class="extra-head"><h3>' + (recs.length > 1 ? 'Your recommended packages.' : 'Your recommended package.') + '</h3>' +
+      '<p>Based on your answers, this is where I\'d start. Prices are fixed, so you know exactly what you\'re paying before anything begins.</p></div>' +
+      '<div class="option-cards' + (recs.length === 1 ? ' option-cards--single' : '') + '">' + cards + '</div>' + allThree;
     el('path-alt').innerHTML = 'Bigger or more complex operation than this suggests? <a href="' + LINKS.inferno + '" style="color:var(--orange); text-decoration:none; font-weight:600;">Inferno might be the better fit →</a>';
 
     pathEmail = {
-      title: 'Ignite & Build',
-      summary: 'Start with Ignite (£750): a 90-minute business audit that maps your client journey and designs the system you actually need. Then Build puts it in place - The Engine Room (+ £1,500) sets up your CRM, pipelines, bookings, onboarding, contracts, invoicing and automations, all connected. £2,250 in total.',
-      boltOns: fits.length
-        ? 'Based on your answers, ' + joinList(fits.map(function(b) { return b.name + ' (' + b.price + ')'; })) + ' would also fit.'
-        : ''
+      title: 'Ember Ignite',
+      summary: 'Recommended for you: ' + recs.map(function(p) { return p.name + ' (' + p.price + ' + VAT)'; }).join(' and ') +
+        '. Every package starts with a Blueprint, so what gets built is designed around you and your business. It maps your customer journey and current tools, sets out the build plan and includes 14 days of follow-up support.',
+      boltOns: recs.length === 2
+        ? 'Need all three? Open for Business brings The Back Office, The Signpost and The Shopfront together for £3,750 + VAT, saving £500.'
+        : '',
+      packages: recs.map(function(p) { return p.name; }).join(', ')
     };
   }
 
@@ -1001,12 +1029,12 @@
     el('path-title').innerHTML = 'Ember <em class="hi">Inferno.</em>';
     el('path-why').textContent = 'With ' + joinList([SIZE_LABEL[profile.size]].concat(signals)) +
       (profile.focus === 'direction'
-        ? ', you need direction before anything gets built - and that starts with a proper look at how the whole operation runs.'
+        ? ', you need direction before anything gets built, and that starts with a proper look at how the whole operation runs.'
         : ', you\'ve outgrown a one-off build. You need someone working inside your operation, not just on it.');
     el('path-body').innerHTML =
       '<h3>Start with an Inferno Audit.</h3>' +
-      '<p>A bigger business needs a bigger audit: more people, more time, more moving parts. I spend time inside your business with the people who run it day to day, and map how things really work - the processes that live in someone\'s head, the tools nobody\'s using to their fullest, the gaps nobody owns.</p>' +
-      '<p>You get a clear, honest picture of what\'s working, what\'s not and what it\'s costing you. No obligation to go further - if you want it, I stay as your embedded systems partner and put it right.</p>';
+      '<p>A bigger business needs a bigger audit: more people, more time, more moving parts. I spend time inside your business with the people who run it day to day, and map how things really work: the processes that live in someone\'s head, the tools nobody\'s using to their fullest, the gaps nobody owns.</p>' +
+      '<p>You get a clear, honest picture of what\'s working, what\'s not and what it\'s costing you. There\'s no obligation to go further. If you want it, I stay as your embedded systems partner and put it right.</p>';
     setActions('Start a Conversation →', 'See Inferno →', LINKS.inferno);
     // No route to Ignite here: larger businesses shouldn't land on small-business pricing
     el('path-extra').innerHTML = '';
@@ -1014,8 +1042,9 @@
 
     pathEmail = {
       title: 'Ember Inferno',
-      summary: 'Start with an Inferno Audit. A bigger business needs a bigger audit, so I spend time inside your business with the people who run it day to day and map how things really work - what\'s working, what\'s not, and what it\'s costing you. From there, if you want it, I stay on as your embedded systems partner and put it right.',
-      boltOns: ''
+      summary: 'Start with an Inferno Audit. A bigger business needs a bigger audit, so I spend time inside your business with the people who run it day to day and map how things really work: what\'s working, what\'s not, and what it\'s costing you. From there, if you want it, I stay on as your embedded systems partner and put it right.',
+      boltOns: '',
+      packages: ''
     };
   }
 

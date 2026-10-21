@@ -41,16 +41,19 @@ Hooks that already work, taken from the site and the quiz:
 - "Nobody owns the plumbing."
 
 ## Where they link
-- **Health Check:** `[health check page URL]?utm_source=meta&utm_medium=organic&utm_campaign=health-check&utm_content=[post-name]`
+- **Health Check:** `https://victorialewis.co.uk/health-check?utm_source=meta&utm_medium=organic&utm_campaign=health-check&utm_content=[post-name]`
 - **Website:** victorialewis.co.uk. Use the Ignite page for small-business posts and the
   Inferno page for growing-team posts.
 
 ## Rules
-- **Two audiences.** Ignite & Build is for solo owners and micro businesses who want the
-  business set up behind them to free up their time. Inferno is for growing businesses with
-  a team, messy processes, no tech person, and systems not used to their fullest.
-- **Prices.** Never show small-business prices in anything aimed at larger businesses.
-  Ignite is £750 and Build is a further £1,500 (£2,250 total), and those only appear in
-  Ignite content.
-- **Voice.** British English, warm and direct, no hype, dashes written as " - ". CTAs are
-  soft ("if that's you, you know where I am").
+- **Two audiences.** Ignite is for small businesses, coaches and consultants who want the
+  right setup behind them to free up their time. Inferno is for larger businesses with a team,
+  messy processes, no tech person, and systems not used to their fullest.
+- **Ignite packages** (fixed prices, all "+ VAT", every one starts with a Blueprint that's
+  included and sized to the build): The Back Office £1,750, The Signpost £750, The Shopfront
+  £1,750, Open for Business £3,750 (all three, saving £500). The old names The Engine Room,
+  The Front End, The Map and The Front Door are no longer used. Don't name GoHighLevel.
+- **Prices.** Never show Ignite prices in anything aimed at larger businesses. Inferno has no
+  published packages yet.
+- **Voice.** UK English, casual and personable, no hype. No dashes, and no "No X. No Y. Just
+  Z." patterns. CTAs are soft ("if that's you, you know where I am").

@@ -1,5 +1,5 @@
 <!--
-  SYSTEMS HEALTH CHECK - RESULTS EMAIL
+  SYSTEMS HEALTH CHECK: RESULTS EMAIL
   Sent by the GHL workflow that receives the Health Check webhook.
 
   GHL SETUP
@@ -9,14 +9,14 @@
   2. Action "Create/Update Contact": first name {{inboundWebhookRequest.first_name}},
      email {{inboundWebhookRequest.email}}.
   3. Action "Add Tag": health-check, plus an If/Else on {{inboundWebhookRequest.track}}
-     to tag hc-ignite or hc-inferno (and newsletter if newsletter_opt_in is "yes").
+     to tag hc-ignite (track is "Ignite") or hc-inferno (and newsletter if newsletter_opt_in is "yes").
   4. Action "Send Email": paste this file into the code editor.
      Subject:  Your Systems Health Check: {{inboundWebhookRequest.score}}/100
      Preview:  Your two pressure points, and where I'd start.
 
   Every {{inboundWebhookRequest.*}} field is sent by the page. Prices only appear for
-  Ignite & Build results - they live in path_summary / bolt_ons, which are empty of
-  prices on the Inferno track.
+  Ignite results. They live in path_summary / bolt_ons, which carry no prices on the
+  Inferno track.
 -->
 <!DOCTYPE html>
 <html lang="en">
