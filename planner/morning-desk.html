@@ -1264,6 +1264,33 @@ async function fetchLittlebird(start, queries, messages, max, app, end) {
 }
 const fetchWhatsApp = (start, max, end) => fetchLittlebird(start, ["WhatsApp chat with a client"],
   ["someone asking me to do something", "client question waiting for my reply", "I promised to send or do something", "message about a deadline or meeting"], max || 16000, "WhatsApp", end || "now");
+// Littlebird's activity summaries, read in two-hour slices so the whole day is covered in order (one search over the
+// whole day only returns the best-matching snippets). Keeps each slice's contents list plus the start of each summary.
+async function fetchDaySummaries(day, isToday) {
+  const nowH = new Date().getHours();
+  const slices = [[0, 8], [8, 10], [10, 12], [12, 14], [14, 16], [16, 18], [18, 20], [20, 24]].filter(([a]) => !isToday || a <= nowH);
+  const hh = (h) => h === 24 ? "23:59:59" : `${pad(h)}:00:00`;
+  const queries = ["client project work", "documents, pages, workflows and automations edited", "emails written and sent", "meetings and calls", "Claude chats and designs", "work activity and apps used"];
+  const seen = new Set(), out = [];
+  let ok = 0, lastErr = null;
+  for (let i = 0; i < slices.length; i += 3) {
+    const batch = slices.slice(i, i + 3);
+    const res = await Promise.allSettled(batch.map(([a, b]) => read("Littlebird", "search_user_context", { search_queries: queries, date_range: { start: `${day} ${hh(a)}`, end: `${day} ${hh(b)}` }, filters: { data_source: "summaries" } }, { cache: false })));
+    res.forEach((r, k) => {
+      if (r.status !== "fulfilled") { lastErr = r.reason; return; }
+      ok++;
+      const txt = asText(r.value.payload);
+      const anchors = {};
+      (txt.match(/^#\d+ \| .*$/gm) || []).forEach(line => { const m = line.match(/^#(\d+) \| (\[[^\]]*\])/); if (m) anchors[m[1]] = m[2]; });
+      const items = [...txt.matchAll(/<#(\d+)>([\s\S]*?)<\/#\1>/g)];
+      const parts = [];
+      items.forEach(m => { const a = anchors[m[1]] || m[2].slice(0, 80); if (seen.has(a)) return; seen.add(a); parts.push(m[2].trim().slice(0, 1800)); });
+      if (parts.length) out.push(`--- ${hh(batch[k][0]).slice(0, 5)} to ${hh(batch[k][1]).slice(0, 5)} ---\n` + parts.join("\n\n"));
+    });
+  }
+  if (!ok && lastErr) throw lastErr;
+  return out.join("\n\n").slice(0, 60000);
+}
 function clientListForAI() {
   const c = cfg();
   return [...new Set([...(c.groups || []).map(d => { const pj = projectsFor(d.name); return `${d.name}${(d.match || []).length ? ` (also known as: ${d.match.join(", ")})` : ""}${pj.length ? ` [sub-clients: ${pj.join(", ")}]` : ""}`; }), ...clientNames()])].join("\n");
@@ -1361,8 +1388,20 @@ function checkDue() {
   return now.getHours() * 60 + now.getMinutes() >= 17 * 60 + 30 && cfg().lastCheckDate !== todayKey && S.check.status !== "busy" && canSave();
 }
 setInterval(() => { const d = checkDue(); if (d !== S.remindShown) { S.remindShown = d; renderToday(); if (d) toast("It's half five. Run Check my day to log today's time.", { act: "check", label: "Check now" }); } }, 60000);
-async function runCheck() {
+function openCheckStart() {
   const day = ($("checkDate") && $("checkDate").value) || todayKey;
+  $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><div class="drawer-in" role="dialog" aria-label="Check your day">
+    <div class="row" style="justify-content:space-between"><h2>Check your day</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>
+    <div class="ctx">Reads Littlebird's activity summaries for the day, two hours at a time, plus your calendar and WhatsApp. Then it suggests time to log, tasks that look finished and follow-ups.</div>
+    <div class="field"><label for="ckDay">Day</label><input type="date" id="ckDay" value="${esc(day)}" max="${todayKey}"></div>
+    <div class="field"><label for="ckPaste">Littlebird's day report (optional)</label><textarea id="ckPaste" placeholder="If you've asked Littlebird for a rundown of your day, paste it here. It makes the check much more accurate."></textarea><span class="hint">Leave it empty and the check reads Littlebird directly.</span></div>
+    <div class="row"><button class="btn btn-sun" data-act="runcheck" type="button">Check my day</button></div>
+  </div></div>`;
+}
+async function runCheck() {
+  const pasted = (($("ckPaste") && $("ckPaste").value) || "").trim().slice(0, 30000);
+  const day = ($("ckDay") && $("ckDay").value) || ($("checkDate") && $("checkDate").value) || todayKey;
+  if ($("ckDay")) closeDrawer();
   const isToday = day === todayKey;
   S.checkDate = day;
   const dayName = isToday ? "today" : new Date(day + "T12:00:00").toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" });
@@ -1370,12 +1409,16 @@ async function runCheck() {
   S.check = { status: "busy", msg: isToday ? "Reading your day…" : `Reading ${dayName}…` }; renderToday();
   let lb, calText = "(calendar unavailable)";
   try {
-    const [a, b] = await Promise.all([
-      fetchLittlebird(day, ["client work done today", "documents, pages and automations edited today", "emails and messages sent to clients today", "meetings and calls today"], ["messages sent today about finished work", "replies sent to clients today"], 26000),
-      fetchLittlebird(day, ["GoHighLevel, Shopify or Make work today", "time spent on each project today", "tasks completed today"], ["confirmation that something is done"], 20000),
-      fetchWhatsApp(day, 10000, isToday ? "now" : day).catch(() => "")
-    ]).then(([a1, b1, c1]) => [a1, b1 + (c1 ? "\n\nWHATSAPP TODAY:\n" + c1 : "")]);
-    lb = a + "\n\n" + b;
+    const [sum, msgs, wa] = await Promise.all([
+      fetchDaySummaries(day, isToday).catch(e => { if (!pasted) throw e; return ""; }),
+      fetchLittlebird(day, ["emails and messages sent to clients"], ["messages sent about finished work", "replies sent to clients", "confirmation that something is done"], 10000).catch(() => ""),
+      fetchWhatsApp(day, 8000, isToday ? "now" : day).catch(() => "")
+    ]);
+    let extra = "";
+    if (!sum && !pasted) extra = await fetchLittlebird(day, ["client work done", "documents, pages and automations edited", "GoHighLevel, Shopify or Make work", "meetings and calls"], ["replies sent to clients"], 26000);
+    lb = (pasted ? "HER OWN LITTLEBIRD DAY REPORT (the most reliable source: use its blocks and times first):\n" + pasted + "\n\n" : "")
+      + (sum ? "ACTIVITY SUMMARIES, IN TIME ORDER (each starts with its [start - end] time range):\n" + sum + "\n\n" : "")
+      + extra + (msgs ? "\n\nMESSAGES AND EMAILS:\n" + msgs : "") + (wa ? "\n\nWHATSAPP:\n" + wa : "");
   } catch (e) { S.check = { status: "err", msg: errText(e, "Littlebird") }; renderToday(); return; }
   try { if (!S.cal || S.cal.date !== day) await loadCalendar(day); if (S.cal && !S.cal.err) calText = JSON.stringify(S.cal.events.map(e => ({ id: e.id, title: e.title, time: e.time, mins: e.mins }))); } catch (_) {}
   S.check = { status: "busy", msg: "Matching against your tasks…" }; renderToday();
@@ -1391,7 +1434,7 @@ Return ONLY JSON in this exact shape:
 
 Rules:
 - done: only open tasks with clear evidence they were finished on that day (sent, published, built, confirmed). Use exact taskIds.
-- time: time she spent ON THAT DAY that is NOT already in the time log. Use screen timestamps to judge durations. Be conservative, round to 5 minutes, skip anything under 10 minutes.
+- time: time she spent ON THAT DAY that is NOT already in the time log. Activity summaries carry [start - end] time ranges: build one entry per continuous block of work for one client, counted from the start of the block to its end (see her notes), split where she switches client. Never count the same minutes twice, and never total more time than actually passed. Round to 5 minutes and skip anything under 10 minutes. If an entry already in the log covers part of a block, only add the uncovered part, and say so in the evidence.
   - Work on a task: kind "work", with its taskId. Other client work: taskId null with the client name.
   - Meetings and calls she actually attended (seen in Littlebird or on the calendar): kind "meeting", include calEventId when it matches a calendar event. Skip calendar blocks that are focus time or reminders (e.g. "NO Calls", "Lift"), and skip meetings already logged.
 - newTasks: follow-ups she clearly committed to that day that are not on the list. Max 8.
@@ -1586,7 +1629,8 @@ document.addEventListener("click", async (ev) => {
     case "cleardone": S.plan.ids = S.plan.ids.filter(x => { const t = getTask(x); return t && t.status !== "done"; }); savePlan(); renderAll(); break;
     case "carry": { const left = (S.prevPlan.ids || []).filter(x => { const t = getTask(x); return t && t.status === "open"; }); S.plan.ids = left.concat(S.plan.ids.filter(x => !left.includes(x))); savePlan(); renderAll(); break; }
     case "gotoday": setTab("today"); $("toastHost").innerHTML = ""; window.scrollTo({ top: 0 }); break;
-    case "check": runCheck(); break;
+    case "check": openCheckStart(); break;
+    case "runcheck": runCheck(); break;
     case "applyreview": applyReview(); break;
     case "meeting": openMeeting(); break;
     case "mlog": {
