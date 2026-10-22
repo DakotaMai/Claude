@@ -1,0 +1,562 @@
+<title>Journal Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a morning page. Write tab = a quiet sheet with a 10-minute clock; Claude reads it back into feelings, plans, ideas.
+   Patterns tab = what keeps coming up across days. Entries tab = the archive. Same desk family as Check-in and Training. */
+:root{
+  --bg:#f2f1f6; --surface:#ffffff; --sheet:#fbfbfd; --sunk:#e8e6f0; --ink:#1b1a24; --muted:#615e72; --line:#d9d6e4;
+  --accent:#5a48c4; --accent-ink:#ffffff; --accent-soft:#ece9fb;
+  --m1:#c8473d; --m2:#d9822b; --m3:#a59a3a; --m4:#3f9a6a; --m5:#2c7fb8;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Barlow","Segoe UI",system-ui,sans-serif;
+  --f-write:"Literata",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111019; --surface:#1a1924; --sheet:#16151f; --sunk:#24222f; --ink:#e7e5ef; --muted:#a19db3; --line:#302d3e;
+  --accent:#a99bff; --accent-ink:#14112a; --accent-soft:#272144;
+  --m1:#ff8a7e; --m2:#f2a65a; --m3:#d4c862; --m4:#6fd09a; --m5:#6cb6ec; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111019; --surface:#1a1924; --sheet:#16151f; --sunk:#24222f; --ink:#e7e5ef; --muted:#a19db3; --line:#302d3e;
+  --accent:#a99bff; --accent-ink:#14112a; --accent-soft:#272144;
+  --m1:#ff8a7e; --m2:#f2a65a; --m3:#d4c862; --m4:#6fd09a; --m5:#6cb6ec; color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--f-body);font-size:15px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 72px}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+.wrap{max-width:1120px;margin:0 auto}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hint{font-size:12.5px;color:var(--muted)}
+
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-block:22px 14px}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(34px,5vw,54px);line-height:.95;margin:4px 0 0;text-transform:uppercase;text-wrap:balance}
+.streak{display:flex;align-items:baseline;gap:10px}
+.streak .n{font-family:var(--f-display);font-weight:800;font-size:44px;line-height:1;color:var(--accent)}
+.streak .l{font-weight:600}
+.streak .d{color:var(--muted);font-size:13px}
+
+.tabs{display:flex;gap:4px;margin:0 0 14px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{border:0;background:transparent;padding:8px 14px;font-family:var(--f-display);font-weight:700;font-size:18px;text-transform:uppercase;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;font-weight:600;font-size:14px}
+.btn:hover{border-color:var(--muted)}
+.btn[disabled]{opacity:.5;cursor:default}
+.btn-pri{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.btn-pri:hover{border-color:transparent;filter:brightness(1.07)}
+.btn-sm{padding:3px 9px;font-size:13px;border-radius:6px}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn-ghost:hover{color:var(--ink);border-color:var(--line)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sp{flex:1}
+.notice{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--m2);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:14px}
+
+/* write */
+.wgrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.wgrid{grid-template-columns:minmax(0,1fr)}}
+.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;min-width:0}
+.sheet-h{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.sheet-h .date{font-family:var(--f-display);font-weight:700;font-size:20px;text-transform:uppercase}
+.clock{display:flex;align-items:center;gap:8px}
+.clock .t{font-family:var(--f-mono);font-size:20px;font-variant-numeric:tabular-nums}
+.clock .t.over{color:var(--accent)}
+.ring{width:22px;height:22px;flex:none}
+.ring circle{fill:none;stroke-width:3}
+.ring .bg{stroke:var(--sunk)} .ring .fg{stroke:var(--accent);stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%}
+.nudge{padding:10px 16px 0;font-family:var(--f-write);font-style:italic;color:var(--muted);font-size:15px;min-height:1.5em}
+#pad{border:0;background:transparent;resize:vertical;min-height:58vh;padding:12px 16px 18px;font-family:var(--f-write);font-size:18px;line-height:1.7;outline:none;width:100%}
+#pad::placeholder{color:var(--muted);opacity:.75}
+.sheet-f{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 16px;border-top:1px solid var(--line)}
+.badge{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+
+.side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.panel h3{font-family:var(--f-display);font-weight:700;font-size:19px;margin:0;text-transform:uppercase}
+.ph{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ph .eyebrow{margin-left:auto}
+.empty{border:1.5px dashed var(--line);border-radius:12px;padding:18px;color:var(--muted)}
+.empty b{color:var(--ink)}
+.ex{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;background:var(--sunk);color:var(--muted);border-radius:4px;padding:1px 6px}
+
+.read .sum{font-family:var(--f-write);font-size:16.5px;line-height:1.55;margin:0}
+.meters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.meter .k{font-size:12px;color:var(--muted)}
+.meter .bar{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-top:4px}
+.meter .bar i{height:8px;border-radius:2px;background:var(--sunk)}
+.sec{display:flex;flex-direction:column;gap:6px}
+.sec .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 11px;font-size:13.5px;font-weight:600}
+.emo{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 11px;font-size:13.5px;font-weight:600;background:var(--accent-soft);color:var(--ink)}
+.emo b{display:inline-flex;gap:2px}
+.emo b i{width:5px;height:5px;border-radius:50%;background:var(--accent);opacity:.25}
+.emo b i.on{opacity:1}
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.list li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;font-size:14.5px}
+.list li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--muted);margin-top:8px}
+.list.plans li::before{display:none}
+.list.plans input{width:17px;height:17px;margin-top:2px;accent-color:var(--accent)}
+.list.plans li.done span{text-decoration:line-through;color:var(--muted)}
+.quote{font-family:var(--f-write);font-style:italic;color:var(--muted);font-size:13px}
+.noticed{border-left:3px solid var(--accent);padding:2px 0 2px 12px;font-family:var(--f-write);font-size:15.5px;line-height:1.5}
+.ask{background:var(--accent-soft);border-radius:10px;padding:10px 12px;font-family:var(--f-write);font-size:15.5px}
+.thinking{display:flex;align-items:center;gap:10px;color:var(--muted)}
+.dots{display:inline-flex;gap:4px}.dots i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:b 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+@keyframes b{0%,80%,100%{opacity:.25}40%{opacity:1}}
+
+/* patterns */
+.pgrid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:900px){.pgrid{grid-template-columns:minmax(0,1fr)}}
+.strip{display:grid;gap:3px;align-items:end}
+.strip .c{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
+.strip .c i{width:100%;max-width:22px;border-radius:3px;background:var(--sunk)}
+.strip .c span{font-family:var(--f-mono);font-size:9.5px;color:var(--muted)}
+.mk{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
+.mk i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.freq{display:flex;flex-direction:column;gap:5px}
+.frow{display:grid;grid-template-columns:130px minmax(0,1fr) 26px;gap:8px;align-items:center;font-size:13.5px}
+.frow .fb{height:10px;border-radius:3px;background:var(--accent);opacity:.8}
+.frow .fn{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);text-align:right}
+@media (max-width:520px){.frow{grid-template-columns:96px minmax(0,1fr) 24px}}
+.pat{display:flex;flex-direction:column;gap:3px}
+.pat b{font-weight:600}
+.pat p{margin:0;font-family:var(--f-write);font-size:15px;line-height:1.5}
+.src{font-size:11.5px;color:var(--muted)}
+
+/* entries */
+.elist{display:flex;flex-direction:column;gap:8px}
+.erow{display:grid;grid-template-columns:86px minmax(0,1fr) auto;gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:left;width:100%}
+.erow:hover{border-color:var(--muted)}
+.erow .d{font-family:var(--f-display);font-weight:700;font-size:17px;text-transform:uppercase;line-height:1.1}
+.erow .d small{display:block;font-family:var(--f-mono);font-weight:400;font-size:11px;color:var(--muted);text-transform:none}
+.erow .s{font-family:var(--f-write);font-size:14.5px;line-height:1.45;overflow-wrap:anywhere;min-width:0}
+.erow .m{width:12px;height:12px;border-radius:50%;margin-top:4px;background:var(--sunk)}
+@media (max-width:520px){.erow{grid-template-columns:minmax(0,1fr) auto}.erow .d{grid-column:1/-1}}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:8px;font-size:14px;z-index:40;max-width:calc(100% - 32px)}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow" id="eyebrow">Morning braindump</div>
+      <h1>Journal Desk</h1>
+    </div>
+    <div class="streak" id="streak"></div>
+  </header>
+  <div class="tabs" role="tablist" aria-label="View">
+    <button role="tab" id="tab-write" type="button" data-act="tab" data-v="write" aria-selected="true">Write</button>
+    <button role="tab" id="tab-patterns" type="button" data-act="tab" data-v="patterns" aria-selected="false">Patterns</button>
+    <button role="tab" id="tab-entries" type="button" data-act="tab" data-v="entries" aria-selected="false">Entries</button>
+  </div>
+  <div id="notices"></div>
+
+  <section id="view-write">
+    <div class="wgrid">
+      <div class="sheet">
+        <div class="sheet-h">
+          <span class="date" id="sheetDate"></span>
+          <span class="sp"></span>
+          <div class="clock" aria-live="off">
+            <svg class="ring" viewBox="0 0 22 22" aria-hidden="true"><circle class="bg" cx="11" cy="11" r="9"/><circle class="fg" id="ringFg" cx="11" cy="11" r="9" stroke-dasharray="56.55" stroke-dashoffset="56.55"/></svg>
+            <span class="t" id="clockT">10:00</span>
+            <button class="btn btn-sm btn-ghost" type="button" data-act="clock" id="clockBtn">Start</button>
+          </div>
+        </div>
+        <div class="nudge" id="nudge"></div>
+        <label for="pad" class="eyebrow" style="position:absolute;left:-9999px">Today's braindump</label>
+        <textarea id="pad" spellcheck="false" placeholder="Start anywhere. Whatever's loudest in your head right now. Don't fix typos, don't go back, just keep the words coming for ten minutes."></textarea>
+        <div class="sheet-f">
+          <span class="badge" id="wordCount">0 words</span>
+          <span class="badge" id="saveBadge" role="status"></span>
+          <span class="sp"></span>
+          <button class="btn btn-sm btn-ghost" type="button" data-act="stuck">Stuck? Give me a prompt</button>
+          <button class="btn btn-pri" type="button" data-act="read" id="readBtn">Read it back to me</button>
+        </div>
+      </div>
+      <aside class="side" id="readPanel"></aside>
+    </div>
+  </section>
+  <section id="view-patterns" hidden></section>
+  <section id="view-entries" hidden></section>
+</div>
+<div id="toastHost"></div>
+
+<script>
+(function(){
+"use strict";
+
+const MINUTES = 10;
+const PROMPTS = [
+  "What's the first thing you thought about when you woke up?",
+  "What are you avoiding at the moment?",
+  "What would make today feel like a good day?",
+  "How does your body feel right now, top to bottom?",
+  "Who's on your mind, and why?",
+  "What's taking up more headspace than it deserves?",
+  "What are you looking forward to this week?",
+  "If you only got one thing done today, what should it be?",
+  "What's been bugging you that you haven't said out loud?",
+  "What did yesterday teach you?",
+  "What idea keeps coming back to you?",
+  "What do you need more of right now? Less of?",
+  "Finish this sentence: honestly, I'm feeling…",
+  "What's a decision you keep putting off?",
+  "What went well recently that you skipped past?"
+];
+
+const S = { entries:{}, patterns:null, date:null, tab:"write", dirty:false, timer:null, saveTimer:null, inflight:false, queued:false,
+  clock:{ running:false, start:0, acc:0, tick:null }, reading:false, readErr:"", patBusy:false, patErr:"", loaded:false, noDb:false, noSample:false, prompt:-1 };
+let db = null, uid = null, sample = null;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const pad2 = (n) => String(n).padStart(2,"0");
+const ymd = (d) => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+const parseYmd = (s) => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d, 12); };
+const addDays = (s, n) => { const d = parseYmd(s); d.setDate(d.getDate()+n); return ymd(d); };
+const todayKey = () => ymd(new Date());
+const longDate = (s) => parseYmd(s).toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long" });
+const shortDate = (s) => parseYmd(s).toLocaleDateString("en-GB", { day:"numeric", month:"short" });
+const dow = (s) => parseYmd(s).toLocaleDateString("en-GB", { weekday:"short" });
+const words = (t) => (String(t || "").trim().match(/\S+/g) || []).length;
+const moodColor = (m) => m ? `var(--m${Math.max(1, Math.min(5, Math.round(m)))})` : "var(--sunk)";
+const MOOD_WORD = ["", "Low", "Heavy", "Mixed", "Steady", "Bright"];
+const ENERGY_WORD = ["", "Empty", "Low", "Middling", "Good", "Buzzing"];
+function toast(msg){ const h = $("toastHost"); h.innerHTML = `<div class="toast" role="status">${esc(msg)}</div>`; clearTimeout(toast._t); toast._t = setTimeout(() => h.innerHTML = "", 3200); }
+function use(name){ try { return window.claude && window.claude.use ? window.claude.use(name).catch(() => null) : Promise.resolve(null); } catch(e){ return Promise.resolve(null); } }
+const lsGet = (k) => { try { return localStorage.getItem(k); } catch(e){ return null; } };
+const lsSet = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch(e){} };
+
+/* ---------- storage: one private doc per day ---------- */
+const ref = (id) => db.doc("data/users/" + uid + "/" + id);
+const cur = () => S.entries[S.date] || { date: S.date, text:"" };
+function setSave(msg){ $("saveBadge").textContent = msg; }
+function patch(date, fn){
+  const e = Object.assign({ date, text:"" }, S.entries[date] ? JSON.parse(JSON.stringify(S.entries[date])) : {});
+  fn(e); e.date = date; e.updated = new Date().toISOString();
+  S.entries[date] = e;
+  queueSave(date);
+}
+function queueSave(date){
+  if (!db || !uid) { setSave("Kept on this device only"); return; }
+  setSave("Saving…");
+  clearTimeout(S.saveTimer);
+  S.saveTimer = setTimeout(() => { S.saveTimer = null; flush(date); }, 900);
+}
+async function flush(date){
+  if (S.inflight) { S.queued = date; return; }
+  S.inflight = true;
+  try { await ref("e_" + date).set(S.entries[date]); setSave("Saved"); S.dirty = false; if (date === S.date) lsSet("jd-draft-" + date, null); }
+  catch(e){ setSave("Couldn't save: " + ((e && e.message) || (e && e.code) || "try again")); }
+  S.inflight = false;
+  if (S.queued) { const q = S.queued; S.queued = false; flush(q); }
+}
+function onData(snap){
+  const entries = {}; let pat = null;
+  snap.docs.forEach(ds => { const d = ds.data(); if (!d) return; if (ds.id.startsWith("e_")) entries[ds.id.slice(2)] = d; else if (ds.id === "patterns") pat = d; });
+  if (S.dirty || S.saveTimer || S.inflight) entries[S.date] = S.entries[S.date];
+  S.entries = entries; S.patterns = pat; S.loaded = true;
+  if (!S.dirty) loadPad();
+  renderAll();
+}
+
+/* ---------- writing ---------- */
+function loadPad(){
+  const e = cur(), draft = lsGet("jd-draft-" + S.date);
+  const text = draft && draft.length > (e.text || "").length ? draft : (e.text || "");
+  const p = $("pad");
+  if (document.activeElement !== p || !p.value) p.value = text;
+  if (!S.clock.running) S.clock.acc = (e.secs || 0) * 1000;
+  updateCount(); drawClock();
+}
+function onType(){
+  const t = $("pad").value;
+  if (!S.clock.running && S.date === todayKey() && !S.clock.started) startClock();
+  S.dirty = true;
+  lsSet("jd-draft-" + S.date, t);
+  patch(S.date, e => { e.text = t; e.words = words(t); e.secs = Math.round(elapsed() / 1000); });
+  updateCount();
+}
+function updateCount(){ const n = words($("pad").value); $("wordCount").textContent = `${n} word${n === 1 ? "" : "s"}`; }
+
+function elapsed(){ return S.clock.acc + (S.clock.running ? Date.now() - S.clock.start : 0); }
+function startClock(){ S.clock.started = true; S.clock.running = true; S.clock.start = Date.now(); clearInterval(S.clock.tick); S.clock.tick = setInterval(drawClock, 500); drawClock(); }
+function stopClock(){ if (!S.clock.running) return; S.clock.acc = elapsed(); S.clock.running = false; clearInterval(S.clock.tick); drawClock(); }
+function drawClock(){
+  const total = MINUTES * 60, el = Math.floor(elapsed() / 1000), left = total - el;
+  const t = $("clockT"), over = left <= 0;
+  const a = Math.abs(left);
+  t.textContent = (over ? "+" : "") + `${Math.floor(a / 60)}:${pad2(a % 60)}`;
+  t.classList.toggle("over", over);
+  $("ringFg").setAttribute("stroke-dashoffset", (56.55 * (1 - Math.min(1, el / total))).toFixed(2));
+  $("clockBtn").textContent = S.clock.running ? "Pause" : el > 0 ? "Resume" : "Start";
+  if (over && S.clock.running && !S.clock.rang) { S.clock.rang = true; setNudge("That's ten minutes. Finish the thought you're on, then have it read back."); }
+}
+function setNudge(t){ $("nudge").textContent = t || ""; }
+
+/* ---------- read back (Claude) ---------- */
+function recentContext(before){
+  return Object.keys(S.entries).filter(d => d < before && S.entries[d].read).sort().slice(-7).map(d => {
+    const r = S.entries[d].read;
+    return `${d}: mood ${r.mood}/5, energy ${r.energy}/5; feelings: ${(r.emotions || []).map(x => x.name).join(", ")}; themes: ${(r.themes || []).join(", ")}; worries: ${(r.worries || []).join("; ")}`;
+  }).join("\n");
+}
+async function readBack(){
+  const text = $("pad").value.trim();
+  if (words(text) < 15) { toast("Write a bit more first. Even a few messy lines is enough."); return; }
+  if (!sample) { S.noSample = true; renderRead(); return; }
+  stopClock();
+  patch(S.date, e => { e.text = $("pad").value; e.words = words(e.text); e.secs = Math.round(elapsed() / 1000); });
+  S.reading = true; S.readErr = ""; renderRead();
+  const ctx = recentContext(S.date);
+  const prompt = `You are reading a private morning journal entry. The writer braindumps for about ten minutes without editing, so expect typos, half sentences and jumps between topics. Their life includes running their own business and client work, training, perimenopause and HRT, and fuelling. Read it the way a perceptive, warm friend would: notice what is actually there, including what is said in passing or more than once. Do not diagnose, moralise or use therapy jargon. Use plain UK English and speak to the writer as "you".
+
+Return JSON only, with exactly these keys:
+{"summary": "1-2 sentences on what is on their mind this morning",
+ "mood": 1-5 (1 low, 5 bright),
+ "energy": 1-5,
+ "emotions": [{"name": "a specific feeling word, e.g. restless, dread, relieved, proud (never 'fine')", "strength": 1-3, "quote": "a few words from the entry that show it, max 12 words"}] max 5,
+ "themes": ["short lowercase topic, 1-3 words, e.g. client deadlines, sleep, training load"] max 5,
+ "plans": ["concrete things they intend or need to do, written as short actions, max 12 words each"],
+ "ideas": ["ideas, possibilities or things they want to try"],
+ "worries": ["worries or unresolved things, short"],
+ "wins": ["anything that went well or they feel good about"],
+ "noticed": "one observation they may not have spotted themselves: a tension, a repeat, something said in passing that matters. Max 35 words. If earlier days are given, you may connect to them.",
+ "question": "one gentle question to carry into the day, max 20 words"}
+Only include what the entry supports. Empty arrays are fine.
+${ctx ? `\nEarlier entries, for context only (already read):\n${ctx}\n` : ""}
+Today's entry (${S.date}):
+"""
+${text}
+"""`;
+  try {
+    const r = await sample.json(prompt, { modelTier:"default" });
+    const read = normaliseRead(r);
+    patch(S.date, e => { e.read = read; e.readAt = new Date().toISOString(); e.readWords = words(text); });
+    S.reading = false; renderAll();
+  } catch(e){
+    S.reading = false;
+    const c = e && e.code;
+    if (c === "not_granted") S.noSample = true;
+    S.readErr = c === "not_granted" ? "Claude wasn't allowed for this page, so it can't read entries back. Your writing is still saved."
+      : c === "rate_limited" ? "Too many requests just now. Give it a minute and try again."
+      : c === "cancelled" ? "" : "That read-back didn't work" + (e && e.message ? ": " + e.message : ". Try again.");
+    renderRead();
+  }
+}
+function arr(x, n){ return Array.isArray(x) ? x.filter(v => v != null && v !== "").slice(0, n || 8) : []; }
+function clamp5(v){ v = Number(v); return v >= 1 && v <= 5 ? Math.round(v) : null; }
+function normaliseRead(r){
+  r = r && typeof r === "object" ? r : {};
+  return {
+    summary: String(r.summary || ""), mood: clamp5(r.mood), energy: clamp5(r.energy),
+    emotions: arr(r.emotions, 5).map(x => typeof x === "string" ? { name:x, strength:2, quote:"" } : { name:String(x.name || "").toLowerCase(), strength:Math.max(1, Math.min(3, Number(x.strength) || 2)), quote:String(x.quote || "") }).filter(x => x.name),
+    themes: arr(r.themes, 5).map(t => String(t).toLowerCase()),
+    plans: arr(r.plans, 10).map(String), ideas: arr(r.ideas).map(String), worries: arr(r.worries).map(String), wins: arr(r.wins).map(String),
+    noticed: String(r.noticed || ""), question: String(r.question || "")
+  };
+}
+
+/* ---------- render ---------- */
+function renderAll(){ renderHeader(); renderNotices(); renderRead(); if (S.tab === "patterns") renderPatterns(); if (S.tab === "entries") renderEntries(); }
+function streakCount(){
+  let n = 0, d = todayKey();
+  if (!(S.entries[d] && words(S.entries[d].text) > 0)) d = addDays(d, -1);
+  while (S.entries[d] && words(S.entries[d].text) > 0) { n++; d = addDays(d, -1); }
+  return n;
+}
+function renderHeader(){
+  const n = streakCount(), total = Object.values(S.entries).filter(e => words(e.text) > 0).length;
+  $("streak").innerHTML = `<span class="n mono">${n}</span><span><span class="l">${n === 1 ? "morning in a row" : "mornings in a row"}</span><br><span class="d">${total} entr${total === 1 ? "y" : "ies"} so far</span></span>`;
+  const t = todayKey();
+  $("sheetDate").textContent = S.date === t ? "Today · " + longDate(t) : longDate(S.date);
+  $("eyebrow").textContent = S.date === t ? "Morning braindump" : "Editing an earlier entry";
+}
+function renderNotices(){
+  let h = "";
+  if (S.loaded && S.noDb) h += `<div class="notice">Entries can't be saved to your account in this view, so they're only kept in this browser. Open the page inside claude.ai while signed in to keep them properly.</div>`;
+  if (S.date !== todayKey()) h += `<div class="notice">You're editing ${esc(longDate(S.date))}. <button class="btn btn-sm" type="button" data-act="goToday">Back to today</button></div>`;
+  $("notices").innerHTML = h;
+}
+function meter(label, v, words){
+  return `<div class="meter"><div class="k">${esc(label)}${v ? ` · <b style="color:var(--ink)">${esc(words[v])}</b>` : ""}</div><div class="bar">${[1,2,3,4,5].map(i => `<i style="${v && i <= v ? `background:${moodColor(v)}` : ""}"></i>`).join("")}</div></div>`;
+}
+function listSec(label, items, cls){
+  if (!items || !items.length) return "";
+  return `<div class="sec"><span class="k">${esc(label)}</span><ul class="list ${cls || ""}">${items.map(t => `<li><span>${esc(t)}</span></li>`).join("")}</ul></div>`;
+}
+function plansSec(e){
+  const r = e.read; if (!r || !r.plans.length) return "";
+  const done = e.done || {};
+  return `<div class="sec"><span class="k">Plans and to-dos</span><ul class="list plans">${r.plans.map((t, i) => `<li class="${done[i] ? "done" : ""}"><input type="checkbox" id="pl-${e.date}-${i}" data-chg="plan" data-d="${e.date}" data-i="${i}" ${done[i] ? "checked" : ""}><label for="pl-${e.date}-${i}"><span>${esc(t)}</span></label></li>`).join("")}</ul></div>`;
+}
+function readHtml(e){
+  const r = e.read;
+  const emos = r.emotions.length ? `<div class="sec"><span class="k">Feelings in there</span><div class="chips">${r.emotions.map(x => `<span class="emo" title="${esc(x.quote)}">${esc(x.name)}<b aria-label="strength ${x.strength} of 3">${[1,2,3].map(i => `<i class="${i <= x.strength ? "on" : ""}"></i>`).join("")}</b></span>`).join("")}</div>
+    ${r.emotions.filter(x => x.quote).slice(0, 2).map(x => `<div class="quote">“${esc(x.quote)}”</div>`).join("")}</div>` : "";
+  const themes = r.themes.length ? `<div class="sec"><span class="k">On your mind</span><div class="chips">${r.themes.map(t => `<span class="chip">${esc(t)}</span>`).join("")}</div></div>` : "";
+  return `<p class="sum">${esc(r.summary)}</p>
+    <div class="meters">${meter("Mood", r.mood, MOOD_WORD)}${meter("Energy", r.energy, ENERGY_WORD)}</div>
+    ${emos}${themes}${plansSec(e)}${listSec("Ideas", r.ideas)}${listSec("Worries", r.worries)}${listSec("Going well", r.wins)}
+    ${r.noticed ? `<div class="sec"><span class="k">Something I noticed</span><div class="noticed">${esc(r.noticed)}</div></div>` : ""}
+    ${r.question ? `<div class="sec"><span class="k">To carry into today</span><div class="ask">${esc(r.question)}</div></div>` : ""}`;
+}
+function renderRead(){
+  const e = cur(), host = $("readPanel");
+  const stale = e.read && e.readWords && words($("pad").value) > e.readWords + 40;
+  $("readBtn").textContent = e.read ? "Read it again" : "Read it back to me";
+  $("readBtn").disabled = S.reading;
+  let body;
+  if (S.reading) body = `<div class="thinking"><span class="dots"><i></i><i></i><i></i></span>Reading what you wrote…</div><p class="hint" style="margin:0">Usually 10 to 30 seconds. The first time, claude.ai asks you to allow it.</p>`;
+  else if (e.read) body = readHtml(e) + (stale ? `<p class="hint" style="margin:0">You've written more since this was read. Read it again to include it.</p>` : "");
+  else if (S.noSample) body = `<div class="empty"><b>Read-back isn't available in this view.</b><br>It needs this page open in claude.ai with Claude allowed for it. Your writing still saves.</div>`;
+  else body = `<div class="empty"><b>Write first, read after.</b><br>When you're done, press <b>Read it back to me</b>. Claude picks out the feelings, plans, ideas and worries in what you wrote, notices anything you said in passing, and gives you one question to take into the day. Plans become a tick list.</div>
+    <div class="sec"><span class="k">What you'll get <span class="ex">Example</span></span>
+      <div class="chips"><span class="emo">restless<b><i class="on"></i><i class="on"></i><i></i></b></span><span class="emo">hopeful<b><i class="on"></i><i></i><i></i></b></span><span class="chip">client deadlines</span><span class="chip">sleep</span></div>
+      <div class="noticed" style="color:var(--muted)">You mentioned being tired three times but only in passing, each time straight before a work task.</div></div>`;
+  host.innerHTML = `<section class="panel read" aria-live="polite"><div class="ph"><h3>Read back</h3>${e.readAt ? `<span class="eyebrow">${esc(new Date(e.readAt).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}))}</span>` : ""}</div>${body}${S.readErr ? `<p class="hint" style="margin:0;color:var(--m1)">${esc(S.readErr)}</p>` : ""}</section>`;
+}
+
+/* ---- patterns ---- */
+function lastDays(n){ return Array.from({length:n}, (_, i) => addDays(todayKey(), -(n-1)+i)); }
+function tally(dates, pick){
+  const m = {}; dates.forEach(d => { const r = S.entries[d] && S.entries[d].read; if (r) pick(r).forEach(k => { k = String(k).toLowerCase().trim(); if (k) m[k] = (m[k] || 0) + 1; }); });
+  return Object.entries(m).sort((a, b) => b[1] - a[1]);
+}
+function freqHtml(rows, empty){
+  if (!rows.length) return `<p class="hint" style="margin:0">${esc(empty)}</p>`;
+  const max = rows[0][1];
+  return `<div class="freq">${rows.slice(0, 8).map(([k, n]) => `<div class="frow"><span style="overflow-wrap:anywhere">${esc(k)}</span><div><div class="fb" style="width:${Math.max(6, n / max * 100)}%"></div></div><span class="fn">${n}</span></div>`).join("")}</div>`;
+}
+function renderPatterns(){
+  const days = lastDays(28), read = days.filter(d => S.entries[d] && S.entries[d].read);
+  const written = days.filter(d => S.entries[d] && words(S.entries[d].text) > 0);
+  const strip = `<div class="strip" style="grid-template-columns:repeat(${days.length},minmax(0,1fr))" role="img" aria-label="Mood for each of the last 28 days">${days.map(d => {
+    const e = S.entries[d], r = e && e.read, h = r && r.mood ? 10 + r.mood * 9 : e && words(e.text) ? 8 : 4;
+    return `<div class="c" title="${esc(shortDate(d))}${r && r.mood ? ": " + MOOD_WORD[r.mood] : e && words(e.text) ? ": written, not read back" : ""}"><i style="height:${h}px;background:${r && r.mood ? moodColor(r.mood) : e && words(e.text) ? "var(--muted)" : "var(--sunk)"};${e && words(e.text) && !(r && r.mood) ? "opacity:.4" : ""}"></i><span>${parseYmd(d).getDate()}</span></div>`; }).join("")}</div>
+    <div class="mk">${[1,2,3,4,5].map(m => `<span><i style="background:${moodColor(m)}"></i>${MOOD_WORD[m]}</span>`).join("")}<span><i style="background:var(--muted);opacity:.4"></i>Written, not read</span></div>`;
+  const plans = [];
+  days.slice(-14).reverse().forEach(d => { const e = S.entries[d]; if (e && e.read) e.read.plans.forEach((t, i) => { if (!(e.done || {})[i]) plans.push({ d, i, t }); }); });
+  const ideas = []; days.slice().reverse().forEach(d => { const e = S.entries[d]; if (e && e.read) e.read.ideas.forEach(t => ideas.push({ d, t })); });
+  const P = S.patterns;
+  let ai;
+  if (S.patBusy) ai = `<div class="thinking"><span class="dots"><i></i><i></i><i></i></span>Looking across your entries…</div>`;
+  else if (P && P.result) {
+    const r = P.result;
+    ai = `${r.headline ? `<p class="sum" style="font-family:var(--f-write);font-size:17px;margin:0">${esc(r.headline)}</p>` : ""}
+      ${(r.patterns || []).map(p => `<div class="pat"><b>${esc(p.title)}</b><p>${esc(p.detail)}</p></div>`).join("")}
+      ${r.suggestion ? `<div class="sec"><span class="k">One thing to try</span><div class="ask">${esc(r.suggestion)}</div></div>` : ""}
+      <span class="src">From ${P.count} read-back entr${P.count === 1 ? "y" : "ies"}, looked at ${esc(new Date(P.at).toLocaleDateString("en-GB",{day:"numeric",month:"short"}))}</span>`;
+  } else ai = `<p class="hint" style="margin:0">Once you have three or more read-back mornings, Claude can look across them for what keeps coming up: moods that follow certain topics, worries that repeat, plans that keep sliding.</p>`;
+  $("view-patterns").innerHTML = `
+    <div class="pgrid">
+      <div class="side">
+        <section class="panel"><div class="ph"><h3>Last 4 weeks</h3><span class="eyebrow">${written.length} of 28 mornings written</span></div>${strip}</section>
+        <section class="panel"><div class="ph"><h3>What keeps coming up</h3><span class="eyebrow">${read.length} read back</span>
+          <button class="btn btn-sm" type="button" data-act="patterns" ${read.length < 3 || S.patBusy ? "disabled" : ""} style="margin-left:8px">${P ? "Look again" : "Look across my entries"}</button></div>
+          ${ai}${S.patErr ? `<p class="hint" style="margin:0;color:var(--m1)">${esc(S.patErr)}</p>` : ""}</section>
+        <section class="panel"><div class="ph"><h3>Open plans</h3><span class="eyebrow">last 14 days, not ticked</span></div>
+          ${plans.length ? `<ul class="list plans">${plans.slice(0, 15).map(p => `<li><input type="checkbox" id="op-${p.d}-${p.i}" data-chg="plan" data-d="${p.d}" data-i="${p.i}"><label for="op-${p.d}-${p.i}"><span>${esc(p.t)} <span class="hint">· ${esc(dow(p.d))} ${esc(shortDate(p.d))}</span></span></label></li>`).join("")}</ul>` : `<p class="hint" style="margin:0">Plans from your read-backs land here until you tick them off.</p>`}</section>
+      </div>
+      <div class="side">
+        <section class="panel"><div class="ph"><h3>Feelings</h3><span class="eyebrow">how often, 4 weeks</span></div>${freqHtml(tally(read, r => r.emotions.map(x => x.name)), "Feelings show up here after your first read-back.")}</section>
+        <section class="panel"><div class="ph"><h3>Topics</h3><span class="eyebrow">how often, 4 weeks</span></div>${freqHtml(tally(read, r => r.themes), "Topics show up here after your first read-back.")}</section>
+        <section class="panel"><div class="ph"><h3>Ideas bank</h3><span class="eyebrow">newest first</span></div>
+          ${ideas.length ? `<ul class="list">${ideas.slice(0, 12).map(x => `<li><span>${esc(x.t)} <span class="hint">· ${esc(shortDate(x.d))}</span></span></li>`).join("")}</ul>` : `<p class="hint" style="margin:0">Ideas you mention in passing get collected here so they don't get lost.</p>`}</section>
+      </div>
+    </div>`;
+}
+async function lookAcross(){
+  if (!sample) { S.patErr = "Claude isn't available in this view."; renderPatterns(); return; }
+  const ds = Object.keys(S.entries).filter(d => S.entries[d].read).sort().slice(-30);
+  const lines = ds.map(d => { const r = S.entries[d].read; return `${d} (${dow(d)}): mood ${r.mood}/5, energy ${r.energy}/5. ${r.summary} Feelings: ${r.emotions.map(x => x.name + " " + x.strength).join(", ")}. Topics: ${r.themes.join(", ")}. Plans: ${r.plans.join("; ")}. Worries: ${r.worries.join("; ")}. Wins: ${r.wins.join("; ")}.`; }).join("\n");
+  S.patBusy = true; S.patErr = ""; renderPatterns();
+  try {
+    const r = await sample.json(`Below are read-back summaries of someone's morning braindump journal, one line per day, oldest first. Look across them for real patterns: feelings that follow certain topics or weekdays, worries that repeat, plans that keep coming back undone, energy shifts, things improving. Only claim what the lines support, and mention dates or counts as evidence. Warm, direct, plain UK English, speak to them as "you". No diagnosis or therapy jargon.
+
+Return JSON only: {"headline": "one sentence on the big picture", "patterns": [{"title": "short", "detail": "1-2 sentences with evidence"}] (2 to 5 items), "suggestion": "one small, specific thing to try this week"}
+
+${lines}`, { modelTier:"default" });
+    const res = { at: new Date().toISOString(), count: ds.length, result: { headline:String(r.headline || ""), patterns:arr(r.patterns, 5).map(p => ({ title:String(p.title || ""), detail:String(p.detail || "") })), suggestion:String(r.suggestion || "") } };
+    S.patterns = res;
+    if (db && uid) ref("patterns").set(res).catch(() => {});
+  } catch(e){
+    const c = e && e.code;
+    S.patErr = c === "not_granted" ? "Claude wasn't allowed for this page." : c === "rate_limited" ? "Too many requests just now. Try again in a minute." : c === "cancelled" ? "" : "That didn't work" + (e && e.message ? ": " + e.message : ".");
+  }
+  S.patBusy = false; renderPatterns();
+}
+
+/* ---- entries ---- */
+function renderEntries(){
+  const ds = Object.keys(S.entries).filter(d => words(S.entries[d].text) > 0).sort().reverse();
+  $("view-entries").innerHTML = ds.length ? `<div class="elist">${ds.map(d => {
+    const e = S.entries[d], r = e.read, snip = r && r.summary ? r.summary : String(e.text).slice(0, 180) + (e.text.length > 180 ? "…" : "");
+    return `<button class="erow" type="button" data-act="open" data-d="${d}"><span class="d">${esc(dow(d))} ${esc(shortDate(d))}<small>${words(e.text)} words${e.secs ? ` · ${Math.round(e.secs / 60)} min` : ""}</small></span>
+      <span class="s">${esc(snip)}${r && r.emotions.length ? `<span class="chips" style="margin-top:6px">${r.emotions.slice(0, 4).map(x => `<span class="emo">${esc(x.name)}</span>`).join("")}</span>` : ""}</span>
+      <span class="m" style="background:${moodColor(r && r.mood)}" title="${r && r.mood ? "Mood: " + MOOD_WORD[r.mood] : "Not read back"}"></span></button>`; }).join("")}</div>`
+    : `<div class="empty"><b>No entries yet.</b><br>Your mornings collect here, newest first, with the mood and feelings from each read-back. Tap one to reread or add to it.</div>`;
+}
+
+/* ---------- events ---------- */
+function showTab(t){
+  if (S.tab === "write" && t !== "write") stopClock();
+  S.tab = t;
+  ["write","patterns","entries"].forEach(x => { $("view-" + x).hidden = x !== t; $("tab-" + x).setAttribute("aria-selected", String(x === t)); });
+  if (t === "patterns") renderPatterns();
+  if (t === "entries") renderEntries();
+  lsSet("jd-tab", t);
+}
+function openDate(d){
+  stopClock(); S.clock = { running:false, start:0, acc:0, tick:null, started: d !== todayKey() };
+  S.date = d; S.dirty = false; S.readErr = ""; setNudge("");
+  $("pad").value = ""; loadPad(); renderAll(); showTab("write");
+}
+document.addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-act]"); if (!b) return;
+  const a = b.dataset.act;
+  if (a === "tab") showTab(b.dataset.v);
+  else if (a === "clock") { S.clock.running ? stopClock() : startClock(); }
+  else if (a === "stuck") { S.prompt = (S.prompt + 1 + Math.floor(Math.random() * 3)) % PROMPTS.length; setNudge(PROMPTS[S.prompt]); $("pad").focus(); }
+  else if (a === "read") readBack();
+  else if (a === "patterns") lookAcross();
+  else if (a === "open") openDate(b.dataset.d);
+  else if (a === "goToday") openDate(todayKey());
+});
+document.addEventListener("change", (ev) => {
+  const el = ev.target;
+  if (el.dataset.chg === "plan") {
+    const d = el.dataset.d, i = el.dataset.i;
+    patch(d, e => { e.done = Object.assign({}, e.done || {}); if (el.checked) e.done[i] = true; else delete e.done[i]; });
+    if (S.tab === "patterns") setTimeout(renderPatterns, 350); else renderRead();
+  }
+});
+$("pad").addEventListener("input", onType);
+document.addEventListener("visibilitychange", () => { if (document.hidden) stopClock(); });
+
+/* ---------- boot ---------- */
+S.date = todayKey();
+const startTab = lsGet("jd-tab");
+loadPad(); renderAll();
+if (startTab === "patterns" || startTab === "entries") showTab(startTab);
+setNudge(PROMPTS[new Date().getDate() % PROMPTS.length]);
+(async () => {
+  const [d, u, s] = await Promise.all([use("db"), use("user"), use("sample")]);
+  sample = s; if (!s) S.noSample = true;
+  db = d; uid = u ? await u.id().catch(() => null) : null;
+  if (db && uid) {
+    try { db.collection("data/users/" + uid).onSnapshot(onData, () => { S.noDb = true; S.loaded = true; renderAll(); }); }
+    catch(e){ S.noDb = true; S.loaded = true; renderAll(); }
+  } else { S.noDb = true; S.loaded = true; renderAll(); }
+})();
+})();
+</script>
