@@ -1003,10 +1003,22 @@ function openMeeting(pre) {
   </form></div>`;
   if (mcp && !cal) loadCalendar(date);
 }
-async function loadCalendar(date) {
+// Google limits how often a calendar can be read (Training Desk and Claude chats share the same allowance), so a
+// "resource exhausted" answer means wait and try again rather than a real failure. One day's events are shared
+// between the meetings card, the training card and the meeting log, and kept for 5 minutes.
+const isQuotaErr = (e) => !!e && (e.code === "rate_limited" || /exhausted|quota|rate limit|too many requests/i.test(String(e.message || "")));
+async function readDayEvents(date) {
   const end = ymd(new Date(new Date(date + "T12:00:00").getTime() + DAY));
+  const input = { startTime: `${date}T00:00:00`, endTime: `${end}T00:00:00`, orderBy: "startTime", pageSize: 50 };
+  for (let i = 0; ; i++) {
+    try { return await read("Google Calendar", "list_events", input, { cache: { staleTime: 300000 } }); }
+    catch (e) { if (!isQuotaErr(e) || i >= 3) throw e; await new Promise(r => setTimeout(r, [4000, 10000, 25000][i])); }
+  }
+}
+const calErrText = (e) => isQuotaErr(e) ? "Google Calendar is busy right now (too many reads in a short time). It'll be back in a minute." : errText(e, "Google Calendar");
+async function loadCalendar(date) {
   try {
-    const r = await read("Google Calendar", "list_events", { startTime: `${date}T00:00:00`, endTime: `${end}T00:00:00`, orderBy: "startTime", pageSize: 50 }, { cache: { staleTime: 60000 } });
+    const r = await readDayEvents(date);
     const events = ((r.payload && r.payload.events) || []).filter(ev => ev.start && ev.start.dateTime && ev.end && ev.end.dateTime && ev.status !== "cancelled" && !isTrainingEvent(ev) && !(ev.attendees || []).some(a => a.self && a.responseStatus === "declined")).map(ev => {
       const s = new Date(ev.start.dateTime), e = new Date(ev.end.dateTime);
       const text = [ev.summary, ...(ev.attendees || []).map(a => a.email)].join(" ");
@@ -1014,7 +1026,7 @@ async function loadCalendar(date) {
       return { id: ev.id, title: ev.summary || "(no title)", start: `${pad(s.getHours())}:${pad(s.getMinutes())}`, time: `${pad(s.getHours())}:${pad(s.getMinutes())}–${pad(e.getHours())}:${pad(e.getMinutes())}`, mins: Math.max(5, Math.round((e - s) / 60000)), client, project: client ? guessProject(client, text) : "" };
     });
     S.cal = { date, events };
-  } catch (e) { S.cal = { date, events: [], err: errText(e, "Google Calendar") }; }
+  } catch (e) { S.cal = { date, events: [], err: calErrText(e) }; }
   if ($("meetForm")) openMeeting(readMeetForm());
 }
 /* ---------- today's training (sessions Training Desk puts on the calendar) ---------- */
@@ -1039,9 +1051,8 @@ const isFreeEv = (ev) => ev.transparency === "transparent" || ev.availability ==
 async function loadTraining() {
   if (!mcp) return;
   const date = todayKey;
-  const end = ymd(new Date(new Date(date + "T12:00:00").getTime() + DAY));
   try {
-    const r = await read("Google Calendar", "list_events", { startTime: `${date}T00:00:00`, endTime: `${end}T00:00:00`, orderBy: "startTime", pageSize: 50 }, { cache: { staleTime: 60000 } });
+    const r = await readDayEvents(date);
     const all = ((r.payload && r.payload.events) || []).filter(ev => ev.status !== "cancelled");
     const timed = all.filter(ev => ev.start && ev.start.dateTime && ev.end && ev.end.dateTime);
     const events = timed.filter(ev => isTrainingEvent(ev) && !/Free training slot/.test(String(ev.description || ""))).map(ev => {
@@ -1059,7 +1070,7 @@ async function loadTraining() {
     });
     const allDay = all.filter(ev => ev.start && ev.start.date && !ev.start.dateTime && !isFreeEv(ev)).map(ev => ev.summary || "Busy");
     S.day = { date, meetings, allDay };
-  } catch (e) { const err = errText(e, "Google Calendar"); S.train = { date, events: [], err }; S.day = { date, meetings: [], allDay: [], err }; }
+  } catch (e) { const err = calErrText(e); S.train = { date, events: [], err }; S.day = { date, meetings: [], allDay: [], err }; }
   renderToday();
 }
 function plannedMeetingMins() { return S.day && S.day.date === todayKey ? S.day.meetings.reduce((n, m) => n + m.mins, 0) : 0; }
@@ -1071,7 +1082,7 @@ function renderDaySide() {
   let m = `<div class="dch"><h2>Meetings</h2>${d && d.meetings.length ? `<span class="eyebrow">${d.meetings.length} · ${fmtMins(plannedMeetingMins())}</span>` : ""}</div>`;
   if (!mcp) m += `<div class="none">Calendar isn't available in this view.</div>`;
   else if (!d) m += `<div class="none">Reading your calendar…</div>`;
-  else if (d.err) m += `<div class="ctx" style="color:var(--crit)">${esc(d.err)}</div>`;
+  else if (d.err) m += `<div class="ctx" style="color:var(--crit)">${esc(d.err)} <button class="btn btn-sm" data-act="calretry" type="button">Try again</button></div>`;
   else {
     m += d.allDay.map(t => `<div class="allday">All day: <b>${esc(t)}</b></div>`).join("");
     m += d.meetings.length ? `<ul class="mt-list">${d.meetings.map(x => {
@@ -1087,7 +1098,7 @@ function renderDaySide() {
   let h = `<div class="dch"><h2>Training</h2><a class="ext" href="${TRAINING_DESK_URL}" target="_blank" rel="noopener" style="margin-left:auto">Training Desk ↗</a></div>`;
   if (!mcp) h += `<div class="none">Calendar isn't available in this view.</div>`;
   else if (!tr) h += `<div class="none">Reading your calendar…</div>`;
-  else if (tr.err) h += `<div class="ctx" style="color:var(--crit)">${esc(tr.err)}</div>`;
+  else if (tr.err) h += `<div class="ctx" style="color:var(--crit)">${esc(tr.err)} <button class="btn btn-sm" data-act="calretry" type="button">Try again</button></div>`;
   else if (!tr.events.length) h += `<div class="none">No training planned today.</div>`;
   else h += tr.events.map(ev => `<div class="train-s"><div><b>${esc(ev.title)}</b> <span class="tag">${esc(ev.time)}</span></div>${ev.desc ? `<details open><summary>Session details</summary><div class="rx">${esc(ev.desc)}</div></details>` : ev.planned ? "" : `<span class="ctx">Not planned in Training Desk yet.</span>`}</div>`).join("");
   h += `<div class="whoopq"><span class="ctx">Whoop morning report</span><button class="chip" data-act="copyWhoop" type="button">Copy prompt</button><a class="ext" href="${TRAINING_DESK_URL}" target="_blank" rel="noopener">Paste it in Training Desk ↗</a></div>`;
@@ -1642,6 +1653,7 @@ document.addEventListener("click", async (ev) => {
     case "medit": { const x = meetingById(id); if (x) openMeeting({ title: x.title, client: x.client || "Unsorted", project: x.project || "", date: todayKey, start: x.start, mins: x.mins, calEventId: x.id }); break; }
     case "calpick": { const e = S.cal && S.cal.events[i]; if (!e) break; const cur = readMeetForm(); openMeeting({ title: e.title, client: e.client || cur.client, project: e.project || "", date: S.cal.date, start: e.start, mins: e.mins, calEventId: e.id }); break; }
     case "timelog": openTimeLog(); break;
+    case "calretry": S.train = null; S.day = null; renderToday(); loadTraining(); break;
     case "report": case "repmonth": openReport(el.dataset.client, el.dataset.month); break;
     case "repcopy": { const t = S.report && S.report.text; if (!t) break; try { await navigator.clipboard.writeText(t); toast("Copied. Paste it into your email."); } catch (e) { const d = document.querySelector(".drawer details"); if (d) { d.open = true; const ta = d.querySelector("textarea"); ta.focus(); ta.select(); } toast("Couldn't copy automatically. The text is selected below."); } break; }
     case "repcsv": reportCSV(); break;
