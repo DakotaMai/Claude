@@ -765,18 +765,23 @@ function tally(entries) {
   });
   return out;
 }
+// A retainer's hours for a month: the usual monthly hours, unless that month has its own figure in hoursByMonth
+// (e.g. unused hours carried over from a cancelled day).
+const capHours = (g, ym) => { const o = g && g.hoursByMonth && g.hoursByMonth[ym]; return Number(o != null ? o : (g && g.hours)) || 0; };
 function renderHours() {
   const c = cfg();
   const t = tally(S.entries);
   const retainers = (c.groups || []).filter(g => (g.kind || "retainer") === "retainer");
   let html = retainers.map(g => {
     const o = t[g.name] || { total: 0, meet: 0, projects: {} }, m = o.total;
-    const hourly = g.billing === "hourly", cap = hourly ? 0 : (Number(g.hours) || 0) * 60;
+    const hourly = g.billing === "hourly", cap = hourly ? 0 : capHours(g, thisMonth) * 60;
+    const carried = !hourly && g.hoursByMonth && g.hoursByMonth[thisMonth] != null && Number(g.hoursByMonth[thisMonth]) !== Number(g.hours);
     const pct = cap ? Math.min(100, (m / cap) * 100) : 0;
     let sub;
     if (hourly && budgetsFor(g.name).length) sub = "Billed hourly";
     else if (hourly) { const top = Object.entries(o.projects).filter(([p]) => p).sort((a, b) => b[1].total - a[1].total).slice(0, 3).map(([p, v]) => `${esc(p)} ${fmtHours(v.total)}`).join(" · "); sub = `Billed hourly${top ? " · " + top : ""}`; }
     else sub = cap ? (m > cap ? `${fmtHours(m - cap)} over the retainer` : `${fmtHours(cap - m)} left in ${monthName}`) : `Set monthly hours in Settings`;
+    if (carried) sub += ` · ${fmtHours(cap - (Number(g.hours) || 0) * 60)} carried over`;
     if (o.meet) sub += ` · ${fmtHours(o.meet)} meetings`;
     const buds = budgetsFor(g.name).filter(b => !b.to || b.to >= thisMonth), all = buds.length ? knownEntries() : [];
     const repBtn = hourly || buds.length ? `<div class="row"><button class="btn btn-sm" data-act="report" data-client="${esc(g.name)}" data-month="${thisMonth}" type="button">${esc(monthName)} report</button></div>` : "";
@@ -1135,7 +1140,7 @@ async function openTimeLog(ym) {
   const sum = { work: 0, meet: 0, total: 0 };
   const rows = order.map(n => {
     const o = t[n], def = defFor(n); sum.work += o.work; sum.meet += o.meet; sum.total += o.total;
-    const cap = def && def.billing !== "hourly" && def.hours ? Number(def.hours) * 60 : 0;
+    const cap = def && def.billing !== "hourly" ? capHours(def, ym) * 60 : 0;
     const projs = Object.entries(o.projects).filter(([p]) => p);
     const subRows = projs.length ? Object.entries(o.projects).sort((a, b) => (a[0] ? 0 : 1) - (b[0] ? 0 : 1) || b[1].total - a[1].total).map(([p, v]) => `<tr class="sub"><td>${esc(p || "General")}</td><td>${fmtHours(v.work)}</td><td>${fmtHours(v.meet)}</td><td>${fmtHours(v.total)}</td><td></td></tr>`).join("") : "";
     return `<tr class="client" style="--lane:${laneColor(def ? def.color : 0)}"><td>${esc(n)}${def && def.billing === "hourly" ? ' <span class="tag">hourly</span>' : ""}</td><td>${fmtHours(o.work)}</td><td>${fmtHours(o.meet)}</td><td>${fmtHours(o.total)}</td><td>${cap ? `<span class="${o.total > cap ? "tag crit" : ""}">${fmtHours(cap)}</span>` : ""}</td></tr>${subRows}`;
@@ -1591,7 +1596,8 @@ function readGroupRows() {
 }
 function collectSettings() {
   let ri = 0;
-  const groups = readGroupRows().filter(g => g.name).map(g => Object.assign(g, { color: g.kind === "internal" ? 5 : g.kind === "adhoc" ? 0 : (ri++ % 4) + 1 }));
+  const prev = new Map((cfg().groups || []).map(g => [g.name, g]));
+  const groups = readGroupRows().filter(g => g.name).map(g => { const old = prev.get(g.name); if (old && old.hoursByMonth) g.hoursByMonth = old.hoursByMonth; return Object.assign(g, { color: g.kind === "internal" ? 5 : g.kind === "adhoc" ? 0 : (ri++ % 4) + 1 }); });
   return {
     groups,
     people: ($("s-people").value || "").split(",").map(s => s.trim()).filter(Boolean),
