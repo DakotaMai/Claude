@@ -13,12 +13,14 @@ Go to **Settings → Custom Fields**, click **Add Field**, choose the type below
 | Health Check track | Single Line | Health Check |
 | Health Check pressure points | Single Line | Health Check |
 | Spark audit answers | Multi Line | Spark audit |
-| Spark audit scores | Single Line | Spark audit |
-| Spark start with | Single Line | Spark audit |
-| Spark readiness | Single Line | Spark audit |
-| Spark recommendation | Single Line | Spark audit |
-| Spark plan status | Single Line | Spark audit |
+| Spark audit scores | Multi Line | Spark audit |
+| Spark top three | Single Line | Spark audit |
+| Spark roadmap | Multi Line | Spark audit |
+| Spark plan | Single Line | Spark audit |
+| Spark admin hours | Single Line | Spark audit |
+| Spark priorities | Single Line | Spark audit |
 | Spark one thing | Multi Line | Spark audit |
+| Spark tried already | Multi Line | Spark audit |
 
 ## 2. Health Check workflow (already live)
 
@@ -35,29 +37,36 @@ Paste the updated Health Check code into the page first, then use **Fetch Sample
 
 ## 3. Spark audit workflow (new)
 
-1. **Create a page** in GHL (for example `victorialewis.co.uk/spark-audit`) and paste `Ember-SparkAudit-GHL.html` into a Custom HTML/Code element.
-2. **New workflow**, trigger **Inbound Webhook**. Copy the full URL with the copy icon and paste it into `LEAD_WEBHOOK_URL` near the top of the page script.
-3. Submit the audit once yourself, then **Fetch Sample Requests**, pick it in **Mapping Reference** and save the trigger.
-4. **Create/Update Contact**: first name `{{inboundWebhookRequest.first_name}}`, email `{{inboundWebhookRequest.email}}`, source `Spark Setup Audit`.
+The Spark Setup Audit is for members. Send it from your welcome email with their details in the link, so their answers land on the right contact:
+
+- Monthly: `https://victorialewis.co.uk/spark-audit?email={{contact.email}}&contact_id={{contact.id}}&first_name={{contact.first_name}}&plan=monthly`
+- Spark Plus (annual): the same link ending `&plan=annual`
+- Filling it in together on a call: add `&mode=call`, so the roadmap comes to you instead of them.
+
+If someone opens the page without those details, it asks for their name and email on the results page before sending anything.
+
+1. **Create a page** (for example `/spark-audit`) and paste `Ember-SparkAudit-GHL.html` into a full-width Custom Code element. Fill in `UPGRADE_URL` (Spark Plus checkout) and `VIDEOS_URL` (course page) at the top of the script.
+2. **New workflow**, trigger **Inbound Webhook**. Copy the full URL with the copy icon and paste it into `WEBHOOK_URL`.
+3. Complete the audit once yourself using a link with your own email, then **Fetch Sample Requests**, pick it in **Mapping Reference** and save the trigger.
+4. **Create/Update Contact**: email `{{inboundWebhookRequest.email}}`, first name `{{inboundWebhookRequest.first_name}}`.
 5. **Update Contact Field**:
 
 | Field | Value |
 | --- | --- |
 | Spark audit answers | `{{inboundWebhookRequest.answers_summary}}` |
-| Spark audit scores | `{{inboundWebhookRequest.scores}}` |
-| Spark start with | `{{inboundWebhookRequest.start_with}}` |
-| Spark readiness | `{{inboundWebhookRequest.readiness}} ({{inboundWebhookRequest.readiness_label}})` |
-| Spark recommendation | `{{inboundWebhookRequest.recommendation}}` |
-| Spark plan status | `{{inboundWebhookRequest.spark_status}}` |
-| Spark one thing | `{{inboundWebhookRequest.one_thing}}` |
+| Spark audit scores | `{{inboundWebhookRequest.scores_text}}` |
+| Spark top three | `{{inboundWebhookRequest.top_three}}` |
+| Spark roadmap | `{{inboundWebhookRequest.roadmap}}` |
+| Spark plan | `{{inboundWebhookRequest.plan_name}}` |
+| Spark admin hours | `{{inboundWebhookRequest.admin_hours}}` |
+| Spark priorities | `{{inboundWebhookRequest.priorities}}` |
+| Spark one thing | `{{inboundWebhookRequest.most_want_sorted}}` |
+| Spark tried already | `{{inboundWebhookRequest.tried_already}}` |
 
-6. **Add Tag**: `spark-audit`.
-7. **If/Else** on `{{inboundWebhookRequest.spark_status}}` **contains** `joined` (they're already a member):
-    - **Yes:** add the tag `spark-load-snapshots` and **Send Internal Notification** to whoever loads accounts (you or your community manager), with their setup order and answers summary, so the right snapshots go in.
-    - Then a second **If/Else** on `spark_status` **contains** `annual`: **Yes:** add the tag `spark-setup-plan` and send yourself an internal notification, so you can write their personal setup plan. The Ember Client Hub can draft it from their answers.
-8. **Send Email** to the contact with their scores and setup order (ask me for the email template).
-9. If `newsletter_opt_in` is `yes`, add your newsletter tag.
+6. **Add Tags**: `spark-audit` and `spark-load-snapshots`, then **Send Internal Notification** to whoever loads accounts (you or your community manager) with their top three and roadmap, so the right snapshots go in.
+7. **If/Else** on `{{inboundWebhookRequest.plan}}` **is** `annual`: add the tag `spark-setup-plan` and send yourself an internal notification, so you can write their personal setup plan. The Ember Client Hub can draft it from their answers.
+8. **If/Else** on `{{inboundWebhookRequest.send_results_to}}` **is** `client`: **Send Email** with their roadmap (ask me for the template). If it's `viki`, it was a call, so the notification to you is enough.
 
 ## Other fields the Spark audit sends
 
-`quiz`, `team_size`, `score_back_office`, `score_signpost`, `score_shopfront`, `setup_order`, `first_steps`, `preference`, `tried`, `booking_link`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`.
+`quiz`, `contact_id`, `mode`, `score_lm`, `score_nur`, `score_enq`, `score_book`, `score_fol`, `score_pipe`, `score_prop`, `score_onb`, `score_inv`, `score_upd`, `score_rev`, `score_past` (each out of 100), plus `scores` and `answers` as nested data for anything that reads JSON.
