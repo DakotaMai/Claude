@@ -825,20 +825,20 @@
       case 'spark-ignite':
         body = joined
           ? '<span class="fix-label">Two good options</span><h3>Carry on with Spark, or have it built for you.</h3><p>You can absolutely do this with Spark, the videos and support. If you\'d rather hand it over, Ignite is my done for you build, from £750 + VAT, and you can split it into three payments.</p>'
-          : '<span class="fix-label">Two good options</span><h3>Spark if you want to learn it, Ignite if you\'d rather not.</h3><p>Spark is £75 a month or £750 a year, and you set it up with the videos and support. With Ignite I build it for you, from £750 + VAT, and you can split it into three payments.</p>';
+          : '<span class="fix-label">Two good options</span><h3>Spark if you want to learn it, Ignite if you\'d rather not.</h3><p>Spark is £75 a month or £750 a year, including VAT, and you set it up with the videos and support. With Ignite I build it for you, from £750 + VAT, and you can split it into three payments.</p>';
         actions = [b(joined ? LINKS.call : LINKS.spark, joined ? 'Talk it through →' : 'Join Spark →'), b(LINKS.ignite, 'See Ignite', true)];
         break;
       case 'spark-annual':
         body = joined && answers.status === 'annual'
           ? '<span class="fix-label">Your next step</span><h3>Send me your answers below.</h3><p>You\'re on the annual plan, so I\'ll review your answers and send you a personal plan, then install the snapshots that fit what you want to achieve.</p>'
-          : '<span class="fix-label">My recommendation</span><h3>Spark annual, with a personal review.</h3><p>The annual plan is £750 a year. I review your answers, send you a personal plan of action and install the snapshots that fit, so you know exactly where to start.</p>';
+          : '<span class="fix-label">My recommendation</span><h3>Spark annual, with a personal review.</h3><p>The annual plan is £750 a year, including VAT. I review your answers, send you a personal plan of action and install the snapshots that fit, so you know exactly where to start.</p>';
         actions = [b(joined ? LINKS.call : LINKS.spark, joined ? 'Book a Free Call →' : 'Join Spark →'), b(LINKS.call, 'Book a Free Call', true)];
         if (joined) actions = [b(LINKS.call, 'Book a Free Call →')];
         break;
       default:
         body = joined
           ? '<span class="fix-label">Your next step</span><h3>Log in and start with your ' + AREAS[r.priority[0].key].name + '.</h3><p>Work through your setup order above, one area at a time. The videos walk you through each step, and support is there if you get stuck.</p>'
-          : '<span class="fix-label">My recommendation</span><h3>Spark is a great fit.</h3><p>You\'ve got the time and confidence to do it yourself. Spark is £75 a month or £750 a year, with the system, the videos and real human support.</p>';
+          : '<span class="fix-label">My recommendation</span><h3>Spark is a great fit.</h3><p>You\'ve got the time and confidence to do it yourself. Spark is £75 a month or £750 a year, including VAT, with the system, the videos and real human support.</p>';
         actions = joined ? [b(LINKS.call, 'Book a Free Call →')] : [b(LINKS.spark, 'Join Spark →'), b(LINKS.call, 'Book a Free Call', true)];
     }
     el('rec-body').innerHTML = body;
