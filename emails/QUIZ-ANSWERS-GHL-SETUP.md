@@ -52,9 +52,9 @@ Paste the updated Health Check code into the page first, then use **Fetch Sample
 | Spark one thing | `{{inboundWebhookRequest.one_thing}}` |
 
 6. **Add Tag**: `spark-audit`.
-7. **If/Else** on `{{inboundWebhookRequest.spark_status}}` **contains** `annual`:
-    - **Yes:** add the tag `spark-annual-review`, then **Send Internal Notification** (email to you) with the answers summary, so you can write their personal plan.
-    - **No:** carry on.
+7. **If/Else** on `{{inboundWebhookRequest.spark_status}}` **contains** `joined` (they're already a member):
+    - **Yes:** add the tag `spark-load-snapshots` and **Send Internal Notification** to whoever loads accounts (you or your community manager), with their setup order and answers summary, so the right snapshots go in.
+    - Then a second **If/Else** on `spark_status` **contains** `annual`: **Yes:** add the tag `spark-setup-plan` and send yourself an internal notification, so you can write their personal setup plan. The Ember Client Hub can draft it from their answers.
 8. **Send Email** to the contact with their scores and setup order (ask me for the email template).
 9. If `newsletter_opt_in` is `yes`, add your newsletter tag.
 

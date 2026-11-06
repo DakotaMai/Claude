@@ -769,7 +769,7 @@
     return { areas: areas, priority: priority, readiness: readiness, rec: rec };
   }
 
-  var REC_LABEL = { inferno: 'Inferno', blueprint: 'Blueprint first', ignite: 'Ignite', 'spark-ignite': 'Spark or Ignite', 'spark-annual': 'Spark annual with review', spark: 'Spark' };
+  var REC_LABEL = { inferno: 'Inferno', blueprint: 'Blueprint first', ignite: 'Ignite', 'spark-ignite': 'Spark or Ignite', 'spark-annual': 'Spark annual with setup plan', spark: 'Spark' };
 
   /* ── RESULTS ── */
   function showResults() {
@@ -829,33 +829,43 @@
         actions = [b(joined ? LINKS.call : LINKS.spark, joined ? 'Talk it through →' : 'Join Spark →'), b(LINKS.ignite, 'See Ignite', true)];
         break;
       case 'spark-annual':
-        body = joined && answers.status === 'annual'
-          ? '<span class="fix-label">Your next step</span><h3>Send me your answers below.</h3><p>You\'re on the annual plan, so I\'ll review your answers and send you a personal plan, then install the snapshots that fit what you want to achieve.</p>'
-          : '<span class="fix-label">My recommendation</span><h3>Spark annual, with a personal review.</h3><p>The annual plan is £750 a year, including VAT. I review your answers, send you a personal plan of action and install the snapshots that fit, so you know exactly where to start.</p>';
-        actions = [b(joined ? LINKS.call : LINKS.spark, joined ? 'Book a Free Call →' : 'Join Spark →'), b(LINKS.call, 'Book a Free Call', true)];
-        if (joined) actions = [b(LINKS.call, 'Book a Free Call →')];
-        break;
       default:
-        body = joined
-          ? '<span class="fix-label">Your next step</span><h3>Log in and start with your ' + AREAS[r.priority[0].key].name + '.</h3><p>Work through your setup order above, one area at a time. The videos walk you through each step, and support is there if you get stuck.</p>'
-          : '<span class="fix-label">My recommendation</span><h3>Spark is a great fit.</h3><p>You\'ve got the time and confidence to do it yourself. Spark is £75 a month or £750 a year, including VAT, with the system, the videos and real human support.</p>';
-        actions = joined ? [b(LINKS.call, 'Book a Free Call →')] : [b(LINKS.spark, 'Join Spark →'), b(LINKS.call, 'Book a Free Call', true)];
+        if (joined) {
+          body = answers.status === 'annual'
+            ? '<span class="fix-label">Your next step</span><h3>Send me your answers below.</h3><p>We\'ll load your account with the snapshots that fit your answers. As you\'re on the annual plan, I\'ll also send you a personal setup plan: what I\'d set up first, and ideas for your business.</p>'
+            : '<span class="fix-label">Your next step</span><h3>Send your answers below.</h3><p>We\'ll load your account with the snapshots that fit your answers, so you can start with your ' + AREAS[r.priority[0].key].name + '. The setup course and real human help are there whenever you need them.</p>';
+          actions = [b(LINKS.call, 'Book a Free Call →')];
+        } else {
+          body = r.rec === 'spark-annual'
+            ? '<span class="fix-label">My recommendation</span><h3>Spark annual, with a personal setup plan.</h3><p>Spark comes loaded with the snapshots that fit your answers, plus the full setup course and real human help. On the annual plan, £750 a year including VAT, you get two months free and a personal setup plan from me, with what I\'d set up first and ideas for your business.</p>'
+            : '<span class="fix-label">My recommendation</span><h3>Spark is a great fit.</h3><p>You\'ve got the time and confidence to do it yourself. Spark comes loaded with the snapshots that fit your answers, plus the full setup course and real human help. It\'s £75 a month or £750 a year, including VAT. Go annual and you get two months free and a personal setup plan from me.</p>';
+          actions = [b(LINKS.spark, 'Join Spark →'), b(LINKS.call, 'Book a Free Call', true)];
+        }
     }
     el('rec-body').innerHTML = body;
     el('rec-actions').innerHTML = actions.join('');
   }
 
   function renderSend() {
-    var annual = answers.status === 'annual';
-    el('send-label').textContent = annual ? 'Your personal plan' : 'Keep a copy';
-    el('send-title').textContent = annual ? 'Send your answers to Viki' : 'Email me my plan';
-    el('send-body').textContent = annual
-      ? 'I\'ll read through everything, including what you most want sorted, and send you a personal plan of action.'
-      : 'I\'ll send your scores and your setup order, so you can come back to them when you\'re ready.';
-    el('send-btn').textContent = annual ? 'Send to Viki →' : 'Send My Plan →';
-    el('thanks-body').textContent = annual
-      ? 'Thank you! I\'ll be in touch with your plan soon. Keep an eye on your inbox, and check spam or promotions just in case.'
-      : 'Your plan will land in your inbox in the next few minutes. If it\'s not there, have a look in spam or promotions.';
+    var st = answers.status;
+    var copy = st === 'annual' ? {
+      label: 'Your personal setup plan', title: 'Send your answers to Viki', btn: 'Send to Viki →',
+      body: 'We\'ll load your account with the snapshots that fit, and I\'ll send your personal setup plan with what I\'d set up first and ideas for your business.',
+      thanks: 'Thank you! We\'ll get your account loaded, and your setup plan will follow soon. Keep an eye on your inbox, and check spam or promotions just in case.'
+    } : st === 'monthly' ? {
+      label: 'Get your account loaded', title: 'Send your answers', btn: 'Send My Answers →',
+      body: 'We\'ll load your account with the snapshots that fit your answers, and email you your scores and setup order.',
+      thanks: 'Thank you! We\'ll get your account loaded with the right snapshots. Your scores and setup order are on their way to your inbox too.'
+    } : {
+      label: 'Keep a copy', title: 'Email me my plan', btn: 'Send My Plan →',
+      body: 'I\'ll send your scores and your setup order, so you can come back to them when you\'re ready.',
+      thanks: 'Your plan will land in your inbox in the next few minutes. If it\'s not there, have a look in spam or promotions.'
+    };
+    el('send-label').textContent = copy.label;
+    el('send-title').textContent = copy.title;
+    el('send-body').textContent = copy.body;
+    el('send-btn').textContent = copy.btn;
+    el('thanks-body').textContent = copy.thanks;
     el('send-card').hidden = false; el('send-thanks').hidden = true;
   }
 
