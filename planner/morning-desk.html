@@ -255,6 +255,16 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 @media (max-width:720px){.lrow{grid-template-columns:minmax(0,1fr) 70px auto}.lrow .daypick{grid-column:1/-1;order:5}}
 .today-foot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
 .train-s{display:flex;flex-direction:column;gap:4px;min-width:0}
+.mroutine{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:14px;display:flex;flex-direction:column;gap:8px}
+.mr-h{display:flex;align-items:baseline;gap:10px}
+.mr-h b{font-family:var(--f-display);font-size:17px}
+.mr-l{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.mr-l li{border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.mr-l li.done{background:var(--ok-bg);border-color:transparent}
+.mr-l li.done b{text-decoration:line-through;color:var(--muted)}
+.mr-l label{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+.mr-l input{width:17px;height:17px;margin-top:2px;accent-color:var(--ok);flex:none}
+.mr-a{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-left:25px}
 .whoopq{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:8px;margin-top:2px}
 .train-s b{overflow-wrap:anywhere}
 .train details summary{cursor:pointer;font-size:12px;color:var(--muted)}
@@ -347,6 +357,7 @@ table.log tr.total td{font-weight:600;border-top:2px solid var(--ink)}
     </div>
   </header>
 
+  <div class="mroutine" id="mroutine" aria-label="Your morning"></div>
   <div class="hours" id="hours"></div>
   <div class="sources" id="sources"></div>
   <div id="notices"></div>
@@ -781,7 +792,7 @@ function renderHours() {
     if (hourly && budgetsFor(g.name).length) sub = "Billed hourly";
     else if (hourly) { const top = Object.entries(o.projects).filter(([p]) => p).sort((a, b) => b[1].total - a[1].total).slice(0, 3).map(([p, v]) => `${esc(p)} ${fmtHours(v.total)}`).join(" · "); sub = `Billed hourly${top ? " · " + top : ""}`; }
     else sub = cap ? (m > cap ? `${fmtHours(m - cap)} over the retainer` : `${fmtHours(cap - m)} left in ${monthName}`) : `Set monthly hours in Settings`;
-    if (carried) sub += ` · ${fmtHours(cap - (Number(g.hours) || 0) * 60)} carried over`;
+    if (carried) { const diff = cap - (Number(g.hours) || 0) * 60; sub += diff >= 0 ? ` · ${fmtHours(diff)} carried over` : ` · ${fmtHours(-diff)} taken off for last month's overrun`; }
     if (o.meet) sub += ` · ${fmtHours(o.meet)} meetings`;
     const buds = budgetsFor(g.name).filter(b => !b.to || b.to >= thisMonth), all = buds.length ? knownEntries() : [];
     const repBtn = hourly || buds.length ? `<div class="row"><button class="btn btn-sm" data-act="report" data-client="${esc(g.name)}" data-month="${thisMonth}" type="button">${esc(monthName)} report</button></div>` : "";
@@ -791,7 +802,18 @@ function renderHours() {
       <div class="mbar${cap && m > cap ? " over" : ""}"><span style="width:${cap ? pct : (m ? 100 : 0)}%;${cap ? "" : "opacity:.4"}"></span></div>
       <div class="sub">${sub}</div>${budHTML || repBtn}</div>`;
   }).join("");
-  const retNames = new Set(retainers.map(g => g.name));
+  // Project clients (any non-retainer lane with a budget): one meter per live budget, counting every month in its period.
+  const projs = (c.groups || []).filter(g => (g.kind || "retainer") !== "retainer" && budgetsFor(g.name).some(b => !b.to || b.to >= thisMonth));
+  const pall = projs.length ? knownEntries() : [];
+  html += projs.map(g => budgetsFor(g.name).filter(b => !b.to || b.to >= thisMonth).map(b => {
+    const used = budgetUsed(b, pall), cap = Number(b.hours) * 60, over = used > cap, per = budgetPeriod(b);
+    const sub = S.pastEntries === null && canSave() ? "Counting earlier months…" : over ? `${fmtMins(used - cap)} over the budget` : `${fmtMins(cap - used)} left`;
+    return `<div class="meter" style="--lane:${laneColor(g.color)}"><div class="meter-h"><b>${esc(g.name)}</b><span class="num"><strong>${fmtHours(used)}</strong> / ${fmtHours(cap)}</span></div>
+      <div class="mbar${over ? " over" : ""}"><span style="width:${Math.min(100, (used / cap) * 100)}%"></span></div>
+      <div class="sub">${esc(b.project)}${per ? " · " + esc(per) : ""} · ${esc(sub)}</div>
+      <div class="row"><button class="btn btn-sm" data-act="report" data-client="${esc(g.name)}" data-month="${thisMonth}" type="button">${esc(monthName)} report</button></div></div>`;
+  }).join("")).join("");
+  const retNames = new Set([...retainers, ...projs].map(g => g.name));
   const other = Object.keys(t).filter(n => !retNames.has(n));
   const otherMins = other.reduce((s, n) => s + t[n].total, 0);
   const top = other.sort((a, b) => t[b].total - t[a].total).slice(0, 3).map(n => `${esc(n)} ${fmtHours(t[n].total)}`).join(" · ");
@@ -899,7 +921,25 @@ function renderSelBar() {
   const n = S.sel.size; bar.hidden = n === 0;
   if (n) bar.innerHTML = `<span><b>${n}</b> selected</span><button class="btn btn-sun btn-sm" data-act="addsel" type="button">Add ${n} to today</button><button class="btn btn-sm" data-act="donesel" type="button">Mark done</button><button class="btn btn-sm" data-act="delsel" type="button">Delete</button><button class="btn btn-sm btn-ghost" data-act="clearsel" type="button">Clear</button>`;
 }
-function renderAll() { renderHeader(); renderTimer(); renderHours(); renderSources(); renderNotices(); renderTray(); renderEverything(); renderToday(); renderSelBar(); }
+// Your morning, in order. Ticks are kept on this device for today only; each step opens where you do it.
+const JOURNAL_DESK_URL = "https://claude.ai/artifact/X65TxE8XSqZgEUvytfL7Vj";
+const ROUTINE = () => [
+  { k:"whoop", n:"Whoop report", d:"Ask Whoop Coach, paste in Training Desk → Body", url: TRAINING_DESK_URL, copy:true },
+  { k:"check", n:"Check-in", d:"Training Desk → Check-in tab", url: TRAINING_DESK_URL },
+  { k:"journal", n:"Journal", d:"10 minutes, then read it back", url: JOURNAL_DESK_URL },
+  { k:"plan", n:"Plan today", d:"Run the sweep, pick today's tasks", url: null }
+];
+const ROUTINE_MEM = {};
+function routineDone(){ const k = "md-routine-" + todayKey; try { const v = localStorage.getItem(k); if (v) return JSON.parse(v); } catch(e){} return Object.assign({}, ROUTINE_MEM[k] || {}); }
+function renderRoutine(){
+  const host = $("mroutine"); if (!host) return;
+  const R = ROUTINE(), done = routineDone(), n = R.filter(r => done[r.k]).length;
+  host.innerHTML = `<div class="mr-h"><b>Your morning</b><span class="eyebrow">${n} of ${R.length}</span></div><ol class="mr-l">${R.map((r, i) => `<li class="${done[r.k] ? "done" : ""}">
+    <label><input type="checkbox" data-routine="${r.k}" ${done[r.k] ? "checked" : ""}><span><b>${i + 1}. ${esc(r.n)}</b><br><span class="ctx">${esc(r.d)}</span></span></label>
+    <span class="mr-a">${r.copy ? `<button class="chip" data-act="copyWhoop" type="button">Copy prompt</button>` : ""}${r.url ? `<a class="ext" href="${r.url}" target="_blank" rel="noopener">Open ↗</a>` : ""}</span></li>`).join("")}</ol>`;
+}
+document.addEventListener("change", (e) => { const k = e.target && e.target.dataset && e.target.dataset.routine; if (!k) return; const d = routineDone(); if (e.target.checked) d[k] = true; else delete d[k]; ROUTINE_MEM["md-routine-" + todayKey] = d; try { localStorage.setItem("md-routine-" + todayKey, JSON.stringify(d)); } catch(_){} renderRoutine(); });
+function renderAll() { renderRoutine(); renderHeader(); renderTimer(); renderHours(); renderSources(); renderNotices(); renderTray(); renderEverything(); renderToday(); renderSelBar(); }
 
 /* ---------- plan actions ---------- */
 function addMany(ids) {
@@ -1259,7 +1299,8 @@ async function fetchGmailLabels() {
   if (!labels.length) return [];
   const out = [];
   for (const l of labels) {
-    const r = await read("Gmail", "search_threads", { query: `label:${l.id}`, pageSize: 30 }, { cache: false });
+    // Gmail search matches labels by name, not id: spaces and slashes become dashes (".TO ACTION" -> label:.TO-ACTION).
+    const r = await read("Gmail", "search_threads", { query: `label:${String(l.name || "").trim().replace(/[\s/]+/g, "-")}`, pageSize: 50 }, { cache: false });
     ((r.payload && r.payload.threads) || []).forEach(t => { const ms = t.messages || []; const m = ms[ms.length - 1] || {}; out.push({ label: l.name, threadId: t.id, from: m.sender, subject: clean(m.subject, 160), snippet: clean(m.snippet, 260), date: m.date, url: t.viewUrl || m.viewUrl }); });
   }
   return out;
@@ -1311,7 +1352,7 @@ function clientListForAI() {
   const c = cfg();
   return [...new Set([...(c.groups || []).map(d => { const pj = projectsFor(d.name); return `${d.name}${(d.match || []).length ? ` (also known as: ${d.match.join(", ")})` : ""}${pj.length ? ` [sub-clients: ${pj.join(", ")}]` : ""}`; }), ...clientNames()])].join("\n");
 }
-async function writeSuggested(items, source0) {
+async function writeSuggested(items, source0, direct) {
   const seen = new Set([...allTasks().values()].map(t => norm(t.title)));
   const fresh = [];
   for (const x of (Array.isArray(items) ? items : []).slice(0, 50)) {
@@ -1321,7 +1362,7 @@ async function writeSuggested(items, source0) {
     const source = ["gmail", "slack", "whatsapp", "littlebird"].includes(x.source) ? x.source : source0;
     const id = (typeof x.threadId === "string" && /^[A-Za-z0-9]{6,40}$/.test(x.threadId)) ? "g" + x.threadId : "s" + hash(source + ":" + norm(title));
     if (canSave()) { try { const snap = await db.doc(`${P.tasks()}/${id}`).get(); if (snap.exists) continue; } catch (_) {} }
-    await createTask({ title, client: clientName(String(x.client || "Unsorted").slice(0, 80)), project: typeof x.project === "string" && x.project.trim() ? x.project.trim().slice(0, 80) : null, source, sourceUrl: typeof x.sourceUrl === "string" && /^https:\/\//.test(x.sourceUrl) ? x.sourceUrl : "", context: String(x.context || "").slice(0, 200), estMins: Math.min(480, Math.max(5, Math.round(Number(x.estMins) || 30))), urgency: ["today", "soon", "later"].includes(x.urgency) ? x.urgency : "soon", due: /^\d{4}-\d{2}-\d{2}$/.test(x.dueDate || "") ? x.dueDate : null, status: "suggested" }, id);
+    await createTask({ title, client: clientName(String(x.client || "Unsorted").slice(0, 80)), project: typeof x.project === "string" && x.project.trim() ? x.project.trim().slice(0, 80) : null, source, sourceUrl: typeof x.sourceUrl === "string" && /^https:\/\//.test(x.sourceUrl) ? x.sourceUrl : "", context: String(x.context || "").slice(0, 200), estMins: Math.min(480, Math.max(5, Math.round(Number(x.estMins) || 30))), urgency: ["today", "soon", "later"].includes(x.urgency) ? x.urgency : "soon", due: /^\d{4}-\d{2}-\d{2}$/.test(x.dueDate || "") ? x.dueDate : null, status: direct && direct.has(x.threadId) ? "open" : "suggested" }, id);
     fresh.push(title);
   }
   return fresh;
@@ -1391,7 +1432,8 @@ ${l.status === "fulfilled" ? l.value : "(unavailable)"}`;
   try { items = await sample.json(prompt, { modelTier: "default", cache: false }); }
   catch (e) { S.sweep.ai = { status: "err", msg: sampleErr(e) }; renderSources(); return; }
   if (!Array.isArray(items)) items = (items && Array.isArray(items.tasks)) ? items.tasks : [];
-  const fresh = await writeSuggested(items, "gmail");
+  // Emails she (or Nat) labelled for action go straight onto the list; everything else waits in the review tray.
+  const fresh = await writeSuggested(items, "gmail", new Set(flagged.map(f => f.threadId)));
   S.sweep.ai = { status: "ok", count: fresh.length };
   await saveSettings({ lastSweep: new Date().toISOString() });
   renderAll();
@@ -1917,6 +1959,17 @@ async function openCompleted(loadOlder) {
   </div></div>`;
 }
 
+// Opening the page sweeps on its own when the last sweep is over three hours old, so emails labelled for action
+// (by her or Nat) land on the list without anyone pressing the button. Once per page load.
+let autoSwept = false;
+function autoSweep() {
+  if (autoSwept || !mcp || !sample || !S.settingsLoaded || !S.loaded.open || !S.loaded.suggested) return;
+  const last = cfg().lastSweep ? Date.parse(cfg().lastSweep) : 0;
+  autoSwept = true;
+  if (Date.now() - last < 3 * 3600000) return;
+  runSweep();
+}
+
 /* ---------- boot ---------- */
 renderAll();
 (async function boot() {
@@ -1926,8 +1979,8 @@ renderAll();
   if (canSave()) {
     const tasks = db.collection(P.tasks());
     const onErr = fail("load your tasks");
-    db.doc(P.settings()).onSnapshot(snap => { S.settings = snap.exists ? snap.data() : null; renderAll(); }, fail("load settings"));
-    const watch = (key, q) => q.onSnapshot(snap => { S.sets[key] = snap.docs.map(d => Object.assign({ id: d.id }, d.data())); S.loaded[key] = true; renderAll(); migrate(); }, onErr);
+    db.doc(P.settings()).onSnapshot(snap => { S.settings = snap.exists ? snap.data() : null; S.settingsLoaded = true; renderAll(); autoSweep(); }, fail("load settings"));
+    const watch = (key, q) => q.onSnapshot(snap => { S.sets[key] = snap.docs.map(d => Object.assign({ id: d.id }, d.data())); S.loaded[key] = true; renderAll(); migrate(); autoSweep(); }, onErr);
     watch("open", tasks.where("status", "==", "open"));
     watch("suggested", tasks.where("status", "==", "suggested"));
     db.doc(P.timer()).onSnapshot(snap => { const d = snap.exists ? snap.data() : null; S.timer = d && d.taskId ? d : null; renderAll(); }, () => {});
