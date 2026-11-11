@@ -1283,7 +1283,9 @@ async function exportTasks() {
 function sinceDate() {
   const c = cfg(), now = Date.now();
   let since = c.lastSweep ? Date.parse(c.lastSweep) - 2 * 3600000 : now - DAY;
-  since = Math.min(since, now - DAY); since = Math.max(since, now - 7 * DAY);
+  // Always look back at least 3 days so nothing slips through between sweeps. Emails already turned into tasks
+  // (or dismissed) are skipped by thread, so re-reading them doesn't create duplicates.
+  since = Math.min(since, now - 3 * DAY); since = Math.max(since, now - 7 * DAY);
   return new Date(since);
 }
 const gmailDate = (d) => `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())}`;
@@ -1292,7 +1294,7 @@ const asText = (p) => typeof p === "string" ? p : (p && typeof p.result === "str
 async function fetchGmail(since) {
   // The Gmail connector matches nothing for "category:primary", so read it as "not in the other tabs".
   const q = (cfg().gmailQuery || DEFAULTS.gmailQuery).replace(/\bcategory:primary\b/gi, "-category:promotions -category:social -category:updates -category:forums");
-  const r = await read("Gmail", "search_threads", { query: `${q} after:${gmailDate(since)}`.trim(), pageSize: 40 }, { cache: false });
+  const r = await read("Gmail", "search_threads", { query: `${q} after:${gmailDate(since)}`.trim(), pageSize: 50 }, { cache: false });
   return ((r.payload && r.payload.threads) || []).map(t => { const ms = t.messages || []; const m = ms[ms.length - 1] || {}; return { threadId: t.id, from: m.sender, subject: clean(m.subject, 160), snippet: clean(m.snippet, 260), date: m.date, url: t.viewUrl || m.viewUrl }; });
 }
 async function fetchGmailLabels() {
