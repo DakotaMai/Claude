@@ -1051,13 +1051,35 @@ function openMeeting(pre) {
 // "resource exhausted" answer means wait and try again rather than a real failure. One day's events are shared
 // between the meetings card, the training card and the meeting log, and kept for 5 minutes.
 const isQuotaErr = (e) => !!e && (e.code === "rate_limited" || /exhausted|quota|rate limit|too many requests/i.test(String(e.message || "")));
-async function readDayEvents(date) {
-  const end = ymd(new Date(new Date(date + "T12:00:00").getTime() + DAY));
-  const input = { startTime: `${date}T00:00:00`, endTime: `${end}T00:00:00`, orderBy: "startTime", pageSize: 50 };
+// Reads the main calendar plus any extra calendars in Settings (the Authentic calendar by default), so calls booked
+// there show in Meetings and the day check. Extra-calendar events carry a hint naming the client they belong to.
+const EXTRA_CALENDARS = [{ id: "victoria@theauthentic.uk", hint: "Authentic" }];
+async function readOneCalendar(input) {
   for (let i = 0; ; i++) {
     try { return await read("Google Calendar", "list_events", input, { cache: { staleTime: 300000 } }); }
     catch (e) { if (!isQuotaErr(e) || i >= 3) throw e; await new Promise(r => setTimeout(r, [4000, 10000, 25000][i])); }
   }
+}
+async function readDayEvents(date) {
+  const end = ymd(new Date(new Date(date + "T12:00:00").getTime() + DAY));
+  const base = { startTime: `${date}T00:00:00`, endTime: `${end}T00:00:00`, orderBy: "startTime", pageSize: 50 };
+  const cals = [{ id: null, hint: "" }, ...(cfg().extraCalendars || EXTRA_CALENDARS)];
+  const res = await Promise.allSettled(cals.map(c => readOneCalendar(c.id ? Object.assign({ calendarId: c.id }, base) : base)));
+  if (res[0].status === "rejected") throw res[0].reason;
+  const seen = new Set(), events = [];
+  res.forEach((r, i) => {
+    if (r.status !== "fulfilled") return;
+    ((r.value.payload && r.value.payload.events) || []).forEach(ev => {
+      const st = ev.start && (ev.start.dateTime || ev.start.date);
+      const key = (ev.iCalUID || ev.id) + "|" + st;
+      const alt = norm(ev.summary) + "|" + st;
+      if (seen.has(key) || seen.has(alt)) return;
+      seen.add(key); seen.add(alt);
+      events.push(cals[i].hint ? Object.assign({}, ev, { _hint: cals[i].hint }) : ev);
+    });
+  });
+  events.sort((a, b) => String((a.start && (a.start.dateTime || a.start.date)) || "").localeCompare(String((b.start && (b.start.dateTime || b.start.date)) || "")));
+  return { payload: { events } };
 }
 const calErrText = (e) => isQuotaErr(e) ? "Google Calendar is busy right now (too many reads in a short time). It'll be back in a minute." : errText(e, "Google Calendar");
 async function loadCalendar(date) {
@@ -1065,7 +1087,7 @@ async function loadCalendar(date) {
     const r = await readDayEvents(date);
     const events = ((r.payload && r.payload.events) || []).filter(ev => ev.start && ev.start.dateTime && ev.end && ev.end.dateTime && ev.status !== "cancelled" && !isTrainingEvent(ev) && !(ev.attendees || []).some(a => a.self && a.responseStatus === "declined")).map(ev => {
       const s = new Date(ev.start.dateTime), e = new Date(ev.end.dateTime);
-      const text = [ev.summary, ...(ev.attendees || []).map(a => a.email)].join(" ");
+      const text = [ev.summary, ev._hint, ...(ev.attendees || []).map(a => a.email)].join(" ");
       const client = guessClient(text);
       return { id: ev.id, title: ev.summary || "(no title)", start: `${pad(s.getHours())}:${pad(s.getMinutes())}`, time: `${pad(s.getHours())}:${pad(s.getMinutes())}–${pad(e.getHours())}:${pad(e.getMinutes())}`, mins: Math.max(5, Math.round((e - s) / 60000)), client, project: client ? guessProject(client, text) : "" };
     });
@@ -1107,7 +1129,7 @@ async function loadTraining() {
     S.train = { date, events };
     const meetings = timed.filter(ev => !isTrainingEvent(ev) && !isDeclined(ev) && !isFreeEv(ev) && !MEET_IGNORE.some(k => String(ev.summary || "").toLowerCase().includes(k))).map(ev => {
       const s = new Date(ev.start.dateTime), e = new Date(ev.end.dateTime);
-      const text = [ev.summary, ...(ev.attendees || []).map(a => a.email)].join(" ");
+      const text = [ev.summary, ev._hint, ...(ev.attendees || []).map(a => a.email)].join(" ");
       const client = guessClient(text);
       const loc = String(ev.location || "");
       return { id: ev.id, title: ev.summary || "(no title)", start: hm(s), time: `${hm(s)}–${hm(e)}`, startMs: s.getTime(), endMs: e.getTime(), mins: Math.max(5, Math.round((e - s) / 60000)), client, project: client ? guessProject(client, text) : "", place: /^https?:/i.test(loc) ? "" : loc, link: ev.conferenceUrl || ev.hangoutLink || (/^https?:/i.test(loc) ? loc : "") };
