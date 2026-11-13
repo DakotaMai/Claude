@@ -1471,12 +1471,48 @@ function checkDue() {
   return now.getHours() * 60 + now.getMinutes() >= 17 * 60 + 30 && cfg().lastCheckDate !== todayKey && S.check.status !== "busy" && canSave();
 }
 setInterval(() => { const d = checkDue(); if (d !== S.remindShown) { S.remindShown = d; renderToday(); if (d) toast("It's half five. Run Check my day to log today's time.", { act: "check", label: "Check now" }); } }, 60000);
+// The day as a list of blocks: from/to as "HH:MM", sorted, with the minutes each covers.
+const hmMins = (s) => { const m = String(s || "").match(/^(\d{1,2}):(\d{2})/); return m ? Math.min(24 * 60, Number(m[1]) * 60 + Number(m[2])) : null; };
+function cleanTimeline(list) {
+  const ok = ["logged", "new", "personal", "break", "unknown"];
+  return (Array.isArray(list) ? list : []).map(b => {
+    const a = hmMins(b && b.from), z = hmMins(b && b.to);
+    if (a === null || z === null || z <= a) return null;
+    return { from: `${pad(Math.floor(a / 60))}:${pad(a % 60)}`, to: `${pad(Math.floor(z / 60))}:${pad(z % 60)}`, mins: z - a, what: String(b.what || "").slice(0, 120), status: ok.includes(b.status) ? b.status : "unknown" };
+  }).filter(Boolean).sort((x, y) => x.from.localeCompare(y.from)).slice(0, 40);
+}
+// Two entries for the same meeting: the calendar's copy and one logged from Littlebird or by hand.
+const DUP_STOP = new Set(["viki", "vicki", "vikki", "victoria", "call", "with", "the", "and", "for", "min", "mins", "meeting", "her", "his"]);
+const dupWords = (s) => new Set(norm(s).split(" ").filter(w => w.length >= 3 && !DUP_STOP.has(w)));
+function looksSame(a, b) {
+  const ca = clientName(a.client), cb = clientName(b.client);
+  if (ca !== cb && ca !== "Unsorted" && cb !== "Unsorted") return false;
+  if (a.calEventId && b.calEventId) return a.calEventId === b.calEventId;
+  if (!(a.calEventId || b.calEventId || (a.kind === "meeting" && b.kind === "meeting"))) return false;
+  const wa = dupWords(a.title), wb = dupWords(b.title);
+  let shared = 0; wa.forEach(w => { if (wb.has(w)) shared++; });
+  return shared >= 2;
+}
+function findDupes(entries) {
+  const out = [], used = new Set();
+  entries.forEach((a, i) => entries.forEach((b, j) => {
+    if (j <= i || used.has(a.id) || used.has(b.id) || !a.id || !b.id || !looksSame(a, b)) return;
+    // Keep the calendar copy (it stops the meeting being suggested again) but take the minutes, client and
+    // project from the other one, which records what actually happened.
+    const keep = a.calEventId ? a : b.calEventId ? b : a, drop = keep === a ? b : a;
+    used.add(a.id); used.add(b.id);
+    out.push({ keep, drop, mins: Number(drop.mins) || Number(keep.mins) || 0 });
+  }));
+  return out.slice(0, 10);
+}
 function openCheckStart() {
   const day = ($("checkDate") && $("checkDate").value) || todayKey;
   $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><div class="drawer-in" role="dialog" aria-label="Check your day">
     <div class="row" style="justify-content:space-between"><h2>Check your day</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>
     <div class="ctx">Reads Littlebird's activity summaries for the day, two hours at a time, plus your calendar and WhatsApp. Then it suggests time to log, tasks that look finished and follow-ups.</div>
     <div class="field"><label for="ckDay">Day</label><input type="date" id="ckDay" value="${esc(day)}" max="${todayKey}"></div>
+    <div class="two"><div class="field"><label for="ckFrom">Started</label><input type="time" id="ckFrom"></div><div class="field"><label for="ckTo">Finished</label><input type="time" id="ckTo"></div></div>
+    <div class="field"><label for="ckOut">Breaks, time out and evening work (optional)</label><input type="text" id="ckOut" placeholder="e.g. out 11 to 1, an hour on Leighton after 9pm"><span class="hint">With your start and finish, the check can find every stretch of the day nothing explains and look each one up in Littlebird.</span></div>
     <div class="field"><label for="ckPaste">Littlebird's day report (optional)</label><textarea id="ckPaste" placeholder="If you've asked Littlebird for a rundown of your day, paste it here. It makes the check much more accurate."></textarea><span class="hint">Leave it empty and the check reads Littlebird directly.</span></div>
     <div class="row"><button class="btn btn-sun" data-act="runcheck" type="button">Check my day</button></div>
   </div></div>`;
@@ -1484,6 +1520,9 @@ function openCheckStart() {
 async function runCheck() {
   const pasted = (($("ckPaste") && $("ckPaste").value) || "").trim().slice(0, 30000);
   const day = ($("ckDay") && $("ckDay").value) || ($("checkDate") && $("checkDate").value) || todayKey;
+  const hrsFrom = ($("ckFrom") && $("ckFrom").value) || "", hrsTo = ($("ckTo") && $("ckTo").value) || "";
+  const hrsOut = (($("ckOut") && $("ckOut").value) || "").trim().slice(0, 300);
+  const hoursLine = hrsFrom || hrsTo || hrsOut ? `She says she worked ${hrsFrom ? "from " + hrsFrom : ""}${hrsTo ? " to " + hrsTo : ""}${hrsOut ? ". Breaks, time out and evening work: " + hrsOut : ""}.` : "She didn't give her start and finish times: take the working window from the first to the last work activity Littlebird shows.";
   if ($("ckDay")) closeDrawer();
   const isToday = day === todayKey;
   S.checkDate = day;
@@ -1499,7 +1538,7 @@ async function runCheck() {
     ]);
     let extra = "";
     if (!sum && !pasted) extra = await fetchLittlebird(day, ["client work done", "documents, pages and automations edited", "GoHighLevel, Shopify or Make work", "meetings and calls"], ["replies sent to clients"], 26000);
-    lb = (pasted ? "HER OWN LITTLEBIRD DAY REPORT (the most reliable source: use its blocks and times first):\n" + pasted + "\n\n" : "")
+    lb = (pasted ? "HER OWN LITTLEBIRD DAY REPORT (trust its client labels, but it is a highlights summary and often leaves out whole blocks of work, so use the activity summaries below to cover the rest of the day):\n" + pasted + "\n\n" : "")
       + (sum ? "ACTIVITY SUMMARIES, IN TIME ORDER (each starts with its [start - end] time range):\n" + sum + "\n\n" : "")
       + extra + (msgs ? "\n\nMESSAGES AND EMAILS:\n" + msgs : "") + (wa ? "\n\nWHATSAPP:\n" + wa : "");
   } catch (e) { S.check = { status: "err", msg: errText(e, "Littlebird") }; renderToday(); return; }
@@ -1507,15 +1546,20 @@ async function runCheck() {
   S.check = { status: "busy", msg: "Matching against your tasks…" }; renderToday();
   const open = S.sets.open.map(t => ({ id: t.id, title: t.title, client: clientName(t.client), project: t.project || null, plannedToday: inPlan(t.id) }));
   const dayEntries = day >= monthStart ? S.entries : await entriesFor(day.slice(0, 7)).catch(() => []);
-  const loggedToday = dayEntries.filter(e => e.date === day).map(e => ({ taskId: e.taskId, client: clientName(e.client), project: e.project, kind: e.kind, title: e.title, mins: e.mins, calEventId: e.calEventId }));
+  const dayLogged = dayEntries.filter(e => e.date === day);
+  const loggedToday = dayLogged.map(e => ({ taskId: e.taskId, client: clientName(e.client), project: e.project, kind: e.kind, title: e.title, mins: e.mins, calEventId: e.calEventId, note: String(e.note || "").slice(0, 160) }));
   const prompt = `You are reviewing ${(S.me && S.me.name) || "the user"}'s working day (${isToday ? "today" : dayName}) from Littlebird screen and meeting context plus her calendar, to make sure her task list and time log are complete. It is now ${new Date().toString()}.
 
 Return ONLY JSON in this exact shape:
 {"done":[{"taskId":"...","evidence":"one line"}],
  "time":[{"taskId":"... or null","kind":"work" or "meeting","calEventId":"... or null","client":"client name","project":"sub-client or null","title":"short description","mins":number,"evidence":"one line"}],
- "newTasks":[{"title":"...","client":"...","project":"... or null","estMins":number,"context":"one line"}]}
+ "newTasks":[{"title":"...","client":"...","project":"... or null","estMins":number,"context":"one line"}],
+ "timeline":[{"from":"HH:MM","to":"HH:MM","what":"short label","status":"logged" or "new" or "personal" or "break" or "unknown"}]}
+
+WORKING HOURS: ${hoursLine}
 
 Rules:
+- timeline: her whole working window in time order, with no holes. "logged" = already in the time log, "new" = one of your time entries, "personal" or "break" = not client work, "unknown" = nothing in Littlebird, the log or the calendar explains it. Never stretch a block to hide a hole: mark it "unknown" instead.
 - done: only open tasks with clear evidence they were finished on that day (sent, published, built, confirmed). Use exact taskIds.
 - time: time she spent ON THAT DAY that is NOT already in the time log. Activity summaries carry [start - end] time ranges: build one entry per continuous block of work for one client, counted from the start of the block to its end (see her notes), split where she switches client. Never count the same minutes twice, and never total more time than actually passed. Round to 5 minutes and skip anything under 10 minutes. If an entry already in the log covers part of a block, only add the uncovered part, and say so in the evidence.
   - Work on a task: kind "work", with its taskId. Other client work: taskId null with the client name.
@@ -1540,12 +1584,49 @@ ${lb}`;
   let out;
   try { out = await sample.json(prompt, { modelTier: "default", cache: false }); }
   catch (e) { S.check = { status: "err", msg: sampleErr(e) }; renderToday(); return; }
+  let timeline = cleanTimeline(out && out.timeline);
+  let gapTime = [];
+  // Second pass: look up every unexplained stretch of 15 minutes or more in Littlebird directly, so blocks the
+  // day report and the two-hour summaries skipped still get found.
+  const gaps = timeline.filter(b => b.status === "unknown" && b.mins >= 15).slice(0, 5);
+  if (gaps.length) {
+    S.check = { status: "busy", msg: `Looking into ${gaps.length} unexplained stretch${gaps.length === 1 ? "" : "es"}…` }; renderToday();
+    const ctx = await Promise.all(gaps.map(g => read("Littlebird", "search_user_context", { search_queries: ["work activity", "client work, documents, workflows and pages edited", "emails, messages and calls", "Claude chats and code"], date_range: { start: `${day} ${g.from}:00`, end: `${day} ${g.to}:00` }, filters: { data_source: "summaries" } }, { cache: false }).then(r => asText(r.payload).slice(0, 9000)).catch(() => "")));
+    if (ctx.some(Boolean)) {
+      const gapPrompt = `These stretches of ${(S.me && S.me.name) || "the user"}'s working day (${dayName}) are not explained by her time log. For each one, say what Littlebird shows she was doing, and turn any client work into time entries. Only use what this context shows for that stretch; if it shows nothing, leave the stretch "unknown".
+
+Return ONLY JSON: {"gaps":[{"from":"HH:MM","to":"HH:MM","what":"short label","status":"new" or "personal" or "break" or "unknown"}],
+ "time":[{"taskId":"... or null","kind":"work" or "meeting","calEventId":null,"client":"client name","project":"sub-client or null","title":"short description","mins":number,"evidence":"the stretch's times and what Littlebird shows"}]}
+Count each entry from the start to the end of the work inside the stretch, never beyond it. Round to 5 minutes; skip anything under 10 minutes.
+Clients: ${clientListForAI().split("\n").join("; ")}
+NOTES FROM HER (follow these):
+${cfg().notes || "(none)"}
+OPEN TASKS: ${JSON.stringify(open)}
+ALREADY LOGGED THAT DAY: ${JSON.stringify(loggedToday)}
+
+${gaps.map((g, i) => `STRETCH ${g.from} to ${g.to}:\n${ctx[i] || "(Littlebird has nothing for this stretch)"}`).join("\n\n")}`;
+      try {
+        const out2 = await sample.json(gapPrompt, { modelTier: "default", cache: false });
+        gapTime = out2 && Array.isArray(out2.time) ? out2.time : [];
+        const found = cleanTimeline(out2 && out2.gaps);
+        if (found.length) timeline = cleanTimeline(timeline.flatMap(b => { if (b.status !== "unknown") return [b]; const inside = found.filter(f => f.from >= b.from && f.to <= b.to); return inside.length ? inside : [b]; }));
+      } catch (_) {}
+    }
+  }
   const ids = new Set(S.sets.open.map(t => t.id));
-  const loggedCal = new Set(S.entries.map(e => e.calEventId).filter(Boolean));
+  const loggedCal = new Set(dayLogged.map(e => e.calEventId).filter(Boolean));
+  const time = [...(out && Array.isArray(out.time) ? out.time : []), ...gapTime].filter(x => x && Number(x.mins) >= 5 && !(x.calEventId && loggedCal.has(x.calEventId))).map(x => {
+    const y = Object.assign({}, x, { taskId: ids.has(x.taskId) ? x.taskId : null, kind: x.kind === "meeting" ? "meeting" : "work", mins: Math.min(600, Math.round(Number(x.mins) / 5) * 5) });
+    const twin = dayLogged.find(e => looksSame(e, { client: x.client, title: x.title, kind: y.kind, calEventId: x.calEventId }));
+    if (twin) y.dupOf = `${twin.title} (${fmtMins(twin.mins)})`;
+    return y;
+  }).slice(0, 30);
   const review = {
     done: (out && Array.isArray(out.done) ? out.done : []).filter(x => x && ids.has(x.taskId)).slice(0, 30),
-    time: (out && Array.isArray(out.time) ? out.time : []).filter(x => x && Number(x.mins) >= 5 && !(x.calEventId && loggedCal.has(x.calEventId))).map(x => Object.assign({}, x, { taskId: ids.has(x.taskId) ? x.taskId : null, kind: x.kind === "meeting" ? "meeting" : "work", mins: Math.min(600, Math.round(Number(x.mins) / 5) * 5) })).slice(0, 30),
-    newTasks: (out && Array.isArray(out.newTasks) ? out.newTasks : []).filter(x => x && typeof x.title === "string").slice(0, 8)
+    time,
+    newTasks: (out && Array.isArray(out.newTasks) ? out.newTasks : []).filter(x => x && typeof x.title === "string").slice(0, 8),
+    timeline,
+    dupes: findDupes(dayLogged)
   };
   review.day = day; review.dayName = dayName;
   S.check = { status: "ok" };
@@ -1555,14 +1636,24 @@ ${lb}`;
 }
 function openReview(r) {
   S.review = r;
-  const none = !r.done.length && !r.time.length && !r.newTasks.length;
+  const tl = r.timeline || [], dupes = r.dupes || [];
+  const holes = tl.filter(b => b.status === "unknown");
+  const none = !r.done.length && !r.time.length && !r.newTasks.length && !dupes.length;
+  const TL = { logged: ["ok", "logged"], new: ["sun", "to log"], personal: ["", "personal"], break: ["", "break"], unknown: ["crit", "not explained"] };
+  const tlHTML = tl.length ? `<h3>Your day</h3>
+    ${holes.length ? `<div class="notice crit">${holes.length} stretch${holes.length === 1 ? "" : "es"} (${fmtMins(holes.reduce((n, b) => n + b.mins, 0))}) that nothing explains, even after looking them up in Littlebird. If you worked then, add it with Log time or tell Claude what it was.</div>` : `<div class="ctx">Every stretch of your working day is accounted for.</div>`}
+    <ul class="entries">${tl.map(b => `<li><span><span class="num">${esc(b.from)}–${esc(b.to)}</span> ${esc(b.what)}</span><span class="tag ${TL[b.status][0]}">${esc(TL[b.status][1])}</span></li>`).join("")}</ul>` : "";
+  const dupHTML = dupes.length ? `<h3>Logged twice</h3><div class="ctx">These look like the same meeting logged from your calendar and again by hand or from Littlebird. Ticked ones keep one entry with the minutes shown.</div>
+    ${dupes.map((x, i) => `<div class="chk"><input type="checkbox" id="rv-x-${i}" checked aria-label="Merge these"><span class="body" style="flex:1"><b>${esc(x.keep.title)}</b><span class="ctx">${esc(clientName(x.drop.client) !== "Unsorted" ? clientName(x.drop.client) : clientName(x.keep.client))} · also logged as “${esc(x.drop.title)}” (${esc(fmtMins(x.drop.mins))})</span></span><input class="mins" type="number" min="5" step="5" id="rv-xm-${i}" value="${x.mins}" aria-label="Minutes to keep"></div>`).join("")}` : "";
   const meetings = r.time.map((x, i) => [x, i]).filter(([x]) => x.kind === "meeting");
   const work = r.time.map((x, i) => [x, i]).filter(([x]) => x.kind !== "meeting");
-  const timeRow = ([x, i]) => { const t = x.taskId ? getTask(x.taskId) : null; const cl = clientName(t ? t.client : x.client), pj = (t && t.project) || x.project; return `<div class="chk"><input type="checkbox" id="rv-t-${i}" checked aria-label="Log this time"><span class="body" style="flex:1"><b>${esc(t ? t.title : (x.title || "Work"))}</b><span class="ctx">${esc(cl)}${pj ? " · " + esc(pj) : ""} · ${esc(x.evidence || "")}</span></span><input class="mins" type="number" min="5" step="5" id="rv-tm-${i}" value="${x.mins}" aria-label="Minutes"></div>`; };
+  const timeRow = ([x, i]) => { const t = x.taskId ? getTask(x.taskId) : null; const cl = clientName(t ? t.client : x.client), pj = (t && t.project) || x.project; return `<div class="chk"><input type="checkbox" id="rv-t-${i}"${x.dupOf ? "" : " checked"} aria-label="Log this time"><span class="body" style="flex:1"><b>${esc(t ? t.title : (x.title || "Work"))}</b><span class="ctx">${esc(cl)}${pj ? " · " + esc(pj) : ""} · ${esc(x.evidence || "")}</span>${x.dupOf ? `<span class="ctx" style="color:var(--warn)">Looks already logged as ${esc(x.dupOf)}, so it's unticked.</span>` : ""}</span><input class="mins" type="number" min="5" step="5" id="rv-tm-${i}" value="${x.mins}" aria-label="Minutes"></div>`; };
   $("drawerHost").innerHTML = `<div class="drawer" data-act="drawerbg"><div class="drawer-in" role="dialog" aria-label="Day check">
     <div class="row" style="justify-content:space-between"><h2>${r.day && r.day !== todayKey ? esc(r.dayName) + ", checked" : "Your day, checked"}</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>
     <div class="ctx">Based on what Littlebird and your calendar show for today. Untick anything that's wrong, adjust minutes, then apply.</div>
     ${none ? `<div class="empty-today">Nothing to add. Your list and time log already match your day.</div>` : ""}
+    ${tlHTML}
+    ${dupHTML}
     ${r.done.length ? `<h3>Looks finished</h3>${r.done.map((x, i) => { const t = getTask(x.taskId); return `<label class="chk"><input type="checkbox" id="rv-d-${i}" checked><span class="body"><b>${esc(t ? t.title : "")}</b><span class="ctx">${esc(x.evidence || "")}</span></span></label>`; }).join("")}` : ""}
     ${work.length ? `<h3>Work time to log</h3>${work.map(timeRow).join("")}` : ""}
     ${meetings.length ? `<h3>Meetings and calls</h3>${meetings.map(timeRow).join("")}` : ""}
@@ -1584,10 +1675,28 @@ async function applyReview() {
     await logTime({ taskId: x.taskId, title: t ? t.title : (x.title || "Work"), client: clientName(t ? t.client : x.client), project: (t && t.project) || (typeof x.project === "string" && x.project ? x.project : null), kind: x.kind, calEventId: x.calEventId || null, mins, date: day, start: new Date(day + "T12:00:00").toISOString(), source: "littlebird", note: x.evidence || "" });
     m += mins;
   }
+  let x2 = 0;
+  for (let i = 0; i < (r.dupes || []).length; i++) {
+    if (!$("rv-x-" + i) || !$("rv-x-" + i).checked) continue;
+    const { keep, drop } = r.dupes[i];
+    const mins = Math.max(1, Math.round(Number($("rv-xm-" + i).value) || keep.mins || 0));
+    const patch = { mins };
+    if (clientName(keep.client) === "Unsorted" && clientName(drop.client) !== "Unsorted") patch.client = clientName(drop.client);
+    if (!keep.project && drop.project) patch.project = drop.project;
+    if (!keep.taskId && drop.taskId) patch.taskId = drop.taskId;
+    if (drop.kind === "meeting" || keep.kind === "meeting") patch.kind = "meeting";
+    if (drop.note && !keep.note) patch.note = drop.note;
+    try {
+      if (canSave()) { await db.doc(`${P.entries()}/${keep.id}`).update(patch); await db.doc(`${P.entries()}/${drop.id}`).delete(); }
+      [S.entries, ...Object.values(monthCache)].forEach(list => { const k = list.find(e => e.id === keep.id); if (k) Object.assign(k, patch); const j = list.findIndex(e => e.id === drop.id); if (j >= 0) list.splice(j, 1); });
+      if (drop.taskId && drop.taskId !== patch.taskId) { const t = getTask(drop.taskId); if (t) updateTask(drop.taskId, { minsLogged: Math.max(0, (Number(t.minsLogged) || 0) - (Number(drop.mins) || 0)) }); }
+      x2++;
+    } catch (e) { fail("merge the duplicate entries")(e); }
+  }
   const picks = r.newTasks.filter((x, i) => $("rv-n-" + i).checked).map(x => Object.assign({ source: "littlebird" }, x));
   if (picks.length) n = (await writeSuggested(picks, "littlebird")).length;
   closeDrawer(); renderAll();
-  toast([d && `${d} ticked off`, m && `${fmtMins(m)} logged`, n && `${n} follow-up${n === 1 ? "" : "s"} to review`].filter(Boolean).join(" · ") || "Nothing applied.");
+  toast([d && `${d} ticked off`, m && `${fmtMins(m)} logged`, x2 && `${x2} duplicate${x2 === 1 ? "" : "s"} merged`, n &&`${n} follow-up${n === 1 ? "" : "s"} to review`].filter(Boolean).join(" · ") || "Nothing applied.");
 }
 
 /* ---------- settings ---------- */
