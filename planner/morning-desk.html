@@ -1339,7 +1339,7 @@ async function fetchSlack(since) {
   return [txt];
 }
 async function fetchLittlebird(start, queries, messages, max, app, end) {
-  const input = { search_queries: queries, search_queries_messages: messages, date_range: { start, end: end || (start === todayKey ? "now" : start) } };
+  const input = { standalone_query: "What did the user do, promise or get asked to do in this period: " + [...(queries || []), ...(messages || [])].join("; "), search_queries: queries, search_queries_messages: messages, date_range: { start, end: end || (start === todayKey ? "now" : start) } };
   if (app) input.filters = { app };
   const r = await read("Littlebird", "search_user_context", input, { cache: false });
   return asText(r.payload).slice(0, max);
@@ -1357,7 +1357,7 @@ async function fetchDaySummaries(day, isToday) {
   let ok = 0, lastErr = null;
   for (let i = 0; i < slices.length; i += 3) {
     const batch = slices.slice(i, i + 3);
-    const res = await Promise.allSettled(batch.map(([a, b]) => read("Littlebird", "search_user_context", { search_queries: queries, date_range: { start: `${day} ${hh(a)}`, end: `${day} ${hh(b)}` }, filters: { data_source: "summaries" } }, { cache: false })));
+    const res = await Promise.allSettled(batch.map(([a, b]) => read("Littlebird", "search_user_context", { standalone_query: `What did the user work on between ${hh(a).slice(0, 5)} and ${hh(b).slice(0, 5)} on ${day}, for which client, and for how long?`, search_queries: queries, date_range: { start: `${day} ${hh(a)}`, end: `${day} ${hh(b)}` }, filters: { data_source: "summaries" } }, { cache: false })));
     res.forEach((r, k) => {
       if (r.status !== "fulfilled") { lastErr = r.reason; return; }
       ok++;
@@ -1591,7 +1591,7 @@ ${lb}`;
   const gaps = timeline.filter(b => b.status === "unknown" && b.mins >= 15).slice(0, 5);
   if (gaps.length) {
     S.check = { status: "busy", msg: `Looking into ${gaps.length} unexplained stretch${gaps.length === 1 ? "" : "es"}…` }; renderToday();
-    const ctx = await Promise.all(gaps.map(g => read("Littlebird", "search_user_context", { search_queries: ["work activity", "client work, documents, workflows and pages edited", "emails, messages and calls", "Claude chats and code"], date_range: { start: `${day} ${g.from}:00`, end: `${day} ${g.to}:00` }, filters: { data_source: "summaries" } }, { cache: false }).then(r => asText(r.payload).slice(0, 9000)).catch(() => "")));
+    const ctx = await Promise.all(gaps.map(g => read("Littlebird", "search_user_context", { standalone_query: `What was the user doing between ${g.from} and ${g.to} on ${day}?`, search_queries: ["work activity", "client work, documents, workflows and pages edited", "emails, messages and calls", "Claude chats and code"], date_range: { start: `${day} ${g.from}:00`, end: `${day} ${g.to}:00` }, filters: { data_source: "summaries" } }, { cache: false }).then(r => asText(r.payload).slice(0, 9000)).catch(() => "")));
     if (ctx.some(Boolean)) {
       const gapPrompt = `These stretches of ${(S.me && S.me.name) || "the user"}'s working day (${dayName}) are not explained by her time log. For each one, say what Littlebird shows she was doing, and turn any client work into time entries. Only use what this context shows for that stretch; if it shows nothing, leave the stretch "unknown".
 
