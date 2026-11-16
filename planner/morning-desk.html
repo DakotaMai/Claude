@@ -1577,7 +1577,7 @@ Rules:
 - done: only open tasks with clear evidence they were finished on that day (sent, published, built, confirmed). Use exact taskIds.
 - time: time she spent ON THAT DAY that is NOT already in the time log. Activity summaries carry [start - end] time ranges: build one entry per continuous block of work for one client, counted from the start of the block to its end (see her notes), split where she switches client. Never count the same minutes twice, and never total more time than actually passed. Round to 5 minutes and skip anything under 10 minutes. If an entry already in the log covers part of a block, only add the uncovered part, and say so in the evidence.
   - Work on a task: kind "work", with its taskId. Other client work: taskId null with the client name.
-  - Meetings and calls she actually attended (seen in Littlebird or on the calendar): kind "meeting", include calEventId when it matches a calendar event. Skip calendar blocks that are focus time or reminders (e.g. "NO Calls", "Lift"), and skip meetings already logged.
+  - Meetings and calls she actually attended: kind "meeting", include calEventId when it matches a calendar event. Only when Littlebird shows she joined it: a calendar event on its own is not evidence, because recurring calls are often cancelled or skipped without the calendar changing. If a work meeting is on the calendar but Littlebird doesn't show it, leave it out and say so in the timeline as "unknown". Skip calendar blocks that are focus time or reminders (e.g. "NO Calls", "Lift"), and skip meetings already logged.
 - newTasks: follow-ups she clearly committed to that day that are not on the list. Max 8.
 - Clients: ${clientListForAI().split("\n").join("; ")}
 
