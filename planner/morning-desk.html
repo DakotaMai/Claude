@@ -1112,6 +1112,18 @@ function plainText(html) {
 // Calendar blocks that are not meetings: work focus blocks, placeholders, travel and free/transparent holds.
 const MEET_IGNORE = ["no calls", "louie", "focus block", "drive to"];
 const hm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+// Personal appointments (chiro, PT, nails...) sit outside the working day: they don't come off the hours for tasks.
+// Words match whole words in the title; "Count as work" / "Personal" on a meeting remembers that title either way.
+const PERSONAL_WORDS = ["chiro", "chiropractor", "pt", "physio", "osteo", "massage", "botox", "nails", "hair", "hairdresser", "dentist", "doctor", "gp", "optician", "vet", "school", "race brief", "personal"];
+const meetKey = (title) => norm(title).replace(/\b\d+\b/g, "").replace(/\s+/g, " ").trim();
+function isPersonalMeeting(title, client) {
+  const k = meetKey(title), o = (cfg().meetingKinds || {})[k];
+  if (o === "personal") return true;
+  if (o === "work") return false;
+  if (client && clientName(client) === "Personal") return true;
+  const words = ` ${norm(title)} `;
+  return [...PERSONAL_WORDS, ...(cfg().personalMeetingWords || [])].some(w => words.includes(` ${norm(w)} `));
+}
 const isDeclined = (ev) => (ev.attendees || []).some(a => a.self && a.responseStatus === "declined");
 const isFreeEv = (ev) => ev.transparency === "transparent" || ev.availability === "AVAILABILITY_FREE";
 async function loadTraining() {
@@ -1132,20 +1144,20 @@ async function loadTraining() {
       const text = [ev.summary, ev._hint, ...(ev.attendees || []).map(a => a.email)].join(" ");
       const client = guessClient(text);
       const loc = String(ev.location || "");
-      return { id: ev.id, title: ev.summary || "(no title)", start: hm(s), time: `${hm(s)}–${hm(e)}`, startMs: s.getTime(), endMs: e.getTime(), mins: Math.max(5, Math.round((e - s) / 60000)), client, project: client ? guessProject(client, text) : "", place: /^https?:/i.test(loc) ? "" : loc, link: ev.conferenceUrl || ev.hangoutLink || (/^https?:/i.test(loc) ? loc : "") };
+      return { id: ev.id, personal: isPersonalMeeting(ev.summary || "", client), title: ev.summary || "(no title)", start: hm(s), time: `${hm(s)}–${hm(e)}`, startMs: s.getTime(), endMs: e.getTime(), mins: Math.max(5, Math.round((e - s) / 60000)), client, project: client ? guessProject(client, text) : "", place: /^https?:/i.test(loc) ? "" : loc, link: ev.conferenceUrl || ev.hangoutLink || (/^https?:/i.test(loc) ? loc : "") };
     });
     const allDay = all.filter(ev => ev.start && ev.start.date && !ev.start.dateTime && !isFreeEv(ev)).map(ev => ev.summary || "Busy");
     S.day = { date, meetings, allDay };
   } catch (e) { const err = calErrText(e); S.train = { date, events: [], err }; S.day = { date, meetings: [], allDay: [], err }; }
   renderToday();
 }
-function plannedMeetingMins() { return S.day && S.day.date === todayKey ? S.day.meetings.reduce((n, m) => n + m.mins, 0) : 0; }
+function plannedMeetingMins() { return S.day && S.day.date === todayKey ? S.day.meetings.filter(m => !m.personal).reduce((n, m) => n + m.mins, 0) : 0; }
 function renderDaySide() {
   const mh = $("meetings"), th = $("training"); if (!mh || !th) return;
   const d = S.day && S.day.date === todayKey ? S.day : null;
   const loggedIds = new Set(S.entries.map(e => e.calEventId).filter(Boolean));
   const now = Date.now();
-  let m = `<div class="dch"><h2>Meetings</h2>${d && d.meetings.length ? `<span class="eyebrow">${d.meetings.length} · ${fmtMins(plannedMeetingMins())}</span>` : ""}</div>`;
+  let m = `<div class="dch"><h2>Meetings</h2>${d && d.meetings.length ? `<span class="eyebrow">${d.meetings.filter(x => !x.personal).length} · ${fmtMins(plannedMeetingMins())}${d.meetings.some(x => x.personal) ? ` · ${d.meetings.filter(x => x.personal).length} personal` : ""}</span>` : ""}</div>`;
   if (!mcp) m += `<div class="none">Calendar isn't available in this view.</div>`;
   else if (!d) m += `<div class="none">Reading your calendar…</div>`;
   else if (d.err) m += `<div class="ctx" style="color:var(--crit)">${esc(d.err)} <button class="btn btn-sm" data-act="calretry" type="button">Try again</button></div>`;
@@ -1153,9 +1165,11 @@ function renderDaySide() {
     m += d.allDay.map(t => `<div class="allday">All day: <b>${esc(t)}</b></div>`).join("");
     m += d.meetings.length ? `<ul class="mt-list">${d.meetings.map(x => {
       const logged = loggedIds.has(x.id), past = now >= x.endMs, live = now >= x.startMs && now < x.endMs;
-      const acts = logged ? `<span class="tag ok">Logged</span>`
+      if (x.personal) return `<li class="mt past" style="--lane:var(--c0)"><span class="time">${esc(x.start)}</span><div class="mb"><b>${esc(x.title)}</b><span class="ctx">${esc(fmtMins(x.mins))} · personal, not taken off your working hours</span></div><div class="acts"><button class="btn btn-sm btn-ghost" data-act="mkind" data-kind="work" data-id="${esc(x.id)}" type="button">Count as work</button></div></li>`;
+      const kindBtn = `<button class="btn btn-sm btn-ghost" data-act="mkind" data-kind="personal" data-id="${esc(x.id)}" type="button">Personal</button>`;
+      const acts = (logged ? `<span class="tag ok">Logged</span>`
         : now >= x.startMs ? `<button class="btn btn-sm" data-act="mlog" data-id="${esc(x.id)}" type="button">${x.client ? "Log " + fmtMins(x.mins) : "Log…"}</button><button class="btn btn-sm btn-ghost" data-act="medit" data-id="${esc(x.id)}" type="button">Edit</button>`
-        : x.link ? `<a class="ext" href="${esc(x.link)}" target="_blank" rel="noopener">Join link ↗</a>` : "";
+        : x.link ? `<a class="ext" href="${esc(x.link)}" target="_blank" rel="noopener">Join link ↗</a>` : "") + (logged ? "" : kindBtn);
       return `<li class="mt${past ? " past" : ""}${live ? " now" : ""}" style="--lane:${colorFor(x.client)}"><span class="time">${esc(x.start)}</span><div class="mb"><b>${esc(x.title)}</b><span class="ctx">${esc(fmtMins(x.mins))}${x.client ? " · " + esc(x.client) : " · client not set"}${x.place ? " · " + esc(x.place) : ""}</span></div>${acts ? `<div class="acts">${acts}</div>` : ""}</li>`;
     }).join("")}</ul>` : `<div class="none">No meetings today. All ${fmtMins((Number(cfg().hoursAvailable) || 6) * 60)} is yours for tasks.</div>`;
   }
@@ -1831,6 +1845,15 @@ document.addEventListener("click", async (ev) => {
       if (!x.client) { openMeeting({ title: x.title, date: todayKey, start: x.start, mins: x.mins, calEventId: x.id }); break; }
       await logTime({ title: x.title, client: x.client, project: x.project || null, kind: "meeting", date: todayKey, start: new Date(x.startMs).toISOString(), mins: x.mins, source: "calendar", calEventId: x.id });
       renderAll(); toast(`Logged ${fmtMins(x.mins)} meeting for ${x.client}.`); break;
+    }
+    case "mkind": {
+      const x = meetingById(id); if (!x) break;
+      const kinds = Object.assign({}, cfg().meetingKinds || {}); kinds[meetKey(x.title)] = el.dataset.kind === "personal" ? "personal" : "work";
+      saveSettings({ meetingKinds: kinds });
+      S.day.meetings.forEach(m => { if (meetKey(m.title) === meetKey(x.title)) m.personal = kinds[meetKey(x.title)] === "personal"; });
+      renderToday();
+      toast(kinds[meetKey(x.title)] === "personal" ? `“${x.title}” is personal from now on, so it won't come off your working hours.` : `“${x.title}” counts as work from now on.`);
+      break;
     }
     case "medit": { const x = meetingById(id); if (x) openMeeting({ title: x.title, client: x.client || "Unsorted", project: x.project || "", date: todayKey, start: x.start, mins: x.mins, calEventId: x.id }); break; }
     case "calpick": { const e = S.cal && S.cal.events[i]; if (!e) break; const cur = readMeetForm(); openMeeting({ title: e.title, client: e.client || cur.client, project: e.project || "", date: S.cal.date, start: e.start, mins: e.mins, calEventId: e.id }); break; }
