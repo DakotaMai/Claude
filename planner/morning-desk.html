@@ -815,6 +815,8 @@ function commitment(ym) {
   const perDay = Number(c.hoursAvailable) || 5.5;
   return { parts, total: parts.reduce((n, p) => n + p[1], 0), days, offDays, perDay, cap: days * perDay };
 }
+// Only budgets running this month show: later phases (e.g. December and January) stay out of view until their month.
+const liveNow = (b) => (!b.from || b.from <= thisMonth) && (!b.to || b.to >= thisMonth);
 function renderHours() {
   const c = cfg();
   const t = tally(S.entries);
@@ -830,7 +832,7 @@ function renderHours() {
     else sub = cap ? (m > cap ? `${fmtHours(m - cap)} over the retainer` : `${fmtHours(cap - m)} left in ${monthName}`) : `Set monthly hours in Settings`;
     if (carried) { const diff = cap - (Number(g.hours) || 0) * 60; sub += diff >= 0 ? ` · ${fmtHours(diff)} carried over` : ` · ${fmtHours(-diff)} taken off for last month's overrun`; }
     if (o.meet) sub += ` · ${fmtHours(o.meet)} meetings`;
-    const buds = budgetsFor(g.name).filter(b => !b.to || b.to >= thisMonth), all = buds.length ? knownEntries() : [];
+    const buds = budgetsFor(g.name).filter(liveNow), all = buds.length ? knownEntries() : [];
     const repBtn = hourly || buds.length ? `<div class="row"><button class="btn btn-sm" data-act="report" data-client="${esc(g.name)}" data-month="${thisMonth}" type="button">${esc(monthName)} report</button></div>` : "";
     const overN = buds.filter(b => budgetUsed(b, all) > Number(b.hours) * 60).length;
     const budHTML = buds.length ? `<details class="budwrap" data-bud="${esc(g.name)}"${budOpen(g.name) ? " open" : ""}><summary>By client · ${buds.length} budget${buds.length === 1 ? "" : "s"}${overN ? `<span class="tag crit">${overN} over</span>` : ""}</summary><div class="bud">${buds.map(b => budgetRowHTML(b, budgetUsed(b, all))).join("")}${repBtn}</div></details>` : "";
@@ -839,9 +841,9 @@ function renderHours() {
       <div class="sub">${sub}</div>${budHTML || repBtn}</div>`;
   }).join("");
   // Project clients (any non-retainer lane with a budget): one meter per live budget, counting every month in its period.
-  const projs = (c.groups || []).filter(g => (g.kind || "retainer") !== "retainer" && budgetsFor(g.name).some(b => !b.to || b.to >= thisMonth));
+  const projs = (c.groups || []).filter(g => (g.kind || "retainer") !== "retainer" && budgetsFor(g.name).some(liveNow));
   const pall = projs.length ? knownEntries() : [];
-  html += projs.map(g => budgetsFor(g.name).filter(b => !b.to || b.to >= thisMonth).map(b => {
+  html += projs.map(g => budgetsFor(g.name).filter(liveNow).map(b => {
     const used = budgetUsed(b, pall), cap = Number(b.hours) * 60, over = used > cap, per = budgetPeriod(b);
     const sub = S.pastEntries === null && canSave() ? "Counting earlier months…" : over ? `${fmtMins(used - cap)} over the budget` : `${fmtMins(cap - used)} left`;
     return `<div class="meter" style="--lane:${laneColor(g.color)}"><div class="meter-h"><b>${esc(g.name)}</b><span class="num"><strong>${fmtHours(used)}</strong> / ${fmtHours(cap)}</span></div>
