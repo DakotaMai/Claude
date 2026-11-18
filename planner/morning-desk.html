@@ -764,6 +764,25 @@ function renderNotices() {
   }
   $("notices").innerHTML = html;
 }
+// Paid client work: everything except Ember & admin (incl. biz dev, sales calls and team catch-ups), Personal and Unsorted.
+const UNPAID = ["Ember & admin", "Personal", "Unsorted"];
+const isPaid = (e) => !UNPAID.includes(clientName(e.client)) && pkey(e.project) !== "bizdev";
+// Evening and weekend work this week (Mon-Sun), from entries with real times. Onsite and travel days are exceptions.
+const ONSITE_RE = /\b(travel|visit|on ?site|day with|telford|stourport)\b/i;
+function lateWork() {
+  const now = new Date(), mon = startOfDay(now); mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
+  const from = ymd(mon), stop = (cfg().workEnd || "17:30");
+  const [sh, sm] = stop.split(":").map(Number);
+  const nights = new Set(), weekend = new Set();
+  knownEntries().filter(e => e.date >= from && e.date <= todayKey && isPaid(e) && !ONSITE_RE.test(`${e.title} ${e.note || ""}`)).forEach(e => {
+    const d = new Date(e.date + "T12:00:00"), dow = d.getDay();
+    if (dow === 0 || dow === 6) { weekend.add(e.date); return; }
+    const s = new Date(e.start); if (isNaN(s) || ymd(s) !== e.date) return;
+    const end = s.getHours() * 60 + s.getMinutes() + (Number(e.mins) || 0);
+    if (end > sh * 60 + sm + 30) nights.add(e.date);
+  });
+  return { nights: [...nights].sort(), weekend: [...weekend].sort() };
+}
 function tally(entries) {
   const out = {};
   entries.forEach(e => {
@@ -834,8 +853,9 @@ function renderToday() {
   const doneMins = tasks.filter(t => t.status === "done").reduce((n, t) => n + (Number(t.estMins) || 30), 0);
   const todays = S.entries.filter(e => e.date === todayKey);
   const logged = todays.reduce((n, e) => n + (Number(e.mins) || 0), 0);
-  const meetings = todays.filter(e => e.kind === "meeting").reduce((n, e) => n + (Number(e.mins) || 0), 0);
-  const dayMins = (Number(c.hoursAvailable) || 6) * 60;
+  const paidToday = todays.filter(isPaid).reduce((n, e) => n + (Number(e.mins) || 0), 0);
+  const dayMins = (Number(c.hoursAvailable) || 5.5) * 60;
+  const late = lateWork();
   const meetMins = plannedMeetingMins();
   const avail = Math.max(0, dayMins - meetMins);
   const scale = Math.max(avail, total) || 1;
@@ -869,7 +889,8 @@ function renderToday() {
     <div class="cap">
       <div class="cap-nums"><span><b>${fmtMins(total)}</b> planned · ${fmtMins(doneMins)} done</span><span>${fmtMins(avail)} for tasks</span></div>
       <div class="bar${over ? " over" : ""}" role="img" aria-label="${fmtMins(total)} planned of ${fmtMins(avail)}"><span class="done" style="width:${(doneMins / scale) * 100}%"></span><span class="todo" style="width:${((total - doneMins) / scale) * 100}%"></span></div>
-      <div class="cap-nums"><span>Logged today: <b>${fmtMins(logged)}</b>${meetings ? ` · ${fmtMins(meetings)} in meetings` : ""}</span>${meetMins ? `<span>${fmtMins(dayMins)} day − ${fmtMins(meetMins)} meetings</span>` : ""}</div>
+      <div class="cap-nums"><span>Paid client work today: <b>${fmtMins(paidToday)}</b>${logged - paidToday ? ` · ${fmtMins(logged - paidToday)} Ember, biz dev &amp; admin` : ""}</span>${meetMins ? `<span>${fmtMins(dayMins)} day − ${fmtMins(meetMins)} calls in your work block</span>` : ""}</div>
+      ${late.nights.length >= 2 || late.weekend.length ? `<div class="ctx" style="color:var(--warn)">${[late.nights.length >= 2 ? `Client work past 18:00 on ${late.nights.length} nights this week` : "", late.weekend.length ? `client work at the weekend (${late.weekend.map(x => new Date(x + "T12:00:00").toLocaleDateString(undefined, { weekday: "short" })).join(", ")})` : ""].filter(Boolean).join(", and ")}. Your template allows the odd evening, not a habit.</div>` : ""}
       ${over ? `<div class="ctx" style="color:var(--crit)">${fmtMins(total - avail)} over. Items after the yellow line won't fit.</div>` : ""}
     </div>`;
   host.innerHTML = `
@@ -1151,7 +1172,18 @@ async function loadTraining() {
   } catch (e) { const err = calErrText(e); S.train = { date, events: [], err }; S.day = { date, meetings: [], allDay: [], err }; }
   renderToday();
 }
-function plannedMeetingMins() { return S.day && S.day.date === todayKey ? S.day.meetings.filter(m => !m.personal).reduce((n, m) => n + m.mins, 0) : 0; }
+// Only time inside the working block (default 12:00-17:30) comes off the hours for tasks: calls in the 08:00 planning
+// hour or a morning slot don't. Personal appointments never count.
+function workWindow() {
+  const c = cfg(), d = new Date(), [a1, a2] = String(c.workStart || "12:00").split(":").map(Number), [b1, b2] = String(c.workEnd || "17:30").split(":").map(Number);
+  const s = new Date(d); s.setHours(a1 || 0, a2 || 0, 0, 0); const e = new Date(d); e.setHours(b1 || 0, b2 || 0, 0, 0);
+  return [s.getTime(), e.getTime()];
+}
+function plannedMeetingMins() {
+  if (!(S.day && S.day.date === todayKey)) return 0;
+  const [ws, we] = workWindow();
+  return S.day.meetings.filter(m => !m.personal).reduce((n, m) => n + Math.max(0, Math.round((Math.min(m.endMs, we) - Math.max(m.startMs, ws)) / 60000)), 0);
+}
 function renderDaySide() {
   const mh = $("meetings"), th = $("training"); if (!mh || !th) return;
   const d = S.day && S.day.date === todayKey ? S.day : null;
@@ -1225,7 +1257,7 @@ async function openTimeLog(ym) {
     <div class="row" style="justify-content:space-between"><h2>Time log</h2><button class="btn btn-ghost" data-act="closedrawer" type="button">Close</button></div>
     <div class="row"><button class="btn btn-sm" data-act="logmonth" data-month="${prevMonth(ym)}" type="button" aria-label="Previous month">←</button><b style="font-family:var(--f-display);font-size:17px">${esc(monthLabel(ym))}</b>${ym < thisMonth ? `<button class="btn btn-sm" data-act="logmonth" data-month="${nextMonth(ym)}" type="button" aria-label="Next month">→</button>` : ""}<button class="btn btn-sm" data-act="export" data-month="${ym}" type="button" style="margin-left:auto">Export CSV</button></div>
     ${(() => { const rc = order.filter(n => { const d = defFor(n); return (d && d.billing === "hourly") || budgetsFor(n).length; }); return rc.length ? `<div class="row">${rc.map(n => `<button class="btn btn-sm" data-act="report" data-client="${esc(n)}" data-month="${ym}" type="button">Client report: ${esc(n)}</button>`).join("")}</div>` : ""; })()}
-    ${order.length ? `<div class="tablewrap"><table class="log"><thead><tr><th>Client</th><th>Work</th><th>Meetings</th><th>Total</th><th>Retainer</th></tr></thead><tbody>${rows}<tr class="total"><td>Total</td><td>${fmtHours(sum.work)}</td><td>${fmtHours(sum.meet)}</td><td>${fmtHours(sum.total)}</td><td></td></tr></tbody></table></div>` : `<div class="empty-today">No time logged in ${esc(monthLabel(ym))} yet.</div>`}
+    ${order.length ? `<div class="tablewrap"><table class="log"><thead><tr><th>Client</th><th>Work</th><th>Meetings</th><th>Total</th><th>Retainer</th></tr></thead><tbody>${rows}<tr class="total"><td>Total</td><td>${fmtHours(sum.work)}</td><td>${fmtHours(sum.meet)}</td><td>${fmtHours(sum.total)}</td><td></td></tr>${(() => { const paid = entries.filter(isPaid), pm = paid.reduce((n, e) => n + (Number(e.mins) || 0), 0), days = new Set(paid.map(e => e.date)).size; return `<tr class="sub"><td>Paid client work${days ? ` · ${fmtHours(pm / days)} a working day` : ""}</td><td></td><td></td><td>${fmtHours(pm)}</td><td></td></tr><tr class="sub"><td>Ember, biz dev &amp; admin</td><td></td><td></td><td>${fmtHours(sum.total - pm)}</td><td></td></tr>`; })()}</tbody></table></div>` : `<div class="empty-today">No time logged in ${esc(monthLabel(ym))} yet.</div>`}
     ${recent.length ? `<h3>Latest entries</h3><ul class="entries">${recent.map(e => `<li><span>${esc(new Date(e.date + "T12:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" }))} · ${esc(clientName(e.client))}${e.project ? " · " + esc(e.project) : ""} · ${esc(e.title)}${e.kind === "meeting" ? ' <span class="tag">meeting</span>' : ""}</span><span class="num">${fmtMins(e.mins)}</span></li>`).join("")}</ul>` : ""}
   </div></div>`;
 }
@@ -1566,7 +1598,7 @@ async function runCheck() {
 
 Return ONLY JSON in this exact shape:
 {"done":[{"taskId":"...","evidence":"one line"}],
- "time":[{"taskId":"... or null","kind":"work" or "meeting","calEventId":"... or null","client":"client name","project":"sub-client or null","title":"short description","mins":number,"evidence":"one line"}],
+ "time":[{"taskId":"... or null","kind":"work" or "meeting","calEventId":"... or null","client":"client name","project":"sub-client or null","title":"short description","from":"HH:MM start time","mins":number,"evidence":"one line"}],
  "newTasks":[{"title":"...","client":"...","project":"... or null","estMins":number,"context":"one line"}],
  "timeline":[{"from":"HH:MM","to":"HH:MM","what":"short label","status":"logged" or "new" or "personal" or "break" or "unknown"}]}
 
@@ -1686,7 +1718,7 @@ async function applyReview() {
     if (!$("rv-t-" + i).checked) continue;
     const x = r.time[i], mins = Math.round(Number($("rv-tm-" + i).value) || 0); if (mins < 1) continue;
     const t = x.taskId ? getTask(x.taskId) : null;
-    await logTime({ taskId: x.taskId, title: t ? t.title : (x.title || "Work"), client: clientName(t ? t.client : x.client), project: (t && t.project) || (typeof x.project === "string" && x.project ? x.project : null), kind: x.kind, calEventId: x.calEventId || null, mins, date: day, start: new Date(day + "T12:00:00").toISOString(), source: "littlebird", note: x.evidence || "" });
+    await logTime({ taskId: x.taskId, title: t ? t.title : (x.title || "Work"), client: clientName(t ? t.client : x.client), project: (t && t.project) || (typeof x.project === "string" && x.project ? x.project : null), kind: x.kind, calEventId: x.calEventId || null, mins, date: day, start: new Date(day + "T" + (/^\d{2}:\d{2}$/.test(x.from || "") ? x.from : "12:00") + ":00").toISOString(), source: "littlebird", note: x.evidence || "" });
     m += mins;
   }
   let x2 = 0;
@@ -1770,7 +1802,7 @@ function openSettings(groupsOverride, habitOverride, budgetsOverride) {
     <h3>Work</h3>
     <div class="field"><label for="s-people">People you pass work to</label><input id="s-people" value="${esc((c.people || []).join(", "))}"><span class="hint">Comma-separated first names.</span></div>
     <div class="field"><label for="s-notes">Notes for Claude</label><textarea id="s-notes" placeholder="e.g. Calls with Jess are Leighton work">${esc(c.notes || "")}</textarea><span class="hint">The morning sweep and day check read these when deciding which client something belongs to.</span></div>
-    <div class="field"><label for="s-hours">Working hours per day</label><input id="s-hours" type="number" min="1" max="14" step="0.5" value="${esc(c.hoursAvailable)}"><span class="hint">Today's meetings come out of this, and what's left is your time for tasks.</span></div>
+    <div class="field"><label for="s-hours">Working hours per day</label><input id="s-hours" type="number" min="1" max="14" step="0.5" value="${esc(c.hoursAvailable)}"><span class="hint">Calls inside your work block (${esc(c.workStart || "12:00")}–${esc(c.workEnd || "17:30")}) come out of this, and what's left is your time for tasks. Personal appointments and anything outside the block don't.</span></div>
     <div class="field"><label for="s-gmail">Which emails to sweep</label><input id="s-gmail" value="${esc(c.gmailQuery)}"><span class="hint">Gmail search for new mail since the last sweep. The date is added for you.${(c.actionLabels || []).length ? ` Everything in ${(c.actionLabels || []).map(l => esc(l.name)).join(" and ")} is also checked every time, however old.` : ""}</span></div>
     <h3>Backup</h3>
     <div class="row"><button class="btn btn-sm" data-act="exporttasks" type="button">Export tasks (CSV)</button><button class="btn btn-sm" data-act="export" data-month="${thisMonth}" type="button">Export ${esc(monthName)} time (CSV)</button></div>
