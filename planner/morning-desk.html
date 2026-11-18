@@ -797,6 +797,21 @@ function tally(entries) {
 // A retainer's hours for a month: the usual monthly hours, unless that month has its own figure in hoursByMonth
 // (e.g. unused hours carried over from a cancelled day).
 const capHours = (g, ym) => { const o = g && g.hoursByMonth && g.hoursByMonth[ym]; return Number(o != null ? o : (g && g.hours)) || 0; };
+// Hours committed this month: retainer hours plus every budget live this month (a budget spanning several months is
+// spread evenly across them), against weekdays x the working day. Ad-hoc work without a budget isn't counted.
+function monthsIn(b) { if (!b.from || !b.to) return 1; let n = 1, m = b.from; while (m < b.to && n < 24) { m = nextMonth(m); n++; } return n; }
+function commitment(ym) {
+  const c = cfg(), parts = [];
+  (c.groups || []).forEach(g => {
+    const hourly = g.billing === "hourly", buds = budgetsFor(g.name).filter(b => (!b.from || b.from <= ym) && (!b.to || b.to >= ym));
+    if ((g.kind || "retainer") === "retainer" && !hourly && capHours(g, ym)) parts.push([g.name, capHours(g, ym)]);
+    else if (buds.length) parts.push([g.name, buds.reduce((n, b) => n + Number(b.hours) / monthsIn(b), 0)]);
+  });
+  const d = new Date(ym + "-01T12:00:00"); let days = 0;
+  while (ymd(d).slice(0, 7) === ym) { if (d.getDay() % 6) days++; d.setDate(d.getDate() + 1); }
+  const perDay = Number(c.hoursAvailable) || 5.5;
+  return { parts, total: parts.reduce((n, p) => n + p[1], 0), days, perDay, cap: days * perDay };
+}
 function renderHours() {
   const c = cfg();
   const t = tally(S.entries);
@@ -837,6 +852,10 @@ function renderHours() {
   const top = other.sort((a, b) => t[b].total - t[a].total).slice(0, 3).map(n => `${esc(n)} ${fmtHours(t[n].total)}`).join(" · ");
   html += `<div class="meter"><div class="meter-h"><b>Everything else in ${esc(monthName)}</b><span class="num"><strong>${fmtHours(otherMins)}</strong></span></div><div class="sub">${top || "No other time logged yet"}</div>
     <div class="row"><button class="btn btn-sm" data-act="timelog" type="button">Time log</button><button class="btn btn-sm btn-ghost" data-act="export" data-month="${thisMonth}" type="button">Export CSV</button></div></div>`;
+  const cm = commitment(thisMonth), cpct = cm.cap ? (cm.total / cm.cap) * 100 : 0, cover = cm.total > cm.cap;
+  html = `<div class="meter"><div class="meter-h"><b>Committed in ${esc(monthName)}</b><span class="num"><strong>${fmtHours(cm.total * 60)}</strong> / ${fmtHours(cm.cap * 60)}</span></div>
+    <div class="mbar${cover ? " over" : ""}"><span style="width:${Math.min(100, cpct)}%;background:${cover ? "var(--crit)" : cpct > 90 ? "var(--warn)" : "var(--ok)"}"></span></div>
+    <div class="sub">${cover ? `<b style="color:var(--crit)">${fmtHours((cm.total - cm.cap) * 60)} more than your ${fmtHours(cm.perDay * 60)} days allow.</b> Time to get help or drop something. ` : cpct > 90 ? `Nearly full: ${fmtHours((cm.cap - cm.total) * 60)} spare. ` : `${fmtHours((cm.cap - cm.total) * 60)} spare for ad-hoc work and projects. `}${cm.days} weekdays × ${fmtHours(cm.perDay * 60)}. Retainers and budgets: ${cm.parts.map(p => `${esc(p[0])} ${fmtHours(p[1] * 60)}`).join(" · ")}</div></div>` + html;
   $("hours").innerHTML = html;
 }
 function renderTimer() {
@@ -1131,7 +1150,7 @@ function plainText(html) {
   try { return (new DOMParser().parseFromString(withBreaks, "text/html").body.textContent || "").trim(); } catch (_) { return withBreaks.replace(/<[^>]+>/g, "").trim(); }
 }
 // Calendar blocks that are not meetings: work focus blocks, placeholders, travel and free/transparent holds.
-const MEET_IGNORE = ["no calls", "louie", "focus block", "drive to"];
+const MEET_IGNORE = ["no calls", "louie", "focus block", "drive to", "call blocks"];
 const hm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 // Personal appointments (chiro, PT, nails...) sit outside the working day: they don't come off the hours for tasks.
 // Words match whole words in the title; "Count as work" / "Personal" on a meeting remembers that title either way.
@@ -1154,7 +1173,7 @@ async function loadTraining() {
     const r = await readDayEvents(date);
     const all = ((r.payload && r.payload.events) || []).filter(ev => ev.status !== "cancelled");
     const timed = all.filter(ev => ev.start && ev.start.dateTime && ev.end && ev.end.dateTime);
-    const events = timed.filter(ev => isTrainingEvent(ev) && !/Free training slot/.test(String(ev.description || ""))).map(ev => {
+    const events = timed.filter(ev => isTrainingEvent(ev) && !/Free training slot|^Training slot,/.test(String(ev.description || ""))).map(ev => {
       const s = new Date(ev.start.dateTime), e = new Date(ev.end.dateTime);
       const desc = plainText(ev.description).replace(/\s*Planned by Training Desk[\s\S]*$/, "").trim();
       return { title: ev.summary || "Training", time: `${hm(s)}–${hm(e)}`, desc, planned: String(ev.description || "").includes(TD_MARK) };
