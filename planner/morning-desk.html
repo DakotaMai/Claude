@@ -808,9 +808,12 @@ function commitment(ym) {
     else if (buds.length) parts.push([g.name, buds.reduce((n, b) => n + Number(b.hours) / monthsIn(b), 0)]);
   });
   const d = new Date(ym + "-01T12:00:00"); let days = 0;
-  while (ymd(d).slice(0, 7) === ym) { if (d.getDay() % 6) days++; d.setDate(d.getDate() + 1); }
+  // Days off ({from, to, label} in settings.daysOff) don't count as working days.
+  const off = (c.daysOff || []).filter(o => o && o.from), isOff = (k) => off.some(o => k >= o.from && k <= (o.to || o.from));
+  let offDays = 0;
+  while (ymd(d).slice(0, 7) === ym) { if (d.getDay() % 6) { if (isOff(ymd(d))) offDays++; else days++; } d.setDate(d.getDate() + 1); }
   const perDay = Number(c.hoursAvailable) || 5.5;
-  return { parts, total: parts.reduce((n, p) => n + p[1], 0), days, perDay, cap: days * perDay };
+  return { parts, total: parts.reduce((n, p) => n + p[1], 0), days, offDays, perDay, cap: days * perDay };
 }
 function renderHours() {
   const c = cfg();
@@ -855,7 +858,7 @@ function renderHours() {
   const cm = commitment(thisMonth), cpct = cm.cap ? (cm.total / cm.cap) * 100 : 0, cover = cm.total > cm.cap;
   html = `<div class="meter"><div class="meter-h"><b>Committed in ${esc(monthName)}</b><span class="num"><strong>${fmtHours(cm.total * 60)}</strong> / ${fmtHours(cm.cap * 60)}</span></div>
     <div class="mbar${cover ? " over" : ""}"><span style="width:${Math.min(100, cpct)}%;background:${cover ? "var(--crit)" : cpct > 90 ? "var(--warn)" : "var(--ok)"}"></span></div>
-    <div class="sub">${cover ? `<b style="color:var(--crit)">${fmtHours((cm.total - cm.cap) * 60)} more than your ${fmtHours(cm.perDay * 60)} days allow.</b> Time to get help or drop something. ` : cpct > 90 ? `Nearly full: ${fmtHours((cm.cap - cm.total) * 60)} spare. ` : `${fmtHours((cm.cap - cm.total) * 60)} spare for ad-hoc work and projects. `}${cm.days} weekdays × ${fmtHours(cm.perDay * 60)}. Retainers and budgets: ${cm.parts.map(p => `${esc(p[0])} ${fmtHours(p[1] * 60)}`).join(" · ")}</div></div>` + html;
+    <div class="sub">${cover ? `<b style="color:var(--crit)">${fmtHours((cm.total - cm.cap) * 60)} more than your ${fmtHours(cm.perDay * 60)} days allow.</b> Time to get help or drop something. ` : cpct > 90 ? `Nearly full: ${fmtHours((cm.cap - cm.total) * 60)} spare. ` : `${fmtHours((cm.cap - cm.total) * 60)} spare for ad-hoc work and projects. `}${cm.days} working days × ${fmtHours(cm.perDay * 60)}${cm.offDays ? ` (${cm.offDays} off)` : ""}. Retainers and budgets: ${cm.parts.map(p => `${esc(p[0])} ${fmtHours(p[1] * 60)}`).join(" · ")}</div></div>` + html;
   $("hours").innerHTML = html;
 }
 function renderTimer() {
