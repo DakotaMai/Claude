@@ -684,6 +684,7 @@ function cardHTML(t, opts) {
   if (d) tags.push(`<span class="tag ${d.tone}">${esc(d.label)}</span>`);
   else if (t.urgency === "today") tags.push(`<span class="tag warn">Someone's waiting</span>`);
   if (t.inProgress) tags.push(`<span class="tag">in progress</span>`);
+  const ckp = ckProgress(t); if (ckp) tags.push(`<span class="tag${ckp.done === ckp.all ? " ok" : ""}">☑ ${ckp.done}/${ckp.all}</span>`);
   if (SRC[t.source]) tags.push(`<span class="tag">${esc(SRC[t.source])}</span>`);
   if (opts.delegated) { const days = t.delegatedAt ? Math.floor((Date.now() - Date.parse(t.delegatedAt)) / DAY) : null; if (days != null) tags.push(`<span class="tag ${days > 5 ? "warn" : ""}">passed ${days === 0 ? "today" : days + "d ago"}</span>`); tags.push(`<span>${esc(clientName(t.client))}</span>`); }
   tags.push(`<span class="tag">~${esc(fmtMins(t.estMins || 30))}</span>`);
@@ -896,7 +897,7 @@ function renderToday() {
     return `<li class="pi${done ? " done" : ""}${pastCap ? " over" : ""}${timing ? " is-timing" : ""}" style="--lane:${colorFor(t.client)}" draggable="true" data-i="${idx}">
       <input type="checkbox" id="pi-${esc(t.id)}" ${done ? "checked" : ""} data-act="toggle" data-id="${esc(t.id)}" aria-label="Mark done">
       <div class="pi-main"><button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button>
-        <div class="meta"><span>${esc(clientName(t.client))}${t.project ? " · " + esc(t.project) : ""}</span>${t.minsLogged ? `<span class="tag ok">${esc(fmtMins(t.minsLogged))} logged</span>` : ""}${t.delegatedTo ? `<span class="tag">with ${esc(t.delegatedTo)}</span>` : ""}</div></div>
+        <div class="meta"><span>${esc(clientName(t.client))}${t.project ? " · " + esc(t.project) : ""}</span>${t.minsLogged ? `<span class="tag ok">${esc(fmtMins(t.minsLogged))} logged</span>` : ""}${(() => { const p = ckProgress(t); return p ? `<span class="tag${p.done === p.all ? " ok" : ""}">☑ ${p.done}/${p.all}</span>` : ""; })()}${t.delegatedTo ? `<span class="tag">with ${esc(t.delegatedTo)}</span>` : ""}</div></div>
       <div class="pi-side"><div class="mini">${done ? "" : `<button class="ib${timing ? " on" : ""}" data-act="timer" data-id="${esc(t.id)}" type="button" aria-label="${timing ? "Stop timer" : "Start timer"}">${timing ? "■" : "▶"}</button>`}</div>
         <select id="est-${esc(t.id)}" data-act="est" data-id="${esc(t.id)}" aria-label="Time estimate">${ests}</select>
         <div class="mini"><button data-act="up" data-i="${idx}" type="button" aria-label="Move up">↑</button><button data-act="down" data-i="${idx}" type="button" aria-label="Move down">↓</button><button data-act="remove" data-i="${idx}" type="button" aria-label="Remove from today">×</button></div></div>
@@ -1016,6 +1017,25 @@ function markDone(id) {
 }
 
 /* ---------- task drawer ---------- */
+/* ---------- checklists inside a task: [{text, done}] ---------- */
+const ckList = (t) => Array.isArray(t && t.checklist) ? t.checklist.filter(x => x && typeof x.text === "string") : [];
+function ckProgress(t) { const l = ckList(t); return l.length ? { done: l.filter(x => x.done).length, all: l.length } : null; }
+function checklistHTML(t) {
+  const l = ckList(t);
+  return `${l.length ? `<ul class="pl">${l.map((x, i) => `<li class="${x.done ? "done" : ""}" style="display:flex;align-items:flex-start;gap:6px"><label style="flex:1"><input type="checkbox" data-act="ck-toggle" data-id="${esc(t.id)}" data-i="${i}" ${x.done ? "checked" : ""}><span>${esc(x.text)}</span></label><button class="btn btn-sm btn-ghost" data-act="ck-del" data-id="${esc(t.id)}" data-i="${i}" type="button" aria-label="Remove this item">×</button></li>`).join("")}</ul>` : `<div class="ctx">No checklist yet. Add the small steps and tick them off as you go.</div>`}
+    <div class="row" style="margin-top:6px"><input id="ck-new" data-id="${esc(t.id)}" placeholder="Add a step" autocomplete="off" style="flex:1;min-width:0;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--surface)"><button class="btn btn-sm" data-act="ck-add" data-id="${esc(t.id)}" type="button">Add</button></div>`;
+}
+function setChecklist(id, list) {
+  const t = getTask(id); if (!t) return;
+  updateTask(id, { checklist: list });
+  const host = $("ckl"); if (host) host.innerHTML = checklistHTML(Object.assign({}, t, { checklist: list }));
+  renderAll();
+}
+function ckAdd(id) {
+  const inp = $("ck-new"), text = ((inp && inp.value) || "").trim().slice(0, 200); if (!text) return;
+  setChecklist(id, [...ckList(getTask(id)), { text, done: false }]);
+  const again = $("ck-new"); if (again) again.focus();
+}
 function openTask(id, preset) {
   const t = id ? getTask(id) : Object.assign({ title: "", client: "Unsorted", project: "", estMins: 30, notes: "", due: null, delegatedTo: null, status: "open" }, preset || {});
   if (!t) return;
@@ -1033,6 +1053,7 @@ function openTask(id, preset) {
       <div class="field"><label for="f-est">Estimate</label><select id="f-est">${ests}</select></div>
       <div class="field"><label for="f-del">Passed to</label><select id="f-del"><option value="">Nobody, I'm doing it</option>${people.map(p => `<option value="${esc(p)}"${t.delegatedTo === p ? " selected" : ""}>${esc(p)}</option>`).join("")}</select></div>
     </div>
+    ${id ? `<div class="field"><span class="flabel">Checklist</span><div id="ckl">${checklistHTML(t)}</div></div>` : ""}
     <div class="field"><label for="f-notes">Notes</label><textarea id="f-notes">${esc(t.notes || t.context || "")}</textarea></div>
     <label class="row"><input type="checkbox" id="f-prog" ${t.inProgress ? "checked" : ""}> In progress</label>
     ${id ? "" : `<label class="row"><input type="checkbox" id="f-today"> Add to today as well</label>`}
@@ -1875,6 +1896,9 @@ document.addEventListener("click", async (ev) => {
     }
     case "expand": S.expanded[el.dataset.key] = !S.expanded[el.dataset.key]; renderEverything(); break;
     case "edit": openTask(id); break;
+    case "ck-toggle": { const l = ckList(getTask(id)).map((x, k) => k === i ? Object.assign({}, x, { done: el.checked }) : x); setChecklist(id, l); break; }
+    case "ck-del": { setChecklist(id, ckList(getTask(id)).filter((x, k) => k !== i)); break; }
+    case "ck-add": ckAdd(id); break;
     case "newin": openTask(null, { client: el.dataset.client }); break;
     case "timer": startTimer(id); break;
     case "stoptimer": stopTimer(); break;
@@ -1995,7 +2019,7 @@ document.querySelectorAll("[data-filter]").forEach(b => b.addEventListener("clic
   document.querySelectorAll("[data-filter]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
   renderEverything();
 }));
-document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("drawerHost").innerHTML) closeDrawer(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("drawerHost").innerHTML) closeDrawer(); if (e.key === "Enter" && e.target && e.target.id === "ck-new") { e.preventDefault(); ckAdd(e.target.dataset.id); } });
 $("search").addEventListener("input", (e) => { S.q = e.target.value; renderEverything(); });
 $("sweepBtn").addEventListener("click", runSweep);
 $("newBtn").addEventListener("click", () => openTask(null));
