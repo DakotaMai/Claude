@@ -818,8 +818,9 @@ function commitment(ym) {
 }
 // Only budgets running this month show: later phases (e.g. December and January) stay out of view until their month.
 const liveNow = (b) => (!b.from || b.from <= thisMonth) && (!b.to || b.to >= thisMonth);
-// The realistic view of a month: hours still owed on retainers and budgets, plus the client work that keeps turning up
-// without a budget (small ad-hoc clients), against the working time actually left. Ember's own work and biz dev are
+// The realistic view of a month: hours still owed on retainers and budgets, plus any client work without a budget that's
+// still on the task list (open tasks' estimates, less time already logged), against the working time actually left.
+// Unbudgeted work isn't projected forward: the rule is no new unbudgeted client work. Ember's own work and biz dev are
 // shown alongside but not subtracted: they're what flexes when client work is heavy. Planning time isn't counted.
 const offDay = (k) => (cfg().daysOff || []).some(o => o && o.from && k >= o.from && k <= (o.to || o.from));
 const workdayKeys = (ym) => { const out = [], d = new Date(ym + "-01T12:00:00"); while (ymd(d).slice(0, 7) === ym) { if (d.getDay() % 6 && !offDay(ymd(d))) out.push(ymd(d)); d.setDate(d.getDate() + 1); } return out; };
@@ -843,18 +844,28 @@ function extrasRate() {
   if (days) return pack(extrasIn(thisMonth, S.entries.filter(e => e.date < todayKey)), days, `${monthName} so far`);
   return { rate: 0, ember: 0, by: {}, basis: "" };
 }
+function unbudgetedLeft() {
+  const names = new Set(commitment(thisMonth).parts.map(p => p[0])), by = {};
+  S.sets.open.forEach(t => {
+    const n = clientName(t.client);
+    if (t.delegatedTo || names.has(n) || UNPAID.includes(n) || pkey(t.project) === "bizdev") return;
+    const m = Math.max(0, (Number(t.estMins) || 0) - (Number(t.minsLogged) || 0));
+    if (m) by[n] = (by[n] || 0) + m;
+  });
+  return by;
+}
 function restOfMonth() {
   const cm = commitment(thisMonth), t = tally(S.entries), per = cm.perDay * 60;
   const owed = cm.parts.map(([n, h]) => [n, Math.max(0, h * 60 - ((t[n] || {}).total || 0))]).filter(p => p[1] >= 1).sort((a, b) => b[1] - a[1]);
   const owedMins = owed.reduce((a, p) => a + p[1], 0);
   const keys = workdayKeys(thisMonth), daysLeft = keys.filter(k => k > todayKey).length;
   const [ws, we] = workWindow(), todayLeft = keys.includes(todayKey) ? Math.min(per, Math.max(0, (we - Math.max(Date.now(), ws)) / 60000)) : 0;
-  const avail = daysLeft * per + todayLeft, ex = extrasRate(), extras = ex.rate * (avail / (per || 1));
-  return { cm, owed, owedMins, daysLeft, avail, extras, ex, free: avail - owedMins - extras, per };
+  const avail = daysLeft * per + todayLeft, ex = extrasRate(), exBy = unbudgetedLeft(), extras = Object.values(exBy).reduce((a, b) => a + b, 0);
+  return { cm, owed, owedMins, daysLeft, avail, extras, exBy, ex, free: avail - owedMins - extras, per };
 }
 function monthAhead(ym) {
-  const cm = commitment(ym), ex = extrasRate(), extras = ex.rate * cm.days;
-  return { cm, extras, free: cm.cap * 60 - cm.total * 60 - extras };
+  const cm = commitment(ym);
+  return { cm, free: cm.cap * 60 - cm.total * 60 };
 }
 function renderHours() {
   const c = cfg();
@@ -903,7 +914,7 @@ function renderHours() {
   const r = restOfMonth(), na = monthAhead(nextMonth(thisMonth)), naName = new Date(nextMonth(thisMonth) + "-15T12:00:00").toLocaleDateString(undefined, { month: "long" });
   const help = Number(c.helpHours) ? ` ${esc(c.helpName || "Your VA")} has ${fmtHours(Number(c.helpHours) * 60)} a month you've already paid for.` : "";
   const seg = (m, col) => r.avail > 0 && m > 0 ? `<span style="width:${Math.min(100, (m / r.avail) * 100)}%;background:${col}"></span>` : "";
-  const exTop = Object.entries(r.ex.by).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([n, m]) => esc(n) + " " + fmtHours(m)).join(" · ");
+  const exTop = Object.entries(r.exBy).sort((a, b) => b[1] - a[1]).map(([n, m]) => esc(n) + " " + fmtHours(m)).join(" · ");
   const afternoons = Math.floor(r.free / (r.per || 330));
   const verdict = r.free < 0 ? `<b style="color:var(--crit)">${fmtHours(-r.free)} over.</b> At your usual pace this month doesn't fit: move something to ${esc(naName)}, hand it over, or say no to anything new.${help}`
     : r.free < 120 ? `<b style="color:var(--warn)">About ${fmtHours(r.free)} free.</b> Full: no room for new work or time off without moving something.`
@@ -912,8 +923,8 @@ function renderHours() {
   html = `<div class="meter" style="grid-column:1/-1"><div class="meter-h"><b>Rest of ${esc(monthName)}</b><span class="num"><strong>${r.free < 0 ? fmtHours(-r.free) + " over" : fmtHours(r.free) + " free"}</strong> of ${fmtHours(r.avail)} left</span></div>
     <div class="mbar" style="display:flex">${r.free < 0 ? `<span style="width:100%;background:var(--crit)"></span>` : seg(r.owedMins, "var(--ink)") + seg(r.extras, "var(--warn)")}</div>
     <div class="sub">${verdict}</div>
-    <div class="sub">${r.daysLeft} working day${r.daysLeft === 1 ? "" : "s"} left${r.avail % r.per ? " plus the rest of today" : ""} = ${fmtHours(r.avail)}. <b>Still to deliver ${fmtHours(r.owedMins)}</b>${r.owed.length ? ": " + r.owed.map(p => `${esc(p[0])} ${fmtHours(p[1])}`).join(" · ") : ""}. <b>Usual extras ~${fmtHours(r.extras)}</b> (clients without a budget run at ${fmtHours(r.ex.rate)} a working day, ${esc(r.ex.basis)}${exTop ? ": " + exTop : ""}). Ember work and biz dev come on top, at ${fmtHours(r.ex.ember)} a working day: that's the time that gets squeezed.</div>
-    <div class="sub">${esc(naName)}: ${fmtHours(na.cm.total * 60)} committed + ~${fmtHours(na.extras)} usual client extras against ${fmtHours(na.cm.cap * 60)} (${na.cm.days} working days${na.cm.offDays ? `, ${na.cm.offDays} off` : ""}) → ${naVerdict}. Whole of ${esc(monthName)}: ${fmtHours(r.cm.total * 60)} committed of ${fmtHours(r.cm.cap * 60)}.</div></div>` + html;
+    <div class="sub">${r.daysLeft} working day${r.daysLeft === 1 ? "" : "s"} left${r.avail % r.per ? " plus the rest of today" : ""} = ${fmtHours(r.avail)}. <b>Still to deliver ${fmtHours(r.owedMins)}</b>${r.owed.length ? ": " + r.owed.map(p => `${esc(p[0])} ${fmtHours(p[1])}`).join(" · ") : ""}. ${r.extras ? `<b>Unbudgeted client work left ~${fmtHours(r.extras)}</b> (open tasks: ${exTop}). ` : ""}Ember work and biz dev come on top${r.ex.ember ? `, at about ${fmtHours(r.ex.ember)} a working day ${esc(r.ex.basis)}` : ""}: that's the time that gets squeezed.</div>
+    <div class="sub">${esc(naName)}: ${fmtHours(na.cm.total * 60)} committed against ${fmtHours(na.cm.cap * 60)} (${na.cm.days} working days${na.cm.offDays ? `, ${na.cm.offDays} off` : ""}) → ${naVerdict}. Whole of ${esc(monthName)}: ${fmtHours(r.cm.total * 60)} committed of ${fmtHours(r.cm.cap * 60)}.</div></div>` + html;
   $("hours").innerHTML = html;
 }
 function renderTimer() {
