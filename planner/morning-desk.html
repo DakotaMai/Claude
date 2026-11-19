@@ -912,19 +912,23 @@ function renderHours() {
   html += `<div class="meter"><div class="meter-h"><b>Everything else in ${esc(monthName)}</b><span class="num"><strong>${fmtHours(otherMins)}</strong></span></div><div class="sub">${top || "No other time logged yet"}</div>
     <div class="row"><button class="btn btn-sm" data-act="timelog" type="button">Time log</button><button class="btn btn-sm btn-ghost" data-act="export" data-month="${thisMonth}" type="button">Export CSV</button></div></div>`;
   const r = restOfMonth(), na = monthAhead(nextMonth(thisMonth)), naName = new Date(nextMonth(thisMonth) + "-15T12:00:00").toLocaleDateString(undefined, { month: "long" });
-  const help = Number(c.helpHours) ? ` ${esc(c.helpName || "Your VA")} has ${fmtHours(Number(c.helpHours) * 60)} a month you've already paid for.` : "";
   const seg = (m, col) => r.avail > 0 && m > 0 ? `<span style="width:${Math.min(100, (m / r.avail) * 100)}%;background:${col}"></span>` : "";
-  const exTop = Object.entries(r.exBy).sort((a, b) => b[1] - a[1]).map(([n, m]) => esc(n) + " " + fmtHours(m)).join(" · ");
   const afternoons = Math.floor(r.free / (r.per || 330));
-  const verdict = r.free < 0 ? `<b style="color:var(--crit)">${fmtHours(-r.free)} over.</b> At your usual pace this month doesn't fit: move something to ${esc(naName)}, hand it over, or say no to anything new.${help}`
-    : r.free < 120 ? `<b style="color:var(--warn)">About ${fmtHours(r.free)} free.</b> Full: no room for new work or time off without moving something.`
-    : `<b style="color:var(--ok)">About ${fmtHours(r.free)} free</b>${afternoons ? `, enough for ${afternoons === 1 ? "an afternoon" : afternoons + " afternoons"} off or a small extra job` : ""}.`;
-  const naVerdict = na.free < 0 ? `<b style="color:var(--crit)">${fmtHours(-na.free)} over</b>` : `<b style="color:${na.free < 120 ? "var(--warn)" : "var(--ok)"}">about ${fmtHours(na.free)} free</b>`;
-  html = `<div class="meter" style="grid-column:1/-1"><div class="meter-h"><b>Rest of ${esc(monthName)}</b><span class="num"><strong>${r.free < 0 ? fmtHours(-r.free) + " over" : fmtHours(r.free) + " free"}</strong> of ${fmtHours(r.avail)} left</span></div>
+  const col = r.free < 0 ? "var(--crit)" : r.free < 120 ? "var(--warn)" : "var(--ok)";
+  const verdict = r.free < 0 ? `Over: move something to ${esc(naName)}${Number(c.helpHours) ? ` or to ${esc(c.helpName || "your VA")}` : ""}, and say no to anything new.`
+    : r.free < 120 ? "Full: no room for new work or time off." : afternoons ? `Room for ${afternoons === 1 ? "an afternoon" : afternoons + " afternoons"} off or a small extra job.` : "A little room, but not a full afternoon.";
+  const naCol = na.free < 0 ? "var(--crit)" : na.free < 120 ? "var(--warn)" : "var(--ok)";
+  const exList = Object.entries(r.exBy).sort((a, b) => b[1] - a[1]).map(([n, m]) => `${esc(n)} ${fmtHours(m)}`).join(" · ");
+  html = `<div class="meter" style="grid-column:1/-1"><div class="meter-h"><b>Rest of ${esc(monthName)}</b><span class="num"><strong style="color:${col}">${r.free < 0 ? fmtHours(-r.free) + " over" : fmtHours(r.free) + " free"}</strong> of ${fmtHours(r.avail)} left</span></div>
     <div class="mbar" style="display:flex">${r.free < 0 ? `<span style="width:100%;background:var(--crit)"></span>` : seg(r.owedMins, "var(--ink)") + seg(r.extras, "var(--warn)")}</div>
-    <div class="sub">${verdict}</div>
-    <div class="sub">${r.daysLeft} working day${r.daysLeft === 1 ? "" : "s"} left${r.avail % r.per ? " plus the rest of today" : ""} = ${fmtHours(r.avail)}. <b>Still to deliver ${fmtHours(r.owedMins)}</b>${r.owed.length ? ": " + r.owed.map(p => `${esc(p[0])} ${fmtHours(p[1])}`).join(" · ") : ""}. ${r.extras ? `<b>Unbudgeted client work left ~${fmtHours(r.extras)}</b> (open tasks: ${exTop}). ` : ""}Ember work and biz dev come on top${r.ex.ember ? `, at about ${fmtHours(r.ex.ember)} a working day ${esc(r.ex.basis)}` : ""}: that's the time that gets squeezed.</div>
-    <div class="sub">${esc(naName)}: ${fmtHours(na.cm.total * 60)} committed against ${fmtHours(na.cm.cap * 60)} (${na.cm.days} working days${na.cm.offDays ? `, ${na.cm.offDays} off` : ""}) → ${naVerdict}. Whole of ${esc(monthName)}: ${fmtHours(r.cm.total * 60)} committed of ${fmtHours(r.cm.cap * 60)}.</div></div>` + html;
+    <div class="sub">${verdict} ${esc(naName)}: <b style="color:${naCol}">${na.free < 0 ? fmtHours(-na.free) + " over" : fmtHours(na.free) + " free"}</b> (${fmtHours(na.cm.total * 60)} of ${fmtHours(na.cm.cap * 60)} committed).</div>
+    <details class="budwrap"><summary>Breakdown</summary><div class="sub" style="display:grid;gap:4px;margin-top:4px">
+      <div>${r.daysLeft} working day${r.daysLeft === 1 ? "" : "s"} left${r.avail % r.per ? " + the rest of today" : ""}: ${fmtHours(r.avail)}</div>
+      <div><b>Still to deliver ${fmtHours(r.owedMins)}</b>${r.owed.length ? ": " + r.owed.map(p => `${esc(p[0])} ${fmtHours(p[1])}`).join(" · ") : ""}</div>
+      ${r.extras ? `<div><b>Unbudgeted tasks ${fmtHours(r.extras)}</b>: ${exList}</div>` : ""}
+      <div>Ember and biz dev on top${r.ex.ember ? `: about ${fmtHours(r.ex.ember)} a working day ${esc(r.ex.basis)}` : ""}</div>
+      <div>Whole of ${esc(monthName)}: ${fmtHours(r.cm.total * 60)} committed of ${fmtHours(r.cm.cap * 60)}</div>
+    </div></details></div>` + html;
   $("hours").innerHTML = html;
 }
 function renderTimer() {
