@@ -825,11 +825,15 @@ function renderHours() {
   let html = retainers.map(g => {
     const o = t[g.name] || { total: 0, meet: 0, projects: {} }, m = o.total;
     const hourly = g.billing === "hourly", cap = hourly ? 0 : capHours(g, thisMonth) * 60;
-    const carried = !hourly && g.hoursByMonth && g.hoursByMonth[thisMonth] != null && Number(g.hoursByMonth[thisMonth]) !== Number(g.hours);
+    const override = g.hoursByMonth && g.hoursByMonth[thisMonth] != null ? Number(g.hoursByMonth[thisMonth]) : null;
+    // A month set to 0 means the retainer isn't running yet (or has paused), not an overrun: don't report it as one.
+    const carried = !hourly && override != null && override > 0 && override !== Number(g.hours);
+    const liveBuds = budgetsFor(g.name).filter(liveNow);
     const pct = cap ? Math.min(100, (m / cap) * 100) : 0;
     let sub;
     if (hourly && budgetsFor(g.name).length) sub = "Billed hourly";
     else if (hourly) { const top = Object.entries(o.projects).filter(([p]) => p).sort((a, b) => b[1].total - a[1].total).slice(0, 3).map(([p, v]) => `${esc(p)} ${fmtHours(v.total)}`).join(" · "); sub = `Billed hourly${top ? " · " + top : ""}`; }
+    else if (!cap && override === 0) sub = liveBuds.length ? `No retainer hours in ${monthName} · project budget below` : `No retainer hours in ${monthName}`;
     else sub = cap ? (m > cap ? `${fmtHours(m - cap)} over the retainer` : `${fmtHours(cap - m)} left in ${monthName}`) : `Set monthly hours in Settings`;
     if (carried) { const diff = cap - (Number(g.hours) || 0) * 60; sub += diff >= 0 ? ` · ${fmtHours(diff)} carried over` : ` · ${fmtHours(-diff)} taken off for last month's overrun`; }
     if (o.meet) sub += ` · ${fmtHours(o.meet)} meetings`;
