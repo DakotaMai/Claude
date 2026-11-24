@@ -930,6 +930,18 @@ function renderHours() {
       <div>Whole of ${esc(monthName)}: ${fmtHours(r.cm.total * 60)} committed of ${fmtHours(r.cm.cap * 60)}</div>
     </div></details></div>` + html;
   $("hours").innerHTML = html;
+  // Privacy mode (settings.hideHours): keep client names, bars and an over/on-track word, but no hour figures,
+  // for days on a client's site where the screen might be seen.
+  if (c.hideHours) {
+    const box = $("hours");
+    box.querySelectorAll("details, .row").forEach(n => n.remove());
+    box.querySelectorAll(".meter").forEach(m => {
+      m.querySelectorAll(".num").forEach(n => { n.textContent = ""; });
+      const subs = m.querySelectorAll(".sub"), t = subs.length ? subs[0].textContent.split(". ")[0] : "";
+      subs.forEach((x, i) => { if (i) x.remove(); else x.textContent = /over the retainer/i.test(t) ? "Over the retainer" : /\bover\b/i.test(t) ? "Over budget" : "On track"; });
+    });
+    box.insertAdjacentHTML("beforeend", `<div class="meter" style="grid-column:1/-1"><div class="sub">Hours are hidden. <button class="btn btn-sm btn-ghost" data-act="showhours" type="button">Show hours</button></div></div>`);
+  }
 }
 function renderTimer() {
   const t = S.timer && S.timer.taskId ? getTask(S.timer.taskId) : null;
@@ -1993,6 +2005,7 @@ document.addEventListener("click", async (ev) => {
       await logTime({ title: x.title, client: x.client, project: x.project || null, kind: "meeting", date: todayKey, start: new Date(x.startMs).toISOString(), mins: x.mins, source: "calendar", calEventId: x.id });
       renderAll(); toast(`Logged ${fmtMins(x.mins)} meeting for ${x.client}.`); break;
     }
+    case "showhours": saveSettings({ hideHours: false }); break;
     case "mkind": {
       const x = meetingById(id); if (!x) break;
       const kinds = Object.assign({}, cfg().meetingKinds || {}); kinds[meetKey(x.title)] = el.dataset.kind === "personal" ? "personal" : "work";
