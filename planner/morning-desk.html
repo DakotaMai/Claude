@@ -226,7 +226,9 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .aday-h b{font-weight:600}
 .aday-h .num{color:var(--muted);font-size:11.5px;white-space:nowrap}
 .aday-h .num.over{color:var(--crit)}
-.arow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px;align-items:center;font-size:12.5px;border-left:3px solid var(--lane,var(--c0));padding:2px 0 2px 6px}
+.arow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 6px;align-items:start;font-size:12.5px;border-left:3px solid var(--lane,var(--c0));padding:4px 0 4px 6px}
+.arow .ctl{grid-column:2;display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.arow .ctl .mini button{min-width:28px;min-height:26px;font-size:14px;border:1px solid var(--line)}
 .arow .n{color:var(--muted);font-family:var(--f-mono);font-size:11px}
 .arow .t{min-width:0;overflow-wrap:anywhere}
 .arow .t small{display:block;color:var(--muted);font-size:11px}
@@ -997,7 +999,7 @@ function aheadHTML() {
       const v = planMins(day, t), back = di === 0 ? "today" : days[di - 1].date, next = days[di + 1] ? days[di + 1].date : null;
       return `<div class="arow" style="--lane:${colorFor(t.client)}"><span class="n">${i + 1}</span>
         <div class="t"><button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button><small>${esc(clientName(t.client))}</small></div>
-        <div class="row" style="gap:2px;flex-wrap:nowrap"><select data-act="aest" data-date="${esc(day.date)}" data-id="${esc(t.id)}" aria-label="Time for this day">${ests(v)}</select>
+        <div class="ctl"><select data-act="aest" data-date="${esc(day.date)}" data-id="${esc(t.id)}" aria-label="Time for this day">${ests(v)}</select>
           <span class="mini"><button data-act="aup" data-date="${esc(day.date)}" data-id="${esc(t.id)}" type="button" aria-label="Move up">↑</button><button data-act="amove" data-id="${esc(t.id)}" data-from="${esc(day.date)}" data-to="${esc(back)}" type="button" aria-label="Move earlier" title="${back === "today" ? "Move to today" : "Move to " + esc(dayLabel(back))}">←</button>${next ? `<button data-act="amove" data-id="${esc(t.id)}" data-from="${esc(day.date)}" data-to="${esc(next)}" type="button" aria-label="Move later" title="Move to ${esc(dayLabel(next))}">→</button>` : ""}<button data-act="aremove" data-date="${esc(day.date)}" data-id="${esc(t.id)}" type="button" aria-label="Remove from this day">×</button></span></div></div>`;
     }).join("");
     return `<div class="aday"><div class="aday-h"><b>${esc(dayLabel(day.date))}</b><span class="num${over ? " over" : ""}">${fmtMins(total)} planned of ${fmtMins(per)}${over ? ` · ${fmtMins(total - per)} over` : ""}</span></div>
