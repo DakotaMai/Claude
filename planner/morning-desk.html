@@ -218,6 +218,20 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .mini{display:flex;gap:2px}
 .mini button{border:none;background:transparent;color:var(--muted);padding:0 4px;font-size:13px;line-height:1.4;border-radius:4px}
 .mini button:hover{background:var(--sunk);color:var(--ink)}
+.ahead{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.ahead h3{margin:0;font-size:13px;font-weight:600}
+.ahead-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.aday{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--surface);display:flex;flex-direction:column;gap:6px;min-width:0}
+.aday-h{display:flex;justify-content:space-between;gap:8px;align-items:baseline;font-size:12.5px}
+.aday-h b{font-weight:600}
+.aday-h .num{color:var(--muted);font-size:11.5px;white-space:nowrap}
+.aday-h .num.over{color:var(--crit)}
+.arow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px;align-items:center;font-size:12.5px;border-left:3px solid var(--lane,var(--c0));padding:2px 0 2px 6px}
+.arow .n{color:var(--muted);font-family:var(--f-mono);font-size:11px}
+.arow .t{min-width:0;overflow-wrap:anywhere}
+.arow .t small{display:block;color:var(--muted);font-size:11px}
+.arow select{border:1px solid var(--line);background:var(--surface);border-radius:6px;font-family:var(--f-mono);font-size:11px;padding:1px 2px}
+.aday .empty{color:var(--muted);font-size:12px}
 .empty-today{border:1.5px dashed var(--line);border-radius:10px;padding:18px 14px;color:var(--muted);font-size:13px;text-align:center}
 .quick{display:flex;gap:6px;flex-wrap:wrap}
 .quick input{flex:1 1 160px;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 10px}
@@ -505,7 +519,7 @@ function setDone(id, done) {
 let planQueue = Promise.resolve(), planPending = 0;
 function savePlan() {
   if (!canSave()) return;
-  const data = { date: todayKey, ids: S.plan.ids.slice(), lifeDone: (S.plan.lifeDone || []).slice(), updatedAt: new Date().toISOString() };
+  const data = { date: todayKey, ids: S.plan.ids.slice(), mins: Object.assign({}, S.plan.mins || {}), carried: !!S.plan.carried, lifeDone: (S.plan.lifeDone || []).slice(), updatedAt: new Date().toISOString() };
   planPending++;
   planQueue = planQueue.then(() => db.doc(P.plan(todayKey)).set(data)).catch(fail("save today's list")).finally(() => { planPending--; });
 }
@@ -642,6 +656,27 @@ function dueInfo(due) {
   return { diff, label, tone };
 }
 const inPlan = (id) => S.plan.ids.includes(id);
+// Rolling plan: today plus the next two working days (weekends and days off skipped). Each day is its own
+// days/plans/<date> doc, so a day planned ahead simply becomes "today" when it arrives. mins holds that day's
+// time for a task, which can differ from the task's overall estimate (e.g. 2h of a 4h build).
+const planMins = (plan, t) => Number(plan && plan.mins && plan.mins[t.id]) || Number(t.estMins) || 30;
+function aheadDays(n) { const out = [], d = new Date(todayKey + "T12:00:00"); while (out.length < n) { d.setDate(d.getDate() + 1); const k = ymd(d); if (d.getDay() % 6 && !offDay(k)) out.push(k); } return out; }
+const aheadOf = (id) => (S.ahead || []).find(d => d.ids.includes(id));
+function saveAhead(day) {
+  if (!canSave()) return;
+  db.doc(P.plan(day.date)).set({ date: day.date, ids: day.ids.slice(), mins: Object.assign({}, day.mins || {}), lifeDone: (day.lifeDone || []).slice(), updatedAt: new Date().toISOString() }).catch(fail("save that day's list"));
+}
+function moveTask(id, from, to) {
+  // from/to: "today" or a date key from S.ahead
+  const day = (k) => k === "today" ? S.plan : (S.ahead || []).find(d => d.date === k);
+  const a = day(from), b = day(to); if (!b || a === b) return;
+  const m = a && a.mins ? a.mins[id] : undefined;
+  if (a) { a.ids = a.ids.filter(x => x !== id); if (a.mins) delete a.mins[id]; from === "today" ? savePlan() : saveAhead(a); }
+  if (!b.ids.includes(id)) b.ids.push(id);
+  if (m != null) { b.mins = b.mins || {}; b.mins[id] = m; }
+  to === "today" ? savePlan() : saveAhead(b);
+  renderAll();
+}
 function passesFilter(t) {
   if (S.q && !norm([t.title, t.notes, t.context, t.client, t.project].join(" ")).includes(norm(S.q))) return false;
   const d = dueInfo(t.due);
@@ -695,8 +730,11 @@ function cardHTML(t, opts) {
   const icons = opts.delegated
     ? `<button class="btn btn-sm" data-act="done" data-id="${esc(t.id)}" type="button">Done</button><button class="btn btn-sm btn-ghost" data-act="takeback" data-id="${esc(t.id)}" type="button">Take back</button><button class="ib del" data-act="del" data-id="${esc(t.id)}" type="button" aria-label="Delete task" title="Delete task">✕</button>`
     : `<button class="ib${timing ? " on" : ""}" data-act="timer" data-id="${esc(t.id)}" type="button" aria-label="${timing ? "Stop timer" : "Start timer"}" title="${timing ? "Stop timer" : "Start timer"}">${timing ? "■" : "▶"}</button><button class="ib" data-act="done" data-id="${esc(t.id)}" type="button" aria-label="Mark done" title="Mark done">✓</button><button class="ib del" data-act="del" data-id="${esc(t.id)}" type="button" aria-label="Delete task" title="Delete task">✕</button>`;
+  const ah = aheadOf(t.id);
+  if (ah && !planned) tags.unshift(`<span class="tag">Planned ${esc(new Date(ah.date + "T12:00:00").toLocaleDateString(undefined, { weekday: "short" }))}</span>`);
+  const nextBtn = (opts.delegated || planned || ah || !(S.ahead || []).length) ? "" : `<button class="add" data-act="addahead" data-id="${esc(t.id)}" type="button" aria-label="Add to ${esc(dayLabel(S.ahead[0].date))}" title="Add to ${esc(dayLabel(S.ahead[0].date))}">+ Next day</button>`;
   return `<article class="card${planned ? " is-planned" : ""}${picked ? " is-picked" : ""}${timing ? " is-timing" : ""}" draggable="${planned || opts.delegated ? "false" : "true"}" data-id="${esc(t.id)}">
-    <div class="card-row">${pick}<button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button>${addBtn}</div>
+    <div class="card-row">${pick}<button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button>${addBtn}${nextBtn}</div>
     <div class="meta">${tags.join("")}</div>
     ${t.context && !t.notes ? `<div class="ctx">${esc(t.context)}</div>` : ""}
     <div class="row">${link ? `<a class="ext" href="${esc(link)}" target="_blank" rel="noopener">Open source ↗</a>` : ""}<div class="icons">${icons}</div></div>
@@ -947,14 +985,34 @@ function renderTimer() {
   const t = S.timer && S.timer.taskId ? getTask(S.timer.taskId) : null;
   $("timerHost").innerHTML = t ? `<div class="timerbar" role="status"><span class="rec"></span><span class="clock" id="clock">${clockText()}</span><span class="what">${esc(t.title)} <span>· ${esc(clientName(t.client))}${t.project ? " · " + esc(t.project) : ""}</span></span><button class="btn btn-sm btn-sun" data-act="stoptimer" type="button">Stop &amp; log</button></div>` : "";
 }
+const dayLabel = (k) => new Date(k + "T12:00:00").toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
+function aheadHTML() {
+  const days = S.ahead || []; if (!days.length) return "";
+  const per = (Number(cfg().hoursAvailable) || 5.5) * 60;
+  const ests = (v) => [15, 30, 45, 60, 90, 120, 150, 180, 240].map(m => `<option value="${m}"${v === m ? " selected" : ""}>${fmtMins(m)}</option>`).join("");
+  const cards = days.map((day, di) => {
+    const ts = day.ids.map(getTask).filter(t => t && t.status === "open");
+    const total = ts.reduce((n, t) => n + planMins(day, t), 0), over = total > per;
+    const rows = ts.map((t, i) => {
+      const v = planMins(day, t), back = di === 0 ? "today" : days[di - 1].date, next = days[di + 1] ? days[di + 1].date : null;
+      return `<div class="arow" style="--lane:${colorFor(t.client)}"><span class="n">${i + 1}</span>
+        <div class="t"><button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button><small>${esc(clientName(t.client))}</small></div>
+        <div class="row" style="gap:2px;flex-wrap:nowrap"><select data-act="aest" data-date="${esc(day.date)}" data-id="${esc(t.id)}" aria-label="Time for this day">${ests(v)}</select>
+          <span class="mini"><button data-act="aup" data-date="${esc(day.date)}" data-id="${esc(t.id)}" type="button" aria-label="Move up">↑</button><button data-act="amove" data-id="${esc(t.id)}" data-from="${esc(day.date)}" data-to="${esc(back)}" type="button" aria-label="Move earlier" title="${back === "today" ? "Move to today" : "Move to " + esc(dayLabel(back))}">←</button>${next ? `<button data-act="amove" data-id="${esc(t.id)}" data-from="${esc(day.date)}" data-to="${esc(next)}" type="button" aria-label="Move later" title="Move to ${esc(dayLabel(next))}">→</button>` : ""}<button data-act="aremove" data-date="${esc(day.date)}" data-id="${esc(t.id)}" type="button" aria-label="Remove from this day">×</button></span></div></div>`;
+    }).join("");
+    return `<div class="aday"><div class="aday-h"><b>${esc(dayLabel(day.date))}</b><span class="num${over ? " over" : ""}">${fmtMins(total)} planned of ${fmtMins(per)}${over ? ` · ${fmtMins(total - per)} over` : ""}</span></div>
+      ${rows || `<div class="empty">Nothing planned yet. Use → on today's list, or + Next day on a task.</div>`}</div>`;
+  }).join("");
+  return `<section class="ahead" aria-label="Coming up"><h3>Coming up</h3><div class="ahead-grid">${cards}</div></section>`;
+}
 function renderToday() {
   const host = $("today"); const c = cfg();
   const planTasks = S.plan.ids.map(id => getTask(id)).filter(Boolean);
   const isLife = (t) => clientName(t.client) === "Personal";
   const tasks = planTasks.filter(t => !isLife(t));
   S.lifeToday = planTasks.filter(isLife);
-  const total = tasks.reduce((n, t) => n + (Number(t.estMins) || 30), 0);
-  const doneMins = tasks.filter(t => t.status === "done").reduce((n, t) => n + (Number(t.estMins) || 30), 0);
+  const total = tasks.reduce((n, t) => n + planMins(S.plan, t), 0);
+  const doneMins = tasks.filter(t => t.status === "done").reduce((n, t) => n + planMins(S.plan, t), 0);
   const todays = S.entries.filter(e => e.date === todayKey);
   const logged = todays.reduce((n, e) => n + (Number(e.mins) || 0), 0);
   const paidToday = todays.filter(isPaid).reduce((n, e) => n + (Number(e.mins) || 0), 0);
@@ -969,7 +1027,7 @@ function renderToday() {
   const rows = ordered.map(t => {
     const idx = S.plan.ids.indexOf(t.id);
     const done = t.status === "done", timing = S.timer && S.timer.taskId === t.id;
-    const est = Number(t.estMins) || 30;
+    const est = planMins(S.plan, t);
     running += done ? 0 : est;
     const pastCap = !done && running > avail && (running - est) <= avail;
     const ests = [15, 30, 45, 60, 90, 120, 180, 240].map(m => `<option value="${m}"${est === m ? " selected" : ""}>${fmtMins(m)}</option>`).join("");
@@ -979,7 +1037,7 @@ function renderToday() {
         <div class="meta"><span>${esc(clientName(t.client))}${t.project ? " · " + esc(t.project) : ""}</span>${t.minsLogged ? `<span class="tag ok">${esc(fmtMins(t.minsLogged))} logged</span>` : ""}${(() => { const p = ckProgress(t); return p ? `<span class="tag${p.done === p.all ? " ok" : ""}">☑ ${p.done}/${p.all}</span>` : ""; })()}${t.delegatedTo ? `<span class="tag">with ${esc(t.delegatedTo)}</span>` : ""}</div></div>
       <div class="pi-side"><div class="mini">${done ? "" : `<button class="ib${timing ? " on" : ""}" data-act="timer" data-id="${esc(t.id)}" type="button" aria-label="${timing ? "Stop timer" : "Start timer"}">${timing ? "■" : "▶"}</button>`}</div>
         <select id="est-${esc(t.id)}" data-act="est" data-id="${esc(t.id)}" aria-label="Time estimate">${ests}</select>
-        <div class="mini"><button data-act="up" data-i="${idx}" type="button" aria-label="Move up">↑</button><button data-act="down" data-i="${idx}" type="button" aria-label="Move down">↓</button><button data-act="remove" data-i="${idx}" type="button" aria-label="Remove from today">×</button></div></div>
+        <div class="mini"><button data-act="up" data-i="${idx}" type="button" aria-label="Move up">↑</button><button data-act="down" data-i="${idx}" type="button" aria-label="Move down">↓</button>${done || !(S.ahead || []).length ? "" : `<button data-act="amove" data-id="${esc(t.id)}" data-from="today" data-to="${esc(S.ahead[0].date)}" type="button" aria-label="Move to ${esc(dayLabel(S.ahead[0].date))}" title="Move to ${esc(dayLabel(S.ahead[0].date))}">→</button>`}<button data-act="remove" data-i="${idx}" type="button" aria-label="Remove from today">×</button></div></div>
     </li>`;
   }).join("");
   let carry = "";
@@ -1000,7 +1058,8 @@ function renderToday() {
   host.innerHTML = `
     ${carry}
     ${rows ? `<ol class="plan">${rows}</ol>` : `<div class="empty-today">Pick tasks from your lanes with <b>+ Today</b>, tick several and add them together, or drag them here.<br>Aim for about ${fmtMins(avail)} of work.</div>`}
-    <form class="quick" id="quickForm"><input id="quickInput" placeholder="Add a new task to today" aria-label="New task for today" autocomplete="off"><select id="quickClient" aria-label="Client">${clientOptions("Unsorted")}</select><button class="btn" type="submit">Add</button></form>`;
+    <form class="quick" id="quickForm"><input id="quickInput" placeholder="Add a new task to today" aria-label="New task for today" autocomplete="off"><select id="quickClient" aria-label="Client">${clientOptions("Unsorted")}</select><button class="btn" type="submit">Add</button></form>
+    ${aheadHTML()}`;
   $("todayfoot").innerHTML = `
     <div class="today-foot">
       <button class="btn btn-sm" data-act="meeting" type="button">Log a meeting or call</button>
@@ -1963,6 +2022,10 @@ document.addEventListener("click", async (ev) => {
   if (act === "drawerbg" && ev.target !== el) return;
   switch (act) {
     case "add": addMany([id]); break;
+    case "amove": moveTask(id, el.dataset.from, el.dataset.to); break;
+    case "addahead": { const d0 = (S.ahead || [])[0]; if (!d0) break; const t = getTask(id); if (t && t.status === "suggested") updateTask(id, { status: "open" }); if (!d0.ids.includes(id)) d0.ids.push(id); saveAhead(d0); renderAll(); toast(`Added to ${dayLabel(d0.date)}.`); break; }
+    case "aup": { const d = (S.ahead || []).find(x => x.date === el.dataset.date); if (!d) break; const k = d.ids.indexOf(id); if (k > 0) { [d.ids[k - 1], d.ids[k]] = [d.ids[k], d.ids[k - 1]]; saveAhead(d); renderToday(); } break; }
+    case "aremove": { const d = (S.ahead || []).find(x => x.date === el.dataset.date); if (!d) break; d.ids = d.ids.filter(x => x !== id); if (d.mins) delete d.mins[id]; saveAhead(d); renderAll(); break; }
     case "copyWhoop": { try { await navigator.clipboard.writeText(WHOOP_PROMPT); toast("Copied. Paste it into Whoop Coach."); } catch(e){ toast("Couldn't copy. Open Training Desk to copy it there."); } break; }
     case "addsel": addMany([...S.sel]); break;
     case "donesel": { const ids = [...S.sel]; ids.forEach(x => setDone(x, true)); S.sel.clear(); renderAll(); toast(`Marked ${ids.length} done.`); break; }
@@ -2056,7 +2119,8 @@ document.addEventListener("change", (ev) => {
   if (el.dataset.act === "pick") { el.checked ? S.sel.add(id) : S.sel.delete(id); const card = el.closest(".card"); if (card) card.classList.toggle("is-picked", el.checked); renderSelBar(); }
   else if (el.dataset.act === "toggle") { if (el.checked && S.timer && S.timer.taskId === id) stopTimer(true); setDone(id, el.checked); renderAll(); }
   else if (el.dataset.act === "habittoggle") { toggleHabit(id, el.checked); }
-  else if (el.dataset.act === "est") { updateTask(id, { estMins: Number(el.value) }); renderToday(); }
+  else if (el.dataset.act === "est") { if (S.plan.mins && S.plan.mins[id] != null) { S.plan.mins[id] = Number(el.value); savePlan(); } else updateTask(id, { estMins: Number(el.value) }); renderToday(); }
+  else if (el.dataset.act === "aest") { const d = (S.ahead || []).find(x => x.date === el.dataset.date); if (d) { d.mins = d.mins || {}; d.mins[id] = Number(el.value); saveAhead(d); renderToday(); } }
   else if (el.dataset.act === "sugclient") { updateTask(id, { client: el.value }); }
   else if (el.dataset.act === "clientpick") { const dl = $("projList"); if (dl) dl.outerHTML = projectList(el.value); }
   else if (el.dataset.act === "meetdate") { S.cal = null; openMeeting(readMeetForm()); }
@@ -2226,13 +2290,31 @@ function subscribeDay() {
     if (key !== todayKey) return;
     if ((snap.metadata && snap.metadata.hasPendingWrites) || planPending > 0) return;
     const d = snap.exists ? snap.data() : null;
-    S.planRaw = d; S.plan = { ids: d && Array.isArray(d.ids) ? d.ids.slice() : [], lifeDone: d && Array.isArray(d.lifeDone) ? d.lifeDone.slice() : [] };
-    S.loaded.plan = true; renderAll(); migrate();
+    S.planRaw = d; S.plan = { ids: d && Array.isArray(d.ids) ? d.ids.slice() : [], mins: (d && d.mins) || {}, carried: !!(d && d.carried), lifeDone: d && Array.isArray(d.lifeDone) ? d.lifeDone.slice() : [] };
+    S.loaded.plan = true; tryCarry(); renderAll(); migrate();
   }, fail("load today's list"));
   db.collection(P.plans()).orderBy("date", "desc").limit(5).get().then(q => {
     const prev = q.docs.map(d => d.data()).find(d => d && d.date && d.date < todayKey && Array.isArray(d.ids));
-    if (prev) { S.prevPlan = prev; renderToday(); }
+    if (prev) { S.prevPlan = prev; }
+    S.prevLoaded = true; tryCarry(); renderToday();
   }).catch(() => {});
+  (unsub.ahead || []).forEach(f => f()); unsub.ahead = [];
+  S.ahead = aheadDays(2).map(k => ({ date: k, ids: [], mins: {}, lifeDone: [] }));
+  S.ahead.forEach((day, i) => {
+    unsub.ahead.push(db.doc(P.plan(day.date)).onSnapshot(snap => {
+      if (key !== todayKey || (snap.metadata && snap.metadata.hasPendingWrites)) return;
+      const d = snap.exists ? snap.data() : null;
+      S.ahead[i] = { date: day.date, ids: d && Array.isArray(d.ids) ? d.ids.slice() : [], mins: (d && d.mins) || {}, lifeDone: d && Array.isArray(d.lifeDone) ? d.lifeDone.slice() : [] };
+      renderToday(); renderEverything();
+    }, fail("load the next days' lists")));
+  });
+}
+// Unfinished tasks from the last planned day roll onto today automatically, once.
+function tryCarry() {
+  if (!S.loaded.plan || !S.prevLoaded || S.plan.carried) return;
+  const left = S.prevPlan ? (S.prevPlan.ids || []).filter(id => { const t = getTask(id); return t && t.status === "open" && !S.plan.ids.includes(id); }) : [];
+  S.plan.carried = true;
+  if (left.length) { S.plan.ids = left.concat(S.plan.ids); savePlan(); toast(`${left.length} unfinished task${left.length === 1 ? "" : "s"} carried over from your last working day.`); }
 }
 function checkNewDay() {
   const k = ymd(new Date());
@@ -2241,7 +2323,7 @@ function checkNewDay() {
   const newMonth = k.slice(0, 7) !== thisMonth;
   todayKey = k; thisMonth = k.slice(0, 7); monthStart = thisMonth + "-01";
   monthName = new Date().toLocaleDateString(undefined, { month: "long" });
-  S.plan = { ids: [], lifeDone: [] }; S.planRaw = null; S.prevPlan = yesterday.ids.length ? yesterday : S.prevPlan;
+  S.plan = { ids: [], mins: {}, lifeDone: [] }; S.planRaw = null; S.prevLoaded = false; S.prevPlan = yesterday.ids.length ? yesterday : S.prevPlan;
   S.sel.clear(); S.check = { status: "idle" };
   if (canSave()) { if (newMonth) subscribeMonth(); subscribeDay(); }
   S.train = null; S.day = null; loadTraining();
