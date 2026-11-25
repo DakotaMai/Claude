@@ -732,12 +732,12 @@ function cardHTML(t, opts) {
     : `<button class="ib${timing ? " on" : ""}" data-act="timer" data-id="${esc(t.id)}" type="button" aria-label="${timing ? "Stop timer" : "Start timer"}" title="${timing ? "Stop timer" : "Start timer"}">${timing ? "■" : "▶"}</button><button class="ib" data-act="done" data-id="${esc(t.id)}" type="button" aria-label="Mark done" title="Mark done">✓</button><button class="ib del" data-act="del" data-id="${esc(t.id)}" type="button" aria-label="Delete task" title="Delete task">✕</button>`;
   const ah = aheadOf(t.id);
   if (ah && !planned) tags.unshift(`<span class="tag">Planned ${esc(new Date(ah.date + "T12:00:00").toLocaleDateString(undefined, { weekday: "short" }))}</span>`);
-  const nextBtn = (opts.delegated || planned || ah || !(S.ahead || []).length) ? "" : `<button class="add" data-act="addahead" data-id="${esc(t.id)}" type="button" aria-label="Add to ${esc(dayLabel(S.ahead[0].date))}" title="Add to ${esc(dayLabel(S.ahead[0].date))}">+ Next day</button>`;
+  const nextBtn = (opts.delegated || planned || ah || !(S.ahead || []).length) ? "" : `<button class="ib" data-act="addahead" data-id="${esc(t.id)}" type="button" aria-label="Add to ${esc(dayLabel(S.ahead[0].date))}" title="Add to ${esc(dayLabel(S.ahead[0].date))}">→</button>`;
   return `<article class="card${planned ? " is-planned" : ""}${picked ? " is-picked" : ""}${timing ? " is-timing" : ""}" draggable="${planned || opts.delegated ? "false" : "true"}" data-id="${esc(t.id)}">
-    <div class="card-row">${pick}<button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button>${addBtn}${nextBtn}</div>
+    <div class="card-row">${pick}<button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button>${addBtn}</div>
     <div class="meta">${tags.join("")}</div>
     ${t.context && !t.notes ? `<div class="ctx">${esc(t.context)}</div>` : ""}
-    <div class="row">${link ? `<a class="ext" href="${esc(link)}" target="_blank" rel="noopener">Open source ↗</a>` : ""}<div class="icons">${icons}</div></div>
+    <div class="row">${link ? `<a class="ext" href="${esc(link)}" target="_blank" rel="noopener">Open source ↗</a>` : ""}<div class="icons">${nextBtn}${icons}</div></div>
   </article>`;
 }
 function laneHTML(g, isAdhoc) {
@@ -1001,7 +1001,7 @@ function aheadHTML() {
           <span class="mini"><button data-act="aup" data-date="${esc(day.date)}" data-id="${esc(t.id)}" type="button" aria-label="Move up">↑</button><button data-act="amove" data-id="${esc(t.id)}" data-from="${esc(day.date)}" data-to="${esc(back)}" type="button" aria-label="Move earlier" title="${back === "today" ? "Move to today" : "Move to " + esc(dayLabel(back))}">←</button>${next ? `<button data-act="amove" data-id="${esc(t.id)}" data-from="${esc(day.date)}" data-to="${esc(next)}" type="button" aria-label="Move later" title="Move to ${esc(dayLabel(next))}">→</button>` : ""}<button data-act="aremove" data-date="${esc(day.date)}" data-id="${esc(t.id)}" type="button" aria-label="Remove from this day">×</button></span></div></div>`;
     }).join("");
     return `<div class="aday"><div class="aday-h"><b>${esc(dayLabel(day.date))}</b><span class="num${over ? " over" : ""}">${fmtMins(total)} planned of ${fmtMins(per)}${over ? ` · ${fmtMins(total - per)} over` : ""}</span></div>
-      ${rows || `<div class="empty">Nothing planned yet. Use → on today's list, or + Next day on a task.</div>`}</div>`;
+      ${rows || `<div class="empty">Nothing planned yet. Use → on today's list or on any task card.</div>`}</div>`;
   }).join("");
   return `<section class="ahead" aria-label="Coming up"><h3>Coming up</h3><div class="ahead-grid">${cards}</div></section>`;
 }
