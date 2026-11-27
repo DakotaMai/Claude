@@ -437,6 +437,17 @@ const monthLabel = (ym) => new Date(ym + "-15T12:00:00").toLocaleDateString(unde
 let monthName = new Date().toLocaleDateString(undefined, { month: "long" });
 const nextMonth = (ym) => { const d = new Date(ym + "-15T12:00:00"); d.setMonth(d.getMonth() + 1); return ymd(d).slice(0, 7); };
 const prevMonth = (ym) => { const d = new Date(ym + "-15T12:00:00"); d.setMonth(d.getMonth() - 1); return ymd(d).slice(0, 7); };
+// Billing months can start early: settings.monthStarts maps a month to its first day (e.g. {"2026-12": "2026-11-30"}
+// when November's work is finished and Monday counts as December). Without an entry a month starts on the 1st.
+const mStart = (ym) => ((S.settings && S.settings.monthStarts) || {})[ym] || ym + "-01";
+function billMonth(k) { k = String(k || ""); const ym = k.slice(0, 7); if (!ym) return ym; if (k >= mStart(nextMonth(ym))) return nextMonth(ym); if (k < mStart(ym)) return prevMonth(ym); return ym; }
+const longMonth = (ym) => new Date(ym + "-15T12:00:00").toLocaleDateString(undefined, { month: "long" });
+// Re-works out the current billing month (on load, when settings change, and each new day). True if it changed.
+function syncMonth() {
+  const ym = billMonth(todayKey), st = mStart(ym);
+  if (ym === thisMonth && st === monthStart) return false;
+  thisMonth = ym; monthStart = st; monthName = longMonth(ym); S.pastEntries = null; return true;
+}
 const startOfDay = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
 const DAY = 86400000;
 const fmtMins = (m) => { m = Math.round(m || 0); const h = Math.floor(m / 60), r = m % 60; return h ? (r ? `${h}h ${r}m` : `${h}h`) : `${r}m`; };
@@ -538,7 +549,7 @@ function logTime(entry) {
   const e = Object.assign({ taskId: null, title: "", client: "Unsorted", project: null, kind: "work", date: todayKey, start: new Date().toISOString(), mins: 0, source: "manual", note: "", calEventId: null }, entry);
   if (!(e.mins > 0)) return Promise.resolve();
   const id = newId();
-  if (e.date >= monthStart) S.entries.push(Object.assign({ id }, e));
+  if (e.date >= monthStart && billMonth(e.date) === thisMonth) S.entries.push(Object.assign({ id }, e));
   const jobs = [];
   if (e.taskId) { const t = getTask(e.taskId); if (t) jobs.push(updateTask(e.taskId, { minsLogged: (Number(t.minsLogged) || 0) + e.mins })); }
   if (canSave()) jobs.push(db.doc(`${P.entries()}/${id}`).set(e).catch(fail("log time")));
@@ -605,7 +616,7 @@ function budgetFor(client, project) {
 const canonProject = (client, project) => { const b = budgetFor(client, project); return b ? b.project : (project || ""); };
 const budgetNames = (b) => [b.project, ...(b.aka || [])].map(pkey).filter(Boolean);
 // Matches by name rather than by budget, so one sub-client can have a budget per period (e.g. 6h in Oct, 6h in Nov).
-const inBudget = (b, e) => clientName(e.client) === clientName(b.client) && budgetNames(b).includes(pkey(e.project)) && (!b.from || String(e.date).slice(0, 7) >= b.from) && (!b.to || String(e.date).slice(0, 7) <= b.to);
+const inBudget = (b, e) => clientName(e.client) === clientName(b.client) && budgetNames(b).includes(pkey(e.project)) && (!b.from || billMonth(e.date) >= b.from) && (!b.to || billMonth(e.date) <= b.to);
 const shortMonth = (ym) => new Date(ym + "-15T12:00:00").toLocaleDateString(undefined, { month: "short" });
 function budgetPeriod(b) {
   if (b.from && b.to) return b.from === b.to ? shortMonth(b.from) : `${shortMonth(b.from)}–${shortMonth(b.to)}`;
@@ -632,7 +643,7 @@ function knownEntries(extra) {
 }
 // Minutes used on a budget up to the end of month ym (default: everything logged so far).
 function budgetUsed(b, entries, ym) {
-  return entries.filter(e => inBudget(b, e) && (!ym || String(e.date).slice(0, 7) <= ym)).reduce((n, e) => n + (Number(e.mins) || 0), 0);
+  return entries.filter(e => inBudget(b, e) && (!ym || billMonth(e.date) <= ym)).reduce((n, e) => n + (Number(e.mins) || 0), 0);
 }
 // Whether a client's "By client" dropdown is open: remembered per viewer in this browser only.
 function budOpen(name) { try { return localStorage.getItem("md-bud-" + name) === "1"; } catch (_) { return false; } }
@@ -855,11 +866,11 @@ function commitment(ym) {
     if ((g.kind || "retainer") === "retainer" && !hourly && capHours(g, ym)) parts.push([g.name, capHours(g, ym)]);
     else if (buds.length) parts.push([g.name, buds.reduce((n, b) => n + Number(b.hours) / monthsIn(b), 0)]);
   });
-  const d = new Date(ym + "-01T12:00:00"); let days = 0;
+  const d = new Date(mStart(ym) + "T12:00:00"), end = mStart(nextMonth(ym)); let days = 0;
   // Days off ({from, to, label} in settings.daysOff) don't count as working days.
   const off = (c.daysOff || []).filter(o => o && o.from), isOff = (k) => off.some(o => k >= o.from && k <= (o.to || o.from));
   let offDays = 0;
-  while (ymd(d).slice(0, 7) === ym) { if (d.getDay() % 6) { if (isOff(ymd(d))) offDays++; else days++; } d.setDate(d.getDate() + 1); }
+  while (ymd(d) < end) { if (d.getDay() % 6) { if (isOff(ymd(d))) offDays++; else days++; } d.setDate(d.getDate() + 1); }
   const perDay = Number(c.hoursAvailable) || 5.5;
   return { parts, total: parts.reduce((n, p) => n + p[1], 0), days, offDays, perDay, cap: days * perDay };
 }
@@ -870,10 +881,10 @@ const liveNow = (b) => (!b.from || b.from <= thisMonth) && (!b.to || b.to >= thi
 // Unbudgeted work isn't projected forward: the rule is no new unbudgeted client work. Ember's own work and biz dev are
 // shown alongside but not subtracted: they're what flexes when client work is heavy. Planning time isn't counted.
 const offDay = (k) => (cfg().daysOff || []).some(o => o && o.from && k >= o.from && k <= (o.to || o.from));
-const workdayKeys = (ym) => { const out = [], d = new Date(ym + "-01T12:00:00"); while (ymd(d).slice(0, 7) === ym) { if (d.getDay() % 6 && !offDay(ymd(d))) out.push(ymd(d)); d.setDate(d.getDate() + 1); } return out; };
+const workdayKeys = (ym) => { const out = [], d = new Date(mStart(ym) + "T12:00:00"), end = mStart(nextMonth(ym)); while (ymd(d) < end) { if (d.getDay() % 6 && !offDay(ymd(d))) out.push(ymd(d)); d.setDate(d.getDate() + 1); } return out; };
 function extrasIn(ym, entries) {
   const names = new Set(commitment(ym).parts.map(p => p[0])), by = {};
-  entries.filter(e => String(e.date).slice(0, 7) === ym).forEach(e => {
+  entries.filter(e => billMonth(e.date) === ym).forEach(e => {
     const n = clientName(e.client);
     if (names.has(n) || n === "Personal" || n === "Unsorted" || pkey(e.project) === "planning") return;
     const k = UNPAID.includes(n) || pkey(e.project) === "bizdev" ? "__ember" : n;
@@ -1427,7 +1438,7 @@ async function entriesFor(ym) {
   if (ym === thisMonth) return S.entries;
   if (monthCache[ym]) return monthCache[ym];
   if (!canSave()) return [];
-  const q = await db.collection(P.entries()).where("date", ">=", ym + "-01").where("date", "<", nextMonth(ym) + "-01").get();
+  const q = await db.collection(P.entries()).where("date", ">=", mStart(ym)).where("date", "<", mStart(nextMonth(ym))).get();
   return (monthCache[ym] = q.docs.map(d => Object.assign({ id: d.id }, d.data())));
 }
 async function openTimeLog(ym) {
@@ -1784,7 +1795,7 @@ async function runCheck() {
   try { if (!S.cal || S.cal.date !== day) await loadCalendar(day); if (S.cal && !S.cal.err) calText = JSON.stringify(S.cal.events.map(e => ({ id: e.id, title: e.title, time: e.time, mins: e.mins }))); } catch (_) {}
   S.check = { status: "busy", msg: "Matching against your tasks…" }; renderToday();
   const open = S.sets.open.map(t => ({ id: t.id, title: t.title, client: clientName(t.client), project: t.project || null, plannedToday: inPlan(t.id) }));
-  const dayEntries = day >= monthStart ? S.entries : await entriesFor(day.slice(0, 7)).catch(() => []);
+  const dayEntries = day >= monthStart ? S.entries : await entriesFor(billMonth(day)).catch(() => []);
   const dayLogged = dayEntries.filter(e => e.date === day);
   const loggedToday = dayLogged.map(e => ({ taskId: e.taskId, client: clientName(e.client), project: e.project, kind: e.kind, title: e.title, mins: e.mins, calEventId: e.calEventId, note: String(e.note || "").slice(0, 160) }));
   const prompt = `You are reviewing ${(S.me && S.me.name) || "the user"}'s working day (${isToday ? "today" : dayName}) from Littlebird screen and meeting context plus her calendar, to make sure her task list and time log are complete. It is now ${new Date().toString()}.
@@ -2299,7 +2310,7 @@ function subscribeMonth() {
   const tasks = db.collection(P.tasks());
   unsub.done = tasks.where("doneDate", ">=", monthStart).onSnapshot(snap => { S.sets.done = snap.docs.map(d => Object.assign({ id: d.id }, d.data())).filter(t => t.status === "done"); S.loaded.done = true; renderAll(); }, fail("load your finished tasks"));
   S.pastEntries = null; loadPastEntries();
-  unsub.entries = db.collection(P.entries()).where("date", ">=", monthStart).onSnapshot(snap => { S.entries = snap.docs.map(d => Object.assign({ id: d.id }, d.data())); renderAll(); }, fail("load your time log"));
+  unsub.entries = db.collection(P.entries()).where("date", ">=", monthStart).onSnapshot(snap => { S.entries = snap.docs.map(d => Object.assign({ id: d.id }, d.data())).filter(e => billMonth(e.date) === thisMonth); renderAll(); }, fail("load your time log"));
 }
 function subscribeDay() {
   if (unsub.plan) unsub.plan();
@@ -2338,9 +2349,7 @@ function checkNewDay() {
   const k = ymd(new Date());
   if (k === todayKey) return;
   const yesterday = { date: todayKey, ids: S.plan.ids.slice() };
-  const newMonth = k.slice(0, 7) !== thisMonth;
-  todayKey = k; thisMonth = k.slice(0, 7); monthStart = thisMonth + "-01";
-  monthName = new Date().toLocaleDateString(undefined, { month: "long" });
+  todayKey = k; const newMonth = syncMonth();
   S.plan = { ids: [], mins: {}, lifeDone: [] }; S.planRaw = null; S.prevLoaded = false; S.prevPlan = yesterday.ids.length ? yesterday : S.prevPlan;
   S.sel.clear(); S.check = { status: "idle" };
   if (canSave()) { if (newMonth) subscribeMonth(); subscribeDay(); }
@@ -2396,7 +2405,7 @@ renderAll();
   if (canSave()) {
     const tasks = db.collection(P.tasks());
     const onErr = fail("load your tasks");
-    db.doc(P.settings()).onSnapshot(snap => { S.settings = snap.exists ? snap.data() : null; S.settingsLoaded = true; renderAll(); autoSweep(); }, fail("load settings"));
+    db.doc(P.settings()).onSnapshot(snap => { S.settings = snap.exists ? snap.data() : null; S.settingsLoaded = true; if (syncMonth()) subscribeMonth(); renderAll(); autoSweep(); }, fail("load settings"));
     const watch = (key, q) => q.onSnapshot(snap => { S.sets[key] = snap.docs.map(d => Object.assign({ id: d.id }, d.data())); S.loaded[key] = true; renderAll(); migrate(); autoSweep(); }, onErr);
     watch("open", tasks.where("status", "==", "open"));
     watch("suggested", tasks.where("status", "==", "suggested"));
