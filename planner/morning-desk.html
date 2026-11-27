@@ -662,7 +662,12 @@ const inPlan = (id) => S.plan.ids.includes(id);
 // Rolling plan: today plus the next two working days (weekends and days off skipped). Each day is its own
 // days/plans/<date> doc, so a day planned ahead simply becomes "today" when it arrives. mins holds that day's
 // time for a task, which can differ from the task's overall estimate (e.g. 2h of a 4h build).
-const planMins = (plan, t) => Number(plan && plan.mins && plan.mins[t.id]) || Number(t.estMins) || 30;
+// A task's time on a given day. Without a set figure for that day, a big job counts as one working
+// session (what's left of its estimate, at most 90m), not its whole estimate.
+const taskLeft = (t) => Math.max(0, (Number(t.estMins) || 30) - (Number(t.minsLogged) || 0));
+const daySlot = (t) => { const left = taskLeft(t); if (!left) return 30; return Math.min(90, Math.max(15, Math.round(left / 15) * 15)); };
+const planMins = (plan, t) => Number(plan && plan.mins && plan.mins[t.id]) || daySlot(t);
+const leftTag = (t, v) => { const left = taskLeft(t); return left > v ? `<span class="tag">${esc(fmtMins(left))} left in total</span>` : ""; };
 function aheadDays(n) { const out = [], d = new Date(todayKey + "T12:00:00"); while (out.length < n) { d.setDate(d.getDate() + 1); const k = ymd(d); if (d.getDay() % 6 && !offDay(k)) out.push(k); } return out; }
 const aheadOf = (id) => (S.ahead || []).find(d => d.ids.includes(id));
 function saveAhead(day) {
@@ -993,7 +998,7 @@ const dayLabel = (k) => new Date(k + "T12:00:00").toLocaleDateString(undefined, 
 function aheadHTML() {
   const days = S.ahead || []; if (!days.length) return "";
   const per = (Number(cfg().hoursAvailable) || 5.5) * 60;
-  const ests = (v) => [15, 30, 45, 60, 90, 120, 150, 180, 240].map(m => `<option value="${m}"${v === m ? " selected" : ""}>${fmtMins(m)}</option>`).join("");
+  const ests = (v) => [...new Set([15, 30, 45, 60, 75, 90, 120, 150, 180, 240, v])].sort((a, b) => a - b).map(m => `<option value="${m}"${v === m ? " selected" : ""}>${fmtMins(m)}</option>`).join("");
   const cards = days.map((day, di) => {
     const ts = day.ids.map(getTask).filter(t => t && t.status === "open");
     if (di > 1 && !ts.length) return "";
@@ -1001,7 +1006,7 @@ function aheadHTML() {
     const rows = ts.map((t, i) => {
       const v = planMins(day, t), back = di === 0 ? "today" : days[di - 1].date, next = days[di + 1] ? days[di + 1].date : null;
       return `<div class="arow" style="--lane:${colorFor(t.client)}"><span class="n">${i + 1}</span>
-        <div class="t"><button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button><small>${esc(clientName(t.client))}</small></div>
+        <div class="t"><button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button><small>${esc(clientName(t.client))}${taskLeft(t) > v ? ` · ${esc(fmtMins(taskLeft(t)))} left in total` : ""}</small></div>
         <div class="ctl"><select data-act="aest" data-date="${esc(day.date)}" data-id="${esc(t.id)}" aria-label="Time for this day">${ests(v)}</select>
           <span class="mini"><button data-act="aup" data-date="${esc(day.date)}" data-id="${esc(t.id)}" type="button" aria-label="Move up">↑</button><button data-act="amove" data-id="${esc(t.id)}" data-from="${esc(day.date)}" data-to="${esc(back)}" type="button" aria-label="Move earlier" title="${back === "today" ? "Move to today" : "Move to " + esc(dayLabel(back))}">←</button>${next ? `<button data-act="amove" data-id="${esc(t.id)}" data-from="${esc(day.date)}" data-to="${esc(next)}" type="button" aria-label="Move later" title="Move to ${esc(dayLabel(next))}">→</button>` : ""}<button data-act="aremove" data-date="${esc(day.date)}" data-id="${esc(t.id)}" type="button" aria-label="Remove from this day">×</button></span></div></div>`;
     }).join("");
@@ -1035,11 +1040,11 @@ function renderToday() {
     const est = planMins(S.plan, t);
     running += done ? 0 : est;
     const pastCap = !done && running > avail && (running - est) <= avail;
-    const ests = [15, 30, 45, 60, 90, 120, 180, 240].map(m => `<option value="${m}"${est === m ? " selected" : ""}>${fmtMins(m)}</option>`).join("");
+    const ests = [...new Set([15, 30, 45, 60, 75, 90, 120, 150, 180, 240, est])].sort((a, b) => a - b).map(m => `<option value="${m}"${est === m ? " selected" : ""}>${fmtMins(m)}</option>`).join("");
     return `<li class="pi${done ? " done" : ""}${pastCap ? " over" : ""}${timing ? " is-timing" : ""}" style="--lane:${colorFor(t.client)}" draggable="true" data-i="${idx}">
       <input type="checkbox" id="pi-${esc(t.id)}" ${done ? "checked" : ""} data-act="toggle" data-id="${esc(t.id)}" aria-label="Mark done">
       <div class="pi-main"><button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button>
-        <div class="meta"><span>${esc(clientName(t.client))}${t.project ? " · " + esc(t.project) : ""}</span>${t.minsLogged ? `<span class="tag ok">${esc(fmtMins(t.minsLogged))} logged</span>` : ""}${(() => { const p = ckProgress(t); return p ? `<span class="tag${p.done === p.all ? " ok" : ""}">☑ ${p.done}/${p.all}</span>` : ""; })()}${t.delegatedTo ? `<span class="tag">with ${esc(t.delegatedTo)}</span>` : ""}</div></div>
+        <div class="meta"><span>${esc(clientName(t.client))}${t.project ? " · " + esc(t.project) : ""}</span>${t.minsLogged ? `<span class="tag ok">${esc(fmtMins(t.minsLogged))} logged</span>` : ""}${done ? "" : leftTag(t, est)}${(() => { const p = ckProgress(t); return p ? `<span class="tag${p.done === p.all ? " ok" : ""}">☑ ${p.done}/${p.all}</span>` : ""; })()}${t.delegatedTo ? `<span class="tag">with ${esc(t.delegatedTo)}</span>` : ""}</div></div>
       <div class="pi-side"><div class="mini">${done ? "" : `<button class="ib${timing ? " on" : ""}" data-act="timer" data-id="${esc(t.id)}" type="button" aria-label="${timing ? "Stop timer" : "Start timer"}">${timing ? "■" : "▶"}</button>`}</div>
         <select id="est-${esc(t.id)}" data-act="est" data-id="${esc(t.id)}" aria-label="Time estimate">${ests}</select>
         <div class="mini"><button data-act="up" data-i="${idx}" type="button" aria-label="Move up">↑</button><button data-act="down" data-i="${idx}" type="button" aria-label="Move down">↓</button>${done || !(S.ahead || []).length ? "" : `<button data-act="amove" data-id="${esc(t.id)}" data-from="today" data-to="${esc(S.ahead[0].date)}" type="button" aria-label="Move to ${esc(dayLabel(S.ahead[0].date))}" title="Move to ${esc(dayLabel(S.ahead[0].date))}">→</button>`}<button data-act="remove" data-i="${idx}" type="button" aria-label="Remove from today">×</button></div></div>
@@ -2124,7 +2129,7 @@ document.addEventListener("change", (ev) => {
   if (el.dataset.act === "pick") { el.checked ? S.sel.add(id) : S.sel.delete(id); const card = el.closest(".card"); if (card) card.classList.toggle("is-picked", el.checked); renderSelBar(); }
   else if (el.dataset.act === "toggle") { if (el.checked && S.timer && S.timer.taskId === id) stopTimer(true); setDone(id, el.checked); renderAll(); }
   else if (el.dataset.act === "habittoggle") { toggleHabit(id, el.checked); }
-  else if (el.dataset.act === "est") { if (S.plan.mins && S.plan.mins[id] != null) { S.plan.mins[id] = Number(el.value); savePlan(); } else updateTask(id, { estMins: Number(el.value) }); renderToday(); }
+  else if (el.dataset.act === "est") { S.plan.mins = S.plan.mins || {}; S.plan.mins[id] = Number(el.value); savePlan(); renderToday(); }
   else if (el.dataset.act === "aest") { const d = (S.ahead || []).find(x => x.date === el.dataset.date); if (d) { d.mins = d.mins || {}; d.mins[id] = Number(el.value); saveAhead(d); renderToday(); } }
   else if (el.dataset.act === "planday") {
     const to = el.value; if (!to) return;
