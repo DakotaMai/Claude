@@ -1627,8 +1627,14 @@ function clientListForAI() {
   const c = cfg();
   return [...new Set([...(c.groups || []).map(d => { const pj = projectsFor(d.name); return `${d.name}${(d.match || []).length ? ` (also known as: ${d.match.join(", ")})` : ""}${pj.length ? ` [sub-clients: ${pj.join(", ")}]` : ""}`; }), ...clientNames()])].join("\n");
 }
+// Titles of tasks she dismissed, so the sweep doesn't keep re-suggesting old messages Littlebird sees again.
+async function dismissedTitles() {
+  if (!canSave()) return [];
+  try { const q = await db.collection(P.tasks()).where("status", "==", "dismissed").get(); return q.docs.map(d => d.data()).sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || ""))).slice(0, 200).map(t => t.title).filter(Boolean); }
+  catch (_) { return []; }
+}
 async function writeSuggested(items, source0, direct) {
-  const seen = new Set([...allTasks().values()].map(t => norm(t.title)));
+  const seen = new Set([...allTasks().values()].map(t => norm(t.title)).concat((await dismissedTitles()).map(norm)));
   const fresh = [];
   for (const x of (Array.isArray(items) ? items : []).slice(0, 50)) {
     if (!x || typeof x.title !== "string" || !x.title.trim()) continue;
@@ -1661,6 +1667,7 @@ async function runSweep() {
   S.sweep.ai = { status: "busy", msg: "Turning messages into tasks…" }; renderSources();
   const who = (S.me && S.me.name) || "the user";
   const existing = [...allTasks().values()].map(t => t.title).slice(0, 300);
+  const nope = await dismissedTitles();
   const prompt = `You are helping ${who}, a freelance marketing-systems consultant, build her morning to-do list. Below are her recent emails, Slack and WhatsApp messages (both captured by Littlebird) and other Littlebird context (screen captures and meeting notes). Extract every concrete action SHE needs to take.
 
 Rules:
@@ -1688,6 +1695,9 @@ ${clientListForAI()}
 
 HER TASK LIST:
 ${existing.join("\n") || "(empty)"}
+
+TASKS SHE DISMISSED (she said no to these; never suggest them again, even reworded or from a newer-looking message about the same thing):
+${nope.join("\n") || "(none)"}
 
 FLAGGED EMAILS (her action labels):
 ${flagged.length ? JSON.stringify(flagged) : "(none)"}
