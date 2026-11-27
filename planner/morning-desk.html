@@ -190,6 +190,7 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px)
 .ext{font-size:11.5px;color:var(--muted);text-decoration:none}
 .ext:hover{text-decoration:underline;color:var(--ink)}
 .icons{display:flex;gap:4px;margin-left:auto}
+.dpick{border:1px solid var(--line);background:transparent;border-radius:6px;height:24px;padding:0 4px;font-size:12px;color:var(--muted);max-width:92px;cursor:pointer}
 .ib{border:1px solid var(--line);background:transparent;border-radius:6px;min-width:26px;height:24px;padding:0 6px;font-size:12px;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;gap:4px}
 .ib:hover{color:var(--ink);border-color:var(--muted)}
 .ib.on{background:var(--sun);color:var(--sun-ink);border-color:transparent}
@@ -734,7 +735,8 @@ function cardHTML(t, opts) {
     : `<button class="ib${timing ? " on" : ""}" data-act="timer" data-id="${esc(t.id)}" type="button" aria-label="${timing ? "Stop timer" : "Start timer"}" title="${timing ? "Stop timer" : "Start timer"}">${timing ? "■" : "▶"}</button><button class="ib" data-act="done" data-id="${esc(t.id)}" type="button" aria-label="Mark done" title="Mark done">✓</button><button class="ib del" data-act="del" data-id="${esc(t.id)}" type="button" aria-label="Delete task" title="Delete task">✕</button>`;
   const ah = aheadOf(t.id);
   if (ah && !planned) tags.unshift(`<span class="tag">Planned ${esc(new Date(ah.date + "T12:00:00").toLocaleDateString(undefined, { weekday: "short" }))}</span>`);
-  const nextBtn = (opts.delegated || planned || ah || !(S.ahead || []).length) ? "" : `<button class="ib" data-act="addahead" data-id="${esc(t.id)}" type="button" aria-label="Add to ${esc(dayLabel(S.ahead[0].date))}" title="Add to ${esc(dayLabel(S.ahead[0].date))}">→</button>`;
+  const dayOpts = (S.ahead || []).map(d => `<option value="${esc(d.date)}"${ah && ah.date === d.date ? " disabled" : ""}>${esc(dayLabel(d.date))}${ah && ah.date === d.date ? " ✓" : ""}</option>`).join("");
+  const nextBtn = (opts.delegated || !(S.ahead || []).length) ? "" : `<select class="dpick" data-act="planday" data-id="${esc(t.id)}" aria-label="Plan this task for a day" title="Plan for a day"><option value="" selected disabled hidden>📅 Plan</option>${planned ? "" : `<option value="today">Today</option>`}${dayOpts}</select>`;
   return `<article class="card${planned ? " is-planned" : ""}${picked ? " is-picked" : ""}${timing ? " is-timing" : ""}" draggable="${planned || opts.delegated ? "false" : "true"}" data-id="${esc(t.id)}">
     <div class="card-row">${pick}<button class="tlink" data-act="edit" data-id="${esc(t.id)}" type="button">${esc(t.title)}</button>${addBtn}</div>
     <div class="meta">${tags.join("")}</div>
@@ -994,6 +996,7 @@ function aheadHTML() {
   const ests = (v) => [15, 30, 45, 60, 90, 120, 150, 180, 240].map(m => `<option value="${m}"${v === m ? " selected" : ""}>${fmtMins(m)}</option>`).join("");
   const cards = days.map((day, di) => {
     const ts = day.ids.map(getTask).filter(t => t && t.status === "open");
+    if (di > 1 && !ts.length) return "";
     const total = ts.reduce((n, t) => n + planMins(day, t), 0), over = total > per;
     const rows = ts.map((t, i) => {
       const v = planMins(day, t), back = di === 0 ? "today" : days[di - 1].date, next = days[di + 1] ? days[di + 1].date : null;
@@ -1003,7 +1006,7 @@ function aheadHTML() {
           <span class="mini"><button data-act="aup" data-date="${esc(day.date)}" data-id="${esc(t.id)}" type="button" aria-label="Move up">↑</button><button data-act="amove" data-id="${esc(t.id)}" data-from="${esc(day.date)}" data-to="${esc(back)}" type="button" aria-label="Move earlier" title="${back === "today" ? "Move to today" : "Move to " + esc(dayLabel(back))}">←</button>${next ? `<button data-act="amove" data-id="${esc(t.id)}" data-from="${esc(day.date)}" data-to="${esc(next)}" type="button" aria-label="Move later" title="Move to ${esc(dayLabel(next))}">→</button>` : ""}<button data-act="aremove" data-date="${esc(day.date)}" data-id="${esc(t.id)}" type="button" aria-label="Remove from this day">×</button></span></div></div>`;
     }).join("");
     return `<div class="aday"><div class="aday-h"><b>${esc(dayLabel(day.date))}</b><span class="num${over ? " over" : ""}">${fmtMins(total)} planned of ${fmtMins(per)}${over ? ` · ${fmtMins(total - per)} over` : ""}</span></div>
-      ${rows || `<div class="empty">Nothing planned yet. Use → on today's list or on any task card.</div>`}</div>`;
+      ${rows || `<div class="empty">Nothing planned yet. Use 📅 Plan on any task card, or → on today's list.</div>`}</div>`;
   }).join("");
   return `<section class="ahead" aria-label="Coming up"><h3>Coming up</h3><div class="ahead-grid">${cards}</div></section>`;
 }
@@ -2123,6 +2126,14 @@ document.addEventListener("change", (ev) => {
   else if (el.dataset.act === "habittoggle") { toggleHabit(id, el.checked); }
   else if (el.dataset.act === "est") { if (S.plan.mins && S.plan.mins[id] != null) { S.plan.mins[id] = Number(el.value); savePlan(); } else updateTask(id, { estMins: Number(el.value) }); renderToday(); }
   else if (el.dataset.act === "aest") { const d = (S.ahead || []).find(x => x.date === el.dataset.date); if (d) { d.mins = d.mins || {}; d.mins[id] = Number(el.value); saveAhead(d); renderToday(); } }
+  else if (el.dataset.act === "planday") {
+    const to = el.value; if (!to) return;
+    const from = inPlan(id) ? "today" : (aheadOf(id) ? aheadOf(id).date : null);
+    const t = getTask(id); if (t && t.status === "suggested") updateTask(id, { status: "open" });
+    if (to === "today" && !from) addMany([id]);
+    else if (from !== to) moveTask(id, from, to);
+    toast(`Planned for ${to === "today" ? "today" : dayLabel(to)}.`);
+  }
   else if (el.dataset.act === "sugclient") { updateTask(id, { client: el.value }); }
   else if (el.dataset.act === "clientpick") { const dl = $("projList"); if (dl) dl.outerHTML = projectList(el.value); }
   else if (el.dataset.act === "meetdate") { S.cal = null; openMeeting(readMeetForm()); }
@@ -2301,7 +2312,7 @@ function subscribeDay() {
     S.prevLoaded = true; tryCarry(); renderToday();
   }).catch(() => {});
   (unsub.ahead || []).forEach(f => f()); unsub.ahead = [];
-  S.ahead = aheadDays(2).map(k => ({ date: k, ids: [], mins: {}, lifeDone: [] }));
+  S.ahead = aheadDays(10).map(k => ({ date: k, ids: [], mins: {}, lifeDone: [] }));
   S.ahead.forEach((day, i) => {
     unsub.ahead.push(db.doc(P.plan(day.date)).onSnapshot(snap => {
       if (key !== todayKey || (snap.metadata && snap.metadata.hasPendingWrites)) return;
